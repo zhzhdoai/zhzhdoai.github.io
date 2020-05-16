@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      sql格式介绍 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>sql格式介绍</h2>
+  <p class="post-date">2018-11-23 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="字符集"><a href="#字符集" class="headerlink" title="字符集"></a>字符集</h2><ul>
+<li>字符编码:计算机针对各种符号，在计算机中的一种二进制存储代号。</li>
+<li>字符集：多个字符的集合<pre><code>ASCII GB2312 BIG5 B18030 UNICODE</code></pre></li>
+</ul>
+<p>如果直接通过CMD直接插入中文会出错<br>1、用户是通过mysql.exe 里啊操作 mysqld.exe<br>2、真正的SQL执行时是Mysqld.exe来执行<br>3、mysql.exe将数据传入mysqld.exes的时候，没有告知其对应的符号规则（字符集），而mysqld也没有能力自己判断，机会hi 用自己默认的（字符集）<br>    解决方案：mysql.exe客户端在进行数据操作之前将自己所使用的字符集告诉mysqld<br>    cmd下的mysql.exe默认只有一个字符集 GBK</p>
+<p>MYsql.exe如果告知mysqld对应的字符类型为gbk<br>快捷方式：set names gbk;<br>深层原理：客户端，服务端，连接层（show variables like ‘character_set%’）<br>Mysql.exe 与 Mysqld.exe 之间的处理关系一共分为三层<br>客户端传入数据给服务端：client<br>服务端返回数据给客服端：server<br>客户端与腹短之间的连接：collection</p>
+<p>Set names 字符集的本质：一次性打通三层字符集，达成一致<br>系统中由三个变量来记录这三个关系对应的字符集：show variables like ‘character_set%’<br>修改服务端变量的值</p>
+<p>– 插入中文<br>    Insert into my_teacher values(‘张三’,12);<br>– mysql.exe告知mysqld.exe自己的字符集规则<br>    set names gbk;(直接这样)</p>
+<p>– 查看系统保存的三种关系处理字符集<br>    show variables like ‘character_set%’;</p>
+<p>– 修改变量<br>    set character_set_client = gbk; </p>
+<h2 id="列类型（字段类型）"><a href="#列类型（字段类型）" class="headerlink" title="列类型（字段类型）"></a>列类型（字段类型）</h2><ul>
+<li><p>整数类型</p>
+</li>
+<li><p>Tinyint<br>  迷你整型，系统采用一个字节来保存的整形，最大表示0~255；</p>
+</li>
+<li><p>Smallint<br>  小整型，系统采用两个字节来保存的整形，0~65535之间</p>
+</li>
+<li><p>Mediumint<br>  中整形,采用三个字节来保存数据。</p>
+</li>
+<li><p>Int<br>  整形（标准整型），采用四个字节来保存数据。</p>
+</li>
+<li><p>Bigint<br>  大整形，采用8个字节来保存数据<br>Tiniyint 和 Int使用比较普遍</p>
+</li>
+</ul>
+<h2 id="无符号设定"><a href="#无符号设定" class="headerlink" title="无符号设定"></a>无符号设定</h2><p>无符号：表示存储的数据在当前字段中，没有负数（只有整数达到0~255）<br>基本语法;alter table my_int add 字段名  tinyint unsigned first;</p>
+<p>插入最大数字会报错，是因为mysql默认的整形增加附属，实际表示的区间为-127~128;<br>– 创建数据表<br>    create table my_int(<br>    int_1 tinyint,<br>    int_2 smallint,<br>    int_3 mediumint,<br>    int_4 int,<br>    int_5 bigint<br>    )charset utf8;</p>
+<p>– 插入数据<br>    Insert into my_int values(10,10000,100000,10000000,100000000000);<br>    Insert into my_int values(255,255,255,255,255);<br>    Insert into my_int values(-128,255,255,255,255);<br>    alter table my_int add int_6  tinyint unsigned first;</p>
+<h2 id="列类型-显示长度"><a href="#列类型-显示长度" class="headerlink" title="列类型___显示长度"></a>列类型___显示长度</h2><p>显示长度：指数据在数据显示的时候，到底可以显示多少位。</p>
+<p>Tinyint(3)；表示最长可以显示3位 ，unsigned 说明只能是整数，0-255用用不会超过三个长度<br>Tinyint(4):表示最长可以显示4位，-128-127.</p>
+<ul>
+<li><p>显示长度只是嗲表了数据是否可以达到指定的长度，但是不会自动满足到指定长度，如果像要数据显示的时候，保持最高位（显示长度），那么还需要增加一个zerofill属性才可以</p>
+</li>
+<li><p>zerofill:从左侧开始填充0（左侧不会改变数值大小），所以负数的时候不能时候zerofill。</p>
+</li>
+<li><p>数据显示的时候，zerofill会在左侧填充0到指定位，如果不足三位，填充到三位。本身已经够了或者超出，那么就不再填充。</p>
+</li>
+<li><p>显示长度可以自己设定，超出长度（但是不超出范围）不会影响，只会对不够长度的进行补充。</p>
+</li>
+</ul>
+<h2 id="列类型————小数型"><a href="#列类型————小数型" class="headerlink" title="列类型————小数型"></a>列类型————小数型</h2><p>专门用来存储鸮属的<br>在Mysql中将小数分为两类：浮点型和定点型。<br>存储较大的值，利用存储数据的位来存储指数</p>
+<ul>
+<li><p>浮点型<br>  精度类型，有可能丢失精度类型的数据类型，数据可能不准确（尤其在超出精度长度范围）</p>
+<ul>
+<li><p>Float<br>  Float称为单精度类型，系统提供4个字节来存储数据，但是能表示的数据范围比整型大的多，约为10^38次方，只能保证大概7个左右的精度<br>  基本语法：</p>
+<pre><code>Float：指定不现实小数位的浮点数
+Float(M,D):表示一共存储M个有效数字，其中效数部分占D位
+Float(10,2):整数8位，效数2位。</code></pre><p>1、创建一个数据表保存浮点数<br>2、存入数据<br>浮点数的英语：用处是用来保存一些数量特别大，达到可以不用那么精确的数据。</p>
+</li>
+<li><p>Double<br>  Double又称之为双精度，系统用8个字节来存储数据，10^308次方，精度15位左右</p>
+</li>
+<li><p>定点数</p>
+<p>  定点数：能够保证数据精确的小数（效数部分可能不精确，超出长度会四舍五入），整数不放呢一定精确</p>
+</li>
+<li><p>Decimal<br>  Decimal定点数：系统自动根据存储的数据来分配存储空间，每大概九个数就会分配四个字节来存储，同时效数和整数部分是分开的。</p>
+<p>  decimal(M,D):M表示总长度，最大值不能超过65，D代表小数部分的长度，最长不能超过30位。<br>  1、创建表：与浮点数对比</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>——————————————————————————————————————————————————————————————————————————————————————<br>    create table my_float(<br>        f1 float,<br>        f2 float(10,2)<br>    )charset utf8;<br>    insert into my_float values(123.123,12345678.90);<br>    //数据精度丢失，浮点型按四舍五入的方式进行<br>    insert into my_float values(123.1234567,123456789.00);</p>
+<pre><code>insert into my_float values(13.1234567,99999999.99);
+//插入数据超过指定整数部分长度，但是如果是系统自动进位导致的
+
+insert into my_float values(123.123,10e5);
+//浮点数可采用课采用科学计数法来存储数据
+
+create table my_decimal(
+    f1 float(10,2),
+    d1 decimal(10,2)
+)charset utf8;
+
+insert into my_decimal values(99999999.99,99999999.99);
+    insert into my_decimal values(99999999.99,99999999.999);//定点数四舍五入</code></pre><h2 id="时间日期类型"><a href="#时间日期类型" class="headerlink" title="时间日期类型"></a>时间日期类型</h2><ul>
+<li><p>Date<br>  日期类型:系统使用三个字节来存储数据，对应的格式位：YYYY-mm-dd,能表示的范围从<br>  1000-01-01到9999-12-12，初始值为0000-00-00</p>
+</li>
+<li><p>Time<br>  时间类型：能够表示某个指定的时间，但是系统统一是提供3个字节来存储，对应的格式为<br>  HH:ii:ss，但是Time类型能够表示的时间范围要大的多</p>
+</li>
+<li><p>Datetime<br>  日期时间类型：就是将前面的date和time合并起来，表示的时间，使用8个字节存储<br>  格式为:YYYY-mm-dd HH:ii:ss,能表示的区间1000-01-01 00:00:00 到9999-12-31 23：59：59</p>
+</li>
+<li><p>Timestamp<br>  时间戳类型：mysql中的时间戳只是表示从格林威治依然和datetime.</p>
+</li>
+<li><p>Year<br>  年类型：占用一个字节来保存，能表示1900年到2155年，但是year两种数据插入方式：<br>  0~99和四位数的具体年</p>
+<p>  year进行两位数插入的时候，有一个区间划分，69和70划分界限。<br>  timestamp当对应的数据被修改的阿时候，会自动更新（这个被修改的数据以是自己）</p>
+</li>
+</ul>
+<h2 id="字符串类型"><a href="#字符串类型" class="headerlink" title="字符串类型"></a>字符串类型</h2><ul>
+<li>char<br>  基本类型：char(L),L代表字符数（中文与英文字母一致），L长度为0~255.</li>
+<li>Varchar<br>边长字符：指定长度之后，系统会更具实际存储的数据来来计算长度，分配合适的长度（数据没有超出长度）。<br>基本语法：varchar(L)，L代表字符数，L的长度理论值0~65535<br>Varchar要记录数据长度（数据根据数据长度自动分配空间）</li>
+</ul>
+<p><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong><strong>___</strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong></strong>fenge</p>
+<pre><code>-- 创建对应的数据表
+create table my_date(
+    d1 date,
+    d2 time,
+    d3 datetime,
+    d4 timestamp,
+    d5 year
+)charset utf8;</code></pre><p>insert into my_date values(<br>    ‘1900-01-01’,’12:12:12’,’1900-01-01 12:12:12’,’1999-01-01 12:12:12’<br>    ,69<br>);</p>
+<h2 id="列属性"><a href="#列属性" class="headerlink" title="列属性"></a>列属性</h2><p>NULL,默认值，列描叙，主键，唯一键和自动增长。<br>注意</p>
+<ol>
+<li>在设计表的时候，尽量不要让数据为空</li>
+<li>记录长度为65535个字节</li>
+</ol>
+<ul>
+<li>默认值<br>defaul:默认值，不进行数据插入会为其填充为null</li>
+<li>列描述<br>comment 专门为开发人员进行维护的一个注释说明<br>基本语法：comment ‘字段描述’;<br>查看comment：查看表创建语句</li>
+</ul>
+<hr>
+<p>– 创建数据表<br>create table my_default(<br>    name varchar(10) NOT NULL,<br>    age int default 18<br>)charset utf8;</p>
+<p>– 创建表，增加字段描述<br>create table my_comment(<br>name varchar(10) not null comment ‘当前是用户名，不能为空’,<br>pass varchar(50) not null comment ‘密码不能为空’<br>)charset utf8;</p>
+<p>————————————————————————————————————————————</p>
+<h2 id="主键"><a href="#主键" class="headerlink" title="主键"></a>主键</h2><p>主要的键，primary key 有且只有一个字段，里面的值唯一性。</p>
+<ul>
+<li><p>创建主键</p>
+</li>
+<li><p>随表创建<br>系统提供两种增加主键的方式</p>
+</li>
+</ul>
+<ol>
+<li>方案1：直接在需要当作主键的字段之后，增加primary key确定主键</li>
+<li>方案2：在所有字段之后增加主键选项，primary key（字段信息）</li>
+</ol>
+<ul>
+<li><p>表后增加<br>基本语法：alter table 表名 add primary key(字段);</p>
+</li>
+<li><p>查看主键<br>方案1: 查看表结构<br>方案2：查看表的创建语句</p>
+</li>
+<li><p>删除主键<br>基本语法：alter table 表名 drop primary key;</p>
+</li>
+</ul>
+<p>– 在字段后增加主键属性</p>
+<ul>
+<li><p>复合主键<br>案例：有一张学生选修课表，学生可以选秀多个选修课，一个选修课可以由多个学生来选，但是一个学生在一个选修课中只有一个选修课成绩。</p>
+</li>
+<li><p>主键约束<br>主键一旦增加，那么对对应的字段有数据要求</p>
+</li>
+</ul>
+<ol>
+<li>当前字段对应的数据不能为空。</li>
+<li>当前字段对应的数据不能有任何重复</li>
+</ol>
+<p>create table my_pri1(<br>    username varchar(10) primary key<br>)charset utf8;</p>
+<p>create table my_pri2<br>(<br>    username varchar(10),<br>    primary key(username)<br>)</p>
+<p>create table my_pri3<br>(<br>    username varchar(10)<br>);<br>alter table my_pri3 add primary key(username);</p>
+<p>aliter table my_pri3 drop primary key;</p>
+<p>create table my_score(<br>    student_no char(10),<br>    course_no char(10),<br>    score tinyint not null,<br>    primary key(student_no,course_no)<br>)charset utf8;</p>
+<p>insert into my_score values (‘00000001’,’course01’,100);<br>insert into my_score values (‘00000002’,’course02’,90);<br>insert into my_score values (‘00000001’,’course03’,95);</p>
+<hr>
+<h2 id="自动增长"><a href="#自动增长" class="headerlink" title="自动增长"></a>自动增长</h2><p>自动增长：auto_increment根据以前存在的数据进行自动增加<br>自动增长用于逻辑主键<br>原理：</p>
+<ol>
+<li>系统维护一组数据，用来保存当前使用了自动增长属性的字段，记住当前对应的数据值，在给定一个指定的步长。</li>
+<li>当用户进行数据插入的时候，如果没有给定值，系统在原始值上再加上新的步长新的数据</li>
+<li>自动增长的出发，给定属性的字段没有提供值</li>
+<li>自动增长只适用于数值</li>
+</ol>
+<ul>
+<li>使用自动增长<br>基本语法：在字段之后增加一个属性auto_increment.<br>插入数据：出发自动增长，不能给定一个值</li>
+<li>修改自动增长</li>
+</ul>
+<ol>
+<li>查看自增长，自增长一旦触发使用，会自动在表选项增加一个选项（一张表最多只能拥有一个自增长）</li>
+</ol>
+<ul>
+<li>删除自动增长<br>删除自增长：就是在字段属性之后不再暴力auto_increment,当用户修改自增长所在的字段,如果没有看到auto_increment属性,系统会自动清楚该自增长</li>
+<li>初始设置<br>在系统中，有一组变量用来维护自增长<br>show variables like ‘auto_increment%’;</li>
+<li>细节问题</li>
+</ul>
+<ol>
+<li>一张表只有一个自增长，自增长会上升到表选项中</li>
+<li>如果数据插入中没有出发自增长（给定了数据），那么自增长不会表现</li>
+<li>自增长修改的时候，值可以较大，但是不能比他小</li>
+</ol>
+<p>create table my_auto(<br>    id int primary key auto_increment,<br>    name varchar(10) not null comment ‘用户名’,<br>    pass varchar(50) not null comment ‘密码’<br>);</p>
+<p>insert into my_auto values(null,’Tom’,’123456’);</p>
+<p>– 修改auto_incrememnt<br>alter table my_auto auto_increment = 10;</p>
+<p>– 删除自增长<br>alter table my_auto modify id int;<br>– 切记不要在再次增加primary key</p>
+<p>– 查看自增长初始变量<br>show variables like ‘auto_increment%’;</p>
+<p>– 增加自增长<br>alter table my_auto modify id int auto_increment;</p>
+<p>insert into my_auto values(3,’Jack’,’123456’);</p>
+<p>——————————————————————————————————————————————————————————————</p>
+<h2 id="唯一键"><a href="#唯一键" class="headerlink" title="唯一键"></a>唯一键</h2><p>unique key,用来保证䫕的字段中的数据唯一<br>主键也而可以用来保证数据的唯一性，但是一张表只有一个主键。</p>
+<ol>
+<li>为一间在一张表中可以有多个</li>
+<li>唯一键允许字段数据为NULL NULL可以有多个（NULL不参与比较）</li>
+</ol>
+<ul>
+<li>创建唯一键<br>表字段之后鞥家唯一键标识符，unique[key]<br>2、 在所有的字段之后使用unique key[字段列表]</li>
+</ul>
+<ol start="3">
+<li>在创建表之后也可以增加唯一键<br>alter table 表名 add unique key[字段列表]</li>
+</ol>
+<pre><code> create table my_unique1(
+    id int primary key auto_increment,
+    username varchar(10) unique 
+
+);
+        create table my_unique2(
+        id int primary key auto_increment,
+        username varchar(10),
+        unique key(username)
+
+    );
+
+create table my_unique3(
+    id int primary key auto_increment,
+    username varchar(10)
+);
+
+alter table my_unique3 add unique key(username);</code></pre></section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#基础笔记" >
+    <span class="tag-code">基础笔记</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/11/21/sql/">
+        <span class="nav-arrow">← </span>
+        
+          数据库操作命令
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/12/18/sqlless1-4/">
+        
+          sqlless1-4
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#字符集"><span class="toc-nav-text">字符集</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#列类型（字段类型）"><span class="toc-nav-text">列类型（字段类型）</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#无符号设定"><span class="toc-nav-text">无符号设定</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#列类型-显示长度"><span class="toc-nav-text">列类型___显示长度</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#列类型————小数型"><span class="toc-nav-text">列类型————小数型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#时间日期类型"><span class="toc-nav-text">时间日期类型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#字符串类型"><span class="toc-nav-text">字符串类型</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#列属性"><span class="toc-nav-text">列属性</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#主键"><span class="toc-nav-text">主键</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#自动增长"><span class="toc-nav-text">自动增长</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#唯一键"><span class="toc-nav-text">唯一键</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2018/11/23/sql格式介绍/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "sql格式介绍",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

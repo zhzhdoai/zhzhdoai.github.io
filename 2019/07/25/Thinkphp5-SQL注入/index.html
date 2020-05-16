@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Thinkphp5 SQL注入(parseWhereItem) | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Thinkphp5 SQL注入(parseWhereItem)</h2>
+  <p class="post-date">2019-07-25 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="thinkphp执行sql语句流程"><a href="#thinkphp执行sql语句流程" class="headerlink" title="thinkphp执行sql语句流程"></a>thinkphp执行sql语句流程</h1><blockquote>
+<p><strong>where方法解析参数返回$this对象 -&gt; /Query.php/select()根据where方法产生的option结果,分析查询表达式 -&gt; /Builder.php/select方法根据option数组存在的键值调用相对应的语句解析，生成sql语句 -&gt; 调用PDO查询prepare($SQL)编译sql语句 -&gt; bindValue($param, $value)将value绑定到param上 -&gt; execute()执行。</strong></p>
+</blockquote>
+<p>该漏洞是利用prepare编译时报错进行注入,当然前期的无过滤和拼接是诱导注入的主因</p>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p><strong>版本</strong>：Thinkphp：　5.0.10</p>
+<p><strong>漏洞影响版本</strong>: ThinkPHP5全版本</p>
+<p><strong>启动</strong>：public目录下<code>php5 -S 127.0.0.1:8899 router.php</code></p>
+<p><strong>配置</strong>：数据库连接配置,app_debug、app_trace开启</p>
+<p><strong>数据库</strong>：mysql</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">database</span> tpdemo;</span><br><span class="line"><span class="keyword">use</span> tpdemo;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">users</span>(</span><br><span class="line">	<span class="keyword">id</span> <span class="built_in">int</span> primary <span class="keyword">key</span> auto_increment,</span><br><span class="line">	username <span class="built_in">varchar</span>(<span class="number">50</span>) <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">users</span>(<span class="keyword">id</span>,username) <span class="keyword">values</span>(<span class="number">1</span>,<span class="string">'od0d'</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>文件内容</strong>：app/index/controller/index</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $username = request()-&gt;get(<span class="string">'username'</span>);</span><br><span class="line">        $result = db(<span class="string">'users'</span>)-&gt;where(<span class="string">'username'</span>,<span class="string">'exp'</span>,$username)-&gt;select();</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'select success'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="漏洞验证"><a href="#漏洞验证" class="headerlink" title="漏洞验证"></a>漏洞验证</h1><p>payload: <a href="http://127.0.0.1:8899/?username=)%20union%20select%20updatexml(1%2cconcat(0x7e,database()%2c0x7e)%2c1)%23%20" target="_blank" rel="noopener">http://127.0.0.1:8899/?username=)%20union%20select%20updatexml(1%2cconcat(0x7e,database()%2c0x7e)%2c1)%23%20</a> [url编码]<br><img src="./1.png" alt=""></p>
+<h1 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h1><ol>
+<li>thinkphp框架没有对传入参数进行sql过滤</li>
+<li>parseItem直接对注入参数值拼接</li>
+</ol>
+<h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><h2 id="参数传入与过滤情况"><a href="#参数传入与过滤情况" class="headerlink" title="参数传入与过滤情况"></a>参数传入与过滤情况</h2><p>thinkphp调用request类get方法传入参数。若没有设置过滤函数默认为空，之后也只是简单调用框架的过滤方法<code>filterExp</code></p>
+<h2 id="where方法解析参数"><a href="#where方法解析参数" class="headerlink" title="where方法解析参数"></a>where方法解析参数</h2><p><strong>where方法</strong>返回值为<code>$this</code>,需要关注是<code>options</code>,该值传入<strong>Query类</strong>中的<code>options</code>数组。</p>
+<p><img src="./2.png" alt=""></p>
+<h2 id="sql查询语句构造"><a href="#sql查询语句构造" class="headerlink" title="sql查询语句构造"></a>sql查询语句构造</h2><p>跟进select方法sql查询组成，是由多个sql解析方法组成</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">select</span><span class="params">($options = [])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $sql = str_replace(</span><br><span class="line">        [<span class="string">'%TABLE%'</span>, <span class="string">'%DISTINCT%'</span>, <span class="string">'%FIELD%'</span>, <span class="string">'%JOIN%'</span>, <span class="string">'%WHERE%'</span>, <span class="string">'%GROUP%'</span>, <span class="string">'%HAVING%'</span>, <span class="string">'%ORDER%'</span>, <span class="string">'%LIMIT%'</span>, <span class="string">'%UNION%'</span>, <span class="string">'%LOCK%'</span>, <span class="string">'%COMMENT%'</span>, <span class="string">'%FORCE%'</span>],</span><br><span class="line">        [</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseTable($options[<span class="string">'table'</span>], $options),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseDistinct($options[<span class="string">'distinct'</span>]),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseField($options[<span class="string">'field'</span>], $options),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseJoin($options[<span class="string">'join'</span>], $options),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseWhere($options[<span class="string">'where'</span>], $options),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseGroup($options[<span class="string">'group'</span>]),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseHaving($options[<span class="string">'having'</span>]),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseOrder($options[<span class="string">'order'</span>], $options),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseLimit($options[<span class="string">'limit'</span>]),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseUnion($options[<span class="string">'union'</span>]),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseLock($options[<span class="string">'lock'</span>]),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseComment($options[<span class="string">'comment'</span>]),</span><br><span class="line">            <span class="keyword">$this</span>-&gt;parseForce($options[<span class="string">'force'</span>]),</span><br><span class="line">        ], <span class="keyword">$this</span>-&gt;selectSql);</span><br><span class="line">    <span class="keyword">return</span> $sql;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>跟进<code>buildWhere</code>方法分析where语句拼接情况。<br>函数逻辑进入最后一个else语句</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// 对字段使用表达式查询</span></span><br><span class="line">                    $field = is_string($field) ? $field : <span class="string">''</span>;</span><br><span class="line">                    $str[] = <span class="string">' '</span> . $key . <span class="string">' '</span> . <span class="keyword">$this</span>-&gt;parseWhereItem($field, $value, $key, $options, $binds);</span><br><span class="line">                &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>parseWhereItem方法</strong>中，<code>$exp=&#39;EXP&#39;</code>,该逻辑直接对<code>$key、$value</code>值进行拼接。造成注入</p>
+<p>$key＝“`username`”</p>
+<p>$value=”) union select updatexml(1,concat(0x7e,database(),0x7e),1)# “</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">elseif</span> (<span class="string">'EXP'</span> == $exp) &#123;</span><br><span class="line">            <span class="comment">// 表达式查询</span></span><br><span class="line">            $whereStr .= <span class="string">'( '</span> . $key . <span class="string">' '</span> . $value . <span class="string">' )'</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://mochazz.github.io/2019/03/23/ThinkPHP5%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E4%B9%8BSQL%E6%B3%A8%E5%85%A53/#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%A6%81" target="_blank" rel="noopener">ThinkPHP5漏洞分析之SQL注入(三)</a></p>
+<p><a href="https://www.leavesongs.com/PENETRATION/thinkphp5-in-sqlinjection.html" target="_blank" rel="noopener">ThinkPHP5 SQL注入漏洞 &amp;&amp; PDO真/伪预处理分析</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#代码审计" >
+    <span class="tag-code">代码审计</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/07/24/2019ISCC%E7%BA%BF%E4%B8%8B%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/">
+        <span class="nav-arrow">← </span>
+        
+          2019ISCC线下赛web题解
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/">
+        
+          Thinkphp5 文件包含
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#thinkphp执行sql语句流程"><span class="toc-nav-text">thinkphp执行sql语句流程</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#环境"><span class="toc-nav-text">环境</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞验证"><span class="toc-nav-text">漏洞验证</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞成因"><span class="toc-nav-text">漏洞成因</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞分析"><span class="toc-nav-text">漏洞分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#参数传入与过滤情况"><span class="toc-nav-text">参数传入与过滤情况</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#where方法解析参数"><span class="toc-nav-text">where方法解析参数</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#sql查询语句构造"><span class="toc-nav-text">sql查询语句构造</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/07/25/Thinkphp5-SQL注入/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "Thinkphp5 SQL注入(parseWhereItem)",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

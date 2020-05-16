@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      函数特性 | 绕过的空白字符 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>函数特性 | 绕过的空白字符</h2>
+  <p class="post-date">2019-02-27 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在整理php弱类型，发现函数缺陷在弱类型中还是挺有意思的，遂找了is_numeric函数来试试手。挺有收货的，不断补全自己的知识盲区。</p>
+<h1 id="使用的空格符替换"><a href="#使用的空格符替换" class="headerlink" title="使用的空格符替换"></a>使用的空格符替换</h1><p>控制码<br>“\0” “%00” (ASCII  0 (0x00))，空字节符。</p>
+<p>制表符<br>“\t” (ASCII  9 (0x09))，水平制表符。</p>
+<p>空白字符：<br>“\n” (ASCII 10 (0x0A))，换行符。<br>“\v” “\x0b” (ASCII  11 (0x0B))，垂直制表符。<br>“\f” “%0c” 换页符<br>“\r” “%0d”(ASCII  13 (0x0D))，回车符。</p>
+<p>空格:<br>“ “ “%20” (ASCII  32 (0x20))，普通空格符。</p>
+<h1 id="源码查找方法"><a href="#源码查找方法" class="headerlink" title="源码查找方法"></a>源码查找方法</h1><p>现在ext找到方法在文件中的定义名，然后在Zend文件中查找</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">php-5.6.30&#x2F;ext&#x2F;standard&#x2F;string.c</span><br><span class="line">$ sudo grep -rn &quot;PHP_FUNCTION(is_numeric)&quot;</span><br><span class="line">-&gt;standard&#x2F;type.c:314:PHP_FUNCTION(is_numeric)</span><br><span class="line">-&gt;standard&#x2F;php_type.h:35:PHP_FUNCTION(is_numeric);</span><br><span class="line"></span><br><span class="line">php-5.6.30&#x2F;Zend&#x2F;zend_operators.c</span><br><span class="line">$ sudo grep -rn &quot;is_numeric_string&quot;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Is-numeric源码分析"><a href="#Is-numeric源码分析" class="headerlink" title="Is_numeric源码分析"></a>Is_numeric源码分析</h1><p>Is_numeric只是判别是否为数，而不是修改数。这是大前提，通过源码我们可以得知。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">static inline zend_uchar is_numeric_string_ex(const char *str, int length, long *lval, double *dval, int allow_errors, int *oflow_info)</span><br><span class="line">&#123;</span><br><span class="line">	const char *ptr;</span><br><span class="line">	int base &#x3D; 10, digits &#x3D; 0, dp_or_e &#x3D; 0;</span><br><span class="line">	double local_dval &#x3D; 0.0;</span><br><span class="line">	zend_uchar type;</span><br><span class="line"></span><br><span class="line">	if (!length) &#123;</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if (oflow_info !&#x3D; NULL) &#123;</span><br><span class="line">		*oflow_info &#x3D; 0;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#x2F;* Skip any whitespace</span><br><span class="line">	 * This is much faster than the isspace() function *&#x2F;</span><br><span class="line">	while (*str &#x3D;&#x3D; &#39; &#39; || *str &#x3D;&#x3D; &#39;\t&#39; || *str &#x3D;&#x3D; &#39;\n&#39; || *str &#x3D;&#x3D; &#39;\r&#39; || *str &#x3D;&#x3D; &#39;\v&#39; || *str &#x3D;&#x3D; &#39;\f&#39;) &#123;</span><br><span class="line">		str++;</span><br><span class="line">		length--;</span><br><span class="line">	&#125;</span><br><span class="line">	ptr &#x3D; str;</span><br><span class="line">	&#x2F;&#x2F;判断正负</span><br><span class="line">	if (*ptr &#x3D;&#x3D; &#39;-&#39; || *ptr &#x3D;&#x3D; &#39;+&#39;) &#123;</span><br><span class="line">		ptr++;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if (ZEND_IS_DIGIT(*ptr)) &#123;</span><br><span class="line">		&#x2F;* Handle hex numbers</span><br><span class="line">		 * str is used instead of ptr to disallow signs and keep old behavior *&#x2F;</span><br><span class="line">		&#x2F;&#x2F;判断十六进制</span><br><span class="line">		if (length &gt; 2 &amp;&amp; *str &#x3D;&#x3D; &#39;0&#39; &amp;&amp; (str[1] &#x3D;&#x3D; &#39;x&#39; || str[1] &#x3D;&#x3D; &#39;X&#39;)) &#123;</span><br><span class="line">			base &#x3D; 16;</span><br><span class="line">			ptr +&#x3D; 2;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		&#x2F;* Skip any leading 0s *&#x2F;</span><br><span class="line">		while (*ptr &#x3D;&#x3D; &#39;0&#39;) &#123;</span><br><span class="line">			ptr++;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		&#x2F;* Count the number of digits. If a decimal point&#x2F;exponent is found,</span><br><span class="line">		 * it&#39;s a double. Otherwise, if there&#39;s a dval or no need to check for</span><br><span class="line">		 * a full match, stop when there are too many digits for a long *&#x2F;</span><br><span class="line">		for (type &#x3D; IS_LONG; !(digits &gt;&#x3D; MAX_LENGTH_OF_LONG &amp;&amp; (dval || allow_errors &#x3D;&#x3D; 1)); digits++, ptr++) &#123;</span><br><span class="line">check_digits:</span><br><span class="line">			if (ZEND_IS_DIGIT(*ptr) || (base &#x3D;&#x3D; 16 &amp;&amp; ZEND_IS_XDIGIT(*ptr))) &#123;...............</span><br></pre></td></tr></table></figure>
+<p>分析源代码：</p>
+<p>Is_numerci()代码执行流程</p>
+<ol>
+<li>处理空格字符串</li>
+<li>判断传参正负</li>
+<li>十六进制识别</li>
+<li>识别小数和科学计数法</li>
+</ol>
+<h1 id="is-numeric-while缺陷利用"><a href="#is-numeric-while缺陷利用" class="headerlink" title="is_numeric while缺陷利用"></a>is_numeric while缺陷利用</h1><p><strong><em>利用在ctf中展示</em></strong></p>
+<p>##　空格字符处理<br><img src="./1.png" alt=""><br>Is_numeric() 在执行前会跳过所有空格字符，保留原来空格字符长度增大。这样处理对数值判断是没有影响。</p>
+<h2 id="验证Demo："><a href="#验证Demo：" class="headerlink" title="验证Demo："></a>验证Demo：</h2><?php 
+if(($_GET['num'])>='0' &&  ($_GET['num']) <= '9'){
+    echo "True";
+}
+else{
+    echo "False";
+}
+?><p><br><img src="./2.png" alt=""></p>
+<h2 id="数值判断方法"><a href="#数值判断方法" class="headerlink" title="数值判断方法"></a>数值判断方法</h2><p><code>#define ZEND_IS_DIGIT(c) ((c) &gt;= &#39;0&#39; &amp;&amp; (c) &lt;= &#39;9&#39;)</code><br><strong><em>如果没有绕过while对字符串的处理那么函数is_numeric返回为FALSE</em></strong></p>
+<h1 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"> </span><br><span class="line">$info &#x3D; &quot;&quot;; </span><br><span class="line">$req &#x3D; [];</span><br><span class="line">$flag&#x3D;&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;;</span><br><span class="line"> </span><br><span class="line">ini_set(&quot;display_error&quot;, false); &#x2F;&#x2F;为一个配置选项设置值</span><br><span class="line">error_reporting(0); &#x2F;&#x2F;关闭所有PHP错误报告</span><br><span class="line"> </span><br><span class="line">if(!isset($_GET[&#39;number&#39;]))&#123;</span><br><span class="line">   header(&quot;hint:26966dc52e85af40f59b4fe73d8c323a.txt&quot;); &#x2F;&#x2F;HTTP头显示hint 26966dc52e85af40f59b4fe73d8c323a.txt</span><br><span class="line"> </span><br><span class="line">   die(&quot;have a fun!!&quot;); &#x2F;&#x2F;die — 等同于 exit()</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">foreach([$_GET, $_POST] as $global_var) &#123;  &#x2F;&#x2F;foreach 语法结构提供了遍历数组的简单方式 </span><br><span class="line">    foreach($global_var as $key &#x3D;&gt; $value) &#123; </span><br><span class="line">        $value &#x3D; trim($value);  &#x2F;&#x2F;trim — 去除字符串首尾处的空格字符（或者其他字符）</span><br><span class="line">        is_string($value) &amp;&amp; $req[$key] &#x3D; addslashes($value); &#x2F;&#x2F; is_string — 检测变量是否是字符串，addslashes — 使用反斜线引用字符串</span><br><span class="line">    &#125; &#x2F;&#x2F;存入数组req中ｖａｌｕｅ</span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">function is_palindrome_number($number) &#123; </span><br><span class="line">    $number &#x3D; strval($number); &#x2F;&#x2F;strval — 获取变量的字符串值</span><br><span class="line">    $i &#x3D; 0; </span><br><span class="line">    $j &#x3D; strlen($number) - 1; &#x2F;&#x2F;strlen — 获取字符串长度</span><br><span class="line">    while($i &lt; $j) &#123; </span><br><span class="line">        if($number[$i] !&#x3D;&#x3D; $number[$j]) &#123; </span><br><span class="line">            return false; </span><br><span class="line">        &#125; </span><br><span class="line">        $i++; </span><br><span class="line">        $j--; </span><br><span class="line">    &#125; </span><br><span class="line">    return true; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">if(is_numeric($_REQUEST[&#39;number&#39;])) &#x2F;&#x2F;is_numeric — 检测变量是否为数字或数字字符串 </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">   $info&#x3D;&quot;sorry, you cann&#39;t input a number!&quot;;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">elseif($req[&#39;number&#39;]!&#x3D;strval(intval($req[&#39;number&#39;]))) &#x2F;&#x2F;intval — 获取变量的整数值．这里要做的是使得elseif False。空白字符绕过</span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">     $info &#x3D; &quot;number must be equal to it&#39;s integer!! &quot;; </span><br><span class="line"> 	</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">     $value1 &#x3D; intval($req[&quot;number&quot;]);</span><br><span class="line">     $value2 &#x3D; intval(strrev($req[&quot;number&quot;]));&#x2F;&#x2F;strrev 反转字符串  </span><br><span class="line"> </span><br><span class="line">     if($value1!&#x3D;$value2)&#123;</span><br><span class="line">          $info&#x3D;&quot;no, this is not a palindrome number!&quot;;</span><br><span class="line">          </span><br><span class="line">     &#125;</span><br><span class="line">     else</span><br><span class="line">     &#123;</span><br><span class="line"> </span><br><span class="line">          if(is_palindrome_number($req[&quot;number&quot;]))&#123;</span><br><span class="line">              $info &#x3D; &quot;nice! &#123;$value1&#125; is a palindrome number!&quot;; </span><br><span class="line">          &#125;</span><br><span class="line">          else</span><br><span class="line">          &#123;</span><br><span class="line">             $info&#x3D;$flag;</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">echo $info;</span><br></pre></td></tr></table></figure>
+
+<h2 id="分析代码"><a href="#分析代码" class="headerlink" title="分析代码"></a>分析代码</h2><ol>
+<li>循环遍历数组foreach去除字符串首尾空格，转义字符串。</li>
+<li>方法 is_palindrome_number()判断是否为回文数。</li>
+<li>之后的代码才是重点通过矛盾的if/else语句得到flag<br><img src="./3.png" alt=""><br>我们的目标是得到<code>$info=$flag</code>最后一个else语句<br><img src="./4.png" alt=""><br>我首先想到是科学计数法(我也不知为什么)，但发现不可以，看完之前对is_numeric源码分析，发现判断无关整数的类型。</li>
+</ol>
+<p><strong><em>题目要求回文整数</em></strong></p>
+<h3 id="1-传入number-191"><a href="#1-传入number-191" class="headerlink" title="1. 传入number=191"></a>1. 传入<code>number=191</code></h3><blockquote>
+<blockquote>
+<p><code>sorry, you cann&#39;t input a number!</code></p>
+</blockquote>
+</blockquote>
+<h3 id="2-分析is-numeric"><a href="#2-分析is-numeric" class="headerlink" title="2. 分析is_numeric"></a>2. 分析is_numeric</h3><p>使得while为False必须绕过<code>’ ’,’\t’,‘\r’,’\v’,’f’</code></p>
+<p>而条件<code>$req[&#39;number&#39;]!=strval(intval($req[&#39;number&#39;]</code>因为弱类型会忽略空白格符号自动转换为整形比较数值<br>通过fuzz可得，可传入参数%00191</p>
+<blockquote>
+<blockquote>
+<p><code>nice! 191 is a palindrome number!</code><br><strong><em>//不需要考虑$value1!=$value2影响，因为他们被intval修饰！！！</em></strong></p>
+</blockquote>
+</blockquote>
+<h3 id="3-但是我们需要的是-info-flag-需要绕过is-palindrome-number-req-“number”"><a href="#3-但是我们需要的是-info-flag-需要绕过is-palindrome-number-req-“number”" class="headerlink" title="3. 但是我们需要的是$info=$flag;需要绕过is_palindrome_number($req[“number”]"></a>3. 但是我们需要的是$info=$flag;需要绕过is_palindrome_number($req[“number”]</h3><p>根据trim源代码分析少去掉的空格符号有<code>\n \r \t \v \0</code><br>发现少了个<code>\f</code> url编码为<code>%0c</code><br><img src="./5.png" alt=""></p>
+<h3 id="4-传入参数-number-00-0c191"><a href="#4-传入参数-number-00-0c191" class="headerlink" title="4. 传入参数?number=%00%0c191"></a>4. 传入参数?number=%00%0c191</h3><blockquote>
+<blockquote>
+<p>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br>成功得到flag</p>
+</blockquote>
+</blockquote>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p>Url编码规范：<a href="https://www.oschina.net/translate/what-every-web-developer-must-know-about-url-encoding" target="_blank" rel="noopener">https://www.oschina.net/translate/what-every-web-developer-must-know-about-url-encoding</a><br>几期『三个白帽』小竞赛的writeup：<a href="https://www.leavesongs.com/PENETRATION/some-sangebaimao-ctf-writeups.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/some-sangebaimao-ctf-writeups.html</a><br>PHP代码审计分段讲解:<a href="https://github.com/bowu678/php_bugs" target="_blank" rel="noopener">https://github.com/bowu678/php_bugs</a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>１．学习了怎么通过分析函数源代码了解函数缺陷<br>２．第一次分析条件矛盾的ctf，刚开始确实很晕但是理清楚函数之间的特异性。就能理清他为什么要设置这样的矛盾<br>３．学习了url编码</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#WEB安全" >
+    <span class="tag-code">WEB安全</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/02/27/PHP%E5%BC%B1%E7%B1%BB%E5%9E%8B/">
+        <span class="nav-arrow">← </span>
+        
+          | PHP弱类型 |
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/03/05/Xdebug-phpstorm%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95-LAMP/">
+        
+          Xdebug+phpstorm本地调试(LAMP)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#使用的空格符替换"><span class="toc-nav-text">使用的空格符替换</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#源码查找方法"><span class="toc-nav-text">源码查找方法</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Is-numeric源码分析"><span class="toc-nav-text">Is_numeric源码分析</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#is-numeric-while缺陷利用"><span class="toc-nav-text">is_numeric while缺陷利用</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#验证Demo："><span class="toc-nav-text">验证Demo：</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#数值判断方法"><span class="toc-nav-text">数值判断方法</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CTF"><span class="toc-nav-text">CTF</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#分析代码"><span class="toc-nav-text">分析代码</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-传入number-191"><span class="toc-nav-text">1. 传入number&#x3D;191</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-分析is-numeric"><span class="toc-nav-text">2. 分析is_numeric</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#3-但是我们需要的是-info-flag-需要绕过is-palindrome-number-req-“number”"><span class="toc-nav-text">3. 但是我们需要的是$info&#x3D;$flag;需要绕过is_palindrome_number($req[“number”]</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#4-传入参数-number-00-0c191"><span class="toc-nav-text">4. 传入参数?number&#x3D;%00%0c191</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#总结"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/02/27/函数特性-绕过的空白字符/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "函数特性 | 绕过的空白字符",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

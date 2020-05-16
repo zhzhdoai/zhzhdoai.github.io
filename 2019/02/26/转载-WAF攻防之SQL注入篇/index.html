@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      转载 | WAF攻防之SQL注入篇 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>转载 | WAF攻防之SQL注入篇</h2>
+  <p class="post-date">2019-02-26 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="0×00-前言"><a href="#0×00-前言" class="headerlink" title="0×00 前言"></a>0×00 前言</h1><blockquote>
+<blockquote>
+<blockquote>
+</blockquote>
+<p>随着国家安全法的出台，网络安全迎来发展的新时期，越来越多企业或政府单位开始重视网络安全。很多网站陆陆续续告别裸奔时代，开始部署web应用防火墙（WAF）以应对网络攻击。由此，相关网站的安全性很大程度上取决于WAF的防护能力，WAF攻防研究已成为安全从业人员的必修课之一。</p>
+</blockquote>
+</blockquote>
+<blockquote>
+<blockquote>
+<blockquote>
+</blockquote>
+<p>大多数WAF以规则匹配为基础进行安全防护，少数WAF带有自学习能力，规则维护成为WAF的核心。近年来，基于语义识别的WAF陆续出现，对其防护能力的研究也成为大家关心的热点之一。本文以MySQL为研究对象，总结相关WAF注入绕过技术，通过实战演练让大家了解各大WAF的相关特性，最后从攻防角度对WAF安全进行总结。</p>
+</blockquote>
+</blockquote>
+<h1 id="0×01-注入绕过技术总结"><a href="#0×01-注入绕过技术总结" class="headerlink" title="0×01 注入绕过技术总结"></a>0×01 注入绕过技术总结</h1><p>对已知的WAF相关绕过技术，总结如下，网上已有相关技巧的讲解，这里就不一一演示，不明白的可以自己查询相关资料：<br><img src="./1.png" alt=""><br>在实际攻击场景中，单一的绕过技巧往往无效，需要我们综合利用各种绕过技术进行组合，结合各自WAF特性不断进行推理，才能真正实现绕过。</p>
+<h1 id="0×02-注入点检测绕过"><a href="#0×02-注入点检测绕过" class="headerlink" title="0×02 注入点检测绕过"></a>0×02 注入点检测绕过</h1><p>Bypass WAF的第一步是识别注入点，我们拿到一个URL，第一步判断参数是否有注入，然后再进行后续的绕过。简单的and 1=1 and 1=2判断肯定会被WAF拦截，我们需转变思路进行绕过，一般WAF为了平衡风险和业务的关系不会对下面数字型探测方式进行拦截，否则会产生大量误报影响正常业务运行。<br><img src="./2.png" alt=""><br><img src="./3.png" alt=""><br><img src="./4.png" alt=""></p>
+<h2 id="本地测试环境："><a href="#本地测试环境：" class="headerlink" title="本地测试环境："></a>本地测试环境：</h2><p><img src="./5.png" alt=""><br>如若 and也会拦截，可以直接在参数上进行类似判断操作，如<code>id=1*0</code> 、<code>id=1*2</code>，除了以上方法，还有很多其它衍生出的识别绕过方法，以<code>{“op}</code>为例作演示，其它的方法大家可以按照这种思路自行发挥：</p>
+<h3 id="安全狗："><a href="#安全狗：" class="headerlink" title="安全狗："></a>安全狗：</h3><p><img src="./6.png" alt=""></p>
+<h3 id="百度云加速："><a href="#百度云加速：" class="headerlink" title="百度云加速："></a>百度云加速：</h3><p><img src="./7.png" alt=""></p>
+<h3 id="腾讯云："><a href="#腾讯云：" class="headerlink" title="腾讯云："></a>腾讯云：</h3><p><img src="./8.png" alt=""></p>
+<h3 id="阿里云："><a href="#阿里云：" class="headerlink" title="阿里云："></a>阿里云：</h3><p><img src="./9.png" alt=""><br>当我们已确认注入点后，下一步的目标是完全<code>Bypass WAF</code>出任意数据，以下以安全狗、modsecurity、百度云加速、 阿里云盾、长亭雷池截止目前最新的版本为例，这里只提供绕过的思路，即如何利用已知技巧进行组合推理来绕过相关WAF防护，出数据具体过程这里就不详解，大家感兴趣的可以手动尝试。</p>
+<h1 id="0×03-安全狗Bypass"><a href="#0×03-安全狗Bypass" class="headerlink" title="0×03 安全狗Bypass"></a>0×03 安全狗Bypass</h1><p>本地无WAF测试环境：<br><img src="./10.png" alt=""></p>
+<p>在对安全狗的绕过测试中发现，只需利用一个<em>/闭合多个/</em>!即可绕过，简单粗暴。<br><code>http://192.168.20.123:81/user.php?id=-11/*!union/*!select/*!1,(select/*!password/*!from/*!test.user limit 0,1),3*/</code><br><img src="./11.png" alt=""></p>
+<h1 id="0×04-Modsecurity-Bypass"><a href="#0×04-Modsecurity-Bypass" class="headerlink" title="0×04 Modsecurity Bypass"></a>0×04 Modsecurity Bypass</h1><p>本地环境搭建modsecurity模块进行安全防护，利用<code>{“op}、/*!50000*/</code>组合进行绕过。<br><code>http://192.168.20.123/user.php?id=1and{</code>version<code>length((select/*!50000schema_name*/from/*!50000information_schema.schemata*/limit 0,1))&gt;0}</code><br><img src="./12.png" alt=""></p>
+<h1 id="0×05-百度云加速Bypass"><a href="#0×05-百度云加速Bypass" class="headerlink" title="0×05 百度云加速Bypass"></a>0×05 百度云加速Bypass</h1><p>利用<code>–+%0a</code>进行绕过。<br><img src="./13.png" alt=""><br><img src="./20.png" alt=""></p>
+<h1 id="0×06-阿里云盾Bypass"><a href="#0×06-阿里云盾Bypass" class="headerlink" title="0×06 阿里云盾Bypass"></a>0×06 阿里云盾Bypass</h1><p>利用<code>–+%0a、@自定义变量、{a key}</code>组合进行绕过。<br><img src="./14.png" alt=""><br><img src="./15.png" alt=""></p>
+<h1 id="0×07-长亭雷池Bypass"><a href="#0×07-长亭雷池Bypass" class="headerlink" title="0×07 长亭雷池Bypass"></a>0×07 长亭雷池Bypass</h1><p>经过大量测试后，发现雷池在处理MySQL注释符<code>/*! */</code>识别时存在缺陷，只需把攻击语句放在注释符中即可绕过。<br><img src="./16.png" alt=""><br><img src="./17.png" alt=""></p>
+<h1 id="0×08-自动化bypass"><a href="#0×08-自动化bypass" class="headerlink" title="0×08 自动化bypass"></a>0×08 自动化bypass</h1><p>当我们挖掘出绕过相关WAF进行SQL注入的技巧后，下一步就是编写脚本实现工具自动化注入。以sqlmap为例，我们编写tamper脚本实现注入自动化。<br><img src="./18.png" alt=""><br><img src="./19.png" alt=""><br>#　0×09 WAF防御</p>
+<blockquote>
+<blockquote>
+<blockquote>
+</blockquote>
+<p>对已知或未知的安全问题进行防御是WAF功能的核心，漏报及误报是衡量一个WAF产品好坏的重要指标，具体落实到规则的及时更新、bypass新技巧的及时响应。另外，还应综合利用拦截日志数据进行相关算法分析，不断提高WAF的防护能力。总结来说，打造一款上乘的WAF，非一朝一日之功，需长期的技术储备、产品不断地更新迭代、算法地持续优化，才能把好防御这个重要的关口。同时，不断探索新的高效防护方法，才能在攻防战中立于不败之地。</p>
+</blockquote>
+</blockquote>
+<p>#　0xa0 总结</p>
+<blockquote>
+<blockquote>
+<blockquote>
+</blockquote>
+<p>从攻击者角度来看，绕过WAF的基本方法其实不多，如何把这些已知方法融合起来，并结合各自WAF本身的防护特性，不断进行推理，成为突破WAF防护的关键。当然，自动化Fuzz才是WAF Bypass新技术产生的正道。另外，从个人的注入Bypass测试过程看，绕过基于语义识别的WAF比绕过基于规则识别的WAF难得多，值得我们挑战。<br>从WAF产品角度来看，衡量一个WAF好坏的标准是漏报率和误报率的高低，但这些指标建立在以WAF不影响正常业务为前提。测试中我发现，基于规则的WAF对业务的耦合度往往较低，不管是腾讯云WAF还是阿里云盾，对用户的输入都较为敏感，如参数中输入注释符请求就会被拦截。而基于语义的WAF的和业务的耦合度较高，误报率下降明显。从测试结果来看，基于语义识别的WAF相较传统WAF来说有较大优势，值得我们学习和借鉴。<br>从安全管理者角度来讲，从以上测试过程可以看出，不管是基于规则的WAF还是基于语义识别的WAF，都存在被都完全绕过的可能。WAF的主要作用是提高攻击门槛，但不能消灭攻击入侵事件，解决安全问题的根本途径还得从代码层面着手进行修复。 </p>
+</blockquote>
+</blockquote>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#SQL注入" >
+    <span class="tag-code">SQL注入</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/">
+        <span class="nav-arrow">← </span>
+        
+          sqlmap操作详解(常用备忘录)
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/02/27/PHP%E5%BC%B1%E7%B1%BB%E5%9E%8B/">
+        
+          | PHP弱类型 |
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0×00-前言"><span class="toc-nav-text">0×00 前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0×01-注入绕过技术总结"><span class="toc-nav-text">0×01 注入绕过技术总结</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0×02-注入点检测绕过"><span class="toc-nav-text">0×02 注入点检测绕过</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#本地测试环境："><span class="toc-nav-text">本地测试环境：</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#安全狗："><span class="toc-nav-text">安全狗：</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#百度云加速："><span class="toc-nav-text">百度云加速：</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#腾讯云："><span class="toc-nav-text">腾讯云：</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#阿里云："><span class="toc-nav-text">阿里云：</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0×03-安全狗Bypass"><span class="toc-nav-text">0×03 安全狗Bypass</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0×04-Modsecurity-Bypass"><span class="toc-nav-text">0×04 Modsecurity Bypass</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0×05-百度云加速Bypass"><span class="toc-nav-text">0×05 百度云加速Bypass</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0×06-阿里云盾Bypass"><span class="toc-nav-text">0×06 阿里云盾Bypass</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0×07-长亭雷池Bypass"><span class="toc-nav-text">0×07 长亭雷池Bypass</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0×08-自动化bypass"><span class="toc-nav-text">0×08 自动化bypass</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/02/26/转载-WAF攻防之SQL注入篇/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "转载 | WAF攻防之SQL注入篇",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

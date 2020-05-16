@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      PHP类学习_魔术方法 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>PHP类学习_魔术方法</h2>
+  <p class="post-date">2019-04-25 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><p><code>__sleep()</code>:<code>serialize()</code> 函数会检查类中是否存在一个魔术方法 <code>__sleep()</code>。如果存在，该方法会先被调用，然后才执行序列化操作。</p>
+<p><code>__wakeup</code>:<code>unserialize()</code> 会检查是否存在一个 <code>__wakeup()</code> 方法。如果存在，则会先调用<code>__wakeup</code>方法，预先准备对象需要的资源。</p>
+<p><code>__toString()</code>: <code>__toString()</code> 方法用于一个类被当成字符串时应怎样回应。</p>
+<p><code>__clone()</code>:当复制完成时，如果定义了<code>__clone()</code> 方法，则新创建的对象（复制生成的对象）中的 <code>__clone()</code> 方法会被调用，可用于修改属性的值（如果有必要的话）。</p>
+<h1 id="创建类并实例化"><a href="#创建类并实例化" class="headerlink" title="创建类并实例化"></a>创建类并实例化</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">user</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">load_info</span><span class="params">($username)</span></span>&#123;</span><br><span class="line">		<span class="comment">//从数据库加载用户信息</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$user =<span class="keyword">new</span> user;</span><br><span class="line">$user-&gt;load_info($_GET[<span class="string">'username'</span>])</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="construct"><a href="#construct" class="headerlink" title="__construct"></a><code>__construct</code></h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">user</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $username;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($username,$password)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;validate_user($username,$password))&#123;</span><br><span class="line">			<span class="keyword">$this</span>-&gt;username=$username;</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">$user=<span class="keyword">new</span> user(<span class="string">'Grif'</span>,<span class="string">'Misto'</span>);</span><br></pre></td></tr></table></figure>
+
+<h1 id="destruct"><a href="#destruct" class="headerlink" title="__destruct"></a><code>__destruct</code></h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Database</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span>&#123;</span><br><span class="line">		db_close(<span class="keyword">$this</span>-&gt;handle);<span class="comment">//关闭数据库连接</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="set-、-get-、-isset-、-unset、"><a href="#set-、-get-、-isset-、-unset、" class="headerlink" title="__set()、__get()、__isset()、__unset、"></a><code>__set()、__get()、__isset()、__unset、</code></h1><p><code>__set()</code>:在给不可访问属性赋值时，<code>__set()</code> 会被调用。</p>
+<p><code>__get()</code>:读取不可访问属性的值时，<code>__get()</code> 会被调用。</p>
+<p><code>__isset()</code>:当对不可访问属性调用 <code>isset()</code> 或 empty() 时，<code>__isset()</code> 会被调用。</p>
+<p><code>__unset</code>:当对不可访问属性调用 <code>unset()</code> 时，<code>__unset()</code> 会被调用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> $__data=<span class="keyword">array</span>();</span><br><span class="line">	<span class="keyword">private</span> $notRead=<span class="string">'asdasd'</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span><span class="params">($property)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;__data[$property]))&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;__data[$property];</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//限定只能设置预定义的属性</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__set</span><span class="params">($property,$value)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;__data[$property]))&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;__data[$property]=$value;</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">$johnwood=<span class="keyword">new</span> Person;</span><br><span class="line">$johnwood-&gt;email=<span class="string">'jonathan@worp.mil'</span>; <span class="comment">// 设置 $user-&gt;__data['email']</span></span><br><span class="line"><span class="keyword">print</span> $johnwood-&gt;email; <span class="comment">//读取 $user-&gt;__data['email']</span></span><br><span class="line"><span class="keyword">print</span> $johnwood-&gt;notRead; <span class="comment">//以定义的属性无法通过__get获取</span></span><br></pre></td></tr></table></figure>
+<p>设置数据时，<code>__set()</code>会重写<code>$__data</code>中的元素。类似地，可以使用<code>__get()</code>拦截调用，并返回正确的数组元素。</p>
+<h1 id="call、-callStatic"><a href="#call、-callStatic" class="headerlink" title="__call、__callStatic"></a><code>__call、__callStatic</code></h1><p><code>__call()</code>:在对象中调用一个不可访问方法时，<code>__call()</code> 会被调用。</p>
+<p><code>__callStatic()</code>:静态上下文中调用一个不可访问方法时，<code>__callStatic()</code> 会被调用。</p>
+<p>$name 参数是要调用的方法名称。$arguments 参数是一个枚举数组，包含着要传递给方法 $name 的参数。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Address</span></span>&#123;</span><br><span class="line">	<span class="keyword">protected</span> $city;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setCity</span><span class="params">($city)</span></span>&#123;</span><br><span class="line">		<span class="keyword">$this</span>-&gt;city=$city;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getCity</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;city;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">	<span class="keyword">protected</span> $name;</span><br><span class="line">	<span class="keyword">protected</span> $address;</span><br><span class="line">	<span class="keyword">protected</span> $method;</span><br><span class="line">	<span class="keyword">protected</span> $arguments;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">$this</span>-&gt;address=<span class="keyword">new</span> Address;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setName</span><span class="params">($name)</span></span>&#123;</span><br><span class="line">		<span class="keyword">$this</span>-&gt;name=$name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span><span class="params">($method,$arguments)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(method_exists(<span class="keyword">$this</span>-&gt;address,$method))&#123;</span><br><span class="line">			<span class="comment">// print $method;</span></span><br><span class="line">			<span class="comment">// var_dump($arguments);</span></span><br><span class="line">			<span class="keyword">return</span> call_user_func_array(<span class="keyword">array</span>(<span class="keyword">$this</span>-&gt;address,$method), $arguments);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$rasums=<span class="keyword">new</span> Person;</span><br><span class="line">$rasums-&gt;setName(<span class="string">'Rasmus Lerdorf'</span>);</span><br><span class="line">$rasums-&gt;setCity(<span class="string">'Sunnyval'</span>);</span><br><span class="line"><span class="keyword">print</span> $rasums-&gt;getName().<span class="string">'lives in '</span>.$rasums-&gt;getCity().<span class="string">'.'</span>;</span><br></pre></td></tr></table></figure>
+<p>调用了个<code>Person</code>中不存在的方法，对象调用魔术方法<code>__call()</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">	<span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">find</span><span class="params">($args)</span></span>&#123;</span><br><span class="line">		<span class="comment">//实际逻辑放在这里</span></span><br><span class="line">		<span class="comment">//例如，一个数据库查询</span></span><br><span class="line">		<span class="comment">//SELECT user From users where $args['field']=$args['value']</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">print</span> <span class="string">'get find function Return'</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">__callStatic</span><span class="params">($method,$args)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(preg_match(<span class="string">'/^findBy(.+)$/'</span>,$method,$matches))&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">static</span>::find(<span class="keyword">array</span>(<span class="string">'field'</span>=&gt;$matches[<span class="number">1</span>],</span><br><span class="line">									<span class="string">'value'</span>=&gt;$args[<span class="number">0</span>]));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">$user = User::findById(<span class="number">123</span>);</span><br><span class="line">$user=User::findByEmail(<span class="string">'rasums@php.net'</span>);</span><br></pre></td></tr></table></figure>
+<p>将执行<code>findByEmail</code>方法的实际逻辑传到<code>User::find()</code></p>
+<p>当尝试以调用函数的方式调用一个对象时，<code>__invoke()</code> 方法会被自动调用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallableClass</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__invoke</span><span class="params">($x)</span> </span>&#123;</span><br><span class="line">        var_dump($x);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$obj = <span class="keyword">new</span> CallableClass;</span><br><span class="line">$obj(<span class="number">5</span>);</span><br><span class="line">var_dump(is_callable($obj));</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h1 id="set-state"><a href="#set-state" class="headerlink" title="__set_state"></a><code>__set_state</code></h1><p>// <code>static __set_state ( array $properties ) : object</code><br>// 自 PHP 5.1.0 起当调用 var_export() 导出类时，此静态 方法会被调用。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $var1;</span><br><span class="line">    <span class="keyword">public</span> $var2;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">__set_state</span><span class="params">($an_array)</span> // <span class="title">As</span> <span class="title">of</span> <span class="title">PHP</span> 5.1.0</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $obj = <span class="keyword">new</span> A;</span><br><span class="line">        $obj-&gt;var1 = $an_array[<span class="string">'var1'</span>];</span><br><span class="line">        $obj-&gt;var2 = $an_array[<span class="string">'var2'</span>];</span><br><span class="line">        <span class="keyword">return</span> $obj;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A;</span><br><span class="line">$a-&gt;var1 = <span class="number">5</span>;</span><br><span class="line">$a-&gt;var2 = <span class="string">'foo'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">eval</span>(<span class="string">'$b = '</span> . var_export($a, <span class="keyword">true</span>) . <span class="string">';'</span>); <span class="comment">// $b = A::__set_state(array(</span></span><br><span class="line">                                            <span class="comment">//    'var1' =&gt; 5,</span></span><br><span class="line">                                            <span class="comment">//    'var2' =&gt; 'foo',</span></span><br><span class="line">                                            <span class="comment">// ));</span></span><br><span class="line">var_dump($b);</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h1 id="debugInfo"><a href="#debugInfo" class="headerlink" title="__debugInfo"></a><code>__debugInfo</code></h1><p><code>__debugInfo （ void ）：数组</code></p>
+<p>// 转储对象以获取应显示的属性时 ，<code>var_dump（）</code>调用此方法。如果未在对象上定义该方法，则将显示所有公共属性，受保护属性和私有属性。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $prop;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($val)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;prop = $val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__debugInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> [</span><br><span class="line">            <span class="string">'propSquared'</span> =&gt; <span class="keyword">$this</span>-&gt;prop ** <span class="number">2</span>,</span><br><span class="line">        ];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var_dump(<span class="keyword">new</span> C(<span class="number">42</span>));</span><br></pre></td></tr></table></figure></section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#基础笔记" >
+    <span class="tag-code">基础笔记</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/04/19/%E4%BC%AAmysql%E6%9C%8D%E5%8A%A1%E5%99%A8-getFile/">
+        <span class="nav-arrow">← </span>
+        
+          伪mysql服务器_getFile
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/">
+        
+          HDwiki6.0_sql盲注
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#创建类并实例化"><span class="toc-nav-text">创建类并实例化</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#construct"><span class="toc-nav-text">__construct</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#destruct"><span class="toc-nav-text">__destruct</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#set-、-get-、-isset-、-unset、"><span class="toc-nav-text">__set()、__get()、__isset()、__unset、</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#call、-callStatic"><span class="toc-nav-text">__call、__callStatic</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#set-state"><span class="toc-nav-text">__set_state</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#debugInfo"><span class="toc-nav-text">__debugInfo</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/04/25/PHP类学习-魔术方法/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "PHP类学习_魔术方法",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

