@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      [CTF]2020RCTF Swoole题解学习笔记 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>[CTF]2020RCTF Swoole题解学习笔记</h2>
+  <p class="post-date">2020-06-02 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="swoole"><a href="#swoole" class="headerlink" title="swoole"></a>swoole</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">Swoole\Runtime::enableCoroutine($flags = SWOOLE_HOOK_ALL);</span><br><span class="line">$http = <span class="keyword">new</span> Swoole\Http\Server(<span class="string">"0.0.0.0"</span>, <span class="number">9501</span>);</span><br><span class="line">$http-&gt;on(<span class="string">"request"</span>,</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="params">(Swoole\Http\Request $request, Swoole\Http\Response $response)</span> </span>&#123;</span><br><span class="line">        Swoole\Runtime::enableCoroutine();</span><br><span class="line">        $response-&gt;header(<span class="string">'Content-Type'</span>, <span class="string">'text/plain'</span>);</span><br><span class="line">        <span class="comment">// $response-&gt;sendfile('/flag');</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>($request-&gt;get[<span class="string">'phpinfo'</span>])) &#123;</span><br><span class="line">            <span class="comment">// Prevent racing condition</span></span><br><span class="line">            <span class="comment">// ob_start();phpinfo();</span></span><br><span class="line">            <span class="comment">// return $response-&gt;end(ob_get_clean());</span></span><br><span class="line">            <span class="keyword">return</span> $response-&gt;sendfile(<span class="string">'phpinfo.txt'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>($request-&gt;get[<span class="string">'code'</span>])) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                $code = $request-&gt;get[<span class="string">'code'</span>];</span><br><span class="line">                <span class="keyword">if</span> (!preg_match(<span class="string">'/\x00/'</span>, $code)) &#123;</span><br><span class="line">                    $a = unserialize($code);</span><br><span class="line">                    $a();</span><br><span class="line">                    $a = <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (\Throwable $e) &#123;</span><br><span class="line">                var_dump($code);</span><br><span class="line">                var_dump($e-&gt;getMessage());</span><br><span class="line">                <span class="comment">// do nothing</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> $response-&gt;end(<span class="string">'Done'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        $response-&gt;sendfile(<span class="keyword">__FILE__</span>);</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br><span class="line">$http-&gt;start();</span><br></pre></td></tr></table></figure>
+
+<p>以上代码执行反序列化，且会以函数的方式调用类，触发<code>__invoke</code>方法.全局搜索后在ObjectProxy中声明了该函数.且此处的利用可以实例化对象或通过<code>[对象,&#39;方法&#39;]</code>数组的形式调用类的无参数方法。</p>
+<p><img src="./image-20200602015820440.png" alt="image-20200602015820440"></p>
+<p>在来看该题考点是利用反序列化修改PDO连接设置，将MYSQL_ATTR_LOCAL_INFILE赋值为1,允许外部读取客户端文件，利用此就能够使用Rouge MySQL Server接收local file。@zsx师傅发现这里若使用mysqli在设置配置参数之后不马上连接，数据库配置会丢失。（<a href="https://github.com/swoole/library/issues/34）" target="_blank" rel="noopener">https://github.com/swoole/library/issues/34）</a></p>
+<p>反序列化思路</p>
+<ol>
+<li>实例化生成PDOPool实例</li>
+<li>PDOPool 调用get方法连接数据库</li>
+</ol>
+<p><img src="./image-20200602013818665.png" alt="image-20200602013818665"></p>
+<p>首先反序列化操作是无法直接调用__construct魔术方法</p>
+<p><img src="./image-20200602013926421.png" alt="image-20200602013926421"></p>
+<p>所以全局搜索到漏洞点，ConnectionPool::make方法中将类变量赋值如下，就能够调用<code>PDOPool::__construct</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;proxy=<span class="string">'new PDOPool'</span>;</span><br><span class="line"><span class="keyword">$this</span>-&gt;constructor=<span class="keyword">new</span> PDOConfig();</span><br></pre></td></tr></table></figure>
+
+<p>![image-20200601223955225](/Users/osword/Documents/typora/ctf2/Untitled 1.assets/image-20200601223955225.png)</p>
+<p>往上溯源<code>$this-&gt;proxy、$this-&gt;constructor</code>,发现make方法在该类的get函数中调用.这里也有个坑点，$this-&gt;pool原值为Channel类，底层限制了无法序列化。需要使用其他类代替且有pop函数。</p>
+<p><img src="./image-20200602014439775.png" alt="image-20200602014439775"></p>
+<p>分析到这我的想法是直接通过<code>[new \Swoole\ConnectionPool(function () { }, 0, &#39;\\Swoole\\Database\\PDOPool&#39;),&#39;get&#39;]</code>直接调用<code>ConnectionPool::get</code>方法.通过此可以生成PDOPool实例，<strong>但是仅靠PDOPool和PDOConfig是无法建立数据连接</strong>。</p>
+<p><img src="./image-20200602020313312.png" alt="image-20200602020313312"></p>
+<p>那要怎么样才能让新建的PDOPool实例，去连接数据库.</p>
+<p>看swoole 提供的例子，可以看到<code>PDOPool</code>需要在调用一次<code>get()</code>方法，且这里需要传入<code>PDOProxy::class</code>才能够成功连接数据库。(这里看ConnectionPool的子类PDOproxy的构造方法)</p>
+<p><img src="./image-20200602142424786.png" alt="image-20200602142424786"></p>
+<p>看EXP中的Part C部分。</p>
+<p><img src="./image-20200602142840267.png" alt="image-20200602142840267"></p>
+<ol>
+<li>以下两行会调用PDOProxy::reconnect函数，通过<code>$constructor()</code>能够调用<code>\Swoole\ConnectionPool::get()</code>函数，继而实例化出且重新赋值了__object为PDOPool实例.</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">changeProperty($d, <span class="string">'constructor'</span>, [$a, <span class="string">'get'</span>]);</span><br><span class="line">$curl-&gt;setOpt(CURLOPT_HEADERFUNCTION, [$d, <span class="string">'reconnect'</span>]);</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200602143204049.png" alt="image-20200602143204049"></p>
+<ol start="2">
+<li>该行代码最终会执行PDOPool-&gt;get()连接数据库.($this-&gt;__object为PDOPool实例)</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$curl-&gt;setOpt(CURLOPT_READFUNCTION, [$d, <span class="string">'get'</span>]);</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20200602144212131.png" alt="image-20200602144212131"></p>
+<h1 id="POP"><a href="#POP" class="headerlink" title="POP"></a>POP</h1><p><img src="./swoole.png" alt="swoole"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
+<li>如果在mysqli_real_connect之前设置mysql_option，其allow_local_infile的配置会被覆盖重写，其源代码限制修改就会无效.</li>
+<li>反序列化时候关注extends 方法，由于该原理的存在，可以利用子父类的方法可以相互调用增加魔术方法调用的可能性</li>
+<li>存在子父类情况，需要关注方法继承存在的利用</li>
+<li>![image-20200601215117226](/Users/osword/Documents/typora/ctf2/Untitled 1.assets/image-20200601215117226.png)</li>
+</ol>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://github.com/zsxsoft/my-ctf-challenges/tree/master/rctf2020/swoole" target="_blank" rel="noopener">https://github.com/zsxsoft/my-ctf-challenges/tree/master/rctf2020/swoole</a></p>
+<p><a href="https://www.anquanke.com/post/id/197518" target="_blank" rel="noopener">https://www.anquanke.com/post/id/197518</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#CTF" >
+    <span class="tag-code">CTF</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2020/05/27/CVE-2020-9484-Tomcat-session%E5%8D%95%E6%9C%BA%E6%8C%81%E4%B9%85%E5%8C%96%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
+        <span class="nav-arrow">← </span>
+        
+          [CVE-2020-9484] Tomcat session单机持久化反序列化
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#swoole"><span class="toc-nav-text">swoole</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#POP"><span class="toc-nav-text">POP</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#总结"><span class="toc-nav-text">总结</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole题解学习笔记/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "[CTF]2020RCTF Swoole题解学习笔记",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
