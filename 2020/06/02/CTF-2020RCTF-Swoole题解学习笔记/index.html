@@ -176,7 +176,7 @@
 <p>所以全局搜索到漏洞点，ConnectionPool::make方法中将类变量赋值如下，就能够调用<code>PDOPool::__construct</code></p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;proxy=<span class="string">'new PDOPool'</span>;</span><br><span class="line"><span class="keyword">$this</span>-&gt;constructor=<span class="keyword">new</span> PDOConfig();</span><br></pre></td></tr></table></figure>
 
-<p>![image-20200601223955225](/Users/osword/Documents/typora/ctf2/Untitled 1.assets/image-20200601223955225.png)</p>
+<p><img src="./image-20200601223955225.png" alt="image-20200601223955225"></p>
 <p>往上溯源<code>$this-&gt;proxy、$this-&gt;constructor</code>,发现make方法在该类的get函数中调用.这里也有个坑点，$this-&gt;pool原值为Channel类，底层限制了无法序列化。需要使用其他类代替且有pop函数。</p>
 <p><img src="./image-20200602014439775.png" alt="image-20200602014439775"></p>
 <p>分析到这我的想法是直接通过<code>[new \Swoole\ConnectionPool(function () { }, 0, &#39;\\Swoole\\Database\\PDOPool&#39;),&#39;get&#39;]</code>直接调用<code>ConnectionPool::get</code>方法.通过此可以生成PDOPool实例，<strong>但是仅靠PDOPool和PDOConfig是无法建立数据连接</strong>。</p>
@@ -203,7 +203,7 @@
 <li>如果在mysqli_real_connect之前设置mysql_option，其allow_local_infile的配置会被覆盖重写，其源代码限制修改就会无效.</li>
 <li>反序列化时候关注extends 方法，由于该原理的存在，可以利用子父类的方法可以相互调用增加魔术方法调用的可能性</li>
 <li>存在子父类情况，需要关注方法继承存在的利用</li>
-<li>![image-20200601215117226](/Users/osword/Documents/typora/ctf2/Untitled 1.assets/image-20200601215117226.png)</li>
+<li><img src="./image-20200601215117226.png" alt="image-20200601215117226"></li>
 </ol>
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://github.com/zsxsoft/my-ctf-challenges/tree/master/rctf2020/swoole" target="_blank" rel="noopener">https://github.com/zsxsoft/my-ctf-challenges/tree/master/rctf2020/swoole</a></p>
 <p><a href="https://www.anquanke.com/post/id/197518" target="_blank" rel="noopener">https://www.anquanke.com/post/id/197518</a></p>
