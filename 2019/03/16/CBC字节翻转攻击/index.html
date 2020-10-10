@@ -1,26 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>CBC字节翻转攻击 | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="WEB安全">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="分组密码工作模式分组密码工作模式   密码学中，分组（block）密码的工作模式（mode of operation）允许使用同一个分组密码密钥对多于一块的数据进行加密，并保证其安全性。[1][2] 分组密码自身只能加密长度等于密码分组长度的单块数据，若要加密变长数据，则数据必须先被划分为一些单独的密码块。通常而言，最后一块数据也需要使用合适填充方式将数据扩展到匹配密码块大小的长度。一种工作模式描">
 <meta property="og:type" content="article">
 <meta property="og:title" content="CBC字节翻转攻击">
@@ -46,291 +31,175 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/1.jpg">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>CBC字节翻转攻击</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/03/14/sql%E6%B3%A8%E5%85%A5%E5%A4%87%E5%BF%98%E5%BD%95/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&text=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&is_video=false&description=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CBC字节翻转攻击&body=Check out this article: http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&name=CBC字节翻转攻击&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&t=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">CBC字节翻转攻击</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#分组密码工作模式"><span class="toc-number">1.</span> <span class="toc-text">分组密码工作模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#密码块链接（CBC）"><span class="toc-number">2.</span> <span class="toc-text">密码块链接（CBC）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#加密过程："><span class="toc-number">2.1.</span> <span class="toc-text">加密过程：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解密过程"><span class="toc-number">2.2.</span> <span class="toc-text">解密过程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#攻击过程"><span class="toc-number">3.</span> <span class="toc-text">攻击过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#攻击过程详解"><span class="toc-number">4.</span> <span class="toc-text">攻击过程详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通俗公式推导"><span class="toc-number">4.1.</span> <span class="toc-text">通俗公式推导</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CTF"><span class="toc-number">5.</span> <span class="toc-text">CTF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#代码分析"><span class="toc-number">5.1.</span> <span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解题过程"><span class="toc-number">5.2.</span> <span class="toc-text">解题过程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#解决首字块乱码"><span class="toc-number">6.</span> <span class="toc-text">解决首字块乱码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#解题python代码"><span class="toc-number">7.</span> <span class="toc-text">解题python代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mochazz学长的python代码"><span class="toc-number">8.</span> <span class="toc-text">mochazz学长的python代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">9.</span> <span class="toc-text">参考链接</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">CBC字节翻转攻击</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-03-16T05:42:44.000Z" itemprop="datePublished" class="page-time">
-  2019-03-16
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#分组密码工作模式"><span class="post-toc-number">1.</span> <span class="post-toc-text">分组密码工作模式</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#密码块链接（CBC）"><span class="post-toc-number">2.</span> <span class="post-toc-text">密码块链接（CBC）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#加密过程："><span class="post-toc-number">2.1.</span> <span class="post-toc-text">加密过程：</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解密过程"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">解密过程</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#攻击过程"><span class="post-toc-number">3.</span> <span class="post-toc-text">攻击过程</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#攻击过程详解"><span class="post-toc-number">4.</span> <span class="post-toc-text">攻击过程详解</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#通俗公式推导"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">通俗公式推导</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#CTF"><span class="post-toc-number">5.</span> <span class="post-toc-text">CTF</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码分析"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">代码分析</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解题过程"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">解题过程</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#解决首字块乱码"><span class="post-toc-number">6.</span> <span class="post-toc-text">解决首字块乱码</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#解题python代码"><span class="post-toc-number">7.</span> <span class="post-toc-text">解题python代码</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#mochazz学长的python代码"><span class="post-toc-number">8.</span> <span class="post-toc-text">mochazz学长的python代码</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考链接"><span class="post-toc-number">9.</span> <span class="post-toc-text">参考链接</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        CBC字节翻转攻击
+    </h1>
 
 
-<article id="post-CBC字节翻转攻击"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">CBC字节翻转攻击</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-03-16 13:42:44" datetime="2019-03-16T05:42:44.000Z"  itemprop="datePublished">2019-03-16</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-16T05:42:44.000Z" itemprop="datePublished">2019-03-16</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="分组密码工作模式"><a href="#分组密码工作模式" class="headerlink" title="分组密码工作模式"></a>分组密码工作模式</h1><p><a href="https://zh.wikipedia.org/wiki/%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener">分组密码工作模式</a></p>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/WEB%E5%AE%89%E5%85%A8/" rel="tag">WEB安全</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="分组密码工作模式"><a href="#分组密码工作模式" class="headerlink" title="分组密码工作模式"></a>分组密码工作模式</h1><p><a href="https://zh.wikipedia.org/wiki/%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F" target="_blank" rel="noopener">分组密码工作模式</a></p>
 <blockquote>
 <blockquote>
 <p>密码学中，分组（block）密码的工作模式（mode of operation）允许使用同一个分组密码密钥对多于一块的数据进行加密，并保证其安全性。[1][2] 分组密码自身只能加密长度等于密码分组长度的单块数据，若要加密变长数据，则数据必须先被划分为一些单独的密码块。通常而言，最后一块数据也需要使用合适填充方式将数据扩展到匹配密码块大小的长度。一种工作模式描述了加密每一数据块的过程，并常常使用基于一个通常称为初始化向量的附加输入值以进行随机化，以保证安全[1]。</p>
 </blockquote>
 </blockquote>
 <p><strong>这段话说的意思是对明文进行分块，分成相同字节的块数据。先使用等长字节数初始向量进行加密对第一块明文，之后的每一明文块都使用想同长度的密文块对明文块进行加密。所以可知密文和明文的每一个字节是一一对应的。解密也是如此，字节数相同的明文块和密文块进行解密。</strong></p>
-<h1 id="密码块链接（CBC）"><a href="#密码块链接（CBC）" class="headerlink" title="密码块链接（CBC）"></a>密码块链接（CBC）</h1><h2 id="加密过程："><a href="#加密过程：" class="headerlink" title="加密过程："></a>加密过程：</h2><p><strong>Ciphertext-0 = Encrypt(Plaintext XOR IV)—只用于第一个组块</strong><br><strong>Ciphertext-N= Encrypt(Plaintext XOR Ciphertext-N-1)—用于第二及剩下的组块</strong></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1.jpg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<h1 id="密码块链接（CBC）"><a href="#密码块链接（CBC）" class="headerlink" title="密码块链接（CBC）"></a>密码块链接（CBC）</h1><h2 id="加密过程："><a href="#加密过程：" class="headerlink" title="加密过程："></a>加密过程：</h2><p><strong>Ciphertext-0 = Encrypt(Plaintext XOR IV)—只用于第一个组块</strong><br><strong>Ciphertext-N= Encrypt(Plaintext XOR Ciphertext-N-1)—用于第二及剩下的组块</strong><br><img src="./1.jpg" alt=""></p>
 <p><strong>Plaintext</strong>：待加密的数据。<br><strong>IV</strong>：用于随机化加密的比特块，保证即使对相同明文多次加密，也可以得到不同的密文。<br><strong>Key</strong>：被一些如AES的对称加密算法使用。<br><strong>Ciphertext</strong>：加密后的数据。</p>
-<h2 id="解密过程"><a href="#解密过程" class="headerlink" title="解密过程"></a>解密过程</h2><p><strong>Plaintext-0 = Decrypt(Ciphertext) XOR IV—只用于第一个组块</strong><br><strong>Plaintext-N= Decrypt(Ciphertext) XOR Ciphertext-N-1—用于第二及剩下的组块</strong></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./2.jpg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-<h1 id="攻击过程"><a href="#攻击过程" class="headerlink" title="攻击过程"></a>攻击过程</h1><p><strong>Ciphertext-N-1（密文-N-1)</strong>是用来产生下一块明文；这就是字节翻转攻击开始发挥作用的地方<br>如果我们改变<strong>Ciphertext-N-1（密文-N-1）</strong>的一个字节，然后与下一个解密后的组块异或，我们就可以得到一个不同的明文了！</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./3.jpg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-<h1 id="攻击过程详解"><a href="#攻击过程详解" class="headerlink" title="攻击过程详解"></a>攻击过程详解</h1><p>先看解密过程</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./4.jpg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<h2 id="解密过程"><a href="#解密过程" class="headerlink" title="解密过程"></a>解密过程</h2><p><strong>Plaintext-0 = Decrypt(Ciphertext) XOR IV—只用于第一个组块</strong><br><strong>Plaintext-N= Decrypt(Ciphertext) XOR Ciphertext-N-1—用于第二及剩下的组块</strong><br><img src="./2.jpg" alt=""></p>
+<h1 id="攻击过程"><a href="#攻击过程" class="headerlink" title="攻击过程"></a>攻击过程</h1><p><strong>Ciphertext-N-1（密文-N-1)</strong>是用来产生下一块明文；这就是字节翻转攻击开始发挥作用的地方<br>如果我们改变<strong>Ciphertext-N-1（密文-N-1）</strong>的一个字节，然后与下一个解密后的组块异或，我们就可以得到一个不同的明文了！<br><img src="./3.jpg" alt=""></p>
+<h1 id="攻击过程详解"><a href="#攻击过程详解" class="headerlink" title="攻击过程详解"></a>攻击过程详解</h1><p>先看解密过程<br><img src="./4.jpg" alt=""></p>
 <p><strong>Plaintext-0 = Decrypt(Ciphertext) XOR IV—只用于第一个组块</strong><br><strong>Plaintext-N= Decrypt(Ciphertext) XOR Ciphertext-N-1—用于第二及剩下的组块</strong><br>即<br>*<em>明文= Descrypt(本组密文) ^ 上组密文 *</em></p>
 <p><code>C    =    A        ^                B</code></p>
 <h2 id="通俗公式推导"><a href="#通俗公式推导" class="headerlink" title="通俗公式推导"></a>通俗公式推导</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">数学公式异或关系表达式如下</span><br><span class="line">A ^ A &#x3D;0 , B^ B &#x3D;0 , 0^ 0 &#x3D;0 , 0 ^ 任一字符&#x3D; 任一字符</span><br><span class="line">可得 A ^ B ^ C&#x3D;A^ B ^ A ^ B &#x3D; 0</span><br><span class="line"></span><br><span class="line">综合所述CBC字节翻转公式：</span><br><span class="line">A ^ B ^ C &#x3D;0  &#x3D;&gt;   A ^ B ^ C ^ &quot; 想要字符&quot;&#x3D;A ^ B ^A ^ B ^ &quot;想要字符&quot;  &#x3D;  0 ^ “想要字符” &#x3D;   “想要字符”</span><br><span class="line">通俗讲：想要字符 &#x3D; 本组密文(A) ^  上组密文(B) ^ 本组明文字节(C) ## 本组密文，上组密文对应位置该字符</span><br></pre></td></tr></table></figure>
 
 <p>借用<a href="http://drops.xmd5.com/static/drops/tips-7828.html" target="_blank" rel="noopener">CBC字节翻转攻击-101Approach</a> 中PHP脚本中演示翻转结果</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$v &#x3D; &quot;a:2:&#123;s:4:&quot;name&quot;;s:6:&quot;sdsdsd&quot;;s:8:&quot;greeting&quot;;s:20:&quot;echo &#39;Hello sdsdsd!&#39;&quot;;&#125;&quot;;</span><br><span class="line">$enc &#x3D; @encrypt($v);</span><br><span class="line">$enc[2] &#x3D; chr(ord($enc[2]) ^ ord(&quot;6&quot;) ^ ord (&quot;7&quot;));</span><br><span class="line">$b &#x3D; @decrypt($enc);</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./5.jpg" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p><strong><em>可以看到 6 被翻转为 7</em></strong></p>
-<h1 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h1><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./6.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+<p><img src="./5.jpg" alt=""><br><strong><em>可以看到 6 被翻转为 7</em></strong></p>
+<h1 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h1><p><img src="./6.png" alt=""></p>
 <h2 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h2><p>通读全篇代码并未对<code>password</code>进行验证，而是关注于<code>username</code>验证。<br>用户在登录界面输入<code>username</code> 和 <code>password</code>。先进入第<strong>76</strong>行进行验证，如果是以<code>admin</code>进行登入则会显示登录失败。<br>在第<strong>63</strong>行，拿到flag需要使用admin进行登入，所以这里与第<strong>76</strong>行代码产生矛盾。<br>如果我们使用<code>cookie session</code>进行登入，程序会进入第<strong>84</strong>行，会执行两个方法<code>check_login()</code>和<code>show_homepage()</code>。 <code>show_homepage()</code>是我们拿到flag的方法入口。而在<code>check_login()</code>，通过解密在<code>$_SESSION[&#39;username&#39;] = $info[&#39;username&#39;];</code> 下会对<code>username</code>重新赋值.<br>所以我们的方法是使用<strong>cbc字节翻转</strong>对<code>cipher</code>中的登入账户的某个字节进行翻转得到<code>&quot;admin&quot;</code></p>
 <h2 id="解题过程"><a href="#解题过程" class="headerlink" title="解题过程"></a>解题过程</h2><p>根据我们上述的方法，编写python代码得到新的cipher  ， new_cipher</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line">import urllib</span><br><span class="line">offset&#x3D;0</span><br><span class="line">cipher&#x3D;&#39;JYMQwKhTEMlRtwFGwuLz36oSosohsx%2BM50msZbWxWNHttjPFQuMGIfVpEEZpZt9aZvxSeohC7XfVmi78v8oyVw%3D%3D&#39;</span><br><span class="line">cipher&#x3D;base64.b64decode(urllib.unquote(cipher))</span><br><span class="line">serialize_info&#x3D;&#39;a:2:&#123;s:8:&quot;username&quot;;s:5:&quot;bdmin&quot;;s:8:&quot;password&quot;;s:5:&quot;admin&quot;;&#125;&#39;</span><br><span class="line">serialize_info1&#x3D;serialize_info[0:16]</span><br><span class="line">serialize_info2&#x3D;serialize_info[16:32]</span><br><span class="line">serialize_info3&#x3D;serialize_info[32:]</span><br><span class="line">array_seria&#x3D;[serialize_info1,serialize_info2,serialize_info3]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">for i in range(0,len(array_seria[1])):</span><br><span class="line">	if array_seria[1][i]&#x3D;&#x3D;&#39;b&#39; in array_seria[1]:</span><br><span class="line">		print(str(array_seria[1][i])+&#39; index is:&#39;+str(i))</span><br><span class="line">		offset&#x3D;i</span><br><span class="line"></span><br><span class="line">new_cipher &#x3D; cipher[:offset] + chr(ord(cipher[offset])^ord(&quot;b&quot;)^ord(&quot;a&quot;)) + cipher[offset+1:]</span><br><span class="line">print(&#39;new_cipher :  &#39;+urllib.quote_plus(base64.b64encode(new_cipher)))</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./7.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-<p>放入<code>burpsuite</code>中替换<code>cipher</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./8.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-<p>提示反序列化失败，对返回的<code>base64</code>代码进行解码</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./9.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p><img src="./7.png" alt=""></p>
+<p>放入<code>burpsuite</code>中替换<code>cipher</code><br><img src="./8.png" alt=""></p>
+<p>提示反序列化失败，对返回的<code>base64</code>代码进行解码<br><img src="./9.png" alt=""></p>
 <h1 id="解决首字块乱码"><a href="#解决首字块乱码" class="headerlink" title="解决首字块乱码"></a>解决首字块乱码</h1><p>发现前16个字节块反序列化失败，所以这里可以知道cbc加密是分16字节每块进行加密。<br><strong>因为第一块明文加密是使用iv初始向量进行加密，而用于一同解密的密文被我们改变,造成解密出现不可预知的乱码。</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">根据第一块解密公式</span><br><span class="line">Plaintext-0 &#x3D; Decrypt(Ciphertext) XOR IV</span><br><span class="line">可得新向量</span><br><span class="line">new_iv &#x3D; Plaintext-0 ^ Decrypt(Ciphertext)</span><br><span class="line">新的初始向量 &#x3D; 十六字节明文 ^ Decrypt(前十六字节密文new_cipher)</span><br></pre></td></tr></table></figure>
 
 <p>编写<code>python</code>代码如下</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">new_iv&#x3D;&#39;&#39;</span><br><span class="line">for j in range(0,16):</span><br><span class="line">	 new_iv&#x3D;new_iv+chr(ord(iv[j]) ^ ord(res[j]) ^ ord(array_seria[0][j]))</span><br><span class="line"></span><br><span class="line">new_iv&#x3D;urllib.quote(base64.b64encode(new_iv))</span><br><span class="line">print(&#39;new_iv: &#39;+new_iv)</span><br></pre></td></tr></table></figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./10.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p><img src="./10.png" alt=""></p>
 <p>将新<code>iv,cipher</code> 替换旧<code>iv , cipher</code>可得flag</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./11.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p><img src="./11.png" alt=""></p>
 <h1 id="解题python代码"><a href="#解题python代码" class="headerlink" title="解题python代码"></a>解题python代码</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">import base64</span><br><span class="line">import urllib</span><br><span class="line">offset&#x3D;0</span><br><span class="line">cipher&#x3D;&#39;JYMQwKhTEMlRtwFGwuLz36oSosohsx%2BM50msZbWxWNHttjPFQuMGIfVpEEZpZt9aZvxSeohC7XfVmi78v8oyVw%3D%3D&#39;</span><br><span class="line">cipher&#x3D;base64.b64decode(urllib.unquote(cipher))</span><br><span class="line">serialize_info&#x3D;&#39;a:2:&#123;s:8:&quot;username&quot;;s:5:&quot;bdmin&quot;;s:8:&quot;password&quot;;s:5:&quot;admin&quot;;&#125;&#39;</span><br><span class="line">serialize_info1&#x3D;serialize_info[0:16]</span><br><span class="line">serialize_info2&#x3D;serialize_info[16:32]</span><br><span class="line">serialize_info3&#x3D;serialize_info[32:]</span><br><span class="line">array_seria&#x3D;[serialize_info1,serialize_info2,serialize_info3]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">for i in range(0,len(array_seria[1])):</span><br><span class="line">	if array_seria[1][i]&#x3D;&#x3D;&#39;b&#39; in array_seria[1]:</span><br><span class="line">		print(str(array_seria[1][i])+&#39; index is:&#39;+str(i))</span><br><span class="line">		offset&#x3D;i</span><br><span class="line"></span><br><span class="line">new_cipher &#x3D; cipher[:offset] + chr(ord(cipher[offset])^ord(&quot;b&quot;)^ord(&quot;a&quot;)) + cipher[offset+1:]</span><br><span class="line">print(&#39;new_cipher :  &#39;+urllib.quote_plus(base64.b64encode(new_cipher)))</span><br><span class="line">res &#x3D; base64.b64decode(&#39;X2+7PVoBz5Fx&#x2F;1OCajQkHm1lIjtzOjU6ImFkbWluIjtzOjg6InBhc3N3b3JkIjtzOjM6IjEyMyI7fQ&#x3D;&#x3D;&#39;);	</span><br><span class="line">iv &#x3D; base64.b64decode(urllib.unquote(&#39;OVvKyLSujW%2BwWSroAUNNaw%3D%3D&#39;)); </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">new_iv&#x3D;&#39;&#39;</span><br><span class="line">for j in range(0,16):</span><br><span class="line">	 new_iv&#x3D;new_iv+chr(ord(iv[j]) ^ ord(res[j]) ^ ord(array_seria[0][j]))</span><br><span class="line"></span><br><span class="line">new_iv&#x3D;urllib.quote(base64.b64encode(new_iv))</span><br><span class="line">print(&#39;new_iv: &#39;+new_iv)</span><br></pre></td></tr></table></figure>
 
 <h1 id="mochazz学长的python代码"><a href="#mochazz学长的python代码" class="headerlink" title="mochazz学长的python代码"></a>mochazz学长的python代码</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">import urllib,base64,requests,re</span><br><span class="line">url &#x3D; &quot;http:&#x2F;&#x2F;*.*.*.*&#x2F;index.php&quot;</span><br><span class="line">datas &#x3D; &#123;</span><br><span class="line">	&quot;username&quot; : &quot;Admin&quot;,</span><br><span class="line">	&quot;password&quot; : &quot;admin&quot;</span><br><span class="line">&#125;</span><br><span class="line">r &#x3D; requests.post(url,data&#x3D;datas)</span><br><span class="line">cipher &#x3D; r.cookies.get(&quot;cipher&quot;)</span><br><span class="line">cipher &#x3D; base64.b64decode(urllib.unquote(cipher))</span><br><span class="line">offset &#x3D; 9</span><br><span class="line">new_cipher &#x3D; cipher[:offset] + chr(ord(cipher[offset])^ord(&quot;A&quot;)^ord(&quot;a&quot;)) + cipher[offset+1:]</span><br><span class="line">new_cookies &#x3D; requests.utils.dict_from_cookiejar(r.cookies)</span><br><span class="line">new_cookies[&quot;cipher&quot;] &#x3D; urllib.quote_plus(base64.b64encode(new_cipher))</span><br><span class="line">r2 &#x3D; requests.get(url,cookies&#x3D;new_cookies)</span><br><span class="line">plain &#x3D; base64.b64decode(re.findall(&quot;decode\(&#39;(.*)&#39;\)&quot;,r2.text)[0])</span><br><span class="line">iv &#x3D; base64.b64decode(urllib.unquote(new_cookies[&quot;iv&quot;]))</span><br><span class="line">old &#x3D; plain[:len(iv)]</span><br><span class="line">new &#x3D; &#39;a:2:&#123;s:8:&quot;userna&#39;</span><br><span class="line">new_iv &#x3D; &quot;&quot;.join([chr(ord(iv[i])^ord(old[i])^ord(new[i])) for i in xrange(16)])</span><br><span class="line">new_cookies[&quot;iv&quot;] &#x3D; urllib.quote_plus(base64.b64encode(new_iv))</span><br><span class="line">r3 &#x3D; requests.get(url,cookies&#x3D;new_cookies)</span><br><span class="line">print(r3.text)</span><br></pre></td></tr></table></figure>
@@ -339,295 +208,137 @@
 <p><a href="https://zh.wikipedia.org/wiki/%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F#%E5%AF%86%E7%A0%81%E5%9D%97%E9%93%BE%E6%8E%A5%EF%BC%88CBC%EF%BC%89" target="_blank" rel="noopener">分组密码工作模式CBC</a></p>
 <p><a href="http://drops.xmd5.com/static/drops/tips-7828.html" target="_blank" rel="noopener">CBC字节翻转攻击-101Approach</a></p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:20:28.000Z" itemprop="dateUpdated">2020-05-15 16:20:28</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WEB%E5%AE%89%E5%85%A8/" rel="tag">WEB安全</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=《CBC字节翻转攻击》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=《CBC字节翻转攻击》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《CBC字节翻转攻击》 — osword's blog&url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">浏览器同源策略及其规避方法笔记</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/03/14/sql%E6%B3%A8%E5%85%A5%E5%A4%87%E5%BF%98%E5%BD%95/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">sql注入备忘录</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#分组密码工作模式"><span class="toc-number">1.</span> <span class="toc-text">分组密码工作模式</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#密码块链接（CBC）"><span class="toc-number">2.</span> <span class="toc-text">密码块链接（CBC）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#加密过程："><span class="toc-number">2.1.</span> <span class="toc-text">加密过程：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解密过程"><span class="toc-number">2.2.</span> <span class="toc-text">解密过程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#攻击过程"><span class="toc-number">3.</span> <span class="toc-text">攻击过程</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#攻击过程详解"><span class="toc-number">4.</span> <span class="toc-text">攻击过程详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#通俗公式推导"><span class="toc-number">4.1.</span> <span class="toc-text">通俗公式推导</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CTF"><span class="toc-number">5.</span> <span class="toc-text">CTF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#代码分析"><span class="toc-number">5.1.</span> <span class="toc-text">代码分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解题过程"><span class="toc-number">5.2.</span> <span class="toc-text">解题过程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#解决首字块乱码"><span class="toc-number">6.</span> <span class="toc-text">解决首字块乱码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#解题python代码"><span class="toc-number">7.</span> <span class="toc-text">解题python代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mochazz学长的python代码"><span class="toc-number">8.</span> <span class="toc-text">mochazz学长的python代码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">9.</span> <span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&text=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&is_video=false&description=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=CBC字节翻转攻击&body=Check out this article: http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&name=CBC字节翻转攻击&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&t=CBC字节翻转攻击" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=《CBC字节翻转攻击》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&title=《CBC字节翻转攻击》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《CBC字节翻转攻击》 — osword's blog&url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

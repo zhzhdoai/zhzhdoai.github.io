@@ -1,32 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>DVWA_[CSP-Bypass] | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="XSS">
-    <meta name="description" content="0x01 Json基本语法定义：JSON是存储和交换文本信息的语法，类似XML 所对应的键值，通过EVAL()转换为JAVASCRIPT的对象，可以通过document.getElementById调用 特性JSON具有层级结构（值中存在值）JSON可通过javascript解析 语法规则数据在名称&#x2F;值对中数据由逗号分隔花括号保存对象方括号保存数组">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="0x01 Json基本语法定义：JSON是存储和交换文本信息的语法，类似XML 所对应的键值，通过EVAL()转换为JAVASCRIPT的对象，可以通过document.getElementById调用 特性JSON具有层级结构（值中存在值）JSON可通过javascript解析 语法规则数据在名称&#x2F;值对中数据由逗号分隔花括号保存对象方括号保存数组 安全性eval()解析JSON语法存在安全性问题">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DVWA_[CSP-Bypass]">
 <meta property="og:url" content="http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/index.html">
 <meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="0x01 Json基本语法定义：JSON是存储和交换文本信息的语法，类似XML 所对应的键值，通过EVAL()转换为JAVASCRIPT的对象，可以通过document.getElementById调用 特性JSON具有层级结构（值中存在值）JSON可通过javascript解析 语法规则数据在名称&#x2F;值对中数据由逗号分隔花括号保存对象方括号保存数组">
+<meta property="og:description" content="0x01 Json基本语法定义：JSON是存储和交换文本信息的语法，类似XML 所对应的键值，通过EVAL()转换为JAVASCRIPT的对象，可以通过document.getElementById调用 特性JSON具有层级结构（值中存在值）JSON可通过javascript解析 语法规则数据在名称&#x2F;值对中数据由逗号分隔花括号保存对象方括号保存数组 安全性eval()解析JSON语法存在安全性问题">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/1.png">
 <meta property="og:image" content="http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/2.png">
@@ -51,187 +36,145 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/1.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>DVWA_[CSP-Bypass]</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/01/02/uploadlabs-%E4%B8%8A%E4%BC%A0%E7%BB%95%E8%BF%87/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2018/12/28/DVWA-XSS/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&text=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&is_video=false&description=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=DVWA_[CSP-Bypass]&body=Check out this article: http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&name=DVWA_[CSP-Bypass]&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&t=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">DVWA_[CSP-Bypass]</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-Json基本语法"><span class="toc-number">1.</span> <span class="toc-text">0x01 Json基本语法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义："><span class="toc-number">1.1.</span> <span class="toc-text">定义：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特性"><span class="toc-number">1.2.</span> <span class="toc-text">特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语法规则"><span class="toc-number">1.3.</span> <span class="toc-text">语法规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安全性"><span class="toc-number">1.4.</span> <span class="toc-text">安全性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-CSP知识点补充"><span class="toc-number">2.</span> <span class="toc-text">0x02 CSP知识点补充</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#作用"><span class="toc-number">2.1.</span> <span class="toc-text">作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSP属性"><span class="toc-number">2.2.</span> <span class="toc-text">CSP属性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-DVWA-CSP-BYPASS"><span class="toc-number">3.</span> <span class="toc-text">0x03 DVWA_CSP BYPASS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Low"><span class="toc-number">3.1.</span> <span class="toc-text">Low</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Medium"><span class="toc-number">3.2.</span> <span class="toc-text">Medium</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High"><span class="toc-number">3.3.</span> <span class="toc-text">High</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#代码简析"><span class="toc-number">3.3.1.</span> <span class="toc-text">代码简析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#正题"><span class="toc-number">3.3.2.</span> <span class="toc-text">正题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#目的-方法"><span class="toc-number">3.3.3.</span> <span class="toc-text">目的(方法)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#High-php-gt-gt-include参数使用解题"><span class="toc-number">3.3.4.</span> <span class="toc-text">High.php&gt;&gt;include参数使用解题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Impossible"><span class="toc-number">3.4.</span> <span class="toc-text">Impossible</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-总结"><span class="toc-number">4.</span> <span class="toc-text">0x04 总结</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">DVWA_[CSP-Bypass]</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2018-12-29T09:16:12.000Z" itemprop="datePublished" class="page-time">
-  2018-12-29
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x01-Json基本语法"><span class="post-toc-number">1.</span> <span class="post-toc-text">0x01 Json基本语法</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#定义："><span class="post-toc-number">1.1.</span> <span class="post-toc-text">定义：</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#特性"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">特性</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#语法规则"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">语法规则</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安全性"><span class="post-toc-number">1.4.</span> <span class="post-toc-text">安全性</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x02-CSP知识点补充"><span class="post-toc-number">2.</span> <span class="post-toc-text">0x02 CSP知识点补充</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#作用"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">作用</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#CSP属性"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">CSP属性</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x03-DVWA-CSP-BYPASS"><span class="post-toc-number">3.</span> <span class="post-toc-text">0x03 DVWA_CSP BYPASS</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Low"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">Low</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Medium"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">Medium</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#High"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">High</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#代码简析"><span class="post-toc-number">3.3.1.</span> <span class="post-toc-text">代码简析</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#正题"><span class="post-toc-number">3.3.2.</span> <span class="post-toc-text">正题</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#目的-方法"><span class="post-toc-number">3.3.3.</span> <span class="post-toc-text">目的(方法)</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#High-php-gt-gt-include参数使用解题"><span class="post-toc-number">3.3.4.</span> <span class="post-toc-text">High.php&gt;&gt;include参数使用解题</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Impossible"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">Impossible</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x04-总结"><span class="post-toc-number">4.</span> <span class="post-toc-text">0x04 总结</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        DVWA_[CSP-Bypass]
+    </h1>
 
 
-<article id="post-DVWA-CSP-Bypass"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">DVWA_[CSP-Bypass]</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2018-12-29 17:16:12" datetime="2018-12-29T09:16:12.000Z"  itemprop="datePublished">2018-12-29</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2018-12-29T09:16:12.000Z" itemprop="datePublished">2018-12-29</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="0x01-Json基本语法"><a href="#0x01-Json基本语法" class="headerlink" title="0x01 Json基本语法"></a>0x01 Json基本语法</h1><h2 id="定义："><a href="#定义：" class="headerlink" title="定义："></a>定义：</h2><p>JSON是存储和交换文本信息的语法，类似XML</p>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/XSS/" rel="tag">XSS</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="0x01-Json基本语法"><a href="#0x01-Json基本语法" class="headerlink" title="0x01 Json基本语法"></a>0x01 Json基本语法</h1><h2 id="定义："><a href="#定义：" class="headerlink" title="定义："></a>定义：</h2><p>JSON是存储和交换文本信息的语法，类似XML</p>
 <p><img src="./1.png" alt=""><br>所对应的键值，通过<code>EVAL()</code>转换为JAVASCRIPT的对象，可以通过document.getElementById调用</p>
 <h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p>JSON具有层级结构（值中存在值）<br>JSON可通过javascript解析</p>
-<h2 id="语法规则"><a href="#语法规则" class="headerlink" title="语法规则"></a>语法规则</h2><p>数据在名称/值对中<br>数据由逗号分隔<br>花括号保存对象<br>方括号保存数组</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./2.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<h2 id="语法规则"><a href="#语法规则" class="headerlink" title="语法规则"></a>语法规则</h2><p>数据在名称/值对中<br>数据由逗号分隔<br>花括号保存对象<br>方括号保存数组<br><img src="./2.png" alt=""></p>
 <h2 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h2><p><code>eval()</code>解析<code>JSON</code>语法存在安全性问题，<code>eval()</code>可解析并执行脚本。建议使用<code>JSON</code>解析器，解析成原生<code>JS</code>对象</p>
 <h1 id="0x02-CSP知识点补充"><a href="#0x02-CSP知识点补充" class="headerlink" title="0x02 CSP知识点补充"></a>0x02 CSP知识点补充</h1><h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><p>新的 Content-Security-Policy HTTP响应头可以帮助你通过声明，其动态资源允许加载减少对现代浏览器XSS风险<br><a href="https://lorexxar.cn/2016/08/08/ccsp/" target="_blank" rel="noopener">https://lorexxar.cn/2016/08/08/ccsp/</a></p>
 <h2 id="CSP属性"><a href="#CSP属性" class="headerlink" title="CSP属性"></a>CSP属性</h2><ol>
@@ -258,99 +201,18 @@
 <li><code>font-src</code>:限制了所以可以被加载的字体资源<br>如果设置字体属性<br><code>font-family:&quot;Example Font&quot;</code>  会返回错误</li>
 <li><code>img-src</code>:限制加载图片的来源</li>
 </ol>
-<h1 id="0x03-DVWA-CSP-BYPASS"><a href="#0x03-DVWA-CSP-BYPASS" class="headerlink" title="0x03 DVWA_CSP BYPASS"></a>0x03 DVWA_CSP BYPASS</h1><h2 id="Low"><a href="#Low" class="headerlink" title="Low"></a>Low</h2><p>允许加载 以下几个网站加载的js文件。在注释里有创建一个<a href="https://pastebin.com/raw/R570EE00JS脚本源" target="_blank" rel="noopener">https://pastebin.com/raw/R570EE00JS脚本源</a></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./3.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./4.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-<h2 id="Medium"><a href="#Medium" class="headerlink" title="Medium"></a>Medium</h2><p>允许属性名为<code>TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=</code>  加载<code>js</code>脚本</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./5.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./6.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./7.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p>若执行错误脚本会在控制台如下错误信息显示<br><code>&lt;img src=hacked onerror=alert(&#39;hacked&#39;)&gt;</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./8.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-<h2 id="High"><a href="#High" class="headerlink" title="High"></a>High</h2><h3 id="代码简析"><a href="#代码简析" class="headerlink" title="代码简析"></a>代码简析</h3><p>形成<code>&lt;script src=&quot;source/jsonp.php?callback=solveSum&quot;&gt;&lt;/script&gt;</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./9.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p>调用并生成json</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./10.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p>触发按钮执行<code>high.js</code>脚本</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./11.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
-
+<h1 id="0x03-DVWA-CSP-BYPASS"><a href="#0x03-DVWA-CSP-BYPASS" class="headerlink" title="0x03 DVWA_CSP BYPASS"></a>0x03 DVWA_CSP BYPASS</h1><h2 id="Low"><a href="#Low" class="headerlink" title="Low"></a>Low</h2><p>允许加载 以下几个网站加载的js文件。在注释里有创建一个<a href="https://pastebin.com/raw/R570EE00JS脚本源" target="_blank" rel="noopener">https://pastebin.com/raw/R570EE00JS脚本源</a><br><img src="./3.png" alt=""><br><img src="./4.png" alt=""></p>
+<h2 id="Medium"><a href="#Medium" class="headerlink" title="Medium"></a>Medium</h2><p>允许属性名为<code>TmV2ZXIgZ29pbmcgdG8gZ2l2ZSB5b3UgdXA=</code>  加载<code>js</code>脚本<br><img src="./5.png" alt=""><br><img src="./6.png" alt=""><br><img src="./7.png" alt=""><br>若执行错误脚本会在控制台如下错误信息显示<br><code>&lt;img src=hacked onerror=alert(&#39;hacked&#39;)&gt;</code></p>
+<p><img src="./8.png" alt=""></p>
+<h2 id="High"><a href="#High" class="headerlink" title="High"></a>High</h2><h3 id="代码简析"><a href="#代码简析" class="headerlink" title="代码简析"></a>代码简析</h3><p>形成<code>&lt;script src=&quot;source/jsonp.php?callback=solveSum&quot;&gt;&lt;/script&gt;</code><br><img src="./9.png" alt=""><br>调用并生成json<br><img src="./10.png" alt=""><br>触发按钮执行<code>high.js</code>脚本<br><img src="./11.png" alt=""></p>
 <h3 id="正题"><a href="#正题" class="headerlink" title="正题"></a>正题</h3><p>本题一直理解成修改<code>jsonp.ph</code>p函数，其实是要求我们对js执行代码的修改。<br>首先分析JS。php脚本执行流程<br><code>json.php</code>脚本</p>
 <blockquote>
 <blockquote>
 <ol>
 <li><code>GET</code>方法接收<code>callback</code>参数.</li>
 <li><code>&quot;answer&quot;</code>赋值15（形成<code>JSON</code>,这里<code>high.js</code>脚本对够成<code>json</code>形式）</li>
-<li>输出<code>answer</code>值</li>
+<li>输出<code>answer</code>值<br><img src="./12.png" alt=""><br>网页事件执行</li>
 </ol>
-</blockquote>
-</blockquote>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./12.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p>网页事件执行</p>
-<blockquote>
-<blockquote>
 </blockquote>
 <p>点击<code>BUTTON</code>触发<code>clickButton()</code>&gt;&gt;执行<code>s.src = &quot;source/jsonp.php?callback=solveSum&quot;;</code>&gt;&gt;语句调用<code>jsonp.php</code>&gt;&gt;<code>jsonp.php</code>做的事是GET接收值，创建关于<code>answer</code>数组。<code>(JSON)</code></p>
 <blockquote>
@@ -367,333 +229,146 @@
 
 <p><code>&lt;script src=&quot;source/jsonp.php?callback=alert(&#39;hacked&#39;);&quot;&gt;&lt;/script&gt;</code><br>PS:唉我却一直在纠结jsonp.php下的callback参数修改,是行不通的</p>
 <h3 id="High-php-gt-gt-include参数使用解题"><a href="#High-php-gt-gt-include参数使用解题" class="headerlink" title="High.php&gt;&gt;include参数使用解题"></a>High.php&gt;&gt;include参数使用解题</h3><p>那么我们要怎么在不修改代码情况下执行JS脚本，可以看到<code>high.php</code>中有<code>POST[&#39;include&#39;]</code>借用它就可以了。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./13.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p>high.php中<code>include</code>使用调用``<script src="source/jsonp.php?callback=alert('hacked');"></script>`满足传参要求。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./14.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p><img src="./13.png" alt=""><br>high.php中<code>include</code>使用调用``<script src="source/jsonp.php?callback=alert('hacked');"></script>`满足传参要求。<br><img src="./14.png" alt=""></p>
 <h2 id="Impossible"><a href="#Impossible" class="headerlink" title="Impossible"></a>Impossible</h2><blockquote>
 <blockquote>
 </blockquote>
 <p>删除callback参数可控，代码写死</p>
 </blockquote>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./15.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./16.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p><img src="./15.png" alt=""><br><img src="./16.png" alt=""></p>
 <h1 id="0x04-总结"><a href="#0x04-总结" class="headerlink" title="0x04 总结"></a>0x04 总结</h1><p>csp确实可以有效防止XSS注入，但是也必须使用得当。为什么现在csp使用较少，因为它限制了许多JS脚本的灵活使用。<br>所以CSP安全策略如果使用不当是可以绕过的。!!!!</p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:28:02.000Z" itemprop="dateUpdated">2020-05-15 16:28:02</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XSS/" rel="tag">XSS</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=《DVWA_[CSP-Bypass]》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=《DVWA_[CSP-Bypass]》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《DVWA_[CSP-Bypass]》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/01/02/uploadlabs-%E4%B8%8A%E4%BC%A0%E7%BB%95%E8%BF%87/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">uploadlabs_上传绕过</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2018/12/28/DVWA-XSS/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">DVWA_XSS</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01-Json基本语法"><span class="toc-number">1.</span> <span class="toc-text">0x01 Json基本语法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义："><span class="toc-number">1.1.</span> <span class="toc-text">定义：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特性"><span class="toc-number">1.2.</span> <span class="toc-text">特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#语法规则"><span class="toc-number">1.3.</span> <span class="toc-text">语法规则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安全性"><span class="toc-number">1.4.</span> <span class="toc-text">安全性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02-CSP知识点补充"><span class="toc-number">2.</span> <span class="toc-text">0x02 CSP知识点补充</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#作用"><span class="toc-number">2.1.</span> <span class="toc-text">作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CSP属性"><span class="toc-number">2.2.</span> <span class="toc-text">CSP属性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x03-DVWA-CSP-BYPASS"><span class="toc-number">3.</span> <span class="toc-text">0x03 DVWA_CSP BYPASS</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Low"><span class="toc-number">3.1.</span> <span class="toc-text">Low</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Medium"><span class="toc-number">3.2.</span> <span class="toc-text">Medium</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High"><span class="toc-number">3.3.</span> <span class="toc-text">High</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#代码简析"><span class="toc-number">3.3.1.</span> <span class="toc-text">代码简析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#正题"><span class="toc-number">3.3.2.</span> <span class="toc-text">正题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#目的-方法"><span class="toc-number">3.3.3.</span> <span class="toc-text">目的(方法)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#High-php-gt-gt-include参数使用解题"><span class="toc-number">3.3.4.</span> <span class="toc-text">High.php&gt;&gt;include参数使用解题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Impossible"><span class="toc-number">3.4.</span> <span class="toc-text">Impossible</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x04-总结"><span class="toc-number">4.</span> <span class="toc-text">0x04 总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&text=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&is_video=false&description=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=DVWA_[CSP-Bypass]&body=Check out this article: http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&name=DVWA_[CSP-Bypass]&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&t=DVWA_[CSP-Bypass]" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=《DVWA_[CSP-Bypass]》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&title=《DVWA_[CSP-Bypass]》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《DVWA_[CSP-Bypass]》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2018/12/29/DVWA-CSP-Bypass/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

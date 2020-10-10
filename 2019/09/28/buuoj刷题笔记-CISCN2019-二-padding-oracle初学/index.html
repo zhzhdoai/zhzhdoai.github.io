@@ -1,26 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>buuoj刷题笔记[CISCN2019(二)]padding oracle初学 | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="CTF">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="[CISCN2019 总决赛 Day2 Web1]Easyweb bak源码泄露 sql注入 文件上传，短标签shell日志写入  image.php.bak源码泄露 需要想办法逃逸单引号注入&#39;\0&#39; &#x3D;&gt; addslashes &#x3D;&gt; &#39;\\\0&#39; &#x3D;&gt; str_replace &#x3D;&gt; &#39;\&#39; 后一个单引号会被转义，前一个单引号">
 <meta property="og:type" content="article">
 <meta property="og:title" content="buuoj刷题笔记[CISCN2019(二)]padding oracle初学">
@@ -48,176 +33,142 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/1569579769845.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>buuoj刷题笔记[CISCN2019(二)]padding oracle初学</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/09/27/buuctf%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%B8%80/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&text=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&is_video=false&description=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=buuoj刷题笔记[CISCN2019(二)]padding oracle初学&body=Check out this article: http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&name=buuoj刷题笔记[CISCN2019(二)]padding oracle初学&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&t=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">buuoj刷题笔记[CISCN2019(二)]padding oracle初学</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CISCN2019-总决赛-Day2-Web1-Easyweb"><span class="toc-number">1.</span> <span class="toc-text">[CISCN2019 总决赛 Day2 Web1]Easyweb</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#EXP"><span class="toc-number">2.</span> <span class="toc-text">EXP</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#padding-oracle"><span class="toc-number">3.</span> <span class="toc-text">padding oracle</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#服务器解密过程"><span class="toc-number">3.1.</span> <span class="toc-text">服务器解密过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#padding-oracle攻击的本质"><span class="toc-number">3.2.</span> <span class="toc-text">padding oracle攻击的本质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#padding添加原理"><span class="toc-number">3.3.</span> <span class="toc-text">padding添加原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务器验证明文正确方式"><span class="toc-number">3.4.</span> <span class="toc-text">服务器验证明文正确方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#逻辑"><span class="toc-number">3.5.</span> <span class="toc-text">逻辑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CISCN2019-东北赛区-Day2-Web3-Point-System"><span class="toc-number">4.</span> <span class="toc-text">[CISCN2019 东北赛区 Day2 Web3]Point System</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#考点"><span class="toc-number">4.1.</span> <span class="toc-text">考点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#meta的作用"><span class="toc-number">4.2.</span> <span class="toc-text">meta的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#padding-oracle攻击思路"><span class="toc-number">4.3.</span> <span class="toc-text">padding oracle攻击思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解密exp"><span class="toc-number">4.4.</span> <span class="toc-text">解密exp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exp-CBC翻转"><span class="toc-number">4.5.</span> <span class="toc-text">exp CBC翻转</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FFMpeg漏洞读取文件"><span class="toc-number">4.6.</span> <span class="toc-text">FFMpeg漏洞读取文件</span></a></li></ol></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">buuoj刷题笔记[CISCN2019(二)]padding oracle初学</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-09-28T03:25:16.000Z" itemprop="datePublished" class="page-time">
-  2019-09-28
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#CISCN2019-总决赛-Day2-Web1-Easyweb"><span class="post-toc-number">1.</span> <span class="post-toc-text">[CISCN2019 总决赛 Day2 Web1]Easyweb</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#EXP"><span class="post-toc-number">2.</span> <span class="post-toc-text">EXP</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#padding-oracle"><span class="post-toc-number">3.</span> <span class="post-toc-text">padding oracle</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#服务器解密过程"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">服务器解密过程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#padding-oracle攻击的本质"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">padding oracle攻击的本质</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#padding添加原理"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">padding添加原理</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#服务器验证明文正确方式"><span class="post-toc-number">3.4.</span> <span class="post-toc-text">服务器验证明文正确方式</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#逻辑"><span class="post-toc-number">3.5.</span> <span class="post-toc-text">逻辑</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#CISCN2019-东北赛区-Day2-Web3-Point-System"><span class="post-toc-number">4.</span> <span class="post-toc-text">[CISCN2019 东北赛区 Day2 Web3]Point System</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#考点"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">考点</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#meta的作用"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">meta的作用</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#padding-oracle攻击思路"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">padding oracle攻击思路</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#解密exp"><span class="post-toc-number">4.4.</span> <span class="post-toc-text">解密exp</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#exp-CBC翻转"><span class="post-toc-number">4.5.</span> <span class="post-toc-text">exp CBC翻转</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#FFMpeg漏洞读取文件"><span class="post-toc-number">4.6.</span> <span class="post-toc-text">FFMpeg漏洞读取文件</span></a></li></ol></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        buuoj刷题笔记[CISCN2019(二)]padding oracle初学
+    </h1>
 
 
-<article id="post-buuoj刷题笔记-CISCN2019-二-padding-oracle初学"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">buuoj刷题笔记[CISCN2019(二)]padding oracle初学</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-09-28 11:25:16" datetime="2019-09-28T03:25:16.000Z"  itemprop="datePublished">2019-09-28</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-09-28T03:25:16.000Z" itemprop="datePublished">2019-09-28</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="CISCN2019-总决赛-Day2-Web1-Easyweb"><a href="#CISCN2019-总决赛-Day2-Web1-Easyweb" class="headerlink" title="[CISCN2019 总决赛 Day2 Web1]Easyweb"></a>[CISCN2019 总决赛 Day2 Web1]Easyweb</h1><ol>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="CISCN2019-总决赛-Day2-Web1-Easyweb"><a href="#CISCN2019-总决赛-Day2-Web1-Easyweb" class="headerlink" title="[CISCN2019 总决赛 Day2 Web1]Easyweb"></a>[CISCN2019 总决赛 Day2 Web1]Easyweb</h1><ol>
 <li>bak源码泄露</li>
 <li>sql注入</li>
 <li>文件上传，短标签shell日志写入</li>
@@ -236,33 +187,10 @@
 
 
 <p>传入的文件内容会被写进日志内文件，使用短标签写入一句话木马</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569579769845.png" alt="1569579769845" title="">
-                </div>
-                <div class="image-caption">1569579769845</div>
-            </figure>
-
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569579860807.png" alt="1569579860807" title="">
-                </div>
-                <div class="image-caption">1569579860807</div>
-            </figure>
-
-
-
+<p><img src="./1569579769845.png" alt="1569579769845"></p>
+<p><img src="./1569579860807.png" alt="1569579860807"></p>
 <h1 id="padding-oracle"><a href="#padding-oracle" class="headerlink" title="padding oracle"></a>padding oracle</h1><p>参考链接：<a href="https://www.freebuf.com/articles/database/150606.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/database/150606.html</a></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569586375256.png" alt="1569586375256" title="">
-                </div>
-                <div class="image-caption">1569586375256</div>
-            </figure>
-
+<p><img src="./1569586375256.png" alt="1569586375256"></p>
 <h2 id="服务器解密过程"><a href="#服务器解密过程" class="headerlink" title="服务器解密过程"></a>服务器解密过程</h2><p>服务器从右往左解密,红色圈圈为AES解密后的中间值。前一个Ciphertext是都是相应解密的iv</p>
 <h2 id="padding-oracle攻击的本质"><a href="#padding-oracle攻击的本质" class="headerlink" title="padding oracle攻击的本质"></a>padding oracle攻击的本质</h2><p>其实就是通过传递密文以及自己猜测的IV值，通过观察服务器对padding判断的结果，进而反推出中间值，最后用中间值与正确的IV异或得到明文.也就是说这个攻击直接跳过了AES,即我们未获得key值也能够得到明文。</p>
 <h2 id="padding添加原理"><a href="#padding添加原理" class="headerlink" title="padding添加原理"></a>padding添加原理</h2><p>由于是分组加解密，当块中的字节数不同时候需要添加padding以满足加解密格式。分组要求每个块的大小都要相同</p>
@@ -286,14 +214,7 @@
 <h2 id="逻辑"><a href="#逻辑" class="headerlink" title="逻辑"></a>逻辑</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">用伪造的c1替换原来的c1</span><br><span class="line">循环一思路：伪造初始向量c1 ^ 中间值最后一位 =<span class="number">0x01</span> 服务器状态码正常</span><br><span class="line"></span><br><span class="line">		=&gt; 继而得到中间值</span><br><span class="line"></span><br><span class="line">循环第二次至第N次循环：伪造初始向量c1 = 上一步得到的中间值最后一位 ^ <span class="number">0x02</span></span><br><span class="line"></span><br><span class="line">最后把得到的所有中间值与原iv异或得到明文</span><br></pre></td></tr></table></figure>
 
 <p>0:16  可加可不加，服务器是从右向左解密</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569640134942.png" alt="1569640134942" title="">
-                </div>
-                <div class="image-caption">1569640134942</div>
-            </figure>
-
+<p><img src="./1569640134942.png" alt="1569640134942"></p>
 <h1 id="CISCN2019-东北赛区-Day2-Web3-Point-System"><a href="#CISCN2019-东北赛区-Day2-Web3-Point-System" class="headerlink" title="[CISCN2019 东北赛区 Day2 Web3]Point System"></a>[CISCN2019 东北赛区 Day2 Web3]Point System</h1><h2 id="考点"><a href="#考点" class="headerlink" title="考点"></a>考点</h2><p>wp ： <a href="https://www.zhaoj.in/read-6057.html" target="_blank" rel="noopener">https://www.zhaoj.in/read-6057.html</a></p>
 <ol>
 <li>敏感文件泄露（Robots.txt）</li>
@@ -302,47 +223,15 @@
 </ol>
 <h2 id="meta的作用"><a href="#meta的作用" class="headerlink" title="meta的作用"></a>meta的作用</h2><p>meta里的数据是供机器解读的，告诉机器该如何解析这个页面，还有一个用途是可以添加服务器发送到浏览器的http头部内容</p>
 <p>调用界面注册api，发现是作用在内网中，需要外部调用注册</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569581860309.png" alt="1569581860309" title="">
-                </div>
-                <div class="image-caption">1569581860309</div>
-            </figure>
-
+<p><img src="./1569581860309.png" alt="1569581860309"></p>
 <p>登录后权限不足</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569581890582.png" alt="1569581890582" title="">
-                </div>
-                <div class="image-caption">1569581890582</div>
-            </figure>
-
+<p><img src="./1569581890582.png" alt="1569581890582"></p>
 <p>login登录后返回token</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569582366649.png" alt="1569582366649" title="">
-                </div>
-                <div class="image-caption">1569582366649</div>
-            </figure>
-
-
-
+<p><img src="./1569582366649.png" alt="1569582366649"></p>
 <p><code>&#39;user_role&#39;:3</code> 这里3指用户权限，需要更改为1 </p>
 <p><img src="./1569582395002.png" alt="1569582395002"></p>
 <p>登录login脚本后，将返回的token作为info脚本访问的key。info Response返回头显示user_role为3，权限不足</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569582407368.png" alt="1569582407368" title="">
-                </div>
-                <div class="image-caption">1569582407368</div>
-            </figure>
-
-
-
+<p><img src="./1569582407368.png" alt="1569582407368"></p>
 <h2 id="padding-oracle攻击思路"><a href="#padding-oracle攻击思路" class="headerlink" title="padding oracle攻击思路"></a>padding oracle攻击思路</h2><p><strong>结题思路：需要先得出明文,确定3在密文中的位置，在通过cbc翻转置为1,即可有权限登录服务器,其实这里只要得到第一块block含有我们需要的讯息，后面就不需要解密</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">eyJzaWduZWRfa2V5IjoiU1VONGExTnBibWRFWVc1alpWSmhVSHNGUVI0bG41VkZDOUwwOWVjaGtZaFRXUWdpd1pvaGoyN0pXdDk4LysxWmdnU2d1WWRLcTJnYXZ3MXRVLzF3NWptdXM3WHo4WDgxMnlESlU4cWtiL3N1NW9wUStiQW1WdXRrNmhKdkc2Q05PNXNpVVpJdTVFTmsrSXFBbU9yWlhBPT0iLCJyb2xlIjozLCJ1c2VyX2lkIjoxLCJwYXlsb2FkIjoiZGhIaHlXS3BqT2VwbUs0RTFXdkVjUmpKSUhNR3pNcWgiLCJleHBpcmVfaW4iOjE1Njk1ODkzNzd9</span><br><span class="line">解码</span><br><span class="line">&#123;&quot;signed_key&quot;:&quot;SUN4a1NpbmdEYW5jZVJhUHsFQR4ln5VFC9L09echkYhTWQgiwZohj27JWt98&#x2F;+1ZggSguYdKq2gavw1tU&#x2F;1w5jmus7Xz8X812yDJU8qkb&#x2F;su5opQ+bAmVutk6hJvG6CNO5siUZIu5ENk+IqAmOrZXA&#x3D;&#x3D;&quot;,&quot;role&quot;:3,&quot;user_id&quot;:1,&quot;payload&quot;:&quot;dhHhyWKpjOepmK4E1WvEcRjJIHMGzMqh&quot;,&quot;expire_in&quot;:1569589377&#125;</span><br><span class="line"></span><br><span class="line">signed_key解码为乱码,</span><br></pre></td></tr></table></figure>
 
@@ -353,326 +242,146 @@
 
 
 <p>添加翻转后的cookie,刷新进入后台界面</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569638915896.png" alt="1569638915896" title="">
-                </div>
-                <div class="image-caption">1569638915896</div>
-            </figure>
-
-
-
+<p><img src="./1569638915896.png" alt="1569638915896"></p>
 <h2 id="FFMpeg漏洞读取文件"><a href="#FFMpeg漏洞读取文件" class="headerlink" title="FFMpeg漏洞读取文件"></a>FFMpeg漏洞读取文件</h2><p><a href="https://github.com/neex/ffmpeg-avi-m3u-xbin/blob/master/gen_xbin_avi.py" target="_blank" rel="noopener">https://github.com/neex/ffmpeg-avi-m3u-xbin/blob/master/gen_xbin_avi.py</a> 来生成 payload</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 gen_xbin_avi.py file:///flag get.avi</span><br></pre></td></tr></table></figure>
 
 <p>上传avi,在下载下来</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569640809772.png" alt="1569640809772" title="">
-                </div>
-                <div class="image-caption">1569640809772</div>
-            </figure>
-
+<p><img src="./1569640809772.png" alt="1569640809772"></p>
 <p><code>flag{2b38832a-9409-4742-8297-996f0ecf9126}</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1569640797530.png" alt="1569640797530" title="">
-                </div>
-                <div class="image-caption">1569640797530</div>
-            </figure>
+<p><img src="./1569640797530.png" alt="1569640797530"></p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:26:06.000Z" itemprop="dateUpdated">2020-05-15 16:26:06</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=《buuoj刷题笔记[CISCN2019(二)]padding oracle初学》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=《buuoj刷题笔记[CISCN2019(二)]padding oracle初学》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《buuoj刷题笔记[CISCN2019(二)]padding oracle初学》 — osword's blog&url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">数据结构 | 单链表增删改查</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/09/27/buuctf%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%B8%80/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">buuoj刷题笔记[CISCN2019(一)]</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CISCN2019-总决赛-Day2-Web1-Easyweb"><span class="toc-number">1.</span> <span class="toc-text">[CISCN2019 总决赛 Day2 Web1]Easyweb</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#EXP"><span class="toc-number">2.</span> <span class="toc-text">EXP</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#padding-oracle"><span class="toc-number">3.</span> <span class="toc-text">padding oracle</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#服务器解密过程"><span class="toc-number">3.1.</span> <span class="toc-text">服务器解密过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#padding-oracle攻击的本质"><span class="toc-number">3.2.</span> <span class="toc-text">padding oracle攻击的本质</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#padding添加原理"><span class="toc-number">3.3.</span> <span class="toc-text">padding添加原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#服务器验证明文正确方式"><span class="toc-number">3.4.</span> <span class="toc-text">服务器验证明文正确方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#逻辑"><span class="toc-number">3.5.</span> <span class="toc-text">逻辑</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CISCN2019-东北赛区-Day2-Web3-Point-System"><span class="toc-number">4.</span> <span class="toc-text">[CISCN2019 东北赛区 Day2 Web3]Point System</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#考点"><span class="toc-number">4.1.</span> <span class="toc-text">考点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#meta的作用"><span class="toc-number">4.2.</span> <span class="toc-text">meta的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#padding-oracle攻击思路"><span class="toc-number">4.3.</span> <span class="toc-text">padding oracle攻击思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解密exp"><span class="toc-number">4.4.</span> <span class="toc-text">解密exp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exp-CBC翻转"><span class="toc-number">4.5.</span> <span class="toc-text">exp CBC翻转</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FFMpeg漏洞读取文件"><span class="toc-number">4.6.</span> <span class="toc-text">FFMpeg漏洞读取文件</span></a></li></ol></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&text=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&is_video=false&description=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=buuoj刷题笔记[CISCN2019(二)]padding oracle初学&body=Check out this article: http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&name=buuoj刷题笔记[CISCN2019(二)]padding oracle初学&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&t=buuoj刷题笔记[CISCN2019(二)]padding oracle初学" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=《buuoj刷题笔记[CISCN2019(二)]padding oracle初学》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&title=《buuoj刷题笔记[CISCN2019(二)]padding oracle初学》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《buuoj刷题笔记[CISCN2019(二)]padding oracle初学》 — osword's blog&url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

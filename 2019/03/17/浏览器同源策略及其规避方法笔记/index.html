@@ -1,26 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>浏览器同源策略及其规避方法笔记 | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="基础笔记">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="前言 最近打算深入了解xss,csrf漏洞学习。既然如此，那么同源策略必然是要搞清楚。本章主要讨论的是浏览器同源策略，也可以认为是前端相互调用同源策略。至于前后台调用同源策略的解决主要依赖XMLHttpRequest，具体可以参考你真的会使用XMLHttpRequest吗？  概述 1995年，同源政策由 Netscape 公司引入浏览器。目前，所有浏览器都实行这个政策。最初，它的含义是指，A网页">
 <meta property="og:type" content="article">
 <meta property="og:title" content="浏览器同源策略及其规避方法笔记">
@@ -36,191 +21,149 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/1.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>浏览器同源策略及其规避方法笔记</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/03/18/create-function%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&text=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&is_video=false&description=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=浏览器同源策略及其规避方法笔记&body=Check out this article: http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&name=浏览器同源策略及其规避方法笔记&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&t=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">浏览器同源策略及其规避方法笔记</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#概述"><span class="toc-number">2.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-目的"><span class="toc-number">2.1.</span> <span class="toc-text">1.2 目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-限制范围"><span class="toc-number">2.2.</span> <span class="toc-text">1.3 限制范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4具体限制"><span class="toc-number">2.3.</span> <span class="toc-text">1.4具体限制</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#疑问"><span class="toc-number">3.</span> <span class="toc-text">疑问</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#src标签"><span class="toc-number">4.</span> <span class="toc-text">src标签</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#cookie"><span class="toc-number">5.</span> <span class="toc-text">cookie</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#AJAX"><span class="toc-number">6.</span> <span class="toc-text">AJAX</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-JSONP跨域"><span class="toc-number">6.1.</span> <span class="toc-text">1.JSONP跨域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-跨域资源共享（CORS）"><span class="toc-number">6.2.</span> <span class="toc-text">2. 跨域资源共享（CORS）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-WebSocket"><span class="toc-number">6.3.</span> <span class="toc-text">3. WebSocket</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#iframe（DOM型）"><span class="toc-number">7.</span> <span class="toc-text">iframe（DOM型）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#window-name"><span class="toc-number">7.1.</span> <span class="toc-text">window.name</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-片段识别符"><span class="toc-number">7.1.1.</span> <span class="toc-text">3.1 片段识别符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-window-name"><span class="toc-number">7.1.2.</span> <span class="toc-text">3.2 window.name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-window-postMessage"><span class="toc-number">7.1.3.</span> <span class="toc-text">3.3 window.postMessage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-LocalStorage"><span class="toc-number">7.1.4.</span> <span class="toc-text">3.4 LocalStorage</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">8.</span> <span class="toc-text">参考链接</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">浏览器同源策略及其规避方法笔记</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-03-17T11:12:37.000Z" itemprop="datePublished" class="page-time">
-  2019-03-17
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#概述"><span class="post-toc-number">2.</span> <span class="post-toc-text">概述</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-2-目的"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">1.2 目的</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-3-限制范围"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">1.3 限制范围</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-4具体限制"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">1.4具体限制</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#疑问"><span class="post-toc-number">3.</span> <span class="post-toc-text">疑问</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#src标签"><span class="post-toc-number">4.</span> <span class="post-toc-text">src标签</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#cookie"><span class="post-toc-number">5.</span> <span class="post-toc-text">cookie</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#AJAX"><span class="post-toc-number">6.</span> <span class="post-toc-text">AJAX</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-JSONP跨域"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">1.JSONP跨域</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-跨域资源共享（CORS）"><span class="post-toc-number">6.2.</span> <span class="post-toc-text">2. 跨域资源共享（CORS）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-WebSocket"><span class="post-toc-number">6.3.</span> <span class="post-toc-text">3. WebSocket</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#iframe（DOM型）"><span class="post-toc-number">7.</span> <span class="post-toc-text">iframe（DOM型）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#window-name"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">window.name</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-片段识别符"><span class="post-toc-number">7.1.1.</span> <span class="post-toc-text">3.1 片段识别符</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-window-name"><span class="post-toc-number">7.1.2.</span> <span class="post-toc-text">3.2 window.name</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-3-window-postMessage"><span class="post-toc-number">7.1.3.</span> <span class="post-toc-text">3.3 window.postMessage</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-4-LocalStorage"><span class="post-toc-number">7.1.4.</span> <span class="post-toc-text">3.4 LocalStorage</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考链接"><span class="post-toc-number">8.</span> <span class="post-toc-text">参考链接</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        浏览器同源策略及其规避方法笔记
+    </h1>
 
 
-<article id="post-浏览器同源策略及其规避方法笔记"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">浏览器同源策略及其规避方法笔记</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-03-17 19:12:37" datetime="2019-03-17T11:12:37.000Z"  itemprop="datePublished">2019-03-17</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-03-17T11:12:37.000Z" itemprop="datePublished">2019-03-17</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%AC%94%E8%AE%B0/" rel="tag">基础笔记</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <p>最近打算深入了解xss,csrf漏洞学习。既然如此，那么同源策略必然是要搞清楚。本章主要讨论的是浏览器同源策略，也可以认为是前端相互调用同源策略。至于前后台调用同源策略的解决主要依赖<code>XMLHttpRequest</code>，具体可以参考<a href="https://segmentfault.com/a/1190000004322487" target="_blank" rel="noopener">你真的会使用XMLHttpRequest吗？</a></p>
 </blockquote>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><blockquote>
 <p>1995年，同源政策由 Netscape 公司引入浏览器。目前，所有浏览器都实行这个政策。<br>最初，它的含义是指，A网页设置的 Cookie，B网页不能打开，除非这两个网页”同源”。所谓”同源”指的是”三个相同”。</p>
 </blockquote>
 <p><strong>协议相同</strong><br><strong>域名相同</strong><br><strong>端口相同</strong></p>
-<p>举例来说，<code>http://sub.eth.space/level/flower.html</code>这个网址，协议是http://，域名是sub.eth.space，端口是80（默认端口可以省略）。它的同源情况如下。</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-
+<p>举例来说，<code>http://sub.eth.space/level/flower.html</code>这个网址，协议是http://，域名是sub.eth.space，端口是80（默认端口可以省略）。它的同源情况如下。<br><img src="./1.png" alt=""></p>
 <h2 id="1-2-目的"><a href="#1-2-目的" class="headerlink" title="1.2 目的"></a>1.2 目的</h2><p>同源政策的目的，是为了保证用户信息的安全，防止恶意的网站窃取数据。<br>设想这样一种情况：A网站是一家银行，用户登录以后，又去浏览其他网站。如果其他网站可以读取A网站的 Cookie，会发生什么？<br>很显然，如果 Cookie 包含隐私（比如存款总额），这些信息就会泄漏。更可怕的是，Cookie 往往用来保存用户的登录状态，如果用户没有退出登录，其他网站就可以冒充用户，为所欲为。因为浏览器同时还规定，提交表单不受同源政策的限制。<br>由此可见，”同源政策”是必需的，否则 Cookie 可以共享，互联网就毫无安全可言了。</p>
 <h2 id="1-3-限制范围"><a href="#1-3-限制范围" class="headerlink" title="1.3 限制范围"></a>1.3 限制范围</h2><p>随着互联网的发展，”同源政策”越来越严格。目前，如果非同源，共有三种行为受到限制。</p>
 <blockquote>
@@ -327,295 +270,137 @@
 
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.anquanke.com/post/id/86078" target="_blank" rel="noopener">漫谈同源策略攻防</a><br><a href="https://lightless.me/archives/review-SOP.html" target="_blank" rel="noopener">再谈同源策略</a><br><a href="https://xz.aliyun.com/t/224" target="_blank" rel="noopener">跨域方法总结</a></p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:27:30.000Z" itemprop="dateUpdated">2020-05-15 16:27:30</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%AC%94%E8%AE%B0/" rel="tag">基础笔记</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=《浏览器同源策略及其规避方法笔记》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=《浏览器同源策略及其规避方法笔记》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《浏览器同源策略及其规避方法笔记》 — osword's blog&url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/03/18/create-function%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">create_function任意代码执行</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">CBC字节翻转攻击</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#概述"><span class="toc-number">2.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-目的"><span class="toc-number">2.1.</span> <span class="toc-text">1.2 目的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-限制范围"><span class="toc-number">2.2.</span> <span class="toc-text">1.3 限制范围</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4具体限制"><span class="toc-number">2.3.</span> <span class="toc-text">1.4具体限制</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#疑问"><span class="toc-number">3.</span> <span class="toc-text">疑问</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#src标签"><span class="toc-number">4.</span> <span class="toc-text">src标签</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#cookie"><span class="toc-number">5.</span> <span class="toc-text">cookie</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#AJAX"><span class="toc-number">6.</span> <span class="toc-text">AJAX</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-JSONP跨域"><span class="toc-number">6.1.</span> <span class="toc-text">1.JSONP跨域</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-跨域资源共享（CORS）"><span class="toc-number">6.2.</span> <span class="toc-text">2. 跨域资源共享（CORS）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-WebSocket"><span class="toc-number">6.3.</span> <span class="toc-text">3. WebSocket</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#iframe（DOM型）"><span class="toc-number">7.</span> <span class="toc-text">iframe（DOM型）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#window-name"><span class="toc-number">7.1.</span> <span class="toc-text">window.name</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-片段识别符"><span class="toc-number">7.1.1.</span> <span class="toc-text">3.1 片段识别符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-window-name"><span class="toc-number">7.1.2.</span> <span class="toc-text">3.2 window.name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-window-postMessage"><span class="toc-number">7.1.3.</span> <span class="toc-text">3.3 window.postMessage</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-LocalStorage"><span class="toc-number">7.1.4.</span> <span class="toc-text">3.4 LocalStorage</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">8.</span> <span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&text=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&is_video=false&description=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=浏览器同源策略及其规避方法笔记&body=Check out this article: http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&name=浏览器同源策略及其规避方法笔记&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&t=浏览器同源策略及其规避方法笔记" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=《浏览器同源策略及其规避方法笔记》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=《浏览器同源策略及其规避方法笔记》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《浏览器同源策略及其规避方法笔记》 — osword's blog&url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

@@ -1,32 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>HTTP请求走私基础学习(一) | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="HTTP请求走私">
-    <meta name="description" content="HTTPS请求走私该漏洞产生原因主要是前后端服务器对请求处理RFC标准不同。造成后端恶意代码缓存驻留                                                                                              smuggling-http-request-to-back-end-server">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="HTTPS请求走私该漏洞产生原因主要是前后端服务器对请求处理RFC标准不同。造成后端恶意代码缓存驻留  几个重要概念TCP复用为了节省代理服务器与后端服务器同效率，往往会复用同一个tcp连接 参考链接：https:&#x2F;&#x2F;www.lushevol.com&#x2F;2018&#x2F;08&#x2F;21&#x2F;TCP%E8%BF%9E%E6%8E%A5%E5%A4%8D%E7%94%A8&#x2F;  http1.1协议连接保持 Keep Al">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HTTP请求走私基础学习(一)">
 <meta property="og:url" content="http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/index.html">
 <meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="HTTPS请求走私该漏洞产生原因主要是前后端服务器对请求处理RFC标准不同。造成后端恶意代码缓存驻留                                                                                              smuggling-http-request-to-back-end-server">
+<meta property="og:description" content="HTTPS请求走私该漏洞产生原因主要是前后端服务器对请求处理RFC标准不同。造成后端恶意代码缓存驻留  几个重要概念TCP复用为了节省代理服务器与后端服务器同效率，往往会复用同一个tcp连接 参考链接：https:&#x2F;&#x2F;www.lushevol.com&#x2F;2018&#x2F;08&#x2F;21&#x2F;TCP%E8%BF%9E%E6%8E%A5%E5%A4%8D%E7%94%A8&#x2F;  http1.1协议连接保持 Keep Al">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/smuggling-http-request-to-back-end-server.svg">
 <meta property="og:image" content="http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/1571288904672.png">
@@ -43,198 +28,146 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/smuggling-http-request-to-back-end-server.svg">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>HTTP请求走私基础学习(一)</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&text=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&is_video=false&description=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTTP请求走私基础学习(一)&body=Check out this article: http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&name=HTTP请求走私基础学习(一)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&t=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">HTTP请求走私基础学习(一)</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTPS请求走私"><span class="toc-number">1.</span> <span class="toc-text">HTTPS请求走私</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#几个重要概念"><span class="toc-number">2.</span> <span class="toc-text">几个重要概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP复用"><span class="toc-number">2.0.1.</span> <span class="toc-text">TCP复用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#http1-1协议连接保持"><span class="toc-number">2.1.</span> <span class="toc-text">http1.1协议连接保持</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pipelining"><span class="toc-number">2.1.1.</span> <span class="toc-text">pipelining</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Keep-Alive"><span class="toc-number">2.1.2.</span> <span class="toc-text">Keep Alive</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTP-中间代理服务器和后端服务器通信示意图"><span class="toc-number">3.</span> <span class="toc-text">HTTP 中间代理服务器和后端服务器通信示意图</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CL不为0的GET请求"><span class="toc-number">4.</span> <span class="toc-text">CL不为0的GET请求</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">4.1.</span> <span class="toc-text">结论</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CL-CL"><span class="toc-number">5.</span> <span class="toc-text">CL-CL</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#不规范操作"><span class="toc-number">5.1.</span> <span class="toc-text">不规范操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CL-TE"><span class="toc-number">5.2.</span> <span class="toc-text">CL-TE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地"><span class="toc-number">5.3.</span> <span class="toc-text">本地</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#靶场环境"><span class="toc-number">5.4.</span> <span class="toc-text">靶场环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TE-CL"><span class="toc-number">5.5.</span> <span class="toc-text">TE-CL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#靶机"><span class="toc-number">5.6.</span> <span class="toc-text">靶机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#"><span class="toc-number">5.7.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TE-TE"><span class="toc-number">5.8.</span> <span class="toc-text">TE-TE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#靶机-1"><span class="toc-number">5.9.</span> <span class="toc-text">靶机</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#结论-1"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">7.</span> <span class="toc-text">参考链接</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">HTTP请求走私基础学习(一)</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-10-17T07:14:13.000Z" itemprop="datePublished" class="page-time">
-  2019-10-17
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#HTTPS请求走私"><span class="post-toc-number">1.</span> <span class="post-toc-text">HTTPS请求走私</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#几个重要概念"><span class="post-toc-number">2.</span> <span class="post-toc-text">几个重要概念</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#TCP复用"><span class="post-toc-number">2.0.1.</span> <span class="post-toc-text">TCP复用</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#http1-1协议连接保持"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">http1.1协议连接保持</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#pipelining"><span class="post-toc-number">2.1.1.</span> <span class="post-toc-text">pipelining</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Keep-Alive"><span class="post-toc-number">2.1.2.</span> <span class="post-toc-text">Keep Alive</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#HTTP-中间代理服务器和后端服务器通信示意图"><span class="post-toc-number">3.</span> <span class="post-toc-text">HTTP 中间代理服务器和后端服务器通信示意图</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#CL不为0的GET请求"><span class="post-toc-number">4.</span> <span class="post-toc-text">CL不为0的GET请求</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#结论"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">结论</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#CL-CL"><span class="post-toc-number">5.</span> <span class="post-toc-text">CL-CL</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#不规范操作"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">不规范操作</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#CL-TE"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">CL-TE</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#本地"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">本地</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#靶场环境"><span class="post-toc-number">5.4.</span> <span class="post-toc-text">靶场环境</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#TE-CL"><span class="post-toc-number">5.5.</span> <span class="post-toc-text">TE-CL</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#靶机"><span class="post-toc-number">5.6.</span> <span class="post-toc-text">靶机</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#"><span class="post-toc-number">5.7.</span> <span class="post-toc-text"></span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#TE-TE"><span class="post-toc-number">5.8.</span> <span class="post-toc-text">TE-TE</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#靶机-1"><span class="post-toc-number">5.9.</span> <span class="post-toc-text">靶机</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#结论-1"><span class="post-toc-number">6.</span> <span class="post-toc-text">结论</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考链接"><span class="post-toc-number">7.</span> <span class="post-toc-text">参考链接</span></a></li></ol>
-        </nav>
-    </aside>
-
-
-<article id="post-HTTP请求走私基础学习-一"
-  class="post-article article-type-post fade" itemprop="blogPost">
-
-    <div class="post-card">
-        <h1 class="post-card-title">HTTP请求走私基础学习(一)</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-10-17 15:14:13" datetime="2019-10-17T07:14:13.000Z"  itemprop="datePublished">2019-10-17</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
-
-
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="HTTPS请求走私"><a href="#HTTPS请求走私" class="headerlink" title="HTTPS请求走私"></a>HTTPS请求走私</h1><p>该漏洞产生原因主要是前后端服务器对请求处理RFC标准不同。造成后端恶意代码缓存驻留</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./smuggling-http-request-to-back-end-server.svg" alt="smuggling-http-request-to-back-end-server" title="">
-                </div>
-                <div class="image-caption">smuggling-http-request-to-back-end-server</div>
-            </figure>
+    <h1 class="posttitle" itemprop="name headline">
+        HTTP请求走私基础学习(一)
+    </h1>
 
 
 
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-10-17T07:14:13.000Z" itemprop="datePublished">2019-10-17</time>
+        
+      
+    </div>
 
 
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81/" rel="tag">HTTP请求走私</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="HTTPS请求走私"><a href="#HTTPS请求走私" class="headerlink" title="HTTPS请求走私"></a>HTTPS请求走私</h1><p>该漏洞产生原因主要是前后端服务器对请求处理RFC标准不同。造成后端恶意代码缓存驻留</p>
+<p><img src="./smuggling-http-request-to-back-end-server.svg" alt="smuggling-http-request-to-back-end-server"></p>
 <h1 id="几个重要概念"><a href="#几个重要概念" class="headerlink" title="几个重要概念"></a>几个重要概念</h1><h3 id="TCP复用"><a href="#TCP复用" class="headerlink" title="TCP复用"></a>TCP复用</h3><p>为了节省代理服务器与后端服务器同效率，往往会复用同一个tcp连接</p>
 <p>参考链接：<a href="https://www.lushevol.com/2018/08/21/TCP%E8%BF%9E%E6%8E%A5%E5%A4%8D%E7%94%A8/" target="_blank" rel="noopener">https://www.lushevol.com/2018/08/21/TCP%E8%BF%9E%E6%8E%A5%E5%A4%8D%E7%94%A8/</a></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571288904672.png" alt="1571288904672" title="">
-                </div>
-                <div class="image-caption">1571288904672</div>
-            </figure>
-
+<p><img src="./1571288904672.png" alt="1571288904672"></p>
 <h2 id="http1-1协议连接保持"><a href="#http1-1协议连接保持" class="headerlink" title="http1.1协议连接保持"></a>http1.1协议连接保持</h2><ul>
 <li><strong>Keep Alive</strong> mode</li>
 <li><strong>Pipelined</strong> queries</li>
@@ -273,16 +206,7 @@
 <p><a href="https://tools.ietf.org/html/rfc7230#section-3.3.3" target="_blank" rel="noopener">https://tools.ietf.org/html/rfc7230#section-3.3.3</a></p>
 <p>RFC7230表明当一个http请求带有多个不同Content-length会导致400错误</p>
 </blockquote>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571278218243.png" alt="1571278218243" title="">
-                </div>
-                <div class="image-caption">1571278218243</div>
-            </figure>
-
-
-
+<p><img src="./1571278218243.png" alt="1571278218243"></p>
 <h2 id="不规范操作"><a href="#不规范操作" class="headerlink" title="不规范操作"></a>不规范操作</h2><blockquote>
 <p>前端代理服务器和后端服务器接收多个Content-Length不会返回400错误。</p>
 <p>​    代理服务器使用第一个Content-Length处理数据</p>
@@ -308,25 +232,9 @@
 <p>CL-TE: 接收两个请求头，前端代理服务器只处理Content-Length，后端遵守RFC2616忽略Content-Length，处理Transfer-Encoding</p>
 </blockquote>
 <h2 id="本地"><a href="#本地" class="headerlink" title="本地"></a>本地</h2><p>同时放入<strong>Content-Length和Transfer-Encoding</strong>头，访问正常</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571287661298.png" alt="1571287661298" title="">
-                </div>
-                <div class="image-caption">1571287661298</div>
-            </figure>
-
+<p><img src="./1571287661298.png" alt="1571287661298"></p>
 <p>只放入<strong>Conetent-Length</strong>，连接挂起，因为服务端需要接收99个字节的请求体，可以证明服务区在对同时处理<strong>Content-Length与Transfer-Encoding会将Content-Length去除</strong></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571287726810.png" alt="1571287726810" title="">
-                </div>
-                <div class="image-caption">1571287726810</div>
-            </figure>
-
-
-
+<p><img src="./1571287726810.png" alt="1571287726810"></p>
 <h2 id="靶场环境"><a href="#靶场环境" class="headerlink" title="靶场环境"></a>靶场环境</h2><p><a href="https://portswigger.net/web-security/request-smuggling/lab-basic-cl-te" target="_blank" rel="noopener">https://portswigger.net/web-security/request-smuggling/lab-basic-cl-te</a></p>
 <p>伪造http包</p>
 <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: ac5c1f3f1ee1d59780728119006600b8.web-security-academy.net</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US,en;q=0.5</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Referer</span>: https://portswigger.net/users?returnurl=%2facademy%2flabs%2flaunch%2febc97abbe886e96facc0aaee856f55e2a45d4784f5d9025ffa5e994b7d8bc2bb%3freferrer%3d%252fweb-security%252frequest-smuggling%252flab-basic-cl-te</span><br><span class="line"><span class="attribute">DNT</span>: 1</span><br><span class="line"><span class="attribute">Connection</span>: keep-alive</span><br><span class="line"><span class="attribute">Cookie</span>: session=JWPczeHT40XYRaExizH7ScudZ6hnlfX6</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-Length</span>: 11</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line">\r\n</span><br><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br><span class="line"><span class="attribute">123456</span></span><br></pre></td></tr></table></figure>
@@ -334,14 +242,7 @@
 
 
 <p>关闭burpsuite自动更新Content-Length，多次发送以下包造成走私攻击</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571288321363.png" alt="1571288321363" title="">
-                </div>
-                <div class="image-caption">1571288321363</div>
-            </figure>
-
+<p><img src="./1571288321363.png" alt="1571288321363"></p>
 <p>前端代理服务器就收到Content-Length长度为11，之后将以下请求体发送到后端服务器</p>
 <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br><span class="line"><span class="attribute">123456</span></span><br></pre></td></tr></table></figure>
 
@@ -379,14 +280,7 @@
 <h2 id="靶机-1"><a href="#靶机-1" class="headerlink" title="靶机"></a>靶机</h2><p><a href="https://portswigger.net/web-security/request-smuggling/lab-ofuscating-te-header" target="_blank" rel="noopener">https://portswigger.net/web-security/request-smuggling/lab-ofuscating-te-header</a></p>
 <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: acd11f061e2b224780f80459004500f2.web-security-academy.net</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US,en;q=0.5</span><br><span class="line"><span class="attribute">Cookie</span>: session=iLGLf03I7Lu3VUWRK8KVmwoarv2Btbhu</span><br><span class="line"><span class="attribute">Content-Length</span>: 4</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: chunked</span><br><span class="line"><span class="attribute">Transfer-Encoding</span>: xxx</span><br><span class="line">\r\n</span><br><span class="line"><span class="attribute">5c\r\n</span></span><br><span class="line">GPOST / HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded\r\n</span><br><span class="line"><span class="attribute">Content-Length</span>: 15\r\n</span><br><span class="line">\r\n</span><br><span class="line">x=1\r\n</span><br><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br></pre></td></tr></table></figure>
 
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1571293596089.png" alt="1571293596089" title="">
-                </div>
-                <div class="image-caption">1571293596089</div>
-            </figure>
-
+<p><img src="./1571293596089.png" alt="1571293596089"></p>
 <p>根据顺序，前端代理服务器处理<code>Transfer-Encoding: chuncked</code></p>
 <figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">\r\n</span><br><span class="line"><span class="attribute">5c\r\n</span></span><br><span class="line">GPOST / HTTP/1.1\r\n</span><br><span class="line"><span class="attribute">Content-Type</span>: application/x-www-form-urlencoded\r\n</span><br><span class="line"><span class="attribute">Content-Length</span>: 15\r\n</span><br><span class="line">\r\n</span><br><span class="line">x=1\r\n</span><br><span class="line"><span class="attribute">0\r\n</span></span><br><span class="line"><span class="attribute">\r\n</span></span><br></pre></td></tr></table></figure>
 
@@ -424,295 +318,137 @@
 <li><a href="https://media.defcon.org/DEF%20CON%2024/DEF%20CON%2024%20presentations/DEF%20CON%2024%20-%20Regilero-Hiding-Wookiees-In-Http.pdf" target="_blank" rel="noopener">https://media.defcon.org/DEF%20CON%2024/DEF%20CON%2024%20presentations/DEF%20CON%2024%20-%20Regilero-Hiding-Wookiees-In-Http.pdf</a></li>
 </ul>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:26:18.000Z" itemprop="dateUpdated">2020-05-15 16:26:18</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81/" rel="tag">HTTP请求走私</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=《HTTP请求走私基础学习(一)》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=《HTTP请求走私基础学习(一)》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《HTTP请求走私基础学习(一)》 — osword's blog&url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">ATS反向代理环境搭建</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">RoarCTF2019_web题解(待补充)</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTPS请求走私"><span class="toc-number">1.</span> <span class="toc-text">HTTPS请求走私</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#几个重要概念"><span class="toc-number">2.</span> <span class="toc-text">几个重要概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#TCP复用"><span class="toc-number">2.0.1.</span> <span class="toc-text">TCP复用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#http1-1协议连接保持"><span class="toc-number">2.1.</span> <span class="toc-text">http1.1协议连接保持</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#pipelining"><span class="toc-number">2.1.1.</span> <span class="toc-text">pipelining</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Keep-Alive"><span class="toc-number">2.1.2.</span> <span class="toc-text">Keep Alive</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#HTTP-中间代理服务器和后端服务器通信示意图"><span class="toc-number">3.</span> <span class="toc-text">HTTP 中间代理服务器和后端服务器通信示意图</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CL不为0的GET请求"><span class="toc-number">4.</span> <span class="toc-text">CL不为0的GET请求</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#结论"><span class="toc-number">4.1.</span> <span class="toc-text">结论</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CL-CL"><span class="toc-number">5.</span> <span class="toc-text">CL-CL</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#不规范操作"><span class="toc-number">5.1.</span> <span class="toc-text">不规范操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CL-TE"><span class="toc-number">5.2.</span> <span class="toc-text">CL-TE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地"><span class="toc-number">5.3.</span> <span class="toc-text">本地</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#靶场环境"><span class="toc-number">5.4.</span> <span class="toc-text">靶场环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TE-CL"><span class="toc-number">5.5.</span> <span class="toc-text">TE-CL</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#靶机"><span class="toc-number">5.6.</span> <span class="toc-text">靶机</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#"><span class="toc-number">5.7.</span> <span class="toc-text"></span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#TE-TE"><span class="toc-number">5.8.</span> <span class="toc-text">TE-TE</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#靶机-1"><span class="toc-number">5.9.</span> <span class="toc-text">靶机</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#结论-1"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">7.</span> <span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&text=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&is_video=false&description=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=HTTP请求走私基础学习(一)&body=Check out this article: http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&name=HTTP请求走私基础学习(一)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&t=HTTP请求走私基础学习(一)" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=《HTTP请求走私基础学习(一)》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&title=《HTTP请求走私基础学习(一)》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《HTTP请求走私基础学习(一)》 — osword's blog&url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>

