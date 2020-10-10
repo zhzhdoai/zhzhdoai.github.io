@@ -1,514 +1,557 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>Thinkphp5 文件包含 - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>Thinkphp5 文件包含 | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="代码审计">
+    <meta name="description" content="前言最近在复现tp漏洞，sql注入略显鸡肋，但更主要是学习框架漏洞挖掘的思路和方法。跟一跟框架方法实现流程，也算是一种漏洞学习吧。 参考文章:ThinkPHP5漏洞分析之文件包含(七)七月火师傅…介绍比较完全，该篇漏洞算是简单的了，跟一跟变量就可以知道原因，但还是想学习下框架模板解析流程。 环境搭建tp版本：5.0.18 文件内容  视图目录下写入index.html模板文件 index控制器写入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Thinkphp5 文件包含">
+<meta property="og:url" content="http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="前言最近在复现tp漏洞，sql注入略显鸡肋，但更主要是学习框架漏洞挖掘的思路和方法。跟一跟框架方法实现流程，也算是一种漏洞学习吧。 参考文章:ThinkPHP5漏洞分析之文件包含(七)七月火师傅…介绍比较完全，该篇漏洞算是简单的了，跟一跟变量就可以知道原因，但还是想学习下框架模板解析流程。 环境搭建tp版本：5.0.18 文件内容  视图目录下写入index.html模板文件 index控制器写入">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/1.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/2.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/3.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/4.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/5.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/6.png">
+<meta property="article:published_time" content="2019-07-26T02:01:36.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:26:32.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="代码审计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/1.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2019-07-26 10:01" pubdate>
-        2019年7月26日 上午
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      504 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      5
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Thinkphp5 文件包含</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">Thinkphp5 文件包含</h1>
+    <div class="container fade-scale">
+        <h1 class="title">Thinkphp5 文件包含</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在复现tp漏洞，sql注入略显鸡肋，但更主要是学习框架漏洞挖掘的思路和方法。跟一跟框架方法实现流程，也算是一种漏洞学习吧。</p>
+                <time datetime="2019-07-26T02:01:36.000Z" itemprop="datePublished" class="page-time">
+  2019-07-26
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#环境搭建"><span class="post-toc-number">2.</span> <span class="post-toc-text">环境搭建</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#漏洞复现"><span class="post-toc-number">3.</span> <span class="post-toc-text">漏洞复现</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#漏洞原理"><span class="post-toc-number">4.</span> <span class="post-toc-text">漏洞原理</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#漏洞分析"><span class="post-toc-number">5.</span> <span class="post-toc-text">漏洞分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#assgin方法执行流程"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">assgin方法执行流程</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#fetch执行流程"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">fetch执行流程</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#漏洞修复"><span class="post-toc-number">6.</span> <span class="post-toc-text">漏洞修复</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-Thinkphp5-文件包含"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">Thinkphp5 文件包含</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-07-26 10:01:36" datetime="2019-07-26T02:01:36.000Z"  itemprop="datePublished">2019-07-26</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在复现tp漏洞，sql注入略显鸡肋，但更主要是学习框架漏洞挖掘的思路和方法。跟一跟框架方法实现流程，也算是一种漏洞学习吧。</p>
 <p>参考文章:<a href="https://mochazz.github.io/2019/04/04/ThinkPHP5%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E4%B9%8B%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB7/#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90" target="_blank" rel="noopener">ThinkPHP5漏洞分析之文件包含(七)</a><br>七月火师傅…介绍比较完全，该篇漏洞算是简单的了，跟一跟变量就可以知道原因，但还是想学习下框架模板解析流程。</p>
 <h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><p><strong>tp版本</strong>：5.0.18</p>
 <p><strong>文件内容</strong></p>
 <ol>
 <li>视图目录下写入index.html模板文件</li>
-<li>index控制器写入当前漏洞测试语句<br><img src="./1.png" srcset="/img/loading.gif" alt=""></li>
+<li>index控制器写入当前漏洞测试语句<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+
+
+</li>
 </ol>
 <h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p>模拟上传功能，public目录下创建shell.jpg</p>
 <p><strong>payload</strong>:<a href="http://127.0.0.1:8899/?cacheFile=shell.jpg" target="_blank" rel="noopener">http://127.0.0.1:8899/?cacheFile=shell.jpg</a></p>
-<p><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./2.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h1 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h1><p>extract变量覆盖、inlucde文件包含不当且可控.</p>
 <h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p><strong><em>分析思路很明确只要跟踪传入的变量即可.但我还是走一遍流程，仔细阅读了tp模板解析时候的操作。</em></strong></p>
 <h2 id="assgin方法执行流程"><a href="#assgin方法执行流程" class="headerlink" title="assgin方法执行流程"></a>assgin方法执行流程</h2><p><strong>assign操作为接收requests-&gt;get()对象，并提取其中的变量，为后续渲染模板提供参数值。</strong></p>
 <p><strong>assign方法</strong>将接收到的参数值存入<code>$this-&gt;data</code>值中，并返回$this对象</p>
 <p>data= <code>$name =&gt; {cacheFIle =&gt; &quot;shell.jpg&quot;}[1]</code></p>
-<p><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
+<p><img src="./3.png" alt=""></p>
 <p>至此<code>$this</code>对象囊括了如下变量信息</p>
-<p><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
+<p><img src="./4.png" alt=""></p>
 <h2 id="fetch执行流程"><a href="#fetch执行流程" class="headerlink" title="fetch执行流程"></a>fetch执行流程</h2><p><strong>/think/view.php fetch()方法</strong>用于解析和获取模板内容。重点关注模板变量<code>$var</code></p>
 <p><code>$var</code>值为<code>$this-&gt;data</code>值传入[<strong>assign方法</strong>的返回值]。跟进第163行中的$method，调用<strong>/library/think/Template.php fetch方法</strong>。</p>
 <p><strong>代码2-25行</strong>执行目的是判断是否存在缓存文件，不存在则编译创建缓存文件。</p>
-<p><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
+<p><img src="./5.png" alt=""></p>
 <p><strong>第29行read()</strong>读取缓存文件.查看具体代码</p>
 <p>extract将第二个参数值设置为<strong>EXTR_OVERWRITE</strong>导致变量覆盖</p>
 <p>将<code>$vars={cacheFIle=&gt;&#39;shell.jpg&#39;}</code>注册为变量 <strong>=&gt;</strong>  <code>$cacheFile=&#39;shell.jpg&#39;;</code> </p>
-<p><code>include</code>之解析<strong>shell.jpg</strong>中的php代码<br><img src="./6.png" srcset="/img/loading.gif" alt=""></p>
+<p><code>include</code>之解析<strong>shell.jpg</strong>中的php代码</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./6.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h1 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h1><p><code>include $cacheFile;</code>  <strong>=&gt;</strong>  <code>include $this-&gt;cacheFile;</code></p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2019/07/27/Thinkphp5-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Thinkphp5 远程代码执行(一)</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2019/07/25/Thinkphp5-SQL%E6%B3%A8%E5%85%A5/">
-                        <span class="hidden-mobile">Thinkphp5 SQL注入(parseWhereItem)</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:26:32.000Z" itemprop="dateUpdated">2020-05-15 16:26:32</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/&title=《Thinkphp5 文件包含》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/&title=《Thinkphp5 文件包含》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Thinkphp5 文件包含》 — osword's blog&url=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/07/27/Thinkphp5-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Thinkphp5 远程代码执行(一)</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/07/25/Thinkphp5-SQL%E6%B3%A8%E5%85%A5/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Thinkphp5 SQL注入(parseWhereItem)</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/&title=《Thinkphp5 文件包含》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/&title=《Thinkphp5 文件包含》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Thinkphp5 文件包含》 — osword's blog&url=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/07/26/Thinkphp5-%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "Thinkphp5 文件包含&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

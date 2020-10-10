@@ -1,241 +1,226 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>浏览器同源策略及其规避方法笔记 - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>浏览器同源策略及其规避方法笔记 | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="基础笔记">
+    <meta name="description" content="前言 最近打算深入了解xss,csrf漏洞学习。既然如此，那么同源策略必然是要搞清楚。本章主要讨论的是浏览器同源策略，也可以认为是前端相互调用同源策略。至于前后台调用同源策略的解决主要依赖XMLHttpRequest，具体可以参考你真的会使用XMLHttpRequest吗？  概述 1995年，同源政策由 Netscape 公司引入浏览器。目前，所有浏览器都实行这个政策。最初，它的含义是指，A网页">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浏览器同源策略及其规避方法笔记">
+<meta property="og:url" content="http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="前言 最近打算深入了解xss,csrf漏洞学习。既然如此，那么同源策略必然是要搞清楚。本章主要讨论的是浏览器同源策略，也可以认为是前端相互调用同源策略。至于前后台调用同源策略的解决主要依赖XMLHttpRequest，具体可以参考你真的会使用XMLHttpRequest吗？  概述 1995年，同源政策由 Netscape 公司引入浏览器。目前，所有浏览器都实行这个政策。最初，它的含义是指，A网页">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/1.png">
+<meta property="article:published_time" content="2019-03-17T11:12:37.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:27:30.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="基础笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/1.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2019-03-17 19:12" pubdate>
-        2019年3月17日 晚上
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      3.4k 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      40
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">浏览器同源策略及其规避方法笔记</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">浏览器同源策略及其规避方法笔记</h1>
+    <div class="container fade-scale">
+        <h1 class="title">浏览器同源策略及其规避方法笔记</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+                <time datetime="2019-03-17T11:12:37.000Z" itemprop="datePublished" class="page-time">
+  2019-03-17
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#概述"><span class="post-toc-number">2.</span> <span class="post-toc-text">概述</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-2-目的"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">1.2 目的</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-3-限制范围"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">1.3 限制范围</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-4具体限制"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">1.4具体限制</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#疑问"><span class="post-toc-number">3.</span> <span class="post-toc-text">疑问</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#src标签"><span class="post-toc-number">4.</span> <span class="post-toc-text">src标签</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#cookie"><span class="post-toc-number">5.</span> <span class="post-toc-text">cookie</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#AJAX"><span class="post-toc-number">6.</span> <span class="post-toc-text">AJAX</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#1-JSONP跨域"><span class="post-toc-number">6.1.</span> <span class="post-toc-text">1.JSONP跨域</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#2-跨域资源共享（CORS）"><span class="post-toc-number">6.2.</span> <span class="post-toc-text">2. 跨域资源共享（CORS）</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#3-WebSocket"><span class="post-toc-number">6.3.</span> <span class="post-toc-text">3. WebSocket</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#iframe（DOM型）"><span class="post-toc-number">7.</span> <span class="post-toc-text">iframe（DOM型）</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#window-name"><span class="post-toc-number">7.1.</span> <span class="post-toc-text">window.name</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-1-片段识别符"><span class="post-toc-number">7.1.1.</span> <span class="post-toc-text">3.1 片段识别符</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-2-window-name"><span class="post-toc-number">7.1.2.</span> <span class="post-toc-text">3.2 window.name</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-3-window-postMessage"><span class="post-toc-number">7.1.3.</span> <span class="post-toc-text">3.3 window.postMessage</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#3-4-LocalStorage"><span class="post-toc-number">7.1.4.</span> <span class="post-toc-text">3.4 LocalStorage</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考链接"><span class="post-toc-number">8.</span> <span class="post-toc-text">参考链接</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-浏览器同源策略及其规避方法笔记"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">浏览器同源策略及其规避方法笔记</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-03-17 19:12:37" datetime="2019-03-17T11:12:37.000Z"  itemprop="datePublished">2019-03-17</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <p>最近打算深入了解xss,csrf漏洞学习。既然如此，那么同源策略必然是要搞清楚。本章主要讨论的是浏览器同源策略，也可以认为是前端相互调用同源策略。至于前后台调用同源策略的解决主要依赖<code>XMLHttpRequest</code>，具体可以参考<a href="https://segmentfault.com/a/1190000004322487" target="_blank" rel="noopener">你真的会使用XMLHttpRequest吗？</a></p>
 </blockquote>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><blockquote>
 <p>1995年，同源政策由 Netscape 公司引入浏览器。目前，所有浏览器都实行这个政策。<br>最初，它的含义是指，A网页设置的 Cookie，B网页不能打开，除非这两个网页”同源”。所谓”同源”指的是”三个相同”。</p>
 </blockquote>
 <p><strong>协议相同</strong><br><strong>域名相同</strong><br><strong>端口相同</strong></p>
-<p>举例来说，<code>http://sub.eth.space/level/flower.html</code>这个网址，协议是http://，域名是sub.eth.space，端口是80（默认端口可以省略）。它的同源情况如下。<br><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
+<p>举例来说，<code>http://sub.eth.space/level/flower.html</code>这个网址，协议是http://，域名是sub.eth.space，端口是80（默认端口可以省略）。它的同源情况如下。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h2 id="1-2-目的"><a href="#1-2-目的" class="headerlink" title="1.2 目的"></a>1.2 目的</h2><p>同源政策的目的，是为了保证用户信息的安全，防止恶意的网站窃取数据。<br>设想这样一种情况：A网站是一家银行，用户登录以后，又去浏览其他网站。如果其他网站可以读取A网站的 Cookie，会发生什么？<br>很显然，如果 Cookie 包含隐私（比如存款总额），这些信息就会泄漏。更可怕的是，Cookie 往往用来保存用户的登录状态，如果用户没有退出登录，其他网站就可以冒充用户，为所欲为。因为浏览器同时还规定，提交表单不受同源政策的限制。<br>由此可见，”同源政策”是必需的，否则 Cookie 可以共享，互联网就毫无安全可言了。</p>
 <h2 id="1-3-限制范围"><a href="#1-3-限制范围" class="headerlink" title="1.3 限制范围"></a>1.3 限制范围</h2><p>随着互联网的发展，”同源政策”越来越严格。目前，如果非同源，共有三种行为受到限制。</p>
 <blockquote>
@@ -245,19 +230,11 @@
 <h2 id="1-4具体限制"><a href="#1-4具体限制" class="headerlink" title="1.4具体限制"></a>1.4具体限制</h2><blockquote>
 <p>我们已经知道了，浏览器会根据同源策略允许或拒绝加载某些资源，但是又一个问题由此而生，我们的网站通常会将静态文件（CSS,JS, 图片）等放置在 CDN 上，那么 CDN 与当前域必然是不同源的，但是神奇的是，这些网站可以正常加载出他们需要的资源并展示给用户，这里为什么又不受同源策略的影响呢？<br>再比如在使用XMLHttpRequest的时候，又会因为同源策略的限制无法发出请求，那么到底什么情况下会触发同源策略呢？总体来说，页面跨域的行为主要会分为三类，<br>分别是：</p>
 </blockquote>
-<pre><code class="hljs pgsql"><span class="hljs-keyword">Cross</span>-origin <span class="hljs-keyword">write</span>
-<span class="hljs-keyword">Cross</span>-origin <span class="hljs-keyword">read</span>
-<span class="hljs-keyword">Cross</span>-origin embedding</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Cross-origin write</span><br><span class="line">Cross-origin read</span><br><span class="line">Cross-origin embedding</span><br></pre></td></tr></table></figure>
 
 
 <p>在这三种行为之中，通常情况下只有<code>Cross-origin read</code>是不被允许的，其余的两种是允许的，例如<code>Cross-origin write</code>中的<code>links</code>，重定向以及表单提交，<code>Cross-origin embedding</code>中的资源嵌入。<br>那么问题又来了，何种资源是允许嵌入的呢？MDN 文档中也给出了一些例子<a href="https://developer.mozilla.org/zh-CN/docs/Web/Security/Same-origin_policy#%E8%B7%A8%E6%BA%90%E7%BD%91%E7%BB%9C%E8%AE%BF%E9%97%AE" target="_blank" rel="noopener">MDN</a>：</p>
-<pre><code class="hljs xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"..."</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>标签嵌入跨域脚本。语法错误信息只能在同源脚本中捕捉到。
-<span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"..."</span>&gt;</span>标签嵌入 CSS。由于 CSS 的松散的语法规则，CSS 的跨域需要一个设置正确的Content-Type消息头，不同浏览器有不同的限制。
-<span class="hljs-tag">&lt;<span class="hljs-name">img</span>&gt;</span>嵌入图片。支持的图片格式包括 PNG,JPEG,GIF,BMP,SVG,...
-<span class="hljs-tag">&lt;<span class="hljs-name">video</span>&gt;</span> 和 <span class="hljs-tag">&lt;<span class="hljs-name">audio</span>&gt;</span>嵌入多媒体资源。
-<span class="hljs-tag">&lt;<span class="hljs-name">object</span>&gt;</span>, <span class="hljs-tag">&lt;<span class="hljs-name">embed</span>&gt;</span> 和 <span class="hljs-tag">&lt;<span class="hljs-name">applet</span>&gt;</span>的插件。
-@font-face引入的字体。一些浏览器允许跨域字体（cross-origin fonts），一些需要同源字体（same-origin fonts）。
-<span class="hljs-tag">&lt;<span class="hljs-name">frame</span>&gt;</span>和<span class="hljs-tag">&lt;<span class="hljs-name">iframe</span>&gt;</span>载入的任何资源。站点可以使用 X-Frame-Options 消息头来阻止这种形式的跨域交互。</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src&#x3D;&quot;...&quot;&gt;&lt;&#x2F;script&gt;标签嵌入跨域脚本。语法错误信息只能在同源脚本中捕捉到。</span><br><span class="line">&lt;link rel&#x3D;&quot;stylesheet&quot; href&#x3D;&quot;...&quot;&gt;标签嵌入 CSS。由于 CSS 的松散的语法规则，CSS 的跨域需要一个设置正确的Content-Type消息头，不同浏览器有不同的限制。</span><br><span class="line">&lt;img&gt;嵌入图片。支持的图片格式包括 PNG,JPEG,GIF,BMP,SVG,...</span><br><span class="line">&lt;video&gt; 和 &lt;audio&gt;嵌入多媒体资源。</span><br><span class="line">&lt;object&gt;, &lt;embed&gt; 和 &lt;applet&gt;的插件。</span><br><span class="line">@font-face引入的字体。一些浏览器允许跨域字体（cross-origin fonts），一些需要同源字体（same-origin fonts）。</span><br><span class="line">&lt;frame&gt;和&lt;iframe&gt;载入的任何资源。站点可以使用 X-Frame-Options 消息头来阻止这种形式的跨域交互。</span><br></pre></td></tr></table></figure>
 <p><strong>这样一来，可以通过<code>&lt;img&gt;</code>标签加载文件而不受同源策略的影响这件事情就明白了。</strong></p>
 <h1 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h1><blockquote>
 <p>其实我看到这里就开始产生疑问，既然有浏览器同源策略限制，<br>1.xss是怎么传递cookie。<br>2.跨域的资源是怎么读取的。<br>3.服务端是怎么能够读取到浏览器传递的header信息。<br>接下来就要谈一谈同源策略的规避方法</p>
@@ -273,74 +250,42 @@
 <p><code>Set-Cookie: key=value; domain=.example.com; path=/</code></p>
 <p>这样的话，二级域名和三级域名不用做任何设置，都可以读取这个Cookie。</p>
 <h1 id="AJAX"><a href="#AJAX" class="headerlink" title="AJAX"></a>AJAX</h1><p><em>同源政策规定，AJAX请求只能发给同源的网址，否则就报错。</em><br>除了架设服务器代理（浏览器请求同源服务器，再由后者请求外部服务），有三种方法规避这个限制。</p>
-<pre><code class="hljs ebnf"><span class="hljs-attribute">JSONP</span>
-<span class="hljs-attribute">WebSocket</span>
-<span class="hljs-attribute">CORS</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">JSONP</span><br><span class="line">WebSocket</span><br><span class="line">CORS</span><br></pre></td></tr></table></figure>
 
 
 
 <h2 id="1-JSONP跨域"><a href="#1-JSONP跨域" class="headerlink" title="1.JSONP跨域"></a>1.JSONP跨域</h2><p>原理：<code>&lt;script&gt;</code>是可以跨域的，而且在跨域脚本中可以直接回调当前脚本的函数<br>script标签是可以加载异域的JavaScript并执行的，通过预先设定好的callback函数来实现和母页面的交互。它有一个大名，叫做JSONP跨域，JSONP是JSON with Padding的略称。它是一个非官方的协议，明明是加载script，为啥和JSON扯上关系呢？原来就是这个callback函数，对它的使用有一个典型的方式，就是通过JSON来传参，即将JSON数据填充进回调函数，这就是JSONP的JSON+Padding的含义。JSONP只支持GET请求。<br><em>前端代码</em></p>
-<pre><code class="hljs xml">/<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">javascript</span>"&gt;</span>/`
-<span class="actionscript">    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">dosomething</span><span class="hljs-params">(jsondata)</span></span>&#123;</span>
-<span class="actionscript">        <span class="hljs-comment">//处理获得的json数据</span></span>
-    &#125;
-<span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>`
-
-<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"http://haorooms.com/data.php?callback=dosomething"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&lt;script javascript&quot;&gt;&#x2F;&#96;</span><br><span class="line">    function dosomething(jsondata)&#123;</span><br><span class="line">        &#x2F;&#x2F;处理获得的json数据</span><br><span class="line">    &#125;</span><br><span class="line">&lt;&#x2F;script&gt;&#96;</span><br><span class="line"></span><br><span class="line">&lt;script src&#x3D;&quot;http:&#x2F;&#x2F;haorooms.com&#x2F;data.php?callback&#x3D;dosomething&quot;&gt;&lt;&#x2F;script&gt;</span><br></pre></td></tr></table></figure>
 
 <p><em>后台代码：</em></p>
-<pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
-<span class="php">$callback = $_GET[<span class="hljs-string">'callback'</span>];<span class="hljs-comment">//得到回调函数名</span></span>
-<span class="php">$data = <span class="hljs-keyword">array</span>(<span class="hljs-string">'a'</span>,<span class="hljs-string">'b'</span>,<span class="hljs-string">'c'</span>);<span class="hljs-comment">//要返回的数据</span></span>
-<span class="php"><span class="hljs-keyword">echo</span> $callback.<span class="hljs-string">'('</span>.json_encode($data).<span class="hljs-string">')'</span>;<span class="hljs-comment">//输出</span></span>
-
-<span class="php"><span class="hljs-meta">?&gt;</span></span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$callback &#x3D; $_GET[&#39;callback&#39;];&#x2F;&#x2F;得到回调函数名</span><br><span class="line">$data &#x3D; array(&#39;a&#39;,&#39;b&#39;,&#39;c&#39;);&#x2F;&#x2F;要返回的数据</span><br><span class="line">echo $callback.&#39;(&#39;.json_encode($data).&#39;)&#39;;&#x2F;&#x2F;输出</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
 
 
 <h2 id="2-跨域资源共享（CORS）"><a href="#2-跨域资源共享（CORS）" class="headerlink" title="2. 跨域资源共享（CORS）"></a>2. 跨域资源共享（CORS）</h2><p><em>原理</em>:服务器设置<code>Access-Control-Allow-Origin</code> HTTP响应头之后，浏览器将会允许跨域请求<br>CORS是HTML5标准提出的跨域资源共享<code>(Cross Origin Resource Share)</code>，支持GET、POST等所有HTTP请求。CORS需要服务器端设置Access-Control-Allow-Origin头，否则浏览器会因为安全策略拦截返回的信息。</p>
-<pre><code class="hljs less"><span class="hljs-attribute">Access-Control-Allow-Origin</span>: *              # 允许所有域名访问，或者
-<span class="hljs-attribute">Access-Control-Allow-Origin</span>: <span class="hljs-attribute">http</span>:<span class="hljs-comment">//a.com   # 只允许所有域名访问</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Access-Control-Allow-Origin: *              # 允许所有域名访问，或者</span><br><span class="line">Access-Control-Allow-Origin: http:&#x2F;&#x2F;a.com   # 只允许所有域名访问</span><br></pre></td></tr></table></figure>
 <p>CORS又分为简单跨域和非简单跨域请求，有关CORS的详细介绍请看阮一峰的跨域资源共享CORS 详解，里面讲解的非常详细。</p>
 <h2 id="3-WebSocket"><a href="#3-WebSocket" class="headerlink" title="3. WebSocket"></a>3. WebSocket</h2><p><code>WebSocket</code>是一种通信协议，使用ws://（非加密）和wss://（加密）作为协议前缀。该协议不实行同源政策，只要服务器支持，就可以通过它进行跨源通信。<br>下面是一个例子，浏览器发出的WebSocket请求的头信息（摘自维基百科）。</p>
-<pre><code class="hljs http"><span class="hljs-keyword">GET</span> <span class="hljs-string">/chat</span> HTTP/1.1
-<span class="hljs-attribute">Host</span>: server.example.com
-<span class="hljs-attribute">Upgrade</span>: websocket
-<span class="hljs-attribute">Connection</span>: Upgrade
-<span class="hljs-attribute">Sec-WebSocket-Key</span>: x3JJHMbDL1EzLkh9GBhXDw==
-<span class="hljs-attribute">Sec-WebSocket-Protocol</span>: chat, superchat
-<span class="hljs-attribute">Sec-WebSocket-Version</span>: 13
-<span class="hljs-attribute">Origin</span>: http://example.com</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET &#x2F;chat HTTP&#x2F;1.1</span><br><span class="line">Host: server.example.com</span><br><span class="line">Upgrade: websocket</span><br><span class="line">Connection: Upgrade</span><br><span class="line">Sec-WebSocket-Key: x3JJHMbDL1EzLkh9GBhXDw&#x3D;&#x3D;</span><br><span class="line">Sec-WebSocket-Protocol: chat, superchat</span><br><span class="line">Sec-WebSocket-Version: 13</span><br><span class="line">Origin: http:&#x2F;&#x2F;example.com</span><br></pre></td></tr></table></figure>
 
 <p>上面代码中，有一个字段是<code>Origin</code>，表示该请求的请求源（<code>origin</code>），即发自哪个域名。<br>正是因为有了<code>Origin</code>这个字段，所以<code>WebSocket</code>才没有实行同源政策。因为服务器可以根据这个字段，判断是否许可本次通信。如果该域名在白名单内，服务器就会做出如下回应。</p>
-<pre><code class="hljs routeros">HTTP/1.1 101 Switching Protocols
-Upgrade: websocket
-Connection: Upgrade
-Sec-WebSocket-Accept: HSmrc0sMlYUkAGmm5OPpG2HaGWk=
-Sec-WebSocket-Protocol: chat</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">HTTP&#x2F;1.1 101 Switching Protocols</span><br><span class="line">Upgrade: websocket</span><br><span class="line">Connection: Upgrade</span><br><span class="line">Sec-WebSocket-Accept: HSmrc0sMlYUkAGmm5OPpG2HaGWk&#x3D;</span><br><span class="line">Sec-WebSocket-Protocol: chat</span><br></pre></td></tr></table></figure>
 
 
 
 
 
 <h1 id="iframe（DOM型）"><a href="#iframe（DOM型）" class="headerlink" title="iframe（DOM型）"></a>iframe（DOM型）</h1><p>如果两个网页不同源，就无法拿到对方的DOM。典型的例子是<code>iframe</code>窗口和<code>window.open</code>方法打开的窗口，它们与父窗口无法通信。<br>比如，父窗口运行下面的命令，如果iframe窗口不是同源，就会报错。</p>
-<pre><code class="hljs dart"><span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">"myIFrame"</span>).contentWindow.<span class="hljs-built_in">document</span>
-<span class="hljs-comment">// Uncaught DOMException: Blocked a frame from accessing a cross-origin frame.</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">document.getElementById(&quot;myIFrame&quot;).contentWindow.document</span><br><span class="line">&#x2F;&#x2F; Uncaught DOMException: Blocked a frame from accessing a cross-origin frame.</span><br></pre></td></tr></table></figure>
 <p>上面命令中，父窗口想获取子窗口的DOM，因为跨源导致报错。<br>反之亦然，子窗口获取主窗口的DOM也会报错。</p>
 <p><code>window.parent.document.body</code><br>// 报错</p>
 <p>如果两个窗口一级域名相同，只是二级域名不同，那么设置上一节介绍的document.domain属性，就可以规避同源政策，拿到DOM。<br>对于完全不同源的网站，目前有三种方法，可以解决跨域窗口的通信问题。<br>片段识别符（fragment identifier）</p>
 <h2 id="window-name"><a href="#window-name" class="headerlink" title="window.name"></a>window.name</h2><p>跨文档通信API（<code>Cross-document messaging</code>）</p>
 <h3 id="3-1-片段识别符"><a href="#3-1-片段识别符" class="headerlink" title="3.1 片段识别符"></a>3.1 片段识别符</h3><p>片段标识符（fragment identifier）指的是，URL的#号后面的部分，比如<code>http://example.com/x.html#fragment</code>的<code>#fragment</code>。如果只是改变片段标识符，页面不会重新刷新。<br>父窗口可以把信息，写入子窗口的片段标识符。</p>
-<pre><code class="hljs dart"><span class="hljs-keyword">var</span> src = originURL + <span class="hljs-string">'#'</span> + data;
-<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">'myIFrame'</span>).src = src;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var src &#x3D; originURL + &#39;#&#39; + data;</span><br><span class="line">document.getElementById(&#39;myIFrame&#39;).src &#x3D; src;</span><br></pre></td></tr></table></figure>
 
 <p>子窗口通过监听<code>hashchange</code>事件得到通知。</p>
-<pre><code class="hljs javascript"><span class="hljs-built_in">window</span>.onhashchange = checkMessage;
-
-<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">checkMessage</span>(<span class="hljs-params"></span>) </span>&#123;
-  <span class="hljs-keyword">var</span> message = <span class="hljs-built_in">window</span>.location.hash;
-  <span class="hljs-comment">// ...</span>
-&#125;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">window.onhashchange &#x3D; checkMessage;</span><br><span class="line"></span><br><span class="line">function checkMessage() &#123;</span><br><span class="line">  var message &#x3D; window.location.hash;</span><br><span class="line">  &#x2F;&#x2F; ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>同样的，子窗口也可以改变父窗口的片段标识符。</p>
 <p><code>parent.location.href= target + &quot;#&quot; + hash;</code></p>
@@ -352,51 +297,27 @@ Sec-WebSocket-Protocol: chat</code></pre>
 <p><code>var data = document.getElementById(&#39;myFrame&#39;).contentWindow.name;</code></p>
 <p>这种方法的优点是，<code>window.name</code>容量很大，可以放置非常长的字符串；缺点是必须监听子窗口window.name属性的变化，影响网页性能。</p>
 <h3 id="3-3-window-postMessage"><a href="#3-3-window-postMessage" class="headerlink" title="3.3 window.postMessage"></a>3.3 window.postMessage</h3><p>该方法只解决了前端两个窗口的通信，但无法解决前后台调用的跨域问题<br>上面两种方法都属于破解，HTML5为了解决这个问题，引入了一个全新的API：跨文档通信 <code>API（Cross-document messaging）</code>。<br>这个API为window对象新增了一个window.postMessage方法，允许跨窗口通信，不论这两个窗口是否同源。<br>举例来说，父窗口<code>http://aaa.com</code>向子窗口<code>http://bbb.com</code>发消息，调用<code>postMessage</code>方法就可以了。</p>
-<pre><code class="hljs dart"><span class="hljs-keyword">var</span> popup = <span class="hljs-built_in">window</span>.open(<span class="hljs-string">'http://bbb.com'</span>, <span class="hljs-string">'title'</span>);
-popup.postMessage(<span class="hljs-string">'Hello World!'</span>, <span class="hljs-string">'http://bbb.com'</span>);</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var popup &#x3D; window.open(&#39;http:&#x2F;&#x2F;bbb.com&#39;, &#39;title&#39;);</span><br><span class="line">popup.postMessage(&#39;Hello World!&#39;, &#39;http:&#x2F;&#x2F;bbb.com&#39;);</span><br></pre></td></tr></table></figure>
 <p><code>postMessage</code>方法的第一个参数是具体的信息内容，第二个参数是接收消息的窗口的源（origin），即”协议 + 域名 + 端口”。也可以设为*，表示不限制域名，向所有窗口发送。<br>子窗口向父窗口发送消息的写法类似。</p>
 <p><code>window.opener.postMessage(&#39;Nice to see you&#39;, &#39;http://aaa.com&#39;);</code></p>
 <p>父窗口和子窗口都可以通过message事件，监听对方的消息。</p>
-<pre><code class="hljs javascript"><span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">'message'</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>) </span>&#123;
-  <span class="hljs-built_in">console</span>.log(e.data);
-&#125;,<span class="hljs-literal">false</span>);</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">window.addEventListener(&#39;message&#39;, function(e) &#123;</span><br><span class="line">  console.log(e.data);</span><br><span class="line">&#125;,false);</span><br></pre></td></tr></table></figure>
 
 <p>message事件的事件对象event，提供以下三个属性。</p>
-<pre><code class="hljs mel"><span class="hljs-keyword">event</span>.<span class="hljs-keyword">source</span>：发送消息的窗口
-<span class="hljs-keyword">event</span>.origin: 消息发向的网址
-<span class="hljs-keyword">event</span>.data: 消息内容</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">event.source：发送消息的窗口</span><br><span class="line">event.origin: 消息发向的网址</span><br><span class="line">event.data: 消息内容</span><br></pre></td></tr></table></figure>
 <p>下面的例子是，子窗口通过<code>event.source</code>属性引用父窗口，然后发送消息。</p>
-<pre><code class="hljs reasonml">window.add<span class="hljs-constructor">EventListener('<span class="hljs-params">message</span>', <span class="hljs-params">receiveMessage</span>)</span>;
-<span class="hljs-keyword">function</span> receive<span class="hljs-constructor">Message(<span class="hljs-params">event</span>)</span> &#123;
-  event.source.post<span class="hljs-constructor">Message('Nice <span class="hljs-params">to</span> <span class="hljs-params">see</span> <span class="hljs-params">you</span>!', '<span class="hljs-operator">*</span>')</span>;
-&#125;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">window.addEventListener(&#39;message&#39;, receiveMessage);</span><br><span class="line">function receiveMessage(event) &#123;</span><br><span class="line">  event.source.postMessage(&#39;Nice to see you!&#39;, &#39;*&#39;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><code>event.origin</code>属性可以过滤不是发给本窗口的消息。</p>
-<pre><code class="hljs mel"><span class="hljs-keyword">window</span>.addEventListener(<span class="hljs-string">'message'</span>, receiveMessage);
-function receiveMessage(<span class="hljs-keyword">event</span>) &#123;
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">event</span>.origin !== <span class="hljs-string">'http://aaa.com'</span>) <span class="hljs-keyword">return</span>;
-  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">event</span>.data === <span class="hljs-string">'Hello World'</span>) &#123;
-      <span class="hljs-keyword">event</span>.<span class="hljs-keyword">source</span>.postMessage(<span class="hljs-string">'Hello'</span>, <span class="hljs-keyword">event</span>.origin);
-  &#125; <span class="hljs-keyword">else</span> &#123;
-    console.<span class="hljs-keyword">log</span>(<span class="hljs-keyword">event</span>.data);
-  &#125;
-&#125;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">window.addEventListener(&#39;message&#39;, receiveMessage);</span><br><span class="line">function receiveMessage(event) &#123;</span><br><span class="line">  if (event.origin !&#x3D;&#x3D; &#39;http:&#x2F;&#x2F;aaa.com&#39;) return;</span><br><span class="line">  if (event.data &#x3D;&#x3D;&#x3D; &#39;Hello World&#39;) &#123;</span><br><span class="line">      event.source.postMessage(&#39;Hello&#39;, event.origin);</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    console.log(event.data);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
 <h3 id="3-4-LocalStorage"><a href="#3-4-LocalStorage" class="headerlink" title="3.4 LocalStorage"></a>3.4 LocalStorage</h3><p>通过window.postMessage，读写其他窗口的 LocalStorage 也成为了可能。<br>下面是一个例子，主窗口写入iframe子窗口的localStorage。</p>
-<pre><code class="hljs reasonml">window.onmessage = <span class="hljs-keyword">function</span>(e) &#123;
-  <span class="hljs-keyword">if</span> (e.origin !== 'http:<span class="hljs-comment">//bbb.com') &#123;</span>
-    return;
-  &#125;
-  var payload = <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">JSON</span>.</span></span>parse(e.data);
-  localStorage.set<span class="hljs-constructor">Item(<span class="hljs-params">payload</span>.<span class="hljs-params">key</span>, JSON.<span class="hljs-params">stringify</span>(<span class="hljs-params">payload</span>.<span class="hljs-params">data</span>)</span>);
-&#125;;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">window.onmessage &#x3D; function(e) &#123;</span><br><span class="line">  if (e.origin !&#x3D;&#x3D; &#39;http:&#x2F;&#x2F;bbb.com&#39;) &#123;</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line">  var payload &#x3D; JSON.parse(e.data);</span><br><span class="line">  localStorage.setItem(payload.key, JSON.stringify(payload.data));</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>上面代码中，子窗口将父窗口发来的消息，写入自己的<code>LocalStorage</code>。<br>父窗口发送消息的代码如下。</p>
-<pre><code class="hljs reasonml">var win = document.get<span class="hljs-constructor">ElementsByTagName('<span class="hljs-params">iframe</span>')</span><span class="hljs-literal">[<span class="hljs-number">0</span>]</span>.contentWindow;
-var obj = &#123; name: 'Jack' &#125;;
-win.post<span class="hljs-constructor">Message(JSON.<span class="hljs-params">stringify</span>(&#123;<span class="hljs-params">key</span>: '<span class="hljs-params">storage</span>', <span class="hljs-params">data</span>: <span class="hljs-params">obj</span>&#125;)</span>, 'http:<span class="hljs-comment">//bbb.com');</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var win &#x3D; document.getElementsByTagName(&#39;iframe&#39;)[0].contentWindow;</span><br><span class="line">var obj &#x3D; &#123; name: &#39;Jack&#39; &#125;;</span><br><span class="line">win.postMessage(JSON.stringify(&#123;key: &#39;storage&#39;, data: obj&#125;), &#39;http:&#x2F;&#x2F;bbb.com&#39;);</span><br></pre></td></tr></table></figure>
 
 
 
@@ -406,258 +327,294 @@ win.post<span class="hljs-constructor">Message(JSON.<span class="hljs-params">st
 
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.anquanke.com/post/id/86078" target="_blank" rel="noopener">漫谈同源策略攻防</a><br><a href="https://lightless.me/archives/review-SOP.html" target="_blank" rel="noopener">再谈同源策略</a><br><a href="https://xz.aliyun.com/t/224" target="_blank" rel="noopener">跨域方法总结</a></p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/%E5%9F%BA%E7%A1%80%E7%AC%94%E8%AE%B0/">基础笔记</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2019/03/18/create-function%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">create_function任意代码执行</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/">
-                        <span class="hidden-mobile">CBC字节翻转攻击</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:27:30.000Z" itemprop="dateUpdated">2020-05-15 16:27:30</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%AC%94%E8%AE%B0/" rel="tag">基础笔记</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=《浏览器同源策略及其规避方法笔记》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=《浏览器同源策略及其规避方法笔记》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《浏览器同源策略及其规避方法笔记》 — osword's blog&url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/03/18/create-function%E4%BB%BB%E6%84%8F%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">create_function任意代码执行</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/03/16/CBC%E5%AD%97%E8%8A%82%E7%BF%BB%E8%BD%AC%E6%94%BB%E5%87%BB/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">CBC字节翻转攻击</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=《浏览器同源策略及其规避方法笔记》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&title=《浏览器同源策略及其规避方法笔记》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《浏览器同源策略及其规避方法笔记》 — osword's blog&url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/03/17/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%90%8C%E6%BA%90%E7%AD%96%E7%95%A5%E5%8F%8A%E5%85%B6%E8%A7%84%E9%81%BF%E6%96%B9%E6%B3%95%E7%AC%94%E8%AE%B0/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "浏览器同源策略及其规避方法笔记&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

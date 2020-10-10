@@ -1,568 +1,655 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>[CTF]2020RCTF Swoole题解学习笔记 - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>[CTF]2020RCTF Swoole题解学习笔记 | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="CTF">
+    <meta name="description" content="swoole12345678910111213141516171819202122232425262728293031323334#!&#x2F;usr&#x2F;bin&#x2F;env php&lt;?phpSwoole\Runtime::enableCoroutine($flags &#x3D; SWOOLE_HOOK_ALL);$http &#x3D; new Swoole\Http\Server(&quot;0.0.0.0&quot;, 9501);$ht">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[CTF]2020RCTF Swoole题解学习笔记">
+<meta property="og:url" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="swoole12345678910111213141516171819202122232425262728293031323334#!&#x2F;usr&#x2F;bin&#x2F;env php&lt;?phpSwoole\Runtime::enableCoroutine($flags &#x3D; SWOOLE_HOOK_ALL);$http &#x3D; new Swoole\Http\Server(&quot;0.0.0.0&quot;, 9501);$ht">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602015820440.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602013818665.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602013926421.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200601223955225.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602014439775.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602020313312.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602142424786.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602142840267.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602143204049.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602144212131.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/swoole.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200601215117226.png">
+<meta property="article:published_time" content="2020-06-02T07:56:26.000Z">
+<meta property="article:modified_time" content="2020-06-02T09:11:12.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/image-20200602015820440.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2020-06-02 15:56" pubdate>
-        2020年6月2日 下午
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      781 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      10
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">[CTF]2020RCTF Swoole题解学习笔记</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">[CTF]2020RCTF Swoole题解学习笔记</h1>
+    <div class="container fade-scale">
+        <h1 class="title">[CTF]2020RCTF Swoole题解学习笔记</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="swoole"><a href="#swoole" class="headerlink" title="swoole"></a>swoole</h1><pre><code class="hljs php"><span class="hljs-comment">#!/usr/bin/env php</span>
-<span class="hljs-meta">&lt;?php</span>
-Swoole\Runtime::enableCoroutine($flags = SWOOLE_HOOK_ALL);
-$http = <span class="hljs-keyword">new</span> Swoole\Http\Server(<span class="hljs-string">"0.0.0.0"</span>, <span class="hljs-number">9501</span>);
-$http-&gt;on(<span class="hljs-string">"request"</span>,
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-params">(Swoole\Http\Request $request, Swoole\Http\Response $response)</span> </span>&#123;
-        Swoole\Runtime::enableCoroutine();
-        $response-&gt;header(<span class="hljs-string">'Content-Type'</span>, <span class="hljs-string">'text/plain'</span>);
-        <span class="hljs-comment">// $response-&gt;sendfile('/flag');</span>
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>($request-&gt;get[<span class="hljs-string">'phpinfo'</span>])) &#123;
-            <span class="hljs-comment">// Prevent racing condition</span>
-            <span class="hljs-comment">// ob_start();phpinfo();</span>
-            <span class="hljs-comment">// return $response-&gt;end(ob_get_clean());</span>
-            <span class="hljs-keyword">return</span> $response-&gt;sendfile(<span class="hljs-string">'phpinfo.txt'</span>);
-        &#125;
-        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>($request-&gt;get[<span class="hljs-string">'code'</span>])) &#123;
-            <span class="hljs-keyword">try</span> &#123;
-                $code = $request-&gt;get[<span class="hljs-string">'code'</span>];
-                <span class="hljs-keyword">if</span> (!preg_match(<span class="hljs-string">'/\x00/'</span>, $code)) &#123;
-                    $a = unserialize($code);
-                    $a();
-                    $a = <span class="hljs-keyword">null</span>;
-                &#125;
-            &#125; <span class="hljs-keyword">catch</span> (\Throwable $e) &#123;
-                var_dump($code);
-                var_dump($e-&gt;getMessage());
-                <span class="hljs-comment">// do nothing</span>
-            &#125;
-            <span class="hljs-keyword">return</span> $response-&gt;end(<span class="hljs-string">'Done'</span>);
-        &#125;
-        $response-&gt;sendfile(<span class="hljs-keyword">__FILE__</span>);
-    &#125;
-);
-$http-&gt;start();</code></pre>
+                <time datetime="2020-06-02T07:56:26.000Z" itemprop="datePublished" class="page-time">
+  2020-06-02
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#swoole"><span class="post-toc-number">1.</span> <span class="post-toc-text">swoole</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#POP"><span class="post-toc-number">2.</span> <span class="post-toc-text">POP</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#总结"><span class="post-toc-number">3.</span> <span class="post-toc-text">总结</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考链接"><span class="post-toc-number">4.</span> <span class="post-toc-text">参考链接</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-CTF-2020RCTF-Swoole题解学习笔记"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">[CTF]2020RCTF Swoole题解学习笔记</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2020-06-02 15:56:26" datetime="2020-06-02T07:56:26.000Z"  itemprop="datePublished">2020-06-02</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="swoole"><a href="#swoole" class="headerlink" title="swoole"></a>swoole</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env php</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">Swoole\Runtime::enableCoroutine($flags = SWOOLE_HOOK_ALL);</span><br><span class="line">$http = <span class="keyword">new</span> Swoole\Http\Server(<span class="string">"0.0.0.0"</span>, <span class="number">9501</span>);</span><br><span class="line">$http-&gt;on(<span class="string">"request"</span>,</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="params">(Swoole\Http\Request $request, Swoole\Http\Response $response)</span> </span>&#123;</span><br><span class="line">        Swoole\Runtime::enableCoroutine();</span><br><span class="line">        $response-&gt;header(<span class="string">'Content-Type'</span>, <span class="string">'text/plain'</span>);</span><br><span class="line">        <span class="comment">// $response-&gt;sendfile('/flag');</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>($request-&gt;get[<span class="string">'phpinfo'</span>])) &#123;</span><br><span class="line">            <span class="comment">// Prevent racing condition</span></span><br><span class="line">            <span class="comment">// ob_start();phpinfo();</span></span><br><span class="line">            <span class="comment">// return $response-&gt;end(ob_get_clean());</span></span><br><span class="line">            <span class="keyword">return</span> $response-&gt;sendfile(<span class="string">'phpinfo.txt'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>($request-&gt;get[<span class="string">'code'</span>])) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                $code = $request-&gt;get[<span class="string">'code'</span>];</span><br><span class="line">                <span class="keyword">if</span> (!preg_match(<span class="string">'/\x00/'</span>, $code)) &#123;</span><br><span class="line">                    $a = unserialize($code);</span><br><span class="line">                    $a();</span><br><span class="line">                    $a = <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (\Throwable $e) &#123;</span><br><span class="line">                var_dump($code);</span><br><span class="line">                var_dump($e-&gt;getMessage());</span><br><span class="line">                <span class="comment">// do nothing</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> $response-&gt;end(<span class="string">'Done'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        $response-&gt;sendfile(<span class="keyword">__FILE__</span>);</span><br><span class="line">    &#125;</span><br><span class="line">);</span><br><span class="line">$http-&gt;start();</span><br></pre></td></tr></table></figure>
 
 <p>以上代码执行反序列化，且会以函数的方式调用类，触发<code>__invoke</code>方法.全局搜索后在ObjectProxy中声明了该函数.且此处的利用可以实例化对象或通过<code>[对象,&#39;方法&#39;]</code>数组的形式调用类的无参数方法。</p>
-<p><img src="./image-20200602015820440.png" srcset="/img/loading.gif" alt="image-20200602015820440"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200602015820440.png" alt="image-20200602015820440" title="">
+                </div>
+                <div class="image-caption">image-20200602015820440</div>
+            </figure>
+
+
+
 <p>在来看该题考点是利用反序列化修改PDO连接设置，将MYSQL_ATTR_LOCAL_INFILE赋值为1,允许外部读取客户端文件，利用此就能够使用Rouge MySQL Server接收local file。@zsx师傅发现这里若使用mysqli在设置配置参数之后不马上连接，数据库配置会丢失。（<a href="https://github.com/swoole/library/issues/34）" target="_blank" rel="noopener">https://github.com/swoole/library/issues/34）</a></p>
 <p>反序列化思路</p>
 <ol>
 <li>实例化生成PDOPool实例</li>
 <li>PDOPool 调用get方法连接数据库</li>
 </ol>
-<p><img src="./image-20200602013818665.png" srcset="/img/loading.gif" alt="image-20200602013818665"></p>
-<p>首先反序列化操作是无法直接调用__construct魔术方法</p>
-<p><img src="./image-20200602013926421.png" srcset="/img/loading.gif" alt="image-20200602013926421"></p>
-<p>所以全局搜索到漏洞点，ConnectionPool::make方法中将类变量赋值如下，就能够调用<code>PDOPool::__construct</code></p>
-<pre><code class="hljs php"><span class="hljs-keyword">$this</span>-&gt;proxy=<span class="hljs-string">'new PDOPool'</span>;
-<span class="hljs-keyword">$this</span>-&gt;constructor=<span class="hljs-keyword">new</span> PDOConfig();</code></pre>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200602013818665.png" alt="image-20200602013818665" title="">
+                </div>
+                <div class="image-caption">image-20200602013818665</div>
+            </figure>
 
-<p><img src="./image-20200601223955225.png" srcset="/img/loading.gif" alt="image-20200601223955225"></p>
+
+
+<p>首先反序列化操作是无法直接调用__construct魔术方法</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200602013926421.png" alt="image-20200602013926421" title="">
+                </div>
+                <div class="image-caption">image-20200602013926421</div>
+            </figure>
+
+
+
+<p>所以全局搜索到漏洞点，ConnectionPool::make方法中将类变量赋值如下，就能够调用<code>PDOPool::__construct</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;proxy=<span class="string">'new PDOPool'</span>;</span><br><span class="line"><span class="keyword">$this</span>-&gt;constructor=<span class="keyword">new</span> PDOConfig();</span><br></pre></td></tr></table></figure>
+
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200601223955225.png" alt="image-20200601223955225" title="">
+                </div>
+                <div class="image-caption">image-20200601223955225</div>
+            </figure>
+
 <p>往上溯源<code>$this-&gt;proxy、$this-&gt;constructor</code>,发现make方法在该类的get函数中调用.这里也有个坑点，$this-&gt;pool原值为Channel类，底层限制了无法序列化。需要使用其他类代替且有pop函数。</p>
-<p><img src="./image-20200602014439775.png" srcset="/img/loading.gif" alt="image-20200602014439775"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200602014439775.png" alt="image-20200602014439775" title="">
+                </div>
+                <div class="image-caption">image-20200602014439775</div>
+            </figure>
+
+
+
 <p>分析到这我的想法是直接通过<code>[new \Swoole\ConnectionPool(function () { }, 0, &#39;\\Swoole\\Database\\PDOPool&#39;),&#39;get&#39;]</code>直接调用<code>ConnectionPool::get</code>方法.通过此可以生成PDOPool实例，<strong>但是仅靠PDOPool和PDOConfig是无法建立数据连接</strong>。</p>
-<p><img src="./image-20200602020313312.png" srcset="/img/loading.gif" alt="image-20200602020313312"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200602020313312.png" alt="image-20200602020313312" title="">
+                </div>
+                <div class="image-caption">image-20200602020313312</div>
+            </figure>
+
 <p>那要怎么样才能让新建的PDOPool实例，去连接数据库.</p>
 <p>看swoole 提供的例子，可以看到<code>PDOPool</code>需要在调用一次<code>get()</code>方法，且这里需要传入<code>PDOProxy::class</code>才能够成功连接数据库。(这里看ConnectionPool的子类PDOproxy的构造方法)</p>
-<p><img src="./image-20200602142424786.png" srcset="/img/loading.gif" alt="image-20200602142424786"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200602142424786.png" alt="image-20200602142424786" title="">
+                </div>
+                <div class="image-caption">image-20200602142424786</div>
+            </figure>
+
+
+
 <p>看EXP中的Part C部分。</p>
-<p><img src="./image-20200602142840267.png" srcset="/img/loading.gif" alt="image-20200602142840267"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200602142840267.png" alt="image-20200602142840267" title="">
+                </div>
+                <div class="image-caption">image-20200602142840267</div>
+            </figure>
+
+
+
 <ol>
 <li>以下两行会调用PDOProxy::reconnect函数，通过<code>$constructor()</code>能够调用<code>\Swoole\ConnectionPool::get()</code>函数，继而实例化出且重新赋值了__object为PDOPool实例.</li>
 </ol>
-<pre><code class="hljs php">changeProperty($d, <span class="hljs-string">'constructor'</span>, [$a, <span class="hljs-string">'get'</span>]);
-$curl-&gt;setOpt(CURLOPT_HEADERFUNCTION, [$d, <span class="hljs-string">'reconnect'</span>]);</code></pre>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">changeProperty($d, <span class="string">'constructor'</span>, [$a, <span class="string">'get'</span>]);</span><br><span class="line">$curl-&gt;setOpt(CURLOPT_HEADERFUNCTION, [$d, <span class="string">'reconnect'</span>]);</span><br></pre></td></tr></table></figure>
 
-<p><img src="./image-20200602143204049.png" srcset="/img/loading.gif" alt="image-20200602143204049"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200602143204049.png" alt="image-20200602143204049" title="">
+                </div>
+                <div class="image-caption">image-20200602143204049</div>
+            </figure>
+
 <ol start="2">
 <li>该行代码最终会执行PDOPool-&gt;get()连接数据库.($this-&gt;__object为PDOPool实例)</li>
 </ol>
-<pre><code class="hljs php">$curl-&gt;setOpt(CURLOPT_READFUNCTION, [$d, <span class="hljs-string">'get'</span>]);</code></pre>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$curl-&gt;setOpt(CURLOPT_READFUNCTION, [$d, <span class="string">'get'</span>]);</span><br></pre></td></tr></table></figure>
 
-<p><img src="./image-20200602144212131.png" srcset="/img/loading.gif" alt="image-20200602144212131"></p>
-<h1 id="POP"><a href="#POP" class="headerlink" title="POP"></a>POP</h1><p><img src="./swoole.png" srcset="/img/loading.gif" alt="swoole"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200602144212131.png" alt="image-20200602144212131" title="">
+                </div>
+                <div class="image-caption">image-20200602144212131</div>
+            </figure>
+
+
+
+
+
+<h1 id="POP"><a href="#POP" class="headerlink" title="POP"></a>POP</h1><p><img src="./swoole.png" alt="swoole"></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ol>
 <li>如果在mysqli_real_connect之前设置mysql_option，其allow_local_infile的配置会被覆盖重写，其源代码限制修改就会无效.</li>
 <li>反序列化时候关注extends 方法，由于该原理的存在，可以利用子父类的方法可以相互调用增加魔术方法调用的可能性</li>
 <li>存在子父类情况，需要关注方法继承存在的利用</li>
-<li><img src="./image-20200601215117226.png" srcset="/img/loading.gif" alt="image-20200601215117226"></li>
+<li><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./image-20200601215117226.png" alt="image-20200601215117226" title="">
+                </div>
+                <div class="image-caption">image-20200601215117226</div>
+            </figure>
+
+
+
+
+
+</li>
 </ol>
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://github.com/zsxsoft/my-ctf-challenges/tree/master/rctf2020/swoole" target="_blank" rel="noopener">https://github.com/zsxsoft/my-ctf-challenges/tree/master/rctf2020/swoole</a></p>
 <p><a href="https://www.anquanke.com/post/id/197518" target="_blank" rel="noopener">https://www.anquanke.com/post/id/197518</a></p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2020/06/09/CC%E9%93%BE%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0-TiedMapEntry%E5%88%A9%E7%94%A8%E9%93%BE/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">[CC链反序列化学习]TiedMapEntry利用链</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2020/05/27/CVE-2020-9484-Tomcat-session%E5%8D%95%E6%9C%BA%E6%8C%81%E4%B9%85%E5%8C%96%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
-                        <span class="hidden-mobile">[CVE-2020-9484] Tomcat session单机持久化反序列化</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-06-02T09:11:12.000Z" itemprop="dateUpdated">2020-06-02 17:11:12</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=《[CTF]2020RCTF Swoole题解学习笔记》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=《[CTF]2020RCTF Swoole题解学习笔记》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《[CTF]2020RCTF Swoole题解学习笔记》 — osword's blog&url=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2020/06/09/CC%E9%93%BE%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0-TiedMapEntry%E5%88%A9%E7%94%A8%E9%93%BE/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">[CC链反序列化学习]TiedMapEntry利用链</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2020/05/27/CVE-2020-9484-Tomcat-session%E5%8D%95%E6%9C%BA%E6%8C%81%E4%B9%85%E5%8C%96%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">[CVE-2020-9484] Tomcat session单机持久化反序列化</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=《[CTF]2020RCTF Swoole题解学习笔记》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&title=《[CTF]2020RCTF Swoole题解学习笔记》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《[CTF]2020RCTF Swoole题解学习笔记》 — osword's blog&url=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2020/06/02/CTF-2020RCTF-Swoole%E9%A2%98%E8%A7%A3%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "[CTF]2020RCTF Swoole题解学习笔记&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

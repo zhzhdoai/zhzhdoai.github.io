@@ -1,294 +1,217 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>数据结构 | 单链表增删改查 - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>数据结构 | 单链表增删改查 | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="数据结构">
+    <meta name="description" content="头插法12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061#include &lt;iostream&gt;using namespace std;#define STOP -999typedef int Element;ty">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据结构 | 单链表增删改查">
+<meta property="og:url" content="http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="头插法12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061#include &lt;iostream&gt;using namespace std;#define STOP -999typedef int Element;ty">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/1569736296836.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/1569746509054.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/1569746361295.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/1569746327282.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/1569746264172.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/1569746218114.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/1569746195714.png">
+<meta property="article:published_time" content="2019-09-29T08:44:04.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:27:36.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="数据结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/1569736296836.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2019-09-29 16:44" pubdate>
-        2019年9月29日 下午
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      1.6k 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      23
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">数据结构 | 单链表增删改查</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">数据结构 | 单链表增删改查</h1>
+    <div class="container fade-scale">
+        <h1 class="title">数据结构 | 单链表增删改查</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="头插法"><a href="#头插法" class="headerlink" title="头插法"></a>头插法</h1><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
-<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
-<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> STOP -999</span>
-<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> Element;
-<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lnode</span></span>
-<span class="hljs-class">&#123;</span>
-    Element data;
-    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lnode</span> *<span class="hljs-title">next</span>;</span>
-&#125;LNode;
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">show</span><span class="hljs-params">(LNode *L)</span></span>;
-<span class="hljs-function">LNode *<span class="hljs-title">create_list_H</span><span class="hljs-params">()</span></span>
-<span class="hljs-function"></span>&#123;
-    <span class="hljs-comment">//(A)创建只有头结点head的: '空单链表'</span>
-    LNode *head,*p;
-    head = <span class="hljs-keyword">new</span> LNode;
-    head-&gt;next=<span class="hljs-literal">NULL</span>;
-    <span class="hljs-comment">//(B)录入链表各结点的数据, 并钩链</span>
-	Element data;
-    <span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>)&#123;
-        <span class="hljs-comment">//(a)键盘输入一个链表结点数据--&gt;data</span>
-        <span class="hljs-built_in">cin</span> &gt;&gt; data;
-        <span class="hljs-comment">//(b)若录入数据data == '数据录入'结束标志END_CODE,则完成链表创建！</span>
-        <span class="hljs-keyword">if</span> (data == STOP)
-        &#123;   
-            <span class="hljs-keyword">break</span>;
-        &#125;
-        <span class="hljs-comment">//(c)录入的链表结点数据'data'有效, 则创建一个链表结点存储此数据</span>
-        p = <span class="hljs-keyword">new</span> LNode;
-        p-&gt;data=data;
-  
-        <span class="hljs-comment">//(d)钩链: 新创建的结点q总是作为第一个结点</span>
-        p-&gt;next = head-&gt;next;
-        head-&gt;next=p;
-        <span class="hljs-comment">//(e)信息提示: 结点创建成功! 并显示当前链表的内容信息！！！</span>
-        <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"创建节点"</span> &lt;&lt; p-&gt;data &lt;&lt; <span class="hljs-string">"成功在表头"</span>;
-		show(head);
-    &#125;
-    <span class="hljs-comment">//(C)返回此单链表的'头结点head'</span>
-    <span class="hljs-keyword">return</span> head;
-&#125;
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">show</span><span class="hljs-params">(LNode *L)</span></span>
-<span class="hljs-function"></span>&#123;
-	<span class="hljs-keyword">if</span>(L-&gt;next ==<span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-keyword">return</span>;
-	&#125;
-	LNode *p =L-&gt;next;
-	<span class="hljs-keyword">while</span> (p!=<span class="hljs-literal">NULL</span>)
+                <time datetime="2019-09-29T08:44:04.000Z" itemprop="datePublished" class="page-time">
+  2019-09-29
+</time>
 
-	&#123;
-		<span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"-&gt; "</span> &lt;&lt; p-&gt;data;
-		p=p-&gt;next;
-	&#125;
-	<span class="hljs-built_in">cout</span> &lt;&lt;<span class="hljs-built_in">endl</span>;
-&#125;
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>
-<span class="hljs-function"></span>&#123;
-    LNode *head =  create_list_H();
-	show(head);   
-    <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-&#125;</code></pre>
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#头插法"><span class="post-toc-number">1.</span> <span class="post-toc-text">头插法</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#尾插入法"><span class="post-toc-number">2.</span> <span class="post-toc-text">尾插入法</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#单链表查找"><span class="post-toc-number">3.</span> <span class="post-toc-text">单链表查找</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#按序号查找"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">按序号查找</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#按值查找"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">按值查找</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#插入"><span class="post-toc-number">4.</span> <span class="post-toc-text">插入</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#删"><span class="post-toc-number">5.</span> <span class="post-toc-text">删</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#删除指定位置的节点"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">删除指定位置的节点</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#删除指定x第一个节点"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">删除指定x第一个节点</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#删除链表中所有重复的节点x"><span class="post-toc-number">5.3.</span> <span class="post-toc-text">删除链表中所有重复的节点x</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-数据结构-单链表增删改查"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">数据结构 | 单链表增删改查</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-09-29 16:44:04" datetime="2019-09-29T08:44:04.000Z"  itemprop="datePublished">2019-09-29</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="头插法"><a href="#头插法" class="headerlink" title="头插法"></a>头插法</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STOP -999</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> Element;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">lnode</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    Element data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">lnode</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;LNode;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">(LNode *L)</span></span>;</span><br><span class="line"><span class="function">LNode *<span class="title">create_list_H</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//(A)创建只有头结点head的: '空单链表'</span></span><br><span class="line">    LNode *head,*p;</span><br><span class="line">    head = <span class="keyword">new</span> LNode;</span><br><span class="line">    head-&gt;next=<span class="literal">NULL</span>;</span><br><span class="line">    <span class="comment">//(B)录入链表各结点的数据, 并钩链</span></span><br><span class="line">	Element data;</span><br><span class="line">    <span class="keyword">while</span>(<span class="literal">true</span>)&#123;</span><br><span class="line">        <span class="comment">//(a)键盘输入一个链表结点数据--&gt;data</span></span><br><span class="line">        <span class="built_in">cin</span> &gt;&gt; data;</span><br><span class="line">        <span class="comment">//(b)若录入数据data == '数据录入'结束标志END_CODE,则完成链表创建！</span></span><br><span class="line">        <span class="keyword">if</span> (data == STOP)</span><br><span class="line">        &#123;   </span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//(c)录入的链表结点数据'data'有效, 则创建一个链表结点存储此数据</span></span><br><span class="line">        p = <span class="keyword">new</span> LNode;</span><br><span class="line">        p-&gt;data=data;</span><br><span class="line">  </span><br><span class="line">        <span class="comment">//(d)钩链: 新创建的结点q总是作为第一个结点</span></span><br><span class="line">        p-&gt;next = head-&gt;next;</span><br><span class="line">        head-&gt;next=p;</span><br><span class="line">        <span class="comment">//(e)信息提示: 结点创建成功! 并显示当前链表的内容信息！！！</span></span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"创建节点"</span> &lt;&lt; p-&gt;data &lt;&lt; <span class="string">"成功在表头"</span>;</span><br><span class="line">		show(head);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//(C)返回此单链表的'头结点head'</span></span><br><span class="line">    <span class="keyword">return</span> head;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">(LNode *L)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(L-&gt;next ==<span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	LNode *p =L-&gt;next;</span><br><span class="line">	<span class="keyword">while</span> (p!=<span class="literal">NULL</span>)</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"-&gt; "</span> &lt;&lt; p-&gt;data;</span><br><span class="line">		p=p-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    LNode *head =  create_list_H();</span><br><span class="line">	show(head);   </span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>头插法逻辑</p>
 <ol>
@@ -300,66 +223,7 @@
 </li>
 </ol>
 <p>思考总结：头插法需要维护中head头指针</p>
-<h1 id="尾插入法"><a href="#尾插入法" class="headerlink" title="尾插入法"></a>尾插入法</h1><pre><code class="hljs c++"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
-<span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> STOP -999</span>
-<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> <span class="hljs-built_in">std</span>;
-
-<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">int</span> element;
-<span class="hljs-keyword">typedef</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lnode</span></span>
-<span class="hljs-class">&#123;</span>
-	element data;
-	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lnode</span> *<span class="hljs-title">next</span>;</span>
-&#125;LNode;
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">show</span><span class="hljs-params">(LNode *L)</span></span>;
-<span class="hljs-function">LNode *<span class="hljs-title">create_chain_e</span><span class="hljs-params">()</span></span>
-<span class="hljs-function"></span>&#123;
-	LNode *head,*q,*p;
-	<span class="hljs-comment">//初始化空链表，尾节点p指向head</span>
-	head = p = <span class="hljs-keyword">new</span> LNode;
-	head-&gt;next = <span class="hljs-literal">NULL</span>;
-	element data;
-
-	<span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>)
-	&#123;
-		<span class="hljs-built_in">cin</span> &gt;&gt; data;
-		<span class="hljs-keyword">if</span> (data == STOP)
-		&#123;
-			<span class="hljs-keyword">break</span>;
-		&#125;
-		q= <span class="hljs-keyword">new</span> LNode;
-		q-&gt;data = data;
-		<span class="hljs-comment">//钩链：新创建的节点总是在尾部</span>
-		q-&gt;next = p-&gt;next;
-		p-&gt;next =q;
-		p=q;
-		<span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"成功插入"</span> &lt;&lt; q-&gt;data &lt;&lt; <span class="hljs-string">"尾部"</span>;
-		show(head);
-	&#125;
-	<span class="hljs-keyword">return</span> (head);
-&#125;
-<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">show</span> <span class="hljs-params">(LNode *L)</span></span>
-<span class="hljs-function"></span>&#123;
-	<span class="hljs-keyword">if</span>(L-&gt;next==<span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-keyword">return</span>;
-	&#125;
-	LNode *p=L-&gt;next;
-	<span class="hljs-keyword">while</span> (p!=<span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-comment">/* code */</span>
-		<span class="hljs-built_in">cout</span> &lt;&lt;  p-&gt;data &lt;&lt; <span class="hljs-string">"&lt;-"</span>;
-		p=p-&gt;next;
-	&#125;
-	<span class="hljs-built_in">cout</span> &lt;&lt;<span class="hljs-built_in">endl</span>;
-	
-&#125;
-
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>
-<span class="hljs-function"></span>&#123;
-	LNode *head = create_chain_e();
-	show(head);
-	<span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
-&#125;</code></pre>
+<h1 id="尾插入法"><a href="#尾插入法" class="headerlink" title="尾插入法"></a>尾插入法</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STOP -999</span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> element;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">lnode</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	element data;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">lnode</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;LNode;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show</span><span class="params">(LNode *L)</span></span>;</span><br><span class="line"><span class="function">LNode *<span class="title">create_chain_e</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	LNode *head,*q,*p;</span><br><span class="line">	<span class="comment">//初始化空链表，尾节点p指向head</span></span><br><span class="line">	head = p = <span class="keyword">new</span> LNode;</span><br><span class="line">	head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">	element data;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (<span class="literal">true</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">cin</span> &gt;&gt; data;</span><br><span class="line">		<span class="keyword">if</span> (data == STOP)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		q= <span class="keyword">new</span> LNode;</span><br><span class="line">		q-&gt;data = data;</span><br><span class="line">		<span class="comment">//钩链：新创建的节点总是在尾部</span></span><br><span class="line">		q-&gt;next = p-&gt;next;</span><br><span class="line">		p-&gt;next =q;</span><br><span class="line">		p=q;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">"成功插入"</span> &lt;&lt; q-&gt;data &lt;&lt; <span class="string">"尾部"</span>;</span><br><span class="line">		show(head);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> (head);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">show</span> <span class="params">(LNode *L)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(L-&gt;next==<span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	LNode *p=L-&gt;next;</span><br><span class="line">	<span class="keyword">while</span> (p!=<span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">/* code */</span></span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt;  p-&gt;data &lt;&lt; <span class="string">"&lt;-"</span>;</span><br><span class="line">		p=p-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	LNode *head = create_chain_e();</span><br><span class="line">	show(head);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>尾插入法逻辑</p>
 <ol>
@@ -371,86 +235,40 @@
 <p>思考总结：这里体现了链表从右向左操作逻辑，还有需要注意的是head与p添加节点之前是指向同一块内存地址，这样相当于有固定头结点的功能。</p>
 </li>
 </ol>
-<p><img src="./1569736296836.png" srcset="/img/loading.gif" alt="1569736296836"></p>
-<h1 id="单链表查找"><a href="#单链表查找" class="headerlink" title="单链表查找"></a>单链表查找</h1><h2 id="按序号查找"><a href="#按序号查找" class="headerlink" title="按序号查找"></a>按序号查找</h2><pre><code class="hljs c++"><span class="hljs-function">element <span class="hljs-title">get_ElemByid</span><span class="hljs-params">(LNode *L, <span class="hljs-keyword">int</span> i)</span></span>
-<span class="hljs-function"></span>&#123;	
-	<span class="hljs-comment">//如果链表首节点或下一个节点位空，则判断该链表为空</span>
-	<span class="hljs-keyword">if</span> (L ==<span class="hljs-literal">NULL</span> &amp;&amp; L-&gt;next ==<span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-keyword">return</span> STOP;
-	&#125;
-	<span class="hljs-comment">//赋值定义p指向p下一个节点,因为首节点为null所以指向下一个</span>
-	LNode *p = L-&gt;next;
-	<span class="hljs-keyword">int</span> j =<span class="hljs-number">1</span>;
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569736296836.png" alt="1569736296836" title="">
+                </div>
+                <div class="image-caption">1569736296836</div>
+            </figure>
 
-	<span class="hljs-keyword">while</span> (p!=<span class="hljs-literal">NULL</span> &amp;&amp; j&lt;i)
-	&#123;
-		p = p-&gt;next;
-		j++;
-	&#125;
-	<span class="hljs-comment">//判断是否找到第i个节点</span>
-	<span class="hljs-keyword">if</span>(j!=i)<span class="hljs-comment">//i太大不给看</span>
-	&#123;
-		<span class="hljs-keyword">return</span> STOP;
-	&#125;<span class="hljs-keyword">else</span>
-	&#123;
-		<span class="hljs-keyword">return</span> (p-&gt;data);
-	&#125;
-&#125;</code></pre>
+
+
+<h1 id="单链表查找"><a href="#单链表查找" class="headerlink" title="单链表查找"></a>单链表查找</h1><h2 id="按序号查找"><a href="#按序号查找" class="headerlink" title="按序号查找"></a>按序号查找</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">element <span class="title">get_ElemByid</span><span class="params">(LNode *L, <span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="comment">//如果链表首节点或下一个节点位空，则判断该链表为空</span></span><br><span class="line">	<span class="keyword">if</span> (L ==<span class="literal">NULL</span> &amp;&amp; L-&gt;next ==<span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> STOP;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//赋值定义p指向p下一个节点,因为首节点为null所以指向下一个</span></span><br><span class="line">	LNode *p = L-&gt;next;</span><br><span class="line">	<span class="keyword">int</span> j =<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (p!=<span class="literal">NULL</span> &amp;&amp; j&lt;i)</span><br><span class="line">	&#123;</span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">		j++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//判断是否找到第i个节点</span></span><br><span class="line">	<span class="keyword">if</span>(j!=i)<span class="comment">//i太大不给看</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> STOP;</span><br><span class="line">	&#125;<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> (p-&gt;data);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>按序号查找逻辑： 遍历指针指向第i的位置</p>
 <p>需要注意需要查询是位于链表下一个元素当做首节点，</p>
-<p><img src="./1569746509054.png" srcset="/img/loading.gif" alt="1569746509054"></p>
-<h2 id="按值查找"><a href="#按值查找" class="headerlink" title="按值查找"></a>按值查找</h2><pre><code class="hljs c++"><span class="hljs-function">LNode *<span class="hljs-title">get_ElemByvalue</span><span class="hljs-params">(LNode *L,element i)</span></span>
-<span class="hljs-function"></span>&#123;
-	LNode *p = L-&gt;next;
-	<span class="hljs-keyword">if</span> (L == <span class="hljs-literal">NULL</span> &amp;&amp; L-&gt;next == <span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
-	&#125;
-	<span class="hljs-keyword">while</span> (p!=<span class="hljs-literal">NULL</span> &amp;&amp; p-&gt;data !=i)
-	&#123;
-		p=p-&gt;next;
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569746509054.png" alt="1569746509054" title="">
+                </div>
+                <div class="image-caption">1569746509054</div>
+            </figure>
 
-	&#125;
-	<span class="hljs-keyword">if</span>(p != <span class="hljs-literal">NULL</span>)&#123;
-		<span class="hljs-keyword">return</span> p;
-	&#125;<span class="hljs-keyword">else</span>
-	&#123;
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">NULL</span>;
-	&#125;
-	
-&#125;</code></pre>
+<h2 id="按值查找"><a href="#按值查找" class="headerlink" title="按值查找"></a>按值查找</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LNode *<span class="title">get_ElemByvalue</span><span class="params">(LNode *L,element i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	LNode *p = L-&gt;next;</span><br><span class="line">	<span class="keyword">if</span> (L == <span class="literal">NULL</span> &amp;&amp; L-&gt;next == <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">while</span> (p!=<span class="literal">NULL</span> &amp;&amp; p-&gt;data !=i)</span><br><span class="line">	&#123;</span><br><span class="line">		p=p-&gt;next;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(p != <span class="literal">NULL</span>)&#123;</span><br><span class="line">		<span class="keyword">return</span> p;</span><br><span class="line">	&#125;<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>按值查找逻辑：也是通过遍历指针，条件替换为值的比较。</p>
-<p><img src="./1569746361295.png" srcset="/img/loading.gif" alt="1569746361295"></p>
-<h1 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h1><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">insertElement</span><span class="hljs-params">(LNode *L,<span class="hljs-keyword">int</span> i,element data)</span></span>
-<span class="hljs-function"></span>&#123;
-	<span class="hljs-comment">//定义p游标头，q插入的指针</span>
-	LNode *p,*q;
-	<span class="hljs-keyword">if</span> (L == <span class="hljs-literal">NULL</span> &amp;&amp; L-&gt;next ==<span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-	&#125;
-	p=L;<span class="hljs-comment">//指向p头结点，可能会插到头节点位置</span>
-	<span class="hljs-keyword">int</span> j = <span class="hljs-number">0</span>;
-	<span class="hljs-comment">// 防止超出链表长度,游标指向第i-1节点</span>
-	<span class="hljs-keyword">while</span> (p -&gt; next !=<span class="hljs-literal">NULL</span>&amp;&amp; j&lt;i<span class="hljs-number">-1</span>)
-	&#123;
-		p=p-&gt;next;
-		j++;
-	&#125;
-	<span class="hljs-keyword">if</span> (j!=i<span class="hljs-number">-1</span>)&#123;<span class="hljs-comment">//i太大</span>
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-	&#125;<span class="hljs-keyword">else</span>
-	&#123;
-		q = <span class="hljs-keyword">new</span> LNode;
-		q-&gt;data=data;
-		q-&gt;next = p-&gt;next;
-		p-&gt;next =q;
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;		
-	&#125;
-&#125;</code></pre>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569746361295.png" alt="1569746361295" title="">
+                </div>
+                <div class="image-caption">1569746361295</div>
+            </figure>
+
+<h1 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h1><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">insertElement</span><span class="params">(LNode *L,<span class="keyword">int</span> i,element data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//定义p游标头，q插入的指针</span></span><br><span class="line">	LNode *p,*q;</span><br><span class="line">	<span class="keyword">if</span> (L == <span class="literal">NULL</span> &amp;&amp; L-&gt;next ==<span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	p=L;<span class="comment">//指向p头结点，可能会插到头节点位置</span></span><br><span class="line">	<span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">	<span class="comment">// 防止超出链表长度,游标指向第i-1节点</span></span><br><span class="line">	<span class="keyword">while</span> (p -&gt; next !=<span class="literal">NULL</span>&amp;&amp; j&lt;i<span class="number">-1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		p=p-&gt;next;</span><br><span class="line">		j++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (j!=i<span class="number">-1</span>)&#123;<span class="comment">//i太大</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		q = <span class="keyword">new</span> LNode;</span><br><span class="line">		q-&gt;data=data;</span><br><span class="line">		q-&gt;next = p-&gt;next;</span><br><span class="line">		p-&gt;next =q;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>插入逻辑和注意点</p>
 <ol>
@@ -459,352 +277,344 @@
 <li><p>勾链操作类似新建链表</p>
 </li>
 <li><p>头结点head在组链表时候已经明确为空了，所以若插入在第一个节点，其实前面还有个值为null的节点。</p>
-<p><img src="./1569746327282.png" srcset="/img/loading.gif" alt="1569746327282"></p>
+<p><img src="./1569746327282.png" alt="1569746327282"></p>
 </li>
 </ol>
-<h1 id="删"><a href="#删" class="headerlink" title="删"></a>删</h1><h2 id="删除指定位置的节点"><a href="#删除指定位置的节点" class="headerlink" title="删除指定位置的节点"></a>删除指定位置的节点</h2><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">deleteByid</span><span class="hljs-params">(LNode *L,<span class="hljs-keyword">int</span> i)</span></span>
-<span class="hljs-function"></span>&#123;
-	<span class="hljs-keyword">if</span> (L ==<span class="hljs-literal">NULL</span> &amp;&amp; L-&gt;next ==<span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-	&#125;
-	<span class="hljs-comment">//q为游标，p为指向第i个待删除的节点</span>
-	LNode *q,*p;
-	q = L;
-	p=L-&gt;next;
-	<span class="hljs-keyword">int</span> j =<span class="hljs-number">0</span>;
-    <span class="hljs-comment">//p下一个节点不能为空，为空说明已经是在最后一个节点</span>
-	<span class="hljs-keyword">while</span> (p-&gt;next!=<span class="hljs-literal">NULL</span> &amp;&amp; j&lt;i<span class="hljs-number">-1</span>)
-	&#123;
-		<span class="hljs-comment">/* code */</span>
-		<span class="hljs-comment">//p与q指针交换位置,这样调整p指针也能够移动q</span>
-		q=p;
-		p=p-&gt;next;
-		j++;
-	&#125;
-	<span class="hljs-keyword">if</span>(j!=i<span class="hljs-number">-1</span>)
-	&#123;
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-	&#125;<span class="hljs-keyword">else</span>
-	&#123;	<span class="hljs-comment">//直接钩住待删除第i个节点的下一个</span>
-		q-&gt;next = p-&gt;next;
-		<span class="hljs-comment">//删除p-&gt;next前继</span>
-		<span class="hljs-keyword">delete</span>(p);
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-	&#125;	
-&#125;</code></pre>
+<h1 id="删"><a href="#删" class="headerlink" title="删"></a>删</h1><h2 id="删除指定位置的节点"><a href="#删除指定位置的节点" class="headerlink" title="删除指定位置的节点"></a>删除指定位置的节点</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">deleteByid</span><span class="params">(LNode *L,<span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (L ==<span class="literal">NULL</span> &amp;&amp; L-&gt;next ==<span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//q为游标，p为指向第i个待删除的节点</span></span><br><span class="line">	LNode *q,*p;</span><br><span class="line">	q = L;</span><br><span class="line">	p=L-&gt;next;</span><br><span class="line">	<span class="keyword">int</span> j =<span class="number">0</span>;</span><br><span class="line">    <span class="comment">//p下一个节点不能为空，为空说明已经是在最后一个节点</span></span><br><span class="line">	<span class="keyword">while</span> (p-&gt;next!=<span class="literal">NULL</span> &amp;&amp; j&lt;i<span class="number">-1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">/* code */</span></span><br><span class="line">		<span class="comment">//p与q指针交换位置,这样调整p指针也能够移动q</span></span><br><span class="line">		q=p;</span><br><span class="line">		p=p-&gt;next;</span><br><span class="line">		j++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(j!=i<span class="number">-1</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;<span class="keyword">else</span></span><br><span class="line">	&#123;	<span class="comment">//直接钩住待删除第i个节点的下一个</span></span><br><span class="line">		q-&gt;next = p-&gt;next;</span><br><span class="line">		<span class="comment">//删除p-&gt;next前继</span></span><br><span class="line">		<span class="keyword">delete</span>(p);</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>思考总结：定义游标、待删指针。指针的移动可以通过地址迭代遍历，分别移动游标和待删指针</p>
-<p><img src="./1569746264172.png" srcset="/img/loading.gif" alt="1569746264172"></p>
-<h2 id="删除指定x第一个节点"><a href="#删除指定x第一个节点" class="headerlink" title="删除指定x第一个节点"></a>删除指定x第一个节点</h2><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">bool</span> <span class="hljs-title">deleteByvar_1</span><span class="hljs-params">(LNode *L,element data)</span></span>
-<span class="hljs-function"></span>&#123;
-	<span class="hljs-keyword">if</span> (L == <span class="hljs-literal">NULL</span> &amp;&amp; L-&gt;next ==<span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-	&#125;
-	LNode *q,*p;
-	q=L;
-	p=L-&gt;next;
-	<span class="hljs-keyword">while</span> (p!=<span class="hljs-literal">NULL</span> &amp;&amp; p-&gt;data != data)&#123;
-		q=p;
-		p=p-&gt;next;
-	&#125;
-	<span class="hljs-keyword">if</span>(p != <span class="hljs-literal">NULL</span> &amp;&amp; p-&gt;data == data)
-	&#123;
-		q-&gt;next = p-&gt;next;
-		<span class="hljs-keyword">delete</span>(p);
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
-	&#125;<span class="hljs-keyword">else</span>
-	&#123;
-		<span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
-	&#125;
-	
-&#125;</code></pre>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569746264172.png" alt="1569746264172" title="">
+                </div>
+                <div class="image-caption">1569746264172</div>
+            </figure>
+
+
+
+<h2 id="删除指定x第一个节点"><a href="#删除指定x第一个节点" class="headerlink" title="删除指定x第一个节点"></a>删除指定x第一个节点</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">deleteByvar_1</span><span class="params">(LNode *L,element data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (L == <span class="literal">NULL</span> &amp;&amp; L-&gt;next ==<span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	LNode *q,*p;</span><br><span class="line">	q=L;</span><br><span class="line">	p=L-&gt;next;</span><br><span class="line">	<span class="keyword">while</span> (p!=<span class="literal">NULL</span> &amp;&amp; p-&gt;data != data)&#123;</span><br><span class="line">		q=p;</span><br><span class="line">		p=p-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(p != <span class="literal">NULL</span> &amp;&amp; p-&gt;data == data)</span><br><span class="line">	&#123;</span><br><span class="line">		q-&gt;next = p-&gt;next;</span><br><span class="line">		<span class="keyword">delete</span>(p);</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">	&#125;<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>思考总结：类比前面</p>
-<p><img src="./1569746218114.png" srcset="/img/loading.gif" alt="1569746218114"></p>
-<h2 id="删除链表中所有重复的节点x"><a href="#删除链表中所有重复的节点x" class="headerlink" title="删除链表中所有重复的节点x"></a>删除链表中所有重复的节点x</h2><pre><code class="hljs c++"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">deleteByvar_n</span><span class="hljs-params">(LNode *L,element data)</span></span>
-<span class="hljs-function"></span>&#123;
-	<span class="hljs-keyword">if</span>(L==<span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-keyword">return</span>;
-	&#125;
-	LNode *q,*p;
-	q=L;
-	p=L-&gt;next;
-	<span class="hljs-keyword">while</span>(p!=<span class="hljs-literal">NULL</span>)
-	&#123;
-		<span class="hljs-keyword">if</span>(p-&gt;data == data)
-		&#123;
-			q-&gt;next = p-&gt;next;
-			<span class="hljs-keyword">delete</span>(p);
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569746218114.png" alt="1569746218114" title="">
+                </div>
+                <div class="image-caption">1569746218114</div>
+            </figure>
 
-			p=q-&gt;next;<span class="hljs-comment">//待删除点继续跟在游标后</span>
-		&#125;
-		<span class="hljs-keyword">else</span>
-		&#123;
-			q=p;
-			p = p-&gt;next;
-		&#125;
-		
-	&#125;
-&#125;</code></pre>
+
+
+<h2 id="删除链表中所有重复的节点x"><a href="#删除链表中所有重复的节点x" class="headerlink" title="删除链表中所有重复的节点x"></a>删除链表中所有重复的节点x</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">deleteByvar_n</span><span class="params">(LNode *L,element data)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(L==<span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	LNode *q,*p;</span><br><span class="line">	q=L;</span><br><span class="line">	p=L-&gt;next;</span><br><span class="line">	<span class="keyword">while</span>(p!=<span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(p-&gt;data == data)</span><br><span class="line">		&#123;</span><br><span class="line">			q-&gt;next = p-&gt;next;</span><br><span class="line">			<span class="keyword">delete</span>(p);</span><br><span class="line"></span><br><span class="line">			p=q-&gt;next;<span class="comment">//待删除点继续跟在游标后</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			q=p;</span><br><span class="line">			p = p-&gt;next;</span><br><span class="line">		&#125;</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>注意点：删除后，必须把待删节点继续接在游标后，否则p变量不存在,可能会随机分配p的值。</p>
-<p><img src="./1569746195714.png" srcset="/img/loading.gif" alt="1569746195714"></p>
-
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">ThinkPHP 5.2反序列化</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/">
-                        <span class="hidden-mobile">buuoj刷题笔记[CISCN2019(二)]padding oracle初学</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569746195714.png" alt="1569746195714" title="">
                 </div>
-              
-            </div>
+                <div class="image-caption">1569746195714</div>
+            </figure>
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:27:36.000Z" itemprop="dateUpdated">2020-05-15 16:27:36</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag">数据结构</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/&title=《数据结构 | 单链表增删改查》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/&title=《数据结构 | 单链表增删改查》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《数据结构 | 单链表增删改查》 — osword's blog&url=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">ThinkPHP 5.2反序列化</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/09/28/buuoj%E5%88%B7%E9%A2%98%E7%AC%94%E8%AE%B0-CISCN2019-%E4%BA%8C-padding-oracle%E5%88%9D%E5%AD%A6/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">buuoj刷题笔记[CISCN2019(二)]padding oracle初学</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/&title=《数据结构 | 单链表增删改查》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/&title=《数据结构 | 单链表增删改查》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《数据结构 | 单链表增删改查》 — osword's blog&url=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "数据结构 | 单链表增删改查&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

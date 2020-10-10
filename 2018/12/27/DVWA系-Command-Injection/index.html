@@ -1,234 +1,216 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>DVWA_(Command Injection) - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>DVWA_(Command Injection) | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="命令执行">
+    <meta name="description" content="前言    命令注入是一种攻击，其目标是通过易受攻击的应用程序在主机操作系统上执行任意命令。当应用程序将不安全的用户提供的数据&gt;（表单，cookie，HTTP标头等）传递给系统shell时，可能会发生命令注入攻击。在此攻击中，攻击者提供的操作系统命令通常以易受攻击的应用程序的权限执行。命令注入攻击很可能主要是由于输入验证不足。此攻击与代码注入不同，因为代码注入允许攻击者添加自己的代码，然后由">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DVWA_(Command Injection)">
+<meta property="og:url" content="http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="前言    命令注入是一种攻击，其目标是通过易受攻击的应用程序在主机操作系统上执行任意命令。当应用程序将不安全的用户提供的数据&gt;（表单，cookie，HTTP标头等）传递给系统shell时，可能会发生命令注入攻击。在此攻击中，攻击者提供的操作系统命令通常以易受攻击的应用程序的权限执行。命令注入攻击很可能主要是由于输入验证不足。此攻击与代码注入不同，因为代码注入允许攻击者添加自己的代码，然后由">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/1.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/2.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/3.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/4.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/5.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/6.png">
+<meta property="article:published_time" content="2018-12-27T13:13:02.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:25:04.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="命令执行">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/1.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2018-12-27 21:13" pubdate>
-        2018年12月27日 晚上
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      907 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      10
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">DVWA_(Command Injection)</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">DVWA_(Command Injection)</h1>
+    <div class="container fade-scale">
+        <h1 class="title">DVWA_(Command Injection)</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+                <time datetime="2018-12-27T13:13:02.000Z" itemprop="datePublished" class="page-time">
+  2018-12-27
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#low"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">low</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#medium"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">medium</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#higth"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">higth</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#impossible"><span class="post-toc-number">1.4.</span> <span class="post-toc-text">impossible</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#防御"><span class="post-toc-number">2.</span> <span class="post-toc-text">防御</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#命令执行执行模型"><span class="post-toc-number">3.</span> <span class="post-toc-text">命令执行执行模型</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#PHP命令执行"><span class="post-toc-number">4.</span> <span class="post-toc-text">PHP命令执行</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#命令执行"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">命令执行</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#代码执行"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">代码执行</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#动态函数调用"><span class="post-toc-number">4.3.</span> <span class="post-toc-text">动态函数调用</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#PHP函数代码执行漏洞"><span class="post-toc-number">4.4.</span> <span class="post-toc-text">PHP函数代码执行漏洞</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#防范命令执行漏洞"><span class="post-toc-number">5.</span> <span class="post-toc-text">防范命令执行漏洞</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-DVWA系-Command-Injection"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">DVWA_(Command Injection)</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-12-27 21:13:02" datetime="2018-12-27T13:13:02.000Z"  itemprop="datePublished">2018-12-27</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <blockquote>
 <blockquote>
 </blockquote>
@@ -238,10 +220,50 @@
 <p>command Injection&gt;&gt;借助PHP对服务端shell的启用&gt;&gt;攻击者插入恶意shell命令</p>
 </blockquote>
 </blockquote>
-<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>源码分析<br><img src="./1.png" srcset="/img/loading.gif" alt=""><br>PHP执行流程&gt;&gt;传入IP地址&gt;&gt;php判断操作系统类型&gt;&gt;执行PING命令<br>从源码可分析，未对IP地址过滤。可以采用IP&amp;&amp;dos 命令对操作系统恶意操作<br>写入一句话<br>echo “<?php @eval($_POST['123'])?>“&gt;F:\phpstudy\PHPTutorial\WWW\DVWA\vulnerabilities\post123.php<br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
-<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2><p>对IP &amp;&amp; ;; 进行过滤<br><img src="./3.png" srcset="/img/loading.gif" alt=""><br>1)我们可以通过&amp;和;混搭，欺骗过滤函数，测试代码如下<br>2) command1&amp;command2 先执行command1，不管是否成功，都会执行command2</p>
-<h2 id="higth"><a href="#higth" class="headerlink" title="higth"></a>higth</h2><p>‘| ’ 过滤出现了差错<br><img src="./4.png" srcset="/img/loading.gif" alt=""><br>Command 1 | Command 2<br>“|”是管道符，表示将Command 1的输出作为Command 2的输入，并且只打印Command 2执行的结果。</p>
-<h2 id="impossible"><a href="#impossible" class="headerlink" title="impossible"></a>impossible</h2><p>对传入参数，对IP做约束。使得用户只能输入IP地址。<br><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="low"><a href="#low" class="headerlink" title="low"></a>low</h2><p>源码分析</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>PHP执行流程&gt;&gt;传入IP地址&gt;&gt;php判断操作系统类型&gt;&gt;执行PING命令<br>从源码可分析，未对IP地址过滤。可以采用IP&amp;&amp;dos 命令对操作系统恶意操作<br>写入一句话<br>echo “<?php @eval($_POST['123'])?>“&gt;F:\phpstudy\PHPTutorial\WWW\DVWA\vulnerabilities\post123.php</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./2.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h2 id="medium"><a href="#medium" class="headerlink" title="medium"></a>medium</h2><p>对IP &amp;&amp; ;; 进行过滤</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./3.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>1)我们可以通过&amp;和;混搭，欺骗过滤函数，测试代码如下<br>2) command1&amp;command2 先执行command1，不管是否成功，都会执行command2</p>
+<h2 id="higth"><a href="#higth" class="headerlink" title="higth"></a>higth</h2><p>‘| ’ 过滤出现了差错</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./4.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>Command 1 | Command 2<br>“|”是管道符，表示将Command 1的输出作为Command 2的输入，并且只打印Command 2执行的结果。</p>
+<h2 id="impossible"><a href="#impossible" class="headerlink" title="impossible"></a>impossible</h2><p>对传入参数，对IP做约束。使得用户只能输入IP地址。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./5.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h1 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h1><p><code>摘自OWASP</code><br>理想情况下，开发人员应使用现有的API作为其语言。例如（Java）：使用位于javax.mail的可用Java API，而不是使用Runtime.exec（）发出’mail’命令。<br>如果不存在此类可用API，则开发人员应清除所有恶意字符输入。实施积极的安全模型将是最有效的。通常，定义合法字符要比非法字符容易得多。</p>
 <h1 id="命令执行执行模型"><a href="#命令执行执行模型" class="headerlink" title="命令执行执行模型"></a>命令执行执行模型</h1><blockquote>
 <blockquote>
@@ -255,43 +277,31 @@
 <li><strong>代码执行漏洞则是靠执行脚本代码调用操作系统命令</strong></li>
 </ul>
 <h1 id="PHP命令执行"><a href="#PHP命令执行" class="headerlink" title="PHP命令执行"></a>PHP命令执行</h1><p>函数system()、shell_exec()、exec()和passthru()</p>
-<h2 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a><strong>命令执行</strong></h2><pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span> </span>
-<span class="php">    $host=$argv[<span class="hljs-number">1</span>];</span>
-<span class="php">    system(<span class="hljs-string">"ping"</span>,$host);</span>
-<span class="php">&gt;</span></code></pre>
+<h2 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a><strong>命令执行</strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">    $host&#x3D;$argv[1];</span><br><span class="line">    system(&quot;ping&quot;,$host);</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
 <p>执行命令  <code>&quot;php.exe cmd.php www.123.com&quot;</code></p>
 <h2 id="代码执行"><a href="#代码执行" class="headerlink" title="代码执行"></a><strong>代码执行</strong></h2><p><code>eval()</code> 解析括号中的内容</p>
 <h2 id="动态函数调用"><a href="#动态函数调用" class="headerlink" title="动态函数调用"></a><strong>动态函数调用</strong></h2><ol>
 <li><p><strong>危险代码一</strong>：</p>
-<pre><code class="hljs kotlin">&lt;?php
-function A()&#123;
-    <span class="hljs-keyword">return</span> <span class="hljs-string">"A()函数.."</span>;
-&#125;
-function B()&#123;
-    <span class="hljs-keyword">return</span> <span class="hljs-string">"B()函数.."</span>;
-&#125;
-$<span class="hljs-function"><span class="hljs-keyword">fun</span> = $_REQUESTS['<span class="hljs-keyword">fun</span>'];</span>
-echo $<span class="hljs-function"><span class="hljs-title">fun</span><span class="hljs-params">()</span></span>
-&gt;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">function A()&#123;</span><br><span class="line">    return &quot;A()函数..&quot;;</span><br><span class="line">&#125;</span><br><span class="line">function B()&#123;</span><br><span class="line">    return &quot;B()函数..&quot;;</span><br><span class="line">&#125;</span><br><span class="line">$fun &#x3D; $_REQUESTS[&#39;fun&#39;];</span><br><span class="line">echo $fun()</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
 <p>PHP根据$fun值来调用对应函数，如<code>&quot;http://www.123.com/function.php?fun=phpinfo&quot;</code><br>就会输出函数<code>phpinfo()</code></p>
 </li>
 <li><p><strong>危险代码二</strong></p>
-<pre><code class="hljs kotlin">&lt;?php
-    $<span class="hljs-function"><span class="hljs-keyword">fun</span> = $_GET['<span class="hljs-keyword">fun</span>'];</span>
-    $par = $_GET[<span class="hljs-string">'par'</span>];
-    $<span class="hljs-function"><span class="hljs-title">fun</span><span class="hljs-params">($par)</span></span>
-&gt;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    $fun &#x3D; $_GET[&#39;fun&#39;];</span><br><span class="line">    $par &#x3D; $_GET[&#39;par&#39;];</span><br><span class="line">    $fun($par)</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
 <p><code>&quot;http://www.123.com/funtion.php/?fun=system&amp;par=net user&quot;</code>组成函数为<code>system(&quot;net user&quot;)</code></p>
 </li>
 </ol>
 <h2 id="PHP函数代码执行漏洞"><a href="#PHP函数代码执行漏洞" class="headerlink" title="PHP函数代码执行漏洞"></a>PHP函数代码执行漏洞</h2><p><code>preg_replace()、ob_start()、array_map()</code></p>
-<pre><code class="hljs angelscript">&lt;?php
-    $arr = $_GET[<span class="hljs-string">'arr'</span>];
-    $<span class="hljs-built_in">array</span> = <span class="hljs-built_in">array</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>,<span class="hljs-number">5</span>);
-    $new_array = <span class="hljs-built_in">array</span>_map(%arr,$<span class="hljs-built_in">array</span>);
-?&gt;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    $arr &#x3D; $_GET[&#39;arr&#39;];</span><br><span class="line">    $array &#x3D; array(1,2,3,4,5);</span><br><span class="line">    $new_array &#x3D; array_map(%arr,$array);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
-<p><code>http://192.168.43.195/xxx.php?arr=phpinfo</code><br><img src="./6.png" srcset="/img/loading.gif" alt=""></p>
+<p><code>http://192.168.43.195/xxx.php?arr=phpinfo</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./6.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <p>还有关于JAVA、框架命令执行漏洞等知识充沛在接触.</p>
 <h1 id="防范命令执行漏洞"><a href="#防范命令执行漏洞" class="headerlink" title="防范命令执行漏洞"></a>防范命令执行漏洞</h1><ul>
 <li><strong>尽量不使用系统执行命令</strong></li>
@@ -300,258 +310,294 @@ echo $<span class="hljs-function"><span class="hljs-title">fun</span><span class
 <li><strong>无法控制危险函数最好不要使用</strong></li>
 </ul>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/">命令执行</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2018/12/27/DVWA-CSRF/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">DVWA_CSRF</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2018/12/23/sqlilabs38-65/">
-                        <span class="hidden-mobile">sqlilabs38-65</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:25:04.000Z" itemprop="dateUpdated">2020-05-15 16:25:04</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/" rel="tag">命令执行</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/&title=《DVWA_(Command Injection)》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/&title=《DVWA_(Command Injection)》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《DVWA_(Command Injection)》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/12/27/DVWA-CSRF/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">DVWA_CSRF</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/12/23/sqlilabs38-65/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">sqlilabs38-65</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/&title=《DVWA_(Command Injection)》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/&title=《DVWA_(Command Injection)》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《DVWA_(Command Injection)》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2018/12/27/DVWA%E7%B3%BB-Command-Injection/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "DVWA_(Command Injection)&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

