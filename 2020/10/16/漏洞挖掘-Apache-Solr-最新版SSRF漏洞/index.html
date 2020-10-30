@@ -8,13 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta name="description" content="前段浏览器水太深，没整理完">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[漏洞挖掘] Apache Solr 最新版SSRF漏洞">
+<meta property="og:title" content="[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)">
 <meta property="og:url" content="http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/index.html">
 <meta property="og:site_name" content="osword&#39;s blog">
 <meta property="og:description" content="前段浏览器水太深，没整理完">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-10-16T05:58:57.000Z">
-<meta property="article:modified_time" content="2020-10-16T06:01:20.101Z">
+<meta property="article:modified_time" content="2020-10-30T10:47:55.023Z">
 <meta property="article:author" content="osword">
 <meta property="article:tag" content="Sold">
 <meta name="twitter:card" content="summary">
@@ -37,7 +37,7 @@
         
     
     <!-- title -->
-    <title>[漏洞挖掘] Apache Solr 最新版SSRF漏洞</title>
+    <title>[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)</title>
     <!-- styles -->
     
 <link rel="stylesheet" href="/css/style.css">
@@ -96,16 +96,16 @@
     <div id="share" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&text=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&is_video=false&description=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=[漏洞挖掘] Apache Solr 最新版SSRF漏洞&body=Check out this article: http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&name=[漏洞挖掘] Apache Solr 最新版SSRF漏洞&description=前段浏览器水太深，没整理完" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&t=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&text=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&is_video=false&description=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)&body=Check out this article: http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&name=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)&description=前段浏览器水太深，没整理完" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&t=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -122,7 +122,7 @@
   <header>
     
     <h1 class="posttitle" itemprop="name headline">
-        [漏洞挖掘] Apache Solr 最新版SSRF漏洞
+        [漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)
     </h1>
 
 
@@ -149,7 +149,7 @@
     </div>
 
 
-      <span id="/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/" class="leancloud_visitors" data-flag-title="[漏洞挖掘] Apache Solr 最新版SSRF漏洞">
+      <span id="/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/" class="leancloud_visitors" data-flag-title="[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)">
     <em class="post-meta-item-text">阅读量 </em>
     <i class="leancloud-visitors-count" data-index="/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/"></span>
     </div>
@@ -221,16 +221,16 @@
     <div id="share-footer" style="display: none">
       <ul>
   <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&text=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&is_video=false&description=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=[漏洞挖掘] Apache Solr 最新版SSRF漏洞&body=Check out this article: http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&name=[漏洞挖掘] Apache Solr 最新版SSRF漏洞&description=前段浏览器水太深，没整理完" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&t=[漏洞挖掘] Apache Solr 最新版SSRF漏洞" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&text=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&is_video=false&description=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)&body=Check out this article: http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&title=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&name=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)&description=前段浏览器水太深，没整理完" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/10/16/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98-Apache-Solr-%E6%9C%80%E6%96%B0%E7%89%88SSRF%E6%BC%8F%E6%B4%9E/&t=[漏洞挖掘] Apache Solr 最新版SSRF漏洞(密文保护)" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
