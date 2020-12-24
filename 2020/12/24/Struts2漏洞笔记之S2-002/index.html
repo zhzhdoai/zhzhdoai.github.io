@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="漏洞原理​    &lt;s:url&gt;或&lt;s:a&gt;接收用户输入调用Request.getParameterMap直接获取没做过滤处理回显至当前界面造成XSS 漏洞版本1Struts 2.0.0 ~ Struts 2.1.8.1      漏洞详解URLTag将url标签转换为对象当处理&lt;s:url&gt;标签时调用class org.apache.struts2.views">
+<meta property="og:type" content="article">
+<meta property="og:title" content=" Struts2漏洞笔记之S2-002">
+<meta property="og:url" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/index.html">
+<meta property="og:site_name" content="osword&#39;s blog">
+<meta property="og:description" content="漏洞原理​    &lt;s:url&gt;或&lt;s:a&gt;接收用户输入调用Request.getParameterMap直接获取没做过滤处理回显至当前界面造成XSS 漏洞版本1Struts 2.0.0 ~ Struts 2.1.8.1      漏洞详解URLTag将url标签转换为对象当处理&lt;s:url&gt;标签时调用class org.apache.struts2.views">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/image-20201221201335135.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/image-20201221201601729.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/image-20201221210314460.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/image-20201221212313893.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/image-20201221212810277.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/image-20201221212916474.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/image-20201221213029799.png">
+<meta property="og:image" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/image-20201221213119562.png">
+<meta property="article:published_time" content="2020-12-24T13:48:04.000Z">
+<meta property="article:modified_time" content="2020-12-24T13:51:53.519Z">
+<meta property="article:author" content="osword">
+<meta property="article:tag" content="Struts2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/image-20201221201335135.png">
+    
+    
+        
+          
+              <link rel="shortcut icon" href="/images/favicon.ico">
+          
+        
+        
+          
+            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+          
+        
+        
+          
+            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+          
+        
+    
+    <!-- title -->
+    <title> Struts2漏洞笔记之S2-002</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+      
+<link rel="stylesheet" href="/css/rtl.css">
+
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
+    
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        <li><a class="icon" href="/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-003/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
+        
+        
+        <li><a class="icon" href="/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-001/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&text= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&is_video=false&description= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject= Struts2漏洞笔记之S2-002&body=Check out this article: http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&name= Struts2漏洞笔记之S2-002&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&t= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞原理"><span class="toc-number">1.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞版本"><span class="toc-number">2.</span> <span class="toc-text">漏洞版本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞详解"><span class="toc-number">3.</span> <span class="toc-text">漏洞详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#URLTag将url标签转换为对象"><span class="toc-number">3.1.</span> <span class="toc-text">URLTag将url标签转换为对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#doStartTag构建标签组件并解析相关属性"><span class="toc-number">3.2.</span> <span class="toc-text">doStartTag构建标签组件并解析相关属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#doEndTag处理输出内容并写入当前jsp页面中"><span class="toc-number">3.3.</span> <span class="toc-text">doEndTag处理输出内容并写入当前jsp页面中</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞复现"><span class="toc-number">4.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞修复"><span class="toc-number">5.</span> <span class="toc-text">漏洞修复</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+         Struts2漏洞笔记之S2-002
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">osword's blog</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2020-12-24T13:48:04.000Z" itemprop="datePublished">2020-12-24</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link" href="/tags/Struts2/" rel="tag">Struts2</a>
+    </div>
+
+
+      <span id="/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/" class="leancloud_visitors" data-flag-title=" Struts2漏洞笔记之S2-002">
+    <em class="post-meta-item-text">阅读量 </em>
+    <i class="leancloud-visitors-count" data-index="/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/"></span>
+    </div>
+
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <h1 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h1><p>​    <code>&lt;s:url&gt;</code>或<code>&lt;s:a&gt;</code>接收用户输入调用<code>Request.getParameterMap</code>直接获取没做过滤处理回显至当前界面造成XSS</p>
+<h1 id="漏洞版本"><a href="#漏洞版本" class="headerlink" title="漏洞版本"></a>漏洞版本</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Struts 2.0.0 ~ Struts 2.1.8.1</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h1 id="漏洞详解"><a href="#漏洞详解" class="headerlink" title="漏洞详解"></a>漏洞详解</h1><h2 id="URLTag将url标签转换为对象"><a href="#URLTag将url标签转换为对象" class="headerlink" title="URLTag将url标签转换为对象"></a>URLTag将url标签转换为对象</h2><p>当处理<code>&lt;s:url&gt;</code>标签时调用<code>class org.apache.struts2.views.jsp.URLTag</code>将标签相关属性通过<code>set</code>方法置于URLTag对象中并返回。</p>
+<p><img src="./image-20201221201335135.png" alt="image-20201221201335135"></p>
+<h2 id="doStartTag构建标签组件并解析相关属性"><a href="#doStartTag构建标签组件并解析相关属性" class="headerlink" title="doStartTag构建标签组件并解析相关属性"></a>doStartTag构建标签组件并解析相关属性</h2><p>初始化<code>URLTag</code>对象后，开始进行标签解析执行<code>ComponentTagSupport::doStartTag()</code>方法.该方法做了以下事情，</p>
+<p>1.引入当前数据栈与上下文载入<code>getBean</code>方法中，会进一步调用<code>URLTag::getBean</code>方法返回<code>org.apache.struts2.components.URL</code>对象</p>
+<p>2.<code>container.inject(this.component);</code>将当前标签构建注入到新的容器中方便管理</p>
+<p>3.通过<code>this.populateParams();</code>进一步调用URLTag::populateParams()方法,完善<code>URLTag::getBean</code>返回的<code>URL</code>对象</p>
+<p>4.调用URL::start方法解析属性</p>
+<p><img src="./image-20201221201601729.png" alt="image-20201221201601729"></p>
+<p>跟进URL::start方法，主要是通过开发人员设置的includeParams值存入相关输入到this.parameter字段中。当设置<code>includeParams=&quot;all&quot;</code>进入相应的逻辑处理.</p>
+<p>1.<code>this.mergeRequestParamters</code>利用<code>Rquest::getParameterMap</code>获取未经过编码后的输入</p>
+<p>2.<code>this.includeGetParamters</code>利用<code>Rquest::getQueryString</code>获取URL编码后的用户输入</p>
+<p>(前两者使用差异参考：<a href="https://stackoverflow.com/questions/29299314/jsp-getquerystring-and-getparametermap-returning-different-parameters" target="_blank" rel="noopener">https://stackoverflow.com/questions/29299314/jsp-getquerystring-and-getparametermap-returning-different-parameters</a>)</p>
+<p>3.<code>this.includeExtraParameters</code>没做特殊处理一般为null</p>
+<p>综上最直观造成xss是由<code>Rquest::getParameterMap</code>获取用户输入并为做过滤，如果置<code>includeParams=&#39;get&#39;</code>只能调用<code>Rquest::getQueryString</code>返回用户输入经过URL编码.</p>
+<p><img src="./image-20201221210314460.png" alt="image-20201221210314460"></p>
+<h2 id="doEndTag处理输出内容并写入当前jsp页面中"><a href="#doEndTag处理输出内容并写入当前jsp页面中" class="headerlink" title="doEndTag处理输出内容并写入当前jsp页面中"></a>doEndTag处理输出内容并写入当前jsp页面中</h2><p><code>doEndTag</code>更直观是对最后的输出做处理</p>
+<p><img src="./image-20201221212313893.png" alt="image-20201221212313893"></p>
+<p>跟进<code>UrlHelper::buildUrl</code>方法，对最后输出result进行拼接，依次拼接当前访问的WEB路径、this.paramters中的两个值。</p>
+<p><img src="./image-20201221212810277.png" alt="image-20201221212810277"></p>
+<p><code>URL::end</code>最后收尾没有调用模版写入，而是直接调用write写入当前jsp页面中.</p>
+<p><img src="./image-20201221212916474.png" alt="image-20201221212916474"></p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost:8085&#x2F;Struts2_002_war_exploded&#x2F;?%3Cscript%3Ealert(1);%3C&#x2F;script%3E</span><br></pre></td></tr></table></figure>
+
+<p><img src="./image-20201221213029799.png" alt="image-20201221213029799"></p>
+<p><img src="./image-20201221213119562.png" alt="image-20201221213119562"></p>
+<h1 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h1><p>比较懒,只是单纯的替换了script字符串很容易绕过.</p>
+<p>参考：<a href="https://dean2021.github.io/posts/s2-002/" target="_blank" rel="noopener">https://dean2021.github.io/posts/s2-002/</a></p>
+
+  </div>
+</article>
+
+    <section id="comments" class="comments">
+      <style>
+        .comments{margin:30px;padding:10px;background:#fff}
+        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
+      </style>
+      <div class="valine_comment"></div>
+<!--载入js，在</body>之前插入即可-->
+<!--Leancloud 操作库:-->
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<!--Valine 的核心代码库-->
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+<script>
+  new Valine({
+      el: '.valine_comment',
+      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
+      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
+      placeholder: '这里留言。。',
+      notify: 'true',
+      verify: 'true',
+      visitor: true
+    });
+</script>
+
+    </section>
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞原理"><span class="toc-number">1.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞版本"><span class="toc-number">2.</span> <span class="toc-text">漏洞版本</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞详解"><span class="toc-number">3.</span> <span class="toc-text">漏洞详解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#URLTag将url标签转换为对象"><span class="toc-number">3.1.</span> <span class="toc-text">URLTag将url标签转换为对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#doStartTag构建标签组件并解析相关属性"><span class="toc-number">3.2.</span> <span class="toc-text">doStartTag构建标签组件并解析相关属性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#doEndTag处理输出内容并写入当前jsp页面中"><span class="toc-number">3.3.</span> <span class="toc-text">doEndTag处理输出内容并写入当前jsp页面中</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞复现"><span class="toc-number">4.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞修复"><span class="toc-number">5.</span> <span class="toc-text">漏洞修复</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&text= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&is_video=false&description= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject= Struts2漏洞笔记之S2-002&body=Check out this article: http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&title= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&name= Struts2漏洞笔记之S2-002&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/12/24/Struts2%E6%BC%8F%E6%B4%9E%E7%AC%94%E8%AE%B0%E4%B9%8BS2-002/&t= Struts2漏洞笔记之S2-002" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2020
+    osword
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a href="/projects_url">项目</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+
+<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
+
+
+    <!-- jquery -->
+
+<script src="/lib/jquery/jquery.min.js"></script>
+
+
+<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
+
+<!-- clipboard -->
+
+  
+<script src="/lib/clipboard/clipboard.min.js"></script>
+
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Disqus Comments -->
+
+
+</body>
+</html>
