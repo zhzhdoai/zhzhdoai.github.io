@@ -1,239 +1,314 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="前言​    文章详细分析了Weblogic历史从CVE-2015至CVE-2019相关历史漏洞，并整理相关POC于Weblogic_Vuln.记录学习Java反序列化漏洞的心得笔记. CVE-2015-4852影响版本1234Oracle WebLogic Server 12.2.1.0Oracle WebLogic Server 12.1.3.0Oracle WebLogic Server 1">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Weblogic T3反序列化历史漏洞(一)">
-<meta property="og:url" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="前言​    文章详细分析了Weblogic历史从CVE-2015至CVE-2019相关历史漏洞，并整理相关POC于Weblogic_Vuln.记录学习Java反序列化漏洞的心得笔记. CVE-2015-4852影响版本1234Oracle WebLogic Server 12.2.1.0Oracle WebLogic Server 12.1.3.0Oracle WebLogic Server 1">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200805001625974.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200804235543594.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200804235834751.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810151136398.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810152202349.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810152533077.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810155349570.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810155449702.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810155601392.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810135823343.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810140747794.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810114116364.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810115907099.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810120053655.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200810135333015.png">
-<meta property="article:published_time" content="2020-08-10T09:42:24.000Z">
-<meta property="article:modified_time" content="2020-08-10T09:43:54.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="Weblogic">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/image-20200805001625974.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>Weblogic T3反序列化历史漏洞(一)</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>Weblogic T3反序列化历史漏洞(一) - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2020/08/15/WebSphere-IIOP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-CVE-2020-4450/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2020/07/17/weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-UniversalExtractor-JNDI%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%E5%A4%8D%E7%8E%B0-%E9%99%84Exp/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&text=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&is_video=false&description=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Weblogic T3反序列化历史漏洞(一)&body=Check out this article: http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&name=Weblogic T3反序列化历史漏洞(一)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&t=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2015-4852"><span class="toc-number">2.</span> <span class="toc-text">CVE-2015-4852</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#影响版本"><span class="toc-number">2.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞原理"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞复现"><span class="toc-number">2.3.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.4.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞修复"><span class="toc-number">2.5.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2016-0638"><span class="toc-number">3.</span> <span class="toc-text">CVE-2016-0638</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#影响版本-1"><span class="toc-number">3.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞原理-1"><span class="toc-number">3.2.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞复现-1"><span class="toc-number">3.3.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析-1"><span class="toc-number">3.4.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞修复-1"><span class="toc-number">3.5.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2016-3510"><span class="toc-number">4.</span> <span class="toc-text">CVE-2016-3510</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#影响版本-2"><span class="toc-number">4.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞原理-2"><span class="toc-number">4.2.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞复现-2"><span class="toc-number">4.3.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析-2"><span class="toc-number">4.4.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞修复-2"><span class="toc-number">4.5.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2019-2890"><span class="toc-number">5.</span> <span class="toc-text">CVE-2019-2890</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#影响版本-3"><span class="toc-number">5.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞复现-3"><span class="toc-number">5.2.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞原理-3"><span class="toc-number">5.3.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析-3"><span class="toc-number">5.4.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞修复-3"><span class="toc-number">5.5.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2017-CVE-2018"><span class="toc-number">6.</span> <span class="toc-text">CVE-2017~CVE-2018</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2017-3248"><span class="toc-number">6.1.</span> <span class="toc-text">CVE-2017-3248</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2018-2628"><span class="toc-number">6.2.</span> <span class="toc-text">CVE-2018-2628</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2018-2893"><span class="toc-number">6.3.</span> <span class="toc-text">CVE-2018-2893</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#结语"><span class="toc-number">7.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">8.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        Weblogic T3反序列化历史漏洞(一)
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2020-08-10T09:42:24.000Z" itemprop="datePublished">2020-08-10</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/Weblogic/" rel="tag">Weblogic</a>
-    </div>
-
-
-      <span id="/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/" class="leancloud_visitors" data-flag-title="Weblogic T3反序列化历史漏洞(一)">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>​    文章详细分析了Weblogic历史从CVE-2015至CVE-2019相关历史漏洞，并整理相关POC于<a href="https://github.com/zhzhdoai/Weblogic_Vuln.git" target="_blank" rel="noopener">Weblogic_Vuln</a>.记录学习Java反序列化漏洞的心得笔记.</p>
-<h1 id="CVE-2015-4852"><a href="#CVE-2015-4852" class="headerlink" title="CVE-2015-4852"></a>CVE-2015-4852</h1><h2 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Oracle WebLogic Server 12.2.1.0</span><br><span class="line">Oracle WebLogic Server 12.1.3.0</span><br><span class="line">Oracle WebLogic Server 12.1.2.0</span><br><span class="line">Oracle WebLogic Server 10.3.6.0</span><br></pre></td></tr></table></figure>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-08-10 17:42" pubdate>
+        2020年8月10日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.2k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      16
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">Weblogic T3反序列化历史漏洞(一)</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>​    文章详细分析了Weblogic历史从CVE-2015至CVE-2019相关历史漏洞，并整理相关POC于<a href="https://github.com/zhzhdoai/Weblogic_Vuln.git" target="_blank" rel="noopener">Weblogic_Vuln</a>.记录学习Java反序列化漏洞的心得笔记.</p>
+<h1 id="CVE-2015-4852"><a href="#CVE-2015-4852" class="headerlink" title="CVE-2015-4852"></a>CVE-2015-4852</h1><h2 id="影响版本"><a href="#影响版本" class="headerlink" title="影响版本"></a>影响版本</h2><pre><code class="hljs routeros">Oracle WebLogic<span class="hljs-built_in"> Server </span>12.2.1.0
+Oracle WebLogic<span class="hljs-built_in"> Server </span>12.1.3.0
+Oracle WebLogic<span class="hljs-built_in"> Server </span>12.1.2.0
+Oracle WebLogic<span class="hljs-built_in"> Server </span>10.3.6.0</code></pre>
 
 <h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>测试环境：10.3.6.0 jdk7u21 debian</p>
 <p>利用t3协议通信反序列化CC链，简化栈如下。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InboundMsgAbbrev.readObject() -&gt; ... -&gt; AnnotationInvocationHandler.readObject() -&gt; AnnotationInvocationHandler.invoke() -&gt; LazyMap.get() -&gt; .... -&gt; Runtime.exec()</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs java">InboundMsgAbbrev.readObject() -&gt; ... -&gt; AnnotationInvocationHandler.readObject() -&gt; AnnotationInvocationHandler.invoke() -&gt; LazyMap.get() -&gt; .... -&gt; Runtime.exec()</code></pre>
 
 
 
-<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java -jar ysoserial-0.0.6-SNAPSHOT-all.jar CommonsCollections1 <span class="string">"open /System/Applications/Calculator.app"</span> &gt; <span class="string">"/tmp/tm.ser"</span></span><br><span class="line"></span><br><span class="line">python weblogic_t3.py 127.0.0.1 7001 /tmp/tm.ser</span><br></pre></td></tr></table></figure>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><pre><code class="hljs bash">java -jar ysoserial-0.0.6-SNAPSHOT-all.jar CommonsCollections1 <span class="hljs-string">"open /System/Applications/Calculator.app"</span> &gt; <span class="hljs-string">"/tmp/tm.ser"</span>
 
-<p><img src="./image-20200805001625974.png" alt="image-20200805001625974"></p>
+python weblogic_t3.py 127.0.0.1 7001 /tmp/tm.ser</code></pre>
+
+<p><img src="./image-20200805001625974.png" srcset="/img/loading.gif" alt="image-20200805001625974"></p>
 <h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>关注反序列化中间过程，利用 <code>LazyMap</code>链进行反序列化，载体套用<code>AnnotationInvocationHandler</code>类，<code>this.memberValues</code>可控为<code>LazyMap</code>类。利用代理机制，在执行<code>entrySet</code>方法使用会优先执行<code>invoke</code>方法</p>
-<p><img src="./image-20200804235543594.png" alt="image-20200804235543594"></p>
+<p><img src="./image-20200804235543594.png" srcset="/img/loading.gif" alt="image-20200804235543594"></p>
 <p>接着触发<code>LazyMap.get</code>方法,this.factory可控<code>ChainedTransformer</code>类,最后反射执行<code>Runtime.getRuntime.exec(&#39;xxx&#39;)</code>.</p>
-<p><img src="./image-20200804235834751.png" alt="image-20200804235834751"></p>
+<p><img src="./image-20200804235834751.png" srcset="/img/loading.gif" alt="image-20200804235834751"></p>
 <h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p><code>resolveClass</code>拦截反序列化的类，将<em>org.apache.commons.collections.functors</em>添加进黑名单。应用位置如下</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">weblogic.rjvm.InboundMsgAbbrev.class :: ServerChannelInputStream</span><br><span class="line">weblogic.rjvm.MsgAbbrevInputStream<span class="class">.<span class="keyword">class</span></span></span><br><span class="line"><span class="class"><span class="title">weblogic</span>.<span class="title">iiop</span>.<span class="title">Utils</span>.<span class="title">class</span></span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs java">weblogic.rjvm.InboundMsgAbbrev.class :: ServerChannelInputStream
+weblogic.rjvm.MsgAbbrevInputStream<span class="hljs-class">.<span class="hljs-keyword">class</span></span>
+<span class="hljs-class"><span class="hljs-title">weblogic</span>.<span class="hljs-title">iiop</span>.<span class="hljs-title">Utils</span>.<span class="hljs-title">class</span></span></code></pre>
 
-<h1 id="CVE-2016-0638"><a href="#CVE-2016-0638" class="headerlink" title="CVE-2016-0638"></a>CVE-2016-0638</h1><h2 id="影响版本-1"><a href="#影响版本-1" class="headerlink" title="影响版本"></a>影响版本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Oracle WebLogic Server 12.2.1.0</span><br><span class="line">Oracle WebLogic Server 12.1.3.0</span><br><span class="line">Oracle WebLogic Server 12.1.2.0</span><br><span class="line">Oracle WebLogic Server 10.3.6.0</span><br></pre></td></tr></table></figure>
+<h1 id="CVE-2016-0638"><a href="#CVE-2016-0638" class="headerlink" title="CVE-2016-0638"></a>CVE-2016-0638</h1><h2 id="影响版本-1"><a href="#影响版本-1" class="headerlink" title="影响版本"></a>影响版本</h2><pre><code class="hljs routeros">Oracle WebLogic<span class="hljs-built_in"> Server </span>12.2.1.0
+Oracle WebLogic<span class="hljs-built_in"> Server </span>12.1.3.0
+Oracle WebLogic<span class="hljs-built_in"> Server </span>12.1.2.0
+Oracle WebLogic<span class="hljs-built_in"> Server </span>10.3.6.0</code></pre>
 
 <h2 id="漏洞原理-1"><a href="#漏洞原理-1" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>测试环境：10.3.6.0 jdk7u21 debian</p>
 <p>利用StreamMessageImpl封装的CommonsCollections1恶意利用链,使恶意类反序列化在StreamMessageImpl.readExternal中进行，不在<code>weblogic.rjvm.InboundMsgAbbrev.class :: ServerChannelInputStream</code>中反序列化，以此绕过补丁</p>
 <h2 id="漏洞复现-1"><a href="#漏洞复现-1" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>重写<code>writeExternal</code>类，以此构造出符合<code>readExternal</code>反序列化的数据流。<code>exp.getObject</code>就是<code>CommonsCollections1</code>最终构造的对象,弹个计算机</p>
-<p><img src="./image-20200810151136398.png" alt="image-20200810151136398"></p>
+<p><img src="./image-20200810151136398.png" srcset="/img/loading.gif" alt="image-20200810151136398"></p>
 <h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p><code>StreamMessageImpl.readExternal</code>中调用<code>readObject</code>反序列化数据流.针对var1反序列化的条件有</p>
 <ol>
 <li>判断读取的第一个字节是否为1</li>
 <li><code>PayloadFactoryImpl.ceatePaload</code>方法中需要读取到var1(恶意类数据流)的长度.</li>
 </ol>
-<p><img src="./image-20200810152202349.png" alt="image-20200810152202349"></p>
+<p><img src="./image-20200810152202349.png" srcset="/img/loading.gif" alt="image-20200810152202349"></p>
 <p>所以依据此我们可以进行<code>StreamMessageImpl.writeExternal</code>进行重写.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">    var3.writeObject(exp.getObject()); <span class="comment">// 传入CommonsCollections1</span></span><br><span class="line">var1.writeByte(<span class="number">1</span>); <span class="comment">// 第一个字符写入字符1</span></span><br><span class="line">    var1.writeInt(var5.length); <span class="comment">// 写入恶意类数据流长度</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs java">    var3.writeObject(exp.getObject()); <span class="hljs-comment">// 传入CommonsCollections1</span>
+var1.writeByte(<span class="hljs-number">1</span>); <span class="hljs-comment">// 第一个字符写入字符1</span>
+    var1.writeInt(var5.length); <span class="hljs-comment">// 写入恶意类数据流长度</span></code></pre>
 
-<p><img src="./image-20200810152533077.png" alt="image-20200810152533077"></p>
-<h2 id="漏洞修复-1"><a href="#漏洞修复-1" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><h1 id="CVE-2016-3510"><a href="#CVE-2016-3510" class="headerlink" title="CVE-2016-3510"></a>CVE-2016-3510</h1><h2 id="影响版本-2"><a href="#影响版本-2" class="headerlink" title="影响版本"></a>影响版本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Oracle WebLogic Server 12.2.1.0</span><br><span class="line">Oracle WebLogic Server 12.1.3.0</span><br><span class="line">Oracle WebLogic Server 12.1.2.0</span><br><span class="line">Oracle WebLogic Server 10.3.6.0</span><br></pre></td></tr></table></figure>
+<p><img src="./image-20200810152533077.png" srcset="/img/loading.gif" alt="image-20200810152533077"></p>
+<h2 id="漏洞修复-1"><a href="#漏洞修复-1" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><h1 id="CVE-2016-3510"><a href="#CVE-2016-3510" class="headerlink" title="CVE-2016-3510"></a>CVE-2016-3510</h1><h2 id="影响版本-2"><a href="#影响版本-2" class="headerlink" title="影响版本"></a>影响版本</h2><pre><code class="hljs routeros">Oracle WebLogic<span class="hljs-built_in"> Server </span>12.2.1.0
+Oracle WebLogic<span class="hljs-built_in"> Server </span>12.1.3.0
+Oracle WebLogic<span class="hljs-built_in"> Server </span>12.1.2.0
+Oracle WebLogic<span class="hljs-built_in"> Server </span>10.3.6.0</code></pre>
 
 <h2 id="漏洞原理-2"><a href="#漏洞原理-2" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>MarshalledObject调用构造方法中存在序列化操作，且该对象中存在<code>readResolve</code>方法能够在反序列化时被调用且反序列化数据流可控.</p>
-<h2 id="漏洞复现-2"><a href="#漏洞复现-2" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p><img src="./image-20200810155349570.png" alt="image-20200810155349570"></p>
+<h2 id="漏洞复现-2"><a href="#漏洞复现-2" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p><img src="./image-20200810155349570.png" srcset="/img/loading.gif" alt="image-20200810155349570"></p>
 <h2 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>跟进<code>MarshalledObject.readResolve</code>方法.其中对<code>this.objBytes</code>调用<code>readObject</code>方法反序列化</p>
-<p><img src="./image-20200810155449702.png" alt="image-20200810155449702"></p>
+<p><img src="./image-20200810155449702.png" srcset="/img/loading.gif" alt="image-20200810155449702"></p>
 <p>回溯如何构造<code>this.objBytes</code>,发现是在创建<code>MarshalledObject</code>对象时候，可以直接插入恶意类生成序列化数据流</p>
-<p><img src="./image-20200810155601392.png" alt="image-20200810155601392"></p>
-<h2 id="漏洞修复-2"><a href="#漏洞修复-2" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><h1 id="CVE-2019-2890"><a href="#CVE-2019-2890" class="headerlink" title="CVE-2019-2890"></a>CVE-2019-2890</h1><h2 id="影响版本-3"><a href="#影响版本-3" class="headerlink" title="影响版本"></a>影响版本</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WebLogic Server 10.3.6.0</span><br><span class="line">WebLogic Server 12.1.3.0</span><br><span class="line">WebLogic Server 12.2.1.3</span><br></pre></td></tr></table></figure>
+<p><img src="./image-20200810155601392.png" srcset="/img/loading.gif" alt="image-20200810155601392"></p>
+<h2 id="漏洞修复-2"><a href="#漏洞修复-2" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><h1 id="CVE-2019-2890"><a href="#CVE-2019-2890" class="headerlink" title="CVE-2019-2890"></a>CVE-2019-2890</h1><h2 id="影响版本-3"><a href="#影响版本-3" class="headerlink" title="影响版本"></a>影响版本</h2><pre><code class="hljs routeros">WebLogic<span class="hljs-built_in"> Server </span>10.3.6.0
+WebLogic<span class="hljs-built_in"> Server </span>12.1.3.0
+WebLogic<span class="hljs-built_in"> Server </span>12.2.1.3</code></pre>
 
-<h2 id="漏洞复现-3"><a href="#漏洞复现-3" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">测试环境：10.3.6.0 + jdk7u21</span><br><span class="line">1.vps开启JRMPListener</span><br><span class="line">java -cp ysoserial-0.0.6-SNAPSHOT-all.jar ysoserial.exploit.JRMPListener 8000 Jdk7u21 <span class="string">"open /System/Applications/Calculator.app"</span></span><br><span class="line">2. T3协议利用</span><br><span class="line">python weblogic_t3.py 127.0.0.1 7001 /tmp/cve-2019.2890.ser</span><br></pre></td></tr></table></figure>
+<h2 id="漏洞复现-3"><a href="#漏洞复现-3" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><pre><code class="hljs bash">测试环境：10.3.6.0 + jdk7u21
+1.vps开启JRMPListener
+java -cp ysoserial-0.0.6-SNAPSHOT-all.jar ysoserial.exploit.JRMPListener 8000 Jdk7u21 <span class="hljs-string">"open /System/Applications/Calculator.app"</span>
+2. T3协议利用
+python weblogic_t3.py 127.0.0.1 7001 /tmp/cve-2019.2890.ser</code></pre>
 
-<p><img src="./image-20200810135823343.png" alt="image-20200810135823343"></p>
+<p><img src="./image-20200810135823343.png" srcset="/img/loading.gif" alt="image-20200810135823343"></p>
 <h2 id="漏洞原理-3"><a href="#漏洞原理-3" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p><code>PersistentContext</code>在序列化时候能够写入恶意类对象,在反序列化时<code>PersistentContext</code>对象调用<code>readObject</code>时对<code>PersistentContext</code>封装的序列化对象再次反序列化，可以绕过黑名单的限制</p>
-<p><img src="./image-20200810140747794.png" alt="image-20200810140747794"></p>
+<p><img src="./image-20200810140747794.png" srcset="/img/loading.gif" alt="image-20200810140747794"></p>
 <h2 id="漏洞分析-3"><a href="#漏洞分析-3" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>该分析主要针对，由于直接复制<code>PersistentContext</code>类进行构造,中间会出现一些问题</p>
 <p>1.实例化对象时会会调用<code>SecurityServiceManager.isKernelIdentity</code>进行判断，由于不影响<code>writeObject</code>对象创建直接注释掉即可.</p>
-<p><img src="./image-20200810114116364.png" alt="image-20200810114116364"></p>
+<p><img src="./image-20200810114116364.png" srcset="/img/loading.gif" alt="image-20200810114116364"></p>
 <p>2.获取KERNEL_ID时候，网上师傅的文章发现生成序列化时候卡住，在调试时并没有出现该情况.测试的版本在调用<code>SubjectManager.getSubjectManager</code>方法代码如下.</p>
-<p><img src="./image-20200810115907099.png" alt="image-20200810115907099"></p>
-<p><img src="./image-20200810120053655.png" alt="image-20200810120053655"></p>
+<p><img src="./image-20200810115907099.png" srcset="/img/loading.gif" alt="image-20200810115907099"></p>
+<p><img src="./image-20200810120053655.png" srcset="/img/loading.gif" alt="image-20200810120053655"></p>
 <ol start="3">
 <li>在反序列化时，需要进行解密。所以在调用<code>writeSubjec</code>写入时需要执行<code>EncryptionUtil.encrypt</code>对数据流进行加密.且加密条件需要本机的<code>SerializedSystemIni.dat</code>文件</li>
 </ol>
-<p><img src="./image-20200810135333015.png" alt="image-20200810135333015"></p>
+<p><img src="./image-20200810135333015.png" srcset="/img/loading.gif" alt="image-20200810135333015"></p>
 <h2 id="漏洞修复-3"><a href="#漏洞修复-3" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p><code>resolveClass</code>中验证反序列化类是否为<code>Subject</code>子类</p>
 <h1 id="CVE-2017-CVE-2018"><a href="#CVE-2017-CVE-2018" class="headerlink" title="CVE-2017~CVE-2018"></a>CVE-2017~CVE-2018</h1><p>CVE-2017至2018更多是替换恶意类绕过补丁，不在赘述</p>
 <h2 id="CVE-2017-3248"><a href="#CVE-2017-3248" class="headerlink" title="CVE-2017-3248"></a>CVE-2017-3248</h2><p>MarshalledObject+JRMP</p>
@@ -259,161 +334,259 @@
 <p><a href="https://xz.aliyun.com/search?keyword=weblogic" target="_blank" rel="noopener">https://xz.aliyun.com/search?keyword=weblogic</a></p>
 <p><a href="https://www.cnblogs.com/afanti/p/10240232.html" target="_blank" rel="noopener">https://www.cnblogs.com/afanti/p/10240232.html</a></p>
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Weblogic/">Weblogic</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2020/08/15/WebSphere-IIOP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-CVE-2020-4450/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">WebSphere IIOP反序列化(CVE-2020-4450)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/07/17/weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-UniversalExtractor-JNDI%E6%B3%A8%E5%85%A5%E5%88%86%E6%9E%90%E5%A4%8D%E7%8E%B0-%E9%99%84Exp/">
+                        <span class="hidden-mobile">weblogic T3反序列化[UniversalExtractor]JNDI注入(附Exp)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2015-4852"><span class="toc-number">2.</span> <span class="toc-text">CVE-2015-4852</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#影响版本"><span class="toc-number">2.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞原理"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞复现"><span class="toc-number">2.3.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.4.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞修复"><span class="toc-number">2.5.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2016-0638"><span class="toc-number">3.</span> <span class="toc-text">CVE-2016-0638</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#影响版本-1"><span class="toc-number">3.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞原理-1"><span class="toc-number">3.2.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞复现-1"><span class="toc-number">3.3.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析-1"><span class="toc-number">3.4.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞修复-1"><span class="toc-number">3.5.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2016-3510"><span class="toc-number">4.</span> <span class="toc-text">CVE-2016-3510</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#影响版本-2"><span class="toc-number">4.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞原理-2"><span class="toc-number">4.2.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞复现-2"><span class="toc-number">4.3.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析-2"><span class="toc-number">4.4.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞修复-2"><span class="toc-number">4.5.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2019-2890"><span class="toc-number">5.</span> <span class="toc-text">CVE-2019-2890</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#影响版本-3"><span class="toc-number">5.1.</span> <span class="toc-text">影响版本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞复现-3"><span class="toc-number">5.2.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞原理-3"><span class="toc-number">5.3.</span> <span class="toc-text">漏洞原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析-3"><span class="toc-number">5.4.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞修复-3"><span class="toc-number">5.5.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CVE-2017-CVE-2018"><span class="toc-number">6.</span> <span class="toc-text">CVE-2017~CVE-2018</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2017-3248"><span class="toc-number">6.1.</span> <span class="toc-text">CVE-2017-3248</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2018-2628"><span class="toc-number">6.2.</span> <span class="toc-text">CVE-2018-2628</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CVE-2018-2893"><span class="toc-number">6.3.</span> <span class="toc-text">CVE-2018-2893</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#结语"><span class="toc-number">7.</span> <span class="toc-text">结语</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">8.</span> <span class="toc-text">参考链接</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&text=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&is_video=false&description=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=Weblogic T3反序列化历史漏洞(一)&body=Check out this article: http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&title=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&name=Weblogic T3反序列化历史漏洞(一)&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2020/08/10/Weblogic-T3%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8E%86%E5%8F%B2%E6%BC%8F%E6%B4%9E-%E4%B8%80/&t=Weblogic T3反序列化历史漏洞(一)" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "Weblogic T3反序列化历史漏洞(一)&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

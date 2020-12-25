@@ -1,358 +1,664 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="__sleep():serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如果存在，该方法会先被调用，然后才执行序列化操作。 __wakeup:unserialize() 会检查是否存在一个 __wakeup() 方法。如果存在，则会先调用__wakeup方法，预先准备对象需要的资源。 __toString(): __toString() 方法用于一个类被当成字符串时应怎">
-<meta property="og:type" content="article">
-<meta property="og:title" content="PHP类学习_魔术方法">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="__sleep():serialize() 函数会检查类中是否存在一个魔术方法 __sleep()。如果存在，该方法会先被调用，然后才执行序列化操作。 __wakeup:unserialize() 会检查是否存在一个 __wakeup() 方法。如果存在，则会先调用__wakeup方法，预先准备对象需要的资源。 __toString(): __toString() 方法用于一个类被当成字符串时应怎">
-<meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2019-04-24T16:03:59.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:28:32.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="基础笔记">
-<meta name="twitter:card" content="summary">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>PHP类学习_魔术方法</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>PHP类学习_魔术方法 - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/04/19/%E4%BC%AAmysql%E6%9C%8D%E5%8A%A1%E5%99%A8-getFile/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&text=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&is_video=false&description=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=PHP类学习_魔术方法&body=Check out this article: http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&name=PHP类学习_魔术方法&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&t=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#创建类并实例化"><span class="toc-number">1.</span> <span class="toc-text">创建类并实例化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#construct"><span class="toc-number">2.</span> <span class="toc-text">__construct</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#destruct"><span class="toc-number">3.</span> <span class="toc-text">__destruct</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#set-、-get-、-isset-、-unset、"><span class="toc-number">4.</span> <span class="toc-text">__set()、__get()、__isset()、__unset、</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#call、-callStatic"><span class="toc-number">5.</span> <span class="toc-text">__call、__callStatic</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#set-state"><span class="toc-number">6.</span> <span class="toc-text">__set_state</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#debugInfo"><span class="toc-number">7.</span> <span class="toc-text">__debugInfo</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        PHP类学习_魔术方法
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-04-24T16:03:59.000Z" itemprop="datePublished">2019-04-25</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%AC%94%E8%AE%B0/" rel="tag">基础笔记</a>
-    </div>
-
-
-      <span id="/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" class="leancloud_visitors" data-flag-title="PHP类学习_魔术方法">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <p><code>__sleep()</code>:<code>serialize()</code> 函数会检查类中是否存在一个魔术方法 <code>__sleep()</code>。如果存在，该方法会先被调用，然后才执行序列化操作。</p>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-04-25 00:03" pubdate>
+        2019年4月25日 凌晨
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      996 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      14
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">PHP类学习_魔术方法</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <p><code>__sleep()</code>:<code>serialize()</code> 函数会检查类中是否存在一个魔术方法 <code>__sleep()</code>。如果存在，该方法会先被调用，然后才执行序列化操作。</p>
 <p><code>__wakeup</code>:<code>unserialize()</code> 会检查是否存在一个 <code>__wakeup()</code> 方法。如果存在，则会先调用<code>__wakeup</code>方法，预先准备对象需要的资源。</p>
 <p><code>__toString()</code>: <code>__toString()</code> 方法用于一个类被当成字符串时应怎样回应。</p>
 <p><code>__clone()</code>:当复制完成时，如果定义了<code>__clone()</code> 方法，则新创建的对象（复制生成的对象）中的 <code>__clone()</code> 方法会被调用，可用于修改属性的值（如果有必要的话）。</p>
-<h1 id="创建类并实例化"><a href="#创建类并实例化" class="headerlink" title="创建类并实例化"></a>创建类并实例化</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">user</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">load_info</span><span class="params">($username)</span></span>&#123;</span><br><span class="line">		<span class="comment">//从数据库加载用户信息</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$user =<span class="keyword">new</span> user;</span><br><span class="line">$user-&gt;load_info($_GET[<span class="string">'username'</span>])</span><br></pre></td></tr></table></figure>
+<h1 id="创建类并实例化"><a href="#创建类并实例化" class="headerlink" title="创建类并实例化"></a>创建类并实例化</h1><pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">user</span></span>&#123;
+	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">load_info</span><span class="hljs-params">($username)</span></span>&#123;
+		<span class="hljs-comment">//从数据库加载用户信息</span>
+	&#125;
+&#125;
+
+$user =<span class="hljs-keyword">new</span> user;
+$user-&gt;load_info($_GET[<span class="hljs-string">'username'</span>])</code></pre>
 
 
-<h1 id="construct"><a href="#construct" class="headerlink" title="__construct"></a><code>__construct</code></h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">user</span></span>&#123;</span><br><span class="line">	<span class="keyword">public</span> $username;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($username,$password)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;validate_user($username,$password))&#123;</span><br><span class="line">			<span class="keyword">$this</span>-&gt;username=$username;</span><br><span class="line"></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">$user=<span class="keyword">new</span> user(<span class="string">'Grif'</span>,<span class="string">'Misto'</span>);</span><br></pre></td></tr></table></figure>
+<h1 id="construct"><a href="#construct" class="headerlink" title="__construct"></a><code>__construct</code></h1><pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">user</span></span>&#123;
+	<span class="hljs-keyword">public</span> $username;
+	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">($username,$password)</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">$this</span>-&gt;validate_user($username,$password))&#123;
+			<span class="hljs-keyword">$this</span>-&gt;username=$username;
 
-<h1 id="destruct"><a href="#destruct" class="headerlink" title="__destruct"></a><code>__destruct</code></h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Database</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">function</span> <span class="title">__destruct</span><span class="params">()</span></span>&#123;</span><br><span class="line">		db_close(<span class="keyword">$this</span>-&gt;handle);<span class="comment">//关闭数据库连接</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+		&#125;
+	&#125;
+&#125;
+$user=<span class="hljs-keyword">new</span> user(<span class="hljs-string">'Grif'</span>,<span class="hljs-string">'Misto'</span>);</code></pre>
+
+<h1 id="destruct"><a href="#destruct" class="headerlink" title="__destruct"></a><code>__destruct</code></h1><pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Database</span></span>&#123;
+	<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__destruct</span><span class="hljs-params">()</span></span>&#123;
+		db_close(<span class="hljs-keyword">$this</span>-&gt;handle);<span class="hljs-comment">//关闭数据库连接</span>
+	&#125;
+&#125;</code></pre>
 
 
 <h1 id="set-、-get-、-isset-、-unset、"><a href="#set-、-get-、-isset-、-unset、" class="headerlink" title="__set()、__get()、__isset()、__unset、"></a><code>__set()、__get()、__isset()、__unset、</code></h1><p><code>__set()</code>:在给不可访问属性赋值时，<code>__set()</code> 会被调用。</p>
 <p><code>__get()</code>:读取不可访问属性的值时，<code>__get()</code> 会被调用。</p>
 <p><code>__isset()</code>:当对不可访问属性调用 <code>isset()</code> 或 empty() 时，<code>__isset()</code> 会被调用。</p>
 <p><code>__unset</code>:当对不可访问属性调用 <code>unset()</code> 时，<code>__unset()</code> 会被调用。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> $__data=<span class="keyword">array</span>();</span><br><span class="line">	<span class="keyword">private</span> $notRead=<span class="string">'asdasd'</span>;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__get</span><span class="params">($property)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;__data[$property]))&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;__data[$property];</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//限定只能设置预定义的属性</span></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__set</span><span class="params">($property,$value)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;__data[$property]))&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;__data[$property]=$value;</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">$johnwood=<span class="keyword">new</span> Person;</span><br><span class="line">$johnwood-&gt;email=<span class="string">'jonathan@worp.mil'</span>; <span class="comment">// 设置 $user-&gt;__data['email']</span></span><br><span class="line"><span class="keyword">print</span> $johnwood-&gt;email; <span class="comment">//读取 $user-&gt;__data['email']</span></span><br><span class="line"><span class="keyword">print</span> $johnwood-&gt;notRead; <span class="comment">//以定义的属性无法通过__get获取</span></span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span></span>&#123;
+	<span class="hljs-keyword">private</span> $__data=<span class="hljs-keyword">array</span>();
+	<span class="hljs-keyword">private</span> $notRead=<span class="hljs-string">'asdasd'</span>;
+	<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__get</span><span class="hljs-params">($property)</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-keyword">$this</span>-&gt;__data[$property]))&#123;
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;__data[$property];
+		&#125;<span class="hljs-keyword">else</span>&#123;
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+		&#125;
+	&#125;
+	<span class="hljs-comment">//限定只能设置预定义的属性</span>
+	<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__set</span><span class="hljs-params">($property,$value)</span></span>&#123;
+		<span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-keyword">$this</span>-&gt;__data[$property]))&#123;
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;__data[$property]=$value;
+		&#125;<span class="hljs-keyword">else</span>&#123;
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>;
+		&#125;
+	&#125;
+&#125;
+$johnwood=<span class="hljs-keyword">new</span> Person;
+$johnwood-&gt;email=<span class="hljs-string">'jonathan@worp.mil'</span>; <span class="hljs-comment">// 设置 $user-&gt;__data['email']</span>
+<span class="hljs-keyword">print</span> $johnwood-&gt;email; <span class="hljs-comment">//读取 $user-&gt;__data['email']</span>
+<span class="hljs-keyword">print</span> $johnwood-&gt;notRead; <span class="hljs-comment">//以定义的属性无法通过__get获取</span></code></pre>
 <p>设置数据时，<code>__set()</code>会重写<code>$__data</code>中的元素。类似地，可以使用<code>__get()</code>拦截调用，并返回正确的数组元素。</p>
 <h1 id="call、-callStatic"><a href="#call、-callStatic" class="headerlink" title="__call、__callStatic"></a><code>__call、__callStatic</code></h1><p><code>__call()</code>:在对象中调用一个不可访问方法时，<code>__call()</code> 会被调用。</p>
 <p><code>__callStatic()</code>:静态上下文中调用一个不可访问方法时，<code>__callStatic()</code> 会被调用。</p>
 <p>$name 参数是要调用的方法名称。$arguments 参数是一个枚举数组，包含着要传递给方法 $name 的参数。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Address</span></span>&#123;</span><br><span class="line">	<span class="keyword">protected</span> $city;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setCity</span><span class="params">($city)</span></span>&#123;</span><br><span class="line">		<span class="keyword">$this</span>-&gt;city=$city;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getCity</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;city;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">	<span class="keyword">protected</span> $name;</span><br><span class="line">	<span class="keyword">protected</span> $address;</span><br><span class="line">	<span class="keyword">protected</span> $method;</span><br><span class="line">	<span class="keyword">protected</span> $arguments;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">$this</span>-&gt;address=<span class="keyword">new</span> Address;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">setName</span><span class="params">($name)</span></span>&#123;</span><br><span class="line">		<span class="keyword">$this</span>-&gt;name=$name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">$this</span>-&gt;name;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__call</span><span class="params">($method,$arguments)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(method_exists(<span class="keyword">$this</span>-&gt;address,$method))&#123;</span><br><span class="line">			<span class="comment">// print $method;</span></span><br><span class="line">			<span class="comment">// var_dump($arguments);</span></span><br><span class="line">			<span class="keyword">return</span> call_user_func_array(<span class="keyword">array</span>(<span class="keyword">$this</span>-&gt;address,$method), $arguments);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$rasums=<span class="keyword">new</span> Person;</span><br><span class="line">$rasums-&gt;setName(<span class="string">'Rasmus Lerdorf'</span>);</span><br><span class="line">$rasums-&gt;setCity(<span class="string">'Sunnyval'</span>);</span><br><span class="line"><span class="keyword">print</span> $rasums-&gt;getName().<span class="string">'lives in '</span>.$rasums-&gt;getCity().<span class="string">'.'</span>;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Address</span></span>&#123;
+	<span class="hljs-keyword">protected</span> $city;
+	<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setCity</span><span class="hljs-params">($city)</span></span>&#123;
+		<span class="hljs-keyword">$this</span>-&gt;city=$city;
+	&#125;
+	<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getCity</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;city;
+	&#125;
+&#125;
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Person</span></span>&#123;
+	<span class="hljs-keyword">protected</span> $name;
+	<span class="hljs-keyword">protected</span> $address;
+	<span class="hljs-keyword">protected</span> $method;
+	<span class="hljs-keyword">protected</span> $arguments;
+	<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">$this</span>-&gt;address=<span class="hljs-keyword">new</span> Address;
+	&#125;
+	<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setName</span><span class="hljs-params">($name)</span></span>&#123;
+		<span class="hljs-keyword">$this</span>-&gt;name=$name;
+	&#125;
+	<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getName</span><span class="hljs-params">()</span></span>&#123;
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;name;
+	&#125;
+
+	<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__call</span><span class="hljs-params">($method,$arguments)</span></span>&#123;
+		<span class="hljs-keyword">if</span>(method_exists(<span class="hljs-keyword">$this</span>-&gt;address,$method))&#123;
+			<span class="hljs-comment">// print $method;</span>
+			<span class="hljs-comment">// var_dump($arguments);</span>
+			<span class="hljs-keyword">return</span> call_user_func_array(<span class="hljs-keyword">array</span>(<span class="hljs-keyword">$this</span>-&gt;address,$method), $arguments);
+		&#125;
+	&#125;
+&#125;
+
+$rasums=<span class="hljs-keyword">new</span> Person;
+$rasums-&gt;setName(<span class="hljs-string">'Rasmus Lerdorf'</span>);
+$rasums-&gt;setCity(<span class="hljs-string">'Sunnyval'</span>);
+<span class="hljs-keyword">print</span> $rasums-&gt;getName().<span class="hljs-string">'lives in '</span>.$rasums-&gt;getCity().<span class="hljs-string">'.'</span>;</code></pre>
 <p>调用了个<code>Person</code>中不存在的方法，对象调用魔术方法<code>__call()</code></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">	<span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">find</span><span class="params">($args)</span></span>&#123;</span><br><span class="line">		<span class="comment">//实际逻辑放在这里</span></span><br><span class="line">		<span class="comment">//例如，一个数据库查询</span></span><br><span class="line">		<span class="comment">//SELECT user From users where $args['field']=$args['value']</span></span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">print</span> <span class="string">'get find function Return'</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">__callStatic</span><span class="params">($method,$args)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(preg_match(<span class="string">'/^findBy(.+)$/'</span>,$method,$matches))&#123;</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">static</span>::find(<span class="keyword">array</span>(<span class="string">'field'</span>=&gt;$matches[<span class="number">1</span>],</span><br><span class="line">									<span class="string">'value'</span>=&gt;$args[<span class="number">0</span>]));</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">$user = User::findById(<span class="number">123</span>);</span><br><span class="line">$user=User::findByEmail(<span class="string">'rasums@php.net'</span>);</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">User</span></span>&#123;
+	<span class="hljs-keyword">static</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">find</span><span class="hljs-params">($args)</span></span>&#123;
+		<span class="hljs-comment">//实际逻辑放在这里</span>
+		<span class="hljs-comment">//例如，一个数据库查询</span>
+		<span class="hljs-comment">//SELECT user From users where $args['field']=$args['value']</span>
+		<span class="hljs-keyword">return</span> <span class="hljs-keyword">print</span> <span class="hljs-string">'get find function Return'</span>;
+	&#125;
+
+	<span class="hljs-keyword">static</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__callStatic</span><span class="hljs-params">($method,$args)</span></span>&#123;
+		<span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">'/^findBy(.+)$/'</span>,$method,$matches))&#123;
+			<span class="hljs-keyword">return</span> <span class="hljs-keyword">static</span>::find(<span class="hljs-keyword">array</span>(<span class="hljs-string">'field'</span>=&gt;$matches[<span class="hljs-number">1</span>],
+									<span class="hljs-string">'value'</span>=&gt;$args[<span class="hljs-number">0</span>]));
+		&#125;
+	&#125;
+&#125;
+$user = User::findById(<span class="hljs-number">123</span>);
+$user=User::findByEmail(<span class="hljs-string">'rasums@php.net'</span>);</code></pre>
 <p>将执行<code>findByEmail</code>方法的实际逻辑传到<code>User::find()</code></p>
 <p>当尝试以调用函数的方式调用一个对象时，<code>__invoke()</code> 方法会被自动调用。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallableClass</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__invoke</span><span class="params">($x)</span> </span>&#123;</span><br><span class="line">        var_dump($x);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$obj = <span class="keyword">new</span> CallableClass;</span><br><span class="line">$obj(<span class="number">5</span>);</span><br><span class="line">var_dump(is_callable($obj));</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CallableClass</span> </span>
+<span class="hljs-class"></span>&#123;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__invoke</span><span class="hljs-params">($x)</span> </span>&#123;
+        var_dump($x);
+    &#125;
+&#125;
+$obj = <span class="hljs-keyword">new</span> CallableClass;
+$obj(<span class="hljs-number">5</span>);
+var_dump(is_callable($obj));</code></pre>
 
 
 
 
 <h1 id="set-state"><a href="#set-state" class="headerlink" title="__set_state"></a><code>__set_state</code></h1><p>// <code>static __set_state ( array $properties ) : object</code><br>// 自 PHP 5.1.0 起当调用 var_export() 导出类时，此静态 方法会被调用。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> $var1;</span><br><span class="line">    <span class="keyword">public</span> $var2;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="function"><span class="keyword">function</span> <span class="title">__set_state</span><span class="params">($an_array)</span> // <span class="title">As</span> <span class="title">of</span> <span class="title">PHP</span> 5.1.0</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $obj = <span class="keyword">new</span> A;</span><br><span class="line">        $obj-&gt;var1 = $an_array[<span class="string">'var1'</span>];</span><br><span class="line">        $obj-&gt;var2 = $an_array[<span class="string">'var2'</span>];</span><br><span class="line">        <span class="keyword">return</span> $obj;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$a = <span class="keyword">new</span> A;</span><br><span class="line">$a-&gt;var1 = <span class="number">5</span>;</span><br><span class="line">$a-&gt;var2 = <span class="string">'foo'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">eval</span>(<span class="string">'$b = '</span> . var_export($a, <span class="keyword">true</span>) . <span class="string">';'</span>); <span class="comment">// $b = A::__set_state(array(</span></span><br><span class="line">                                            <span class="comment">//    'var1' =&gt; 5,</span></span><br><span class="line">                                            <span class="comment">//    'var2' =&gt; 'foo',</span></span><br><span class="line">                                            <span class="comment">// ));</span></span><br><span class="line">var_dump($b);</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">A</span></span>
+<span class="hljs-class"></span>&#123;
+    <span class="hljs-keyword">public</span> $var1;
+    <span class="hljs-keyword">public</span> $var2;
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__set_state</span><span class="hljs-params">($an_array)</span> // <span class="hljs-title">As</span> <span class="hljs-title">of</span> <span class="hljs-title">PHP</span> 5.1.0</span>
+<span class="hljs-function">    </span>&#123;
+        $obj = <span class="hljs-keyword">new</span> A;
+        $obj-&gt;var1 = $an_array[<span class="hljs-string">'var1'</span>];
+        $obj-&gt;var2 = $an_array[<span class="hljs-string">'var2'</span>];
+        <span class="hljs-keyword">return</span> $obj;
+    &#125;
+&#125;
+
+$a = <span class="hljs-keyword">new</span> A;
+$a-&gt;var1 = <span class="hljs-number">5</span>;
+$a-&gt;var2 = <span class="hljs-string">'foo'</span>;
+
+<span class="hljs-keyword">eval</span>(<span class="hljs-string">'$b = '</span> . var_export($a, <span class="hljs-keyword">true</span>) . <span class="hljs-string">';'</span>); <span class="hljs-comment">// $b = A::__set_state(array(</span>
+                                            <span class="hljs-comment">//    'var1' =&gt; 5,</span>
+                                            <span class="hljs-comment">//    'var2' =&gt; 'foo',</span>
+                                            <span class="hljs-comment">// ));</span>
+var_dump($b);</code></pre>
 
 
 
 
 <h1 id="debugInfo"><a href="#debugInfo" class="headerlink" title="__debugInfo"></a><code>__debugInfo</code></h1><p><code>__debugInfo （ void ）：数组</code></p>
 <p>// 转储对象以获取应显示的属性时 ，<code>var_dump（）</code>调用此方法。如果未在对象上定义该方法，则将显示所有公共属性，受保护属性和私有属性。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> $prop;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span><span class="params">($val)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;prop = $val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__debugInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> [</span><br><span class="line">            <span class="string">'propSquared'</span> =&gt; <span class="keyword">$this</span>-&gt;prop ** <span class="number">2</span>,</span><br><span class="line">        ];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var_dump(<span class="keyword">new</span> C(<span class="number">42</span>));</span><br></pre></td></tr></table></figure>
-  </div>
-</article>
+<pre><code class="hljs php"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">C</span> </span>&#123;
+    <span class="hljs-keyword">private</span> $prop;
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">($val)</span> </span>&#123;
+        <span class="hljs-keyword">$this</span>-&gt;prop = $val;
+    &#125;
 
-    </section>
+    <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__debugInfo</span><span class="hljs-params">()</span> </span>&#123;
+        <span class="hljs-keyword">return</span> [
+            <span class="hljs-string">'propSquared'</span> =&gt; <span class="hljs-keyword">$this</span>-&gt;prop ** <span class="hljs-number">2</span>,
+        ];
+    &#125;
+&#125;
 
+var_dump(<span class="hljs-keyword">new</span> C(<span class="hljs-number">42</span>));</code></pre>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%9F%BA%E7%A1%80%E7%AC%94%E8%AE%B0/">基础笔记</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/04/25/HDwiki6-0-sql%E7%9B%B2%E6%B3%A8/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">HDwiki6.0_sql盲注</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/04/19/%E4%BC%AAmysql%E6%9C%8D%E5%8A%A1%E5%99%A8-getFile/">
+                        <span class="hidden-mobile">伪mysql服务器_getFile</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#创建类并实例化"><span class="toc-number">1.</span> <span class="toc-text">创建类并实例化</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#construct"><span class="toc-number">2.</span> <span class="toc-text">__construct</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#destruct"><span class="toc-number">3.</span> <span class="toc-text">__destruct</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#set-、-get-、-isset-、-unset、"><span class="toc-number">4.</span> <span class="toc-text">__set()、__get()、__isset()、__unset、</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#call、-callStatic"><span class="toc-number">5.</span> <span class="toc-text">__call、__callStatic</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#set-state"><span class="toc-number">6.</span> <span class="toc-text">__set_state</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#debugInfo"><span class="toc-number">7.</span> <span class="toc-text">__debugInfo</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&text=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&is_video=false&description=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=PHP类学习_魔术方法&body=Check out this article: http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&title=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&name=PHP类学习_魔术方法&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/04/25/PHP%E7%B1%BB%E5%AD%A6%E4%B9%A0-%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/&t=PHP类学习_魔术方法" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "PHP类学习_魔术方法&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

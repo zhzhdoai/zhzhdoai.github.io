@@ -1,179 +1,295 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="前言最近在整理php弱类型，发现函数缺陷在弱类型中还是挺有意思的，遂找了is_numeric函数来试试手。挺有收货的，不断补全自己的知识盲区。 使用的空格符替换控制码“\0” “%00” (ASCII  0 (0x00))，空字节符。 制表符“\t” (ASCII  9 (0x09))，水平制表符。 空白字符：“\n” (ASCII 10 (0x0A))，换行符。“\v” “\x0b” (ASCI">
-<meta property="og:type" content="article">
-<meta property="og:title" content="函数特性 | 绕过的空白字符">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="前言最近在整理php弱类型，发现函数缺陷在弱类型中还是挺有意思的，遂找了is_numeric函数来试试手。挺有收货的，不断补全自己的知识盲区。 使用的空格符替换控制码“\0” “%00” (ASCII  0 (0x00))，空字节符。 制表符“\t” (ASCII  9 (0x09))，水平制表符。 空白字符：“\n” (ASCII 10 (0x0A))，换行符。“\v” “\x0b” (ASCI">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/1.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/2.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/3.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/4.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/5.png">
-<meta property="article:published_time" content="2019-02-27T09:31:58.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:31:42.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="WEB安全">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/1.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>函数特性 | 绕过的空白字符</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>函数特性 | 绕过的空白字符 - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/03/05/Xdebug-phpstorm%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95-LAMP/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/02/27/PHP%E5%BC%B1%E7%B1%BB%E5%9E%8B/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&text=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&is_video=false&description=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=函数特性 | 绕过的空白字符&body=Check out this article: http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&name=函数特性 | 绕过的空白字符&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&t=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用的空格符替换"><span class="toc-number">2.</span> <span class="toc-text">使用的空格符替换</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码查找方法"><span class="toc-number">3.</span> <span class="toc-text">源码查找方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Is-numeric源码分析"><span class="toc-number">4.</span> <span class="toc-text">Is_numeric源码分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#is-numeric-while缺陷利用"><span class="toc-number">5.</span> <span class="toc-text">is_numeric while缺陷利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#验证Demo："><span class="toc-number">5.1.</span> <span class="toc-text">验证Demo：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数值判断方法"><span class="toc-number">5.2.</span> <span class="toc-text">数值判断方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CTF"><span class="toc-number">6.</span> <span class="toc-text">CTF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析代码"><span class="toc-number">6.1.</span> <span class="toc-text">分析代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-传入number-191"><span class="toc-number">6.1.1.</span> <span class="toc-text">1. 传入number&#x3D;191</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-分析is-numeric"><span class="toc-number">6.1.2.</span> <span class="toc-text">2. 分析is_numeric</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-但是我们需要的是-info-flag-需要绕过is-palindrome-number-req-“number”"><span class="toc-number">6.1.3.</span> <span class="toc-text">3. 但是我们需要的是$info&#x3D;$flag;需要绕过is_palindrome_number($req[“number”]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-传入参数-number-00-0c191"><span class="toc-number">6.1.4.</span> <span class="toc-text">4. 传入参数?number&#x3D;%00%0c191</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">7.</span> <span class="toc-text">参考链接</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        函数特性 | 绕过的空白字符
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-02-27T09:31:58.000Z" itemprop="datePublished">2019-02-27</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/WEB%E5%AE%89%E5%85%A8/" rel="tag">WEB安全</a>
-    </div>
-
-
-      <span id="/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/" class="leancloud_visitors" data-flag-title="函数特性 | 绕过的空白字符">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在整理php弱类型，发现函数缺陷在弱类型中还是挺有意思的，遂找了is_numeric函数来试试手。挺有收货的，不断补全自己的知识盲区。</p>
+  
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-02-27 17:31" pubdate>
+        2019年2月27日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      19
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">函数特性 | 绕过的空白字符</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在整理php弱类型，发现函数缺陷在弱类型中还是挺有意思的，遂找了is_numeric函数来试试手。挺有收货的，不断补全自己的知识盲区。</p>
 <h1 id="使用的空格符替换"><a href="#使用的空格符替换" class="headerlink" title="使用的空格符替换"></a>使用的空格符替换</h1><p>控制码<br>“\0” “%00” (ASCII  0 (0x00))，空字节符。</p>
 <p>制表符<br>“\t” (ASCII  9 (0x09))，水平制表符。</p>
 <p>空白字符：<br>“\n” (ASCII 10 (0x0A))，换行符。<br>“\v” “\x0b” (ASCII  11 (0x0B))，垂直制表符。<br>“\f” “%0c” 换页符<br>“\r” “%0d”(ASCII  13 (0x0D))，回车符。</p>
 <p>空格:<br>“ “ “%20” (ASCII  32 (0x20))，普通空格符。</p>
 <h1 id="源码查找方法"><a href="#源码查找方法" class="headerlink" title="源码查找方法"></a>源码查找方法</h1><p>现在ext找到方法在文件中的定义名，然后在Zend文件中查找</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">php-5.6.30&#x2F;ext&#x2F;standard&#x2F;string.c</span><br><span class="line">$ sudo grep -rn &quot;PHP_FUNCTION(is_numeric)&quot;</span><br><span class="line">-&gt;standard&#x2F;type.c:314:PHP_FUNCTION(is_numeric)</span><br><span class="line">-&gt;standard&#x2F;php_type.h:35:PHP_FUNCTION(is_numeric);</span><br><span class="line"></span><br><span class="line">php-5.6.30&#x2F;Zend&#x2F;zend_operators.c</span><br><span class="line">$ sudo grep -rn &quot;is_numeric_string&quot;</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs elm"><span class="hljs-title">php</span><span class="hljs-number">-5.6</span><span class="hljs-number">.30</span>/ext/standard/string.c
+$ sudo grep -rn <span class="hljs-string">"PHP_FUNCTION(is_numeric)"</span>
+-&gt;standard/<span class="hljs-keyword">type</span>.c:314:<span class="hljs-type">PHP_FUNCTION</span>(is_numeric)
+-&gt;standard/php_<span class="hljs-keyword">type</span>.h:35:<span class="hljs-type">PHP_FUNCTION</span>(is_numeric);
+
+<span class="hljs-title">php</span><span class="hljs-number">-5.6</span><span class="hljs-number">.30</span>/<span class="hljs-type">Zend</span>/zend_operators.c
+$ sudo grep -rn <span class="hljs-string">"is_numeric_string"</span></code></pre>
 
 <h1 id="Is-numeric源码分析"><a href="#Is-numeric源码分析" class="headerlink" title="Is_numeric源码分析"></a>Is_numeric源码分析</h1><p>Is_numeric只是判别是否为数，而不是修改数。这是大前提，通过源码我们可以得知。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">static inline zend_uchar is_numeric_string_ex(const char *str, int length, long *lval, double *dval, int allow_errors, int *oflow_info)</span><br><span class="line">&#123;</span><br><span class="line">	const char *ptr;</span><br><span class="line">	int base &#x3D; 10, digits &#x3D; 0, dp_or_e &#x3D; 0;</span><br><span class="line">	double local_dval &#x3D; 0.0;</span><br><span class="line">	zend_uchar type;</span><br><span class="line"></span><br><span class="line">	if (!length) &#123;</span><br><span class="line">		return 0;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if (oflow_info !&#x3D; NULL) &#123;</span><br><span class="line">		*oflow_info &#x3D; 0;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	&#x2F;* Skip any whitespace</span><br><span class="line">	 * This is much faster than the isspace() function *&#x2F;</span><br><span class="line">	while (*str &#x3D;&#x3D; &#39; &#39; || *str &#x3D;&#x3D; &#39;\t&#39; || *str &#x3D;&#x3D; &#39;\n&#39; || *str &#x3D;&#x3D; &#39;\r&#39; || *str &#x3D;&#x3D; &#39;\v&#39; || *str &#x3D;&#x3D; &#39;\f&#39;) &#123;</span><br><span class="line">		str++;</span><br><span class="line">		length--;</span><br><span class="line">	&#125;</span><br><span class="line">	ptr &#x3D; str;</span><br><span class="line">	&#x2F;&#x2F;判断正负</span><br><span class="line">	if (*ptr &#x3D;&#x3D; &#39;-&#39; || *ptr &#x3D;&#x3D; &#39;+&#39;) &#123;</span><br><span class="line">		ptr++;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	if (ZEND_IS_DIGIT(*ptr)) &#123;</span><br><span class="line">		&#x2F;* Handle hex numbers</span><br><span class="line">		 * str is used instead of ptr to disallow signs and keep old behavior *&#x2F;</span><br><span class="line">		&#x2F;&#x2F;判断十六进制</span><br><span class="line">		if (length &gt; 2 &amp;&amp; *str &#x3D;&#x3D; &#39;0&#39; &amp;&amp; (str[1] &#x3D;&#x3D; &#39;x&#39; || str[1] &#x3D;&#x3D; &#39;X&#39;)) &#123;</span><br><span class="line">			base &#x3D; 16;</span><br><span class="line">			ptr +&#x3D; 2;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		&#x2F;* Skip any leading 0s *&#x2F;</span><br><span class="line">		while (*ptr &#x3D;&#x3D; &#39;0&#39;) &#123;</span><br><span class="line">			ptr++;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		&#x2F;* Count the number of digits. If a decimal point&#x2F;exponent is found,</span><br><span class="line">		 * it&#39;s a double. Otherwise, if there&#39;s a dval or no need to check for</span><br><span class="line">		 * a full match, stop when there are too many digits for a long *&#x2F;</span><br><span class="line">		for (type &#x3D; IS_LONG; !(digits &gt;&#x3D; MAX_LENGTH_OF_LONG &amp;&amp; (dval || allow_errors &#x3D;&#x3D; 1)); digits++, ptr++) &#123;</span><br><span class="line">check_digits:</span><br><span class="line">			if (ZEND_IS_DIGIT(*ptr) || (base &#x3D;&#x3D; 16 &amp;&amp; ZEND_IS_XDIGIT(*ptr))) &#123;...............</span><br></pre></td></tr></table></figure>
+<pre><code class="hljs processing"><span class="hljs-keyword">static</span> inline zend_uchar is_numeric_string_ex(<span class="hljs-keyword">const</span> <span class="hljs-built_in">char</span> *<span class="hljs-built_in">str</span>, <span class="hljs-built_in">int</span> length, <span class="hljs-keyword">long</span> *lval, <span class="hljs-keyword">double</span> *dval, <span class="hljs-built_in">int</span> allow_errors, <span class="hljs-built_in">int</span> *oflow_info)
+&#123;
+	<span class="hljs-keyword">const</span> <span class="hljs-built_in">char</span> *ptr;
+	<span class="hljs-built_in">int</span> base = <span class="hljs-number">10</span>, digits = <span class="hljs-number">0</span>, dp_or_e = <span class="hljs-number">0</span>;
+	<span class="hljs-keyword">double</span> local_dval = <span class="hljs-number">0.0</span>;
+	zend_uchar type;
+
+	<span class="hljs-keyword">if</span> (!length) &#123;
+		<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+	&#125;
+
+	<span class="hljs-keyword">if</span> (oflow_info != NULL) &#123;
+		*oflow_info = <span class="hljs-number">0</span>;
+	&#125;
+
+	<span class="hljs-comment">/* Skip any whitespace</span>
+<span class="hljs-comment">	 * This is much faster than the isspace() function */</span>
+	<span class="hljs-keyword">while</span> (*<span class="hljs-built_in">str</span> == <span class="hljs-string">' '</span> || *<span class="hljs-built_in">str</span> == <span class="hljs-string">'\t'</span> || *<span class="hljs-built_in">str</span> == <span class="hljs-string">'\n'</span> || *<span class="hljs-built_in">str</span> == <span class="hljs-string">'\r'</span> || *<span class="hljs-built_in">str</span> == <span class="hljs-string">'\v'</span> || *<span class="hljs-built_in">str</span> == <span class="hljs-string">'\f'</span>) &#123;
+		<span class="hljs-built_in">str</span>++;
+		length--;
+	&#125;
+	ptr = <span class="hljs-built_in">str</span>;
+	<span class="hljs-comment">//判断正负</span>
+	<span class="hljs-keyword">if</span> (*ptr == <span class="hljs-string">'-'</span> || *ptr == <span class="hljs-string">'+'</span>) &#123;
+		ptr++;
+	&#125;
+
+	<span class="hljs-keyword">if</span> (ZEND_IS_DIGIT(*ptr)) &#123;
+		<span class="hljs-comment">/* Handle hex numbers</span>
+<span class="hljs-comment">		 * str is used instead of ptr to disallow signs and keep old behavior */</span>
+		<span class="hljs-comment">//判断十六进制</span>
+		<span class="hljs-keyword">if</span> (length &gt; <span class="hljs-number">2</span> &amp;&amp; *<span class="hljs-built_in">str</span> == <span class="hljs-string">'0'</span> &amp;&amp; (<span class="hljs-built_in">str</span>[<span class="hljs-number">1</span>] == <span class="hljs-string">'x'</span> || <span class="hljs-built_in">str</span>[<span class="hljs-number">1</span>] == <span class="hljs-string">'X'</span>)) &#123;
+			base = <span class="hljs-number">16</span>;
+			ptr += <span class="hljs-number">2</span>;
+		&#125;
+
+		<span class="hljs-comment">/* Skip any leading 0s */</span>
+		<span class="hljs-keyword">while</span> (*ptr == <span class="hljs-string">'0'</span>) &#123;
+			ptr++;
+		&#125;
+
+		<span class="hljs-comment">/* Count the number of digits. If a decimal point/exponent is found,</span>
+<span class="hljs-comment">		 * it's a double. Otherwise, if there's a dval or no need to check for</span>
+<span class="hljs-comment">		 * a full match, stop when there are too many digits for a long */</span>
+		<span class="hljs-keyword">for</span> (type = IS_LONG; !(digits &gt;= MAX_LENGTH_OF_LONG &amp;&amp; (dval || allow_errors == <span class="hljs-number">1</span>)); digits++, ptr++) &#123;
+check_digits:
+			<span class="hljs-keyword">if</span> (ZEND_IS_DIGIT(*ptr) || (base == <span class="hljs-number">16</span> &amp;&amp; ZEND_IS_XDIGIT(*ptr))) &#123;...............</code></pre>
 <p>分析源代码：</p>
 <p>Is_numerci()代码执行流程</p>
 <ol>
@@ -183,7 +299,7 @@
 <li>识别小数和科学计数法</li>
 </ol>
 <h1 id="is-numeric-while缺陷利用"><a href="#is-numeric-while缺陷利用" class="headerlink" title="is_numeric while缺陷利用"></a>is_numeric while缺陷利用</h1><p><strong><em>利用在ctf中展示</em></strong></p>
-<p>##　空格字符处理<br><img src="./1.png" alt=""><br>Is_numeric() 在执行前会跳过所有空格字符，保留原来空格字符长度增大。这样处理对数值判断是没有影响。</p>
+<p>##　空格字符处理<br><img src="./1.png" srcset="/img/loading.gif" alt=""><br>Is_numeric() 在执行前会跳过所有空格字符，保留原来空格字符长度增大。这样处理对数值判断是没有影响。</p>
 <h2 id="验证Demo："><a href="#验证Demo：" class="headerlink" title="验证Demo："></a>验证Demo：</h2><?php 
 if(($_GET['num'])>='0' &&  ($_GET['num']) <= '9'){
     echo "True";
@@ -191,14 +307,90 @@ if(($_GET['num'])>='0' &&  ($_GET['num']) <= '9'){
 else{
     echo "False";
 }
-?><p><br><img src="./2.png" alt=""></p>
+?><p><br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
 <h2 id="数值判断方法"><a href="#数值判断方法" class="headerlink" title="数值判断方法"></a>数值判断方法</h2><p><code>#define ZEND_IS_DIGIT(c) ((c) &gt;= &#39;0&#39; &amp;&amp; (c) &lt;= &#39;9&#39;)</code><br><strong><em>如果没有绕过while对字符串的处理那么函数is_numeric返回为FALSE</em></strong></p>
-<h1 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line"> </span><br><span class="line">$info &#x3D; &quot;&quot;; </span><br><span class="line">$req &#x3D; [];</span><br><span class="line">$flag&#x3D;&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;;</span><br><span class="line"> </span><br><span class="line">ini_set(&quot;display_error&quot;, false); &#x2F;&#x2F;为一个配置选项设置值</span><br><span class="line">error_reporting(0); &#x2F;&#x2F;关闭所有PHP错误报告</span><br><span class="line"> </span><br><span class="line">if(!isset($_GET[&#39;number&#39;]))&#123;</span><br><span class="line">   header(&quot;hint:26966dc52e85af40f59b4fe73d8c323a.txt&quot;); &#x2F;&#x2F;HTTP头显示hint 26966dc52e85af40f59b4fe73d8c323a.txt</span><br><span class="line"> </span><br><span class="line">   die(&quot;have a fun!!&quot;); &#x2F;&#x2F;die — 等同于 exit()</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">foreach([$_GET, $_POST] as $global_var) &#123;  &#x2F;&#x2F;foreach 语法结构提供了遍历数组的简单方式 </span><br><span class="line">    foreach($global_var as $key &#x3D;&gt; $value) &#123; </span><br><span class="line">        $value &#x3D; trim($value);  &#x2F;&#x2F;trim — 去除字符串首尾处的空格字符（或者其他字符）</span><br><span class="line">        is_string($value) &amp;&amp; $req[$key] &#x3D; addslashes($value); &#x2F;&#x2F; is_string — 检测变量是否是字符串，addslashes — 使用反斜线引用字符串</span><br><span class="line">    &#125; &#x2F;&#x2F;存入数组req中ｖａｌｕｅ</span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">function is_palindrome_number($number) &#123; </span><br><span class="line">    $number &#x3D; strval($number); &#x2F;&#x2F;strval — 获取变量的字符串值</span><br><span class="line">    $i &#x3D; 0; </span><br><span class="line">    $j &#x3D; strlen($number) - 1; &#x2F;&#x2F;strlen — 获取字符串长度</span><br><span class="line">    while($i &lt; $j) &#123; </span><br><span class="line">        if($number[$i] !&#x3D;&#x3D; $number[$j]) &#123; </span><br><span class="line">            return false; </span><br><span class="line">        &#125; </span><br><span class="line">        $i++; </span><br><span class="line">        $j--; </span><br><span class="line">    &#125; </span><br><span class="line">    return true; </span><br><span class="line">&#125; </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">if(is_numeric($_REQUEST[&#39;number&#39;])) &#x2F;&#x2F;is_numeric — 检测变量是否为数字或数字字符串 </span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">   $info&#x3D;&quot;sorry, you cann&#39;t input a number!&quot;;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">elseif($req[&#39;number&#39;]!&#x3D;strval(intval($req[&#39;number&#39;]))) &#x2F;&#x2F;intval — 获取变量的整数值．这里要做的是使得elseif False。空白字符绕过</span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">     $info &#x3D; &quot;number must be equal to it&#39;s integer!! &quot;; </span><br><span class="line"> 	</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line"> </span><br><span class="line">     $value1 &#x3D; intval($req[&quot;number&quot;]);</span><br><span class="line">     $value2 &#x3D; intval(strrev($req[&quot;number&quot;]));&#x2F;&#x2F;strrev 反转字符串  </span><br><span class="line"> </span><br><span class="line">     if($value1!&#x3D;$value2)&#123;</span><br><span class="line">          $info&#x3D;&quot;no, this is not a palindrome number!&quot;;</span><br><span class="line">          </span><br><span class="line">     &#125;</span><br><span class="line">     else</span><br><span class="line">     &#123;</span><br><span class="line"> </span><br><span class="line">          if(is_palindrome_number($req[&quot;number&quot;]))&#123;</span><br><span class="line">              $info &#x3D; &quot;nice! &#123;$value1&#125; is a palindrome number!&quot;; </span><br><span class="line">          &#125;</span><br><span class="line">          else</span><br><span class="line">          &#123;</span><br><span class="line">             $info&#x3D;$flag;</span><br><span class="line">          &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">echo $info;</span><br></pre></td></tr></table></figure>
+<h1 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h1><pre><code class="hljs xml"><span class="php"><span class="hljs-meta">&lt;?php</span></span>
+<span class="php"> </span>
+<span class="php">$info = <span class="hljs-string">""</span>; </span>
+<span class="php">$req = [];</span>
+<span class="php">$flag=<span class="hljs-string">"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"</span>;</span>
+<span class="php"> </span>
+<span class="php">ini_set(<span class="hljs-string">"display_error"</span>, <span class="hljs-keyword">false</span>); <span class="hljs-comment">//为一个配置选项设置值</span></span>
+<span class="php">error_reporting(<span class="hljs-number">0</span>); <span class="hljs-comment">//关闭所有PHP错误报告</span></span>
+<span class="php"> </span>
+<span class="php"><span class="hljs-keyword">if</span>(!<span class="hljs-keyword">isset</span>($_GET[<span class="hljs-string">'number'</span>]))&#123;</span>
+<span class="php">   header(<span class="hljs-string">"hint:26966dc52e85af40f59b4fe73d8c323a.txt"</span>); <span class="hljs-comment">//HTTP头显示hint 26966dc52e85af40f59b4fe73d8c323a.txt</span></span>
+<span class="php"> </span>
+<span class="php">   <span class="hljs-keyword">die</span>(<span class="hljs-string">"have a fun!!"</span>); <span class="hljs-comment">//die — 等同于 exit()</span></span>
+<span class="php"> </span>
+<span class="php">&#125;</span>
+<span class="php"> </span>
+<span class="php"><span class="hljs-keyword">foreach</span>([$_GET, $_POST] <span class="hljs-keyword">as</span> $global_var) &#123;  <span class="hljs-comment">//foreach 语法结构提供了遍历数组的简单方式 </span></span>
+<span class="php">    <span class="hljs-keyword">foreach</span>($global_var <span class="hljs-keyword">as</span> $key =&gt; $value) &#123; </span>
+<span class="php">        $value = trim($value);  <span class="hljs-comment">//trim — 去除字符串首尾处的空格字符（或者其他字符）</span></span>
+<span class="php">        is_string($value) &amp;&amp; $req[$key] = addslashes($value); <span class="hljs-comment">// is_string — 检测变量是否是字符串，addslashes — 使用反斜线引用字符串</span></span>
+<span class="php">    &#125; <span class="hljs-comment">//存入数组req中ｖａｌｕｅ</span></span>
+<span class="php">&#125; </span>
+<span class="php"> </span>
+<span class="php"> </span>
+<span class="php"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">is_palindrome_number</span><span class="hljs-params">($number)</span> </span>&#123; </span>
+<span class="php">    $number = strval($number); <span class="hljs-comment">//strval — 获取变量的字符串值</span></span>
+<span class="php">    $i = <span class="hljs-number">0</span>; </span>
+<span class="php">    $j = strlen($number) - <span class="hljs-number">1</span>; <span class="hljs-comment">//strlen — 获取字符串长度</span></span>
+<span class="php">    <span class="hljs-keyword">while</span>($i &lt; $j) &#123; </span>
+<span class="php">        <span class="hljs-keyword">if</span>($number[$i] !== $number[$j]) &#123; </span>
+<span class="php">            <span class="hljs-keyword">return</span> <span class="hljs-keyword">false</span>; </span>
+<span class="php">        &#125; </span>
+<span class="php">        $i++; </span>
+<span class="php">        $j--; </span>
+<span class="php">    &#125; </span>
+<span class="php">    <span class="hljs-keyword">return</span> <span class="hljs-keyword">true</span>; </span>
+<span class="php">&#125; </span>
+<span class="php"> </span>
+<span class="php"> </span>
+<span class="php"><span class="hljs-keyword">if</span>(is_numeric($_REQUEST[<span class="hljs-string">'number'</span>])) <span class="hljs-comment">//is_numeric — 检测变量是否为数字或数字字符串 </span></span>
+<span class="php">&#123;</span>
+<span class="php"> </span>
+<span class="php">   $info=<span class="hljs-string">"sorry, you cann't input a number!"</span>;</span>
+<span class="php"> </span>
+<span class="php">&#125;</span>
+
+<span class="php"><span class="hljs-keyword">elseif</span>($req[<span class="hljs-string">'number'</span>]!=strval(intval($req[<span class="hljs-string">'number'</span>]))) <span class="hljs-comment">//intval — 获取变量的整数值．这里要做的是使得elseif False。空白字符绕过</span></span>
+<span class="php">&#123;</span>
+<span class="php"> </span>
+<span class="php">     $info = <span class="hljs-string">"number must be equal to it's integer!! "</span>; </span>
+<span class="php"> 	</span>
+<span class="php">&#125;</span>
+<span class="php"><span class="hljs-keyword">else</span></span>
+<span class="php">&#123;</span>
+<span class="php"> </span>
+<span class="php">     $value1 = intval($req[<span class="hljs-string">"number"</span>]);</span>
+<span class="php">     $value2 = intval(strrev($req[<span class="hljs-string">"number"</span>]));<span class="hljs-comment">//strrev 反转字符串  </span></span>
+<span class="php"> </span>
+<span class="php">     <span class="hljs-keyword">if</span>($value1!=$value2)&#123;</span>
+<span class="php">          $info=<span class="hljs-string">"no, this is not a palindrome number!"</span>;</span>
+<span class="php">          </span>
+<span class="php">     &#125;</span>
+<span class="php">     <span class="hljs-keyword">else</span></span>
+<span class="php">     &#123;</span>
+<span class="php"> </span>
+<span class="php">          <span class="hljs-keyword">if</span>(is_palindrome_number($req[<span class="hljs-string">"number"</span>]))&#123;</span>
+<span class="php">              $info = <span class="hljs-string">"nice! &#123;$value1&#125; is a palindrome number!"</span>; </span>
+<span class="php">          &#125;</span>
+<span class="php">          <span class="hljs-keyword">else</span></span>
+<span class="php">          &#123;</span>
+<span class="php">             $info=$flag;</span>
+<span class="php">          &#125;</span>
+<span class="php">     &#125;</span>
+<span class="php"> </span>
+<span class="php">&#125;</span>
+<span class="php"> </span>
+<span class="php"><span class="hljs-keyword">echo</span> $info;</span></code></pre>
 
 <h2 id="分析代码"><a href="#分析代码" class="headerlink" title="分析代码"></a>分析代码</h2><ol>
 <li>循环遍历数组foreach去除字符串首尾空格，转义字符串。</li>
 <li>方法 is_palindrome_number()判断是否为回文数。</li>
-<li>之后的代码才是重点通过矛盾的if/else语句得到flag<br><img src="./3.png" alt=""><br>我们的目标是得到<code>$info=$flag</code>最后一个else语句<br><img src="./4.png" alt=""><br>我首先想到是科学计数法(我也不知为什么)，但发现不可以，看完之前对is_numeric源码分析，发现判断无关整数的类型。</li>
+<li>之后的代码才是重点通过矛盾的if/else语句得到flag<br><img src="./3.png" srcset="/img/loading.gif" alt=""><br>我们的目标是得到<code>$info=$flag</code>最后一个else语句<br><img src="./4.png" srcset="/img/loading.gif" alt=""><br>我首先想到是科学计数法(我也不知为什么)，但发现不可以，看完之前对is_numeric源码分析，发现判断无关整数的类型。</li>
 </ol>
 <p><strong><em>题目要求回文整数</em></strong></p>
 <h3 id="1-传入number-191"><a href="#1-传入number-191" class="headerlink" title="1. 传入number=191"></a>1. 传入<code>number=191</code></h3><blockquote>
@@ -213,7 +405,7 @@ else{
 <p><code>nice! 191 is a palindrome number!</code><br><strong><em>//不需要考虑$value1!=$value2影响，因为他们被intval修饰！！！</em></strong></p>
 </blockquote>
 </blockquote>
-<h3 id="3-但是我们需要的是-info-flag-需要绕过is-palindrome-number-req-“number”"><a href="#3-但是我们需要的是-info-flag-需要绕过is-palindrome-number-req-“number”" class="headerlink" title="3. 但是我们需要的是$info=$flag;需要绕过is_palindrome_number($req[“number”]"></a>3. 但是我们需要的是$info=$flag;需要绕过is_palindrome_number($req[“number”]</h3><p>根据trim源代码分析少去掉的空格符号有<code>\n \r \t \v \0</code><br>发现少了个<code>\f</code> url编码为<code>%0c</code><br><img src="./5.png" alt=""></p>
+<h3 id="3-但是我们需要的是-info-flag-需要绕过is-palindrome-number-req-“number”"><a href="#3-但是我们需要的是-info-flag-需要绕过is-palindrome-number-req-“number”" class="headerlink" title="3. 但是我们需要的是$info=$flag;需要绕过is_palindrome_number($req[“number”]"></a>3. 但是我们需要的是$info=$flag;需要绕过is_palindrome_number($req[“number”]</h3><p>根据trim源代码分析少去掉的空格符号有<code>\n \r \t \v \0</code><br>发现少了个<code>\f</code> url编码为<code>%0c</code><br><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
 <h3 id="4-传入参数-number-00-0c191"><a href="#4-传入参数-number-00-0c191" class="headerlink" title="4. 传入参数?number=%00%0c191"></a>4. 传入参数?number=%00%0c191</h3><blockquote>
 <blockquote>
 <p>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<br>成功得到flag</p>
@@ -222,161 +414,259 @@ else{
 <h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p>Url编码规范：<a href="https://www.oschina.net/translate/what-every-web-developer-must-know-about-url-encoding" target="_blank" rel="noopener">https://www.oschina.net/translate/what-every-web-developer-must-know-about-url-encoding</a><br>几期『三个白帽』小竞赛的writeup：<a href="https://www.leavesongs.com/PENETRATION/some-sangebaimao-ctf-writeups.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/some-sangebaimao-ctf-writeups.html</a><br>PHP代码审计分段讲解:<a href="https://github.com/bowu678/php_bugs" target="_blank" rel="noopener">https://github.com/bowu678/php_bugs</a></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>１．学习了怎么通过分析函数源代码了解函数缺陷<br>２．第一次分析条件矛盾的ctf，刚开始确实很晕但是理清楚函数之间的特异性。就能理清他为什么要设置这样的矛盾<br>３．学习了url编码</p>
 
-  </div>
-</article>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/WEB%E5%AE%89%E5%85%A8/">WEB安全</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/03/05/Xdebug-phpstorm%E6%9C%AC%E5%9C%B0%E8%B0%83%E8%AF%95-LAMP/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Xdebug+phpstorm本地调试(LAMP)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/02/27/PHP%E5%BC%B1%E7%B1%BB%E5%9E%8B/">
+                        <span class="hidden-mobile">| PHP弱类型 |</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
-
-
-        
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用的空格符替换"><span class="toc-number">2.</span> <span class="toc-text">使用的空格符替换</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#源码查找方法"><span class="toc-number">3.</span> <span class="toc-text">源码查找方法</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Is-numeric源码分析"><span class="toc-number">4.</span> <span class="toc-text">Is_numeric源码分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#is-numeric-while缺陷利用"><span class="toc-number">5.</span> <span class="toc-text">is_numeric while缺陷利用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#验证Demo："><span class="toc-number">5.1.</span> <span class="toc-text">验证Demo：</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数值判断方法"><span class="toc-number">5.2.</span> <span class="toc-text">数值判断方法</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CTF"><span class="toc-number">6.</span> <span class="toc-text">CTF</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#分析代码"><span class="toc-number">6.1.</span> <span class="toc-text">分析代码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-传入number-191"><span class="toc-number">6.1.1.</span> <span class="toc-text">1. 传入number&#x3D;191</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-分析is-numeric"><span class="toc-number">6.1.2.</span> <span class="toc-text">2. 分析is_numeric</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-但是我们需要的是-info-flag-需要绕过is-palindrome-number-req-“number”"><span class="toc-number">6.1.3.</span> <span class="toc-text">3. 但是我们需要的是$info&#x3D;$flag;需要绕过is_palindrome_number($req[“number”]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-传入参数-number-00-0c191"><span class="toc-number">6.1.4.</span> <span class="toc-text">4. 传入参数?number&#x3D;%00%0c191</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考链接"><span class="toc-number">7.</span> <span class="toc-text">参考链接</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
-    </div>
-
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&text=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&is_video=false&description=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=函数特性 | 绕过的空白字符&body=Check out this article: http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&title=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&name=函数特性 | 绕过的空白字符&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/02/27/%E5%87%BD%E6%95%B0%E7%89%B9%E6%80%A7-%E7%BB%95%E8%BF%87%E7%9A%84%E7%A9%BA%E7%99%BD%E5%AD%97%E7%AC%A6/&t=函数特性 | 绕过的空白字符" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "函数特性 | 绕过的空白字符&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>

