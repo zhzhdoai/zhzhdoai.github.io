@@ -253,11 +253,11 @@
 </blockquote>
 <p>跟进代码看下究竟</p>
 <p><code>ParametersInterceptor.doIntercept</code>会从ActionContext上下文中取出<code>parameters</code></p>
-<p><img src="/Users/osword/Documents/typora/Struts2%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/s2-001.assets/image-20201210104747537.png" srcset="/img/loading.gif" alt="image-20201210104747537"></p>
+<p><img src="./image-20201210104747537.png" srcset="/img/loading.gif" alt="image-20201210104747537"></p>
 <p>跟进<code>ParametersInterceptor.setParameters</code>一路跟进在<code>OgnlRuntime.setMethodValue</code>中根菌propertyName获取该属性的set方法.接着执行<code>OgnlRuntime.callAppropriateMethod</code>反射执行<code>setPassword</code>方法</p>
-<p><img src="/Users/osword/Documents/typora/Struts2%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/s2-001.assets/image-20201210105247323.png" srcset="/img/loading.gif" alt="image-20201210105247323"></p>
+<p><img src="./image-20201210105247323.png" srcset="/img/loading.gif" alt="image-20201210105247323"></p>
 <h2 id="执行Action"><a href="#执行Action" class="headerlink" title="执行Action"></a>执行Action</h2><p>在一系列拦截器执行完毕后，调用DefaulActionInvocation.invokeActionOnly()执行Action操作.继续跟进<code>DefaulActionInvocation.invokeAction</code>会先获取需要执行该Action实例的方法，该方法在创建ActionProxy获取，没有制定方法时，会默认调用<code>execute</code>方法，接着会反射执行<code>LoginAction.execute()</code></p>
-<p><img src="/Users/osword/Documents/typora/Struts2%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/s2-001.assets/image-20201210110754593.png" srcset="/img/loading.gif" alt="image-20201210110754593"></p>
+<p><img src="./image-20201210110754593.png" srcset="/img/loading.gif" alt="image-20201210110754593"></p>
 <h2 id="Result处理"><a href="#Result处理" class="headerlink" title="Result处理"></a>Result处理</h2><p>当执行execute返回”error”作为ResultCode返回，(可以看作账号验证失败仍然停留在登陆界面)，执行StrutsResultSupport.doExcute()后框架将会开始处理页面回显，而其中会调用中间件tomcat调度器ApplicationDispatcher由于访问jsp文件，会调用<code>JspServlet</code>处理请求。接着Struts2会利用doStartTag、doEndTag解析标签.</p>
 <p>通过向页面请求</p>
 <pre><code class="hljs http">username=1&amp;password=%25&#123;%40java.lang.System%40getProperty("user.dir")&#125;</code></pre>
@@ -268,14 +268,14 @@
 
 
 <p>进入UIBean解析公共标签，满足IF语句后会对password拼接<code>%{</code>字符串为<code>%{password}</code>.</p>
-<p><img src="/Users/osword/Documents/typora/Struts2%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/s2-001.assets/image-20201210193258205.png" srcset="/img/loading.gif" alt="image-20201210193258205"></p>
+<p><img src="./image-20201210193258205.png" srcset="/img/loading.gif" alt="image-20201210193258205"></p>
 <p>之后会进入<code>TextParseUtil.translateVariables</code>递归判断当前返回字符串是否含有<code>%{}</code>字符串,满足的话会剔除掉<code>%{}</code>，执行findValue方法，从当前值栈中找到<code>password</code>获得对应的值<code>%{@java.lang.System@getProperty(&quot;user.dir&quot;)}</code></p>
-<p><img src="/Users/osword/Documents/typora/Struts2%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/s2-001.assets/image-20201210194132579.png" srcset="/img/loading.gif" alt="image-20201210194132579"></p>
+<p><img src="./image-20201210194132579.png" srcset="/img/loading.gif" alt="image-20201210194132579"></p>
 <p>由于<code>TextParseUtil.translateVariables</code>的递归判断，会再一次执行获得的值<code>%{@java.lang.System@getProperty(&quot;user.dir&quot;)}</code>造成二次解析，最后将结果保存值<code>parameters.nameValue</code>.在解析模版时会获取<code>parameters.nameValue</code>值，将执行代码的结果输出到浏览器上.</p>
-<p><img src="/Users/osword/Documents/typora/Struts2%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/s2-001.assets/image-20201210194753753.png" srcset="/img/loading.gif" alt="image-20201210194753753"></p>
-<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p><img src="/Users/osword/Documents/typora/Struts2%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/s2-001.assets/image-20201210200224422.png" srcset="/img/loading.gif" alt="image-20201210200224422"></p>
+<p><img src="./image-20201210194753753.png" srcset="/img/loading.gif" alt="image-20201210194753753"></p>
+<h1 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h1><p><img src="./image-20201210200224422.png" srcset="/img/loading.gif" alt="image-20201210200224422"></p>
 <h1 id="修复"><a href="#修复" class="headerlink" title="修复"></a>修复</h1><p><code>TextParseUtil.translateVariables</code>限制递归深度，仅解析一次表达式</p>
-<p><img src="/Users/osword/Documents/typora/Struts2%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/s2-001.assets/image-20201210203428795.png" srcset="/img/loading.gif" alt="image-20201210203428795"></p>
+<p><img src="./image-20201210203428795.png" srcset="/img/loading.gif" alt="image-20201210203428795"></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>其实这是第二遍分析s2-001漏洞，在调试一遍学到很多，主要从框架出发来看待这个问题.</p>
 <p>1.ThreadLocal设计模式，保证线程安全，使得每次拿到的ActionContext不受影响.</p>
 <p>2.二次解析漏洞挖掘思路，分析至此，究其原因在于递归调用，最后在调用stack.findValue时会解析表达式.(或许写个全局搜findValue有惊喜呢)</p>
